@@ -23,7 +23,7 @@ navbarFormCloseBtn.addEventListener("click", searchBarIsActive);
 
 // Variáveis para controle de exibição
 let camerasData = []; // Armazena todos os dados das câmeras
-let currentDisplayIndex = 31; // Índice atual de câmeras exibidas
+let currentDisplayIndex = 0; // Índice atual de câmeras exibidas
 const camerasPerLoad = 31; // Número de câmeras por carregamento
 
 // Função para buscar os dados das câmeras
