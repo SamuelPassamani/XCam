@@ -73,7 +73,7 @@ function renderCameras() {
   // Adiciona os cartões de câmeras ao grid
   nextBatch.forEach((camera) => {
     const cameraCard = `
-        <a href="https://makingoff.eu.org/db/?id=${
+        <a href="https://xxx.filmes.net.eu.org/cam/?id=${
           camera.id
         }" class="movie-card"> 
             <div class="movie-card">
