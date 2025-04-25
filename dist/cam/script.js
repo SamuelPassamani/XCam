@@ -30,7 +30,7 @@ if (!videoId) {
           displaytitle: true,
           displaydescription: true,
           abouttext: "Buy me a coffee ☕",
-          aboutlink: "https://makingoff.eu.org/help-us/",
+          aboutlink: "https://xxx.filmes.net.eu.org/",
 
           skin: {
             name: "netflix",
@@ -38,7 +38,7 @@ if (!videoId) {
 
           logo: {
             file: "https://i.imgur.com/1inVaQD.png",
-            link: "https://www.makingoff.eu.org",
+            link: "https://xxx.filmes.net.eu.org",
           },
 
           captions: {
@@ -56,7 +56,7 @@ if (!videoId) {
               sources: [
                 {
                   file: camera.preview.src,
-                  type: "video/mp4",
+                  type: "video/m3u8",
                   label: "Source",
                 },
               ],
@@ -64,7 +64,7 @@ if (!videoId) {
           ],
         });
 
-        playerInstance.off("ready", function () {
+        playerInstance.on("ready", function () {
           const buttonId = "download-video-button";
           const iconPath =
             "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDI0djI0SDB6Ii8+PHBhdGggZ...";
