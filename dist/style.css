@@ -1084,33 +1084,39 @@ input:focus, textarea:focus, select:focus {
 
 .live-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Grade responsiva */
+  gap: 30px; /* Espaçamento entre itens */
 }
 
 .live-card {
-  cursor: pointer;
   position: relative;
-  border-radius: 15px;
+  border-radius: 15px; /* Cantos arredondados */
   overflow: hidden;
-  background: var(--oxford-blue);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--oxford-blue); /* Fundo consistente */
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suavidade no hover */
 }
 
 .live-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px); /* Levanta o card ao passar o mouse */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adiciona sombra */
 }
 
 .live-card .card-head {
-  height: 225px; /* Altura fixa para corresponder às dimensões */
   position: relative;
+  height: 225px; /* Altura fixa para imagens */
+  background: var(--oxford-blue-50); /* Fundo enquanto a imagem carrega */
 }
 
 .live-card .card-head img {
-  width: 400px; /* Largura fixa para corresponder às dimensões */
-  height: 225px; /* Altura fixa para corresponder às dimensões */
-  object-fit: cover;
+  width: 100%; /* Ocupa toda a largura */
+  height: 100%; /* Ocupa toda a altura */
+  object-fit: cover; /* Corta a imagem para se ajustar */
+  transition: transform 0.3s ease; /* Suavidade no zoom */
+}
+
+.live-card:hover .card-head img {
+  transform: scale(1.1); /* Zoom suave ao passar o mouse */
 }
 
 .live-card .card-head::after {
@@ -1120,7 +1126,7 @@ input:focus, textarea:focus, select:focus {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.8));
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.8)); /* Gradiente para contraste */
 }
 
 .live-card .live-badge {
@@ -1128,11 +1134,12 @@ input:focus, textarea:focus, select:focus {
   top: 15px;
   left: 15px;
   padding: 5px 10px;
-  background: var(--live-indicator);
+  background: var(--live-indicator); /* Indicador de live */
   color: var(--white);
   font-size: var(--font-size-small);
   font-weight: var(--fw6);
   border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .live-card .viewer-count {
@@ -1140,7 +1147,7 @@ input:focus, textarea:focus, select:focus {
   bottom: 15px;
   left: 15px;
   padding: 5px 10px;
-  background: var(--oxford-blue-50);
+  background: var(--oxford-blue-50); /* Fundo semi-transparente */
   color: var(--off-white);
   font-size: var(--font-size-small);
   border-radius: 5px;
@@ -1150,47 +1157,44 @@ input:focus, textarea:focus, select:focus {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
+  transform: translate(-50%, -50%) scale(0.8); /* Centraliza e reduz */
   color: var(--white);
-  font-size: 2.5rem;
+  font-size: var(--section-heading);
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Suavidade na exibição */
 }
 
 .live-card:hover .play-icon {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%) scale(1); /* Exibe e aumenta */
 }
 
 .live-card .card-body {
   padding: 15px;
   display: flex;
   flex-direction: column;
+  gap: 10px; /* Espaço entre título e outros elementos */
 }
 
 .live-card .card-title {
   font-size: var(--font-size-medium);
   font-weight: var(--fw6);
-  margin-bottom: 10px;
   color: var(--white);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Realce no texto */
+  transition: color 0.3s ease; /* Suavidade na mudança de cor */
 }
 
 .live-card .card-title:hover {
-  color: var(--light-azure);
+  color: var(--light-azure); /* Destaque ao passar o mouse */
 }
 
-/* Responsividade para a seção "live" */
+/* Responsividade */
 @media screen and (max-width: 768px) {
   .live-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Apenas uma coluna em telas menores */
   }
 
   .live-card .card-head {
-    height: 150px; /* Ajusta altura para telas menores */
-  }
-
-  .live-card .card-head img {
-    width: 100%; /* Ajusta largura dinâmica */
-    height: 150px; /* Ajusta altura dinâmica */
+    height: 150px; /* Reduz altura para telas menores */
   }
 }
