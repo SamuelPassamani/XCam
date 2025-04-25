@@ -35,31 +35,6 @@ const playerInstance = jwplayer("player").setup({
             "https://d8218.filescdn.com/d/rryt6xys6dlfx5d4jnsfbdn4qllfbizdgixqc2euoh5bthtq7rooq4e6wzccyg245ae6p4rh/video.mp4",
           type: "video/webm",
           label: "720p"
-        },
-        {
-          file:
-            "https://d1112.filescdn.com/d/iby2gxas6dlfx5d4jnsapcpg2z7dhtyjpmwr2vptezntpml5rw2vt76lt6642hvpnqyivk3g/video.mp4",
-          type: "video/webm",
-          label: "1080p"
-        },
-        {
-          file:
-            "https://cloclo-stock4.datacloudmail.ru/stock/get/42zwwmJ48BtyKCH4NhFTCTC8jWf1LhMP4pFdG64Hhr4SNWJEwfoMDPVEecoZo23tF2PGkqRnbezw/hhi0IdYa%20%281%29.mp4?x-email=alls.company%40bk.ru",
-          type: "video/webm",
-          label: "Server 3"
-        }
-      ],
-      captions: [
-        {
-          file: "https://drive.site.my.eu.org/0:/CDN/hhi0IdYa/hhi0IdYa-PT.vtt",
-          label: "Português",
-          kind: "captions"
-        }
-      ],
-      tracks: [
-        {
-          file: "https://cdn.jwplayer.com/strips/hhi0IdYa-120.vtt",
-          kind: "thumbnails"
         }
       ]
     }
