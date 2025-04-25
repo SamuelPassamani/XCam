@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Movie Website</title>
+  <title>Site Responsivo de Filmes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -24,15 +24,15 @@
 
         <nav class="">
           <ul class="navbar-nav">
-            <li><a href="#" class="navbar-link">Home</a></li>
-            <li><a href="#category" class="navbar-link">Category</a></li>
-            <li><a href="#live" class="navbar-link indicator">LIVE</a></li>
+            <li><a href="#" class="navbar-link">Início</a></li>
+            <li><a href="#category" class="navbar-link">Categorias</a></li>
+            <li><a href="#live" class="navbar-link indicator">AO VIVO</a></li>
           </ul>
         </nav>
 
         <div class="navbar-actions">
           <form action="#" class="navbar-form">
-            <input type="text" name="search" placeholder="I'm looking for..." class="navbar-form-search">
+            <input type="text" name="search" placeholder="Estou procurando por..." class="navbar-form-search">
 
             <button class="navbar-form-btn">
               <ion-icon name="search"></ion-icon>
@@ -48,7 +48,7 @@
           </button>
 
           <a href="#" class="navbar-signin">
-            <span>Sign In</span>
+            <span>Entrar</span>
             <ion-icon name="log-in"></ion-icon>
           </a>
         </div>
@@ -64,7 +64,7 @@
             <div class="card-info">
               <div class="genre">
                 <ion-icon name="film"></ion-icon>
-                <span>Action/Thriller</span>
+                <span>Ação/Suspense</span>
               </div>
 
               <div class="year">
@@ -79,7 +79,7 @@
 
               <div class="quality">4k</div>
             </div>
-            <h2 class="card-title">John Wick: Chapter 3 - Parabellum</h2>
+            <h2 class="card-title">John Wick: Capítulo 3 - Parabellum</h2>
           </div>
         </div>
 
@@ -89,21 +89,21 @@
         <div class="filter-bar">
           <div class="filter-dropdowns">
             <select name="genre" class="genre">
-              <option value="all genres">All Genres</option>
-              <option value="action">Action</option>
-              <option value="adventure">Adventure</option>
+              <option value="all genres">Todos os Gêneros</option>
+              <option value="action">Ação</option>
+              <option value="adventure">Aventura</option>
               <option value="animal">Animal</option>
-              <option value="animation">Animation</option>
-              <option value="biography">Biography</option>
+              <option value="animation">Animação</option>
+              <option value="biography">Biografia</option>
               <option value="drama">Drama</option>
-              <option value="fantasy">Fantasy</option>
-              <option value="horror">Horror</option>
-              <option value="scifi">Sci-fi</option>
-              <option value="war">War</option>
+              <option value="fantasy">Fantasia</option>
+              <option value="horror">Terror</option>
+              <option value="scifi">Ficção Científica</option>
+              <option value="war">Guerra</option>
             </select>
 
             <select name="year" class="year">
-              <option value="all years">All years</option>
+              <option value="all years">Todos os Anos</option>
               <option value="2024">2024</option>
               <option value="2020-2023">2020-2023</option>
               <option value="2010-2019">2010-2019</option>
@@ -114,13 +114,13 @@
 
           <div class="filter-radios">
             <input type="radio" name="grade" id="featured" checked>
-            <label for="featured">Featured</label>
+            <label for="featured">Destaques</label>
 
             <input type="radio" name="grade" id="popular">
-            <label for="popular">Popular</label>
+            <label for="popular">Populares</label>
 
             <input type="radio" name="grade" id="newest">
-            <label for="newest">Newest</label>
+            <label for="newest">Mais Recentes</label>
 
             <div class="checked-radio-bg"></div>
           </div>
@@ -130,112 +130,112 @@
           <!-- Os itens serão gerados dinamicamente pelo script.js -->
         </div>
 
-        <button class="load-more">LOAD MORE</button>
+        <button class="load-more">CARREGAR MAIS</button>
       </section>
 
       <section class="category" id="category">
-        <h2 class="section-heading">Category</h2>
+        <h2 class="section-heading">Categorias</h2>
 
         <div class="category-grid">
           <div class="category-card">
-            <img src="https://i.postimg.cc/JzfWFmfC/action.jpg" alt="image" class="card-img">
-            <div class="name">Action</div>
+            <img src="https://i.postimg.cc/JzfWFmfC/action.jpg" alt="imagem" class="card-img">
+            <div class="name">Ação</div>
             <div class="total">100</div>
           </div>
 
           <div class="category-card">
-            <img src="https://i.postimg.cc/CKpxqjL8/comedy.jpg" alt="image" class="card-img">
-            <div class="name">Comedy</div>
+            <img src="https://i.postimg.cc/CKpxqjL8/comedy.jpg" alt="imagem" class="card-img">
+            <div class="name">Comédia</div>
             <div class="total">50</div>
           </div>
 
           <div class="category-card">
-            <img src="https://i.postimg.cc/3rfrBMxY/thriller.webp" alt="image" class="card-img">
-            <div class="name">Thriller</div>
+            <img src="https://i.postimg.cc/3rfrBMxY/thriller.webp" alt="imagem" class="card-img">
+            <div class="name">Suspense</div>
             <div class="total">20</div>
           </div>
 
           <div class="category-card">
-            <img src="https://i.postimg.cc/HkXpdV4k/horror.jpg" alt="image" class="card-img">
-            <div class="name">Horror</div>
+            <img src="https://i.postimg.cc/HkXpdV4k/horror.jpg" alt="imagem" class="card-img">
+            <div class="name">Terror</div>
             <div class="total">80</div>
           </div>
 
           <div class="category-card">
-            <img src="https://i.postimg.cc/qRRVhRnn/adventure.jpg" alt="image" class="card-img">
-            <div class="name">Adventure</div>
+            <img src="https://i.postimg.cc/qRRVhRnn/adventure.jpg" alt="imagem" class="card-img">
+            <div class="name">Aventura</div>
             <div class="total">100</div>
           </div>
 
           <div class="category-card">
-            <img src="https://i.postimg.cc/15pmZ8K5/animated.jpg" alt="image" class="card-img">
-            <div class="name">Animation</div>
+            <img src="https://i.postimg.cc/15pmZ8K5/animated.jpg" alt="imagem" class="card-img">
+            <div class="name">Animação</div>
             <div class="total">50</div>
           </div>
 
           <div class="category-card">
-            <img src="https://i.postimg.cc/XvX6Xq95/crime.jpg" alt="image" class="card-img">
+            <img src="https://i.postimg.cc/XvX6Xq95/crime.jpg" alt="imagem" class="card-img">
             <div class="name">Crime</div>
             <div class="total">20</div>
           </div>
 
           <div class="category-card">
-            <img src="https://i.postimg.cc/8568BYKP/sci-fi.jpg" alt="image" class="card-img">
-            <div class="name">Sci-fi</div>
+            <img src="https://i.postimg.cc/8568BYKP/sci-fi.jpg" alt="imagem" class="card-img">
+            <div class="name">Ficção Científica</div>
             <div class="total">80</div>
           </div>
         </div>
       </section>
 
       <section class="live" id="live">
-        <h2 class="section-heading">Live TV Shows</h2>
+        <h2 class="section-heading">Programas de TV ao Vivo</h2>
 
         <div class="live-grid">
           <div class="live-card">
             <div class="card-head">
-              <img src="https://i.postimg.cc/m26wBrZJ/planet.jpg" alt="image" class="card-img">
-              <div class="live-badge">LIVE</div>
-              <div class="total-viewers">305K viewers</div>
+              <img src="https://i.postimg.cc/m26wBrZJ/planet.jpg" alt="imagem" class="card-img">
+              <div class="live-badge">AO VIVO</div>
+              <div class="total-viewers">305K espectadores</div>
               <div class="play">
                 <ion-icon name="play-circle-outline"></ion-icon>
               </div>
             </div>
 
             <div class="card-body">
-              <img src="https://i.postimg.cc/YCzQjqtt/bbcamerica.jpg" alt="image" class="avatar">
-              <h3 class="card-title">Planet Earth II <br> Season 1 - Islands</h3>
+              <img src="https://i.postimg.cc/YCzQjqtt/bbcamerica.jpg" alt="imagem" class="avatar">
+              <h3 class="card-title">Planeta Terra II <br> Temporada 1 - Ilhas</h3>
             </div>
           </div>
 
           <div class="live-card">
             <div class="card-head">
-              <img src="https://i.postimg.cc/PrY8CrdP/got.jpg" alt="image" class="card-img">
-              <div class="live-badge">LIVE</div>
-              <div class="total-viewers">1.7M viewers</div>
+              <img src="https://i.postimg.cc/PrY8CrdP/got.jpg" alt="imagem" class="card-img">
+              <div class="live-badge">AO VIVO</div>
+              <div class="total-viewers">1.7M espectadores</div>
               <div class="play">
                 <ion-icon name="play-circle-outline"></ion-icon>
               </div>
             </div>
 
             <div class="card-body">
-              <img src="https://i.postimg.cc/ryWpJn3H/HBO-Logo-square.jpg" alt="image" class="avatar">
-              <h3 class="card-title">Game of Thrones <br> Season 5 - Mother's Mercy</h3>
+              <img src="https://i.postimg.cc/ryWpJn3H/HBO-Logo-square.jpg" alt="imagem" class="avatar">
+              <h3 class="card-title">Game of Thrones <br> Temporada 5 - Misericórdia da Mãe</h3>
             </div>
           </div>
 
           <div class="live-card">
             <div class="card-head">
-              <img src="https://i.postimg.cc/RVLZr3MQ/vikins.jpg" alt="image" class="card-img">
-              <div class="live-badge">LIVE</div>
-              <div class="total-viewers">468K viewers</div>
+              <img src="https://i.postimg.cc/RVLZr3MQ/vikins.jpg" alt="imagem" class="card-img">
+              <div class="live-badge">AO VIVO</div>
+              <div class="total-viewers">468K espectadores</div>
               <div class="play">
                 <ion-icon name="play-circle-outline"></ion-icon>
               </div>
             </div>
 
             <div class="card-body">
-              <img src="https://i.postimg.cc/ryWpJn3H/HBO-Logo-square.jpg" alt="image" class="avatar">
-              <h3 class="card-title">Vikings <br> Season 4 - What Might Have Been</h3>
+              <img src="https://i.postimg.cc/ryWpJn3H/HBO-Logo-square.jpg" alt="imagem" class="avatar">
+              <h3 class="card-title">Vikings <br> Temporada 4 - O Que Poderia Ter Sido</h3>
             </div>
           </div>
         </div>
@@ -245,8 +245,8 @@
     <footer>
       <div class="footer-content">
         <div class="footer-brand">
-          <img src="https://i.postimg.cc/KvjKVZXj/logo.png" alt="image" class="footer-logo">
-          <p class="slogan">Movies & TV Shows, Online Cinema, Movie Database HTML Template</p>
+          <img src="https://i.postimg.cc/KvjKVZXj/logo.png" alt="imagem" class="footer-logo">
+          <p class="slogan">Filmes e Programas de TV, Cinema Online, Modelo de Banco de Dados de Filmes HTML</p>
 
           <div class="social-link">
             <a href="#">
@@ -271,36 +271,36 @@
           <ul>
             <h4 class="link-heading">CineFlix</h4>
 
-            <li class="link-item"><a href="#">About us</a></li>
-            <li class="link-item"><a href="#">My profile</a></li>
-            <li class="link-item"><a href="#">Pricing plans</a></li>
-            <li class="link-item"><a href="#">Contacts</a></li>
+            <li class="link-item"><a href="#">Sobre nós</a></li>
+            <li class="link-item"><a href="#">Meu perfil</a></li>
+            <li class="link-item"><a href="#">Planos de Preços</a></li>
+            <li class="link-item"><a href="#">Contatos</a></li>
           </ul>
 
           <ul>
-            <h4 class="link-heading">Browse</h4>
+            <h4 class="link-heading">Navegar</h4>
 
-            <li class="link-item"><a href="#">Live TV</a></li>
-            <li class="link-item"><a href="#">Live News</a></li>
-            <li class="link-item"><a href="#">Live Sports</a></li>
-            <li class="link-item"><a href="#">Streaming Library</a></li>
+            <li class="link-item"><a href="#">TV ao Vivo</a></li>
+            <li class="link-item"><a href="#">Notícias ao Vivo</a></li>
+            <li class="link-item"><a href="#">Esportes ao Vivo</a></li>
+            <li class="link-item"><a href="#">Biblioteca de Streaming</a></li>
           </ul>
 
           <ul>
 
-            <li class="link-item"><a href="#">TV Shows</a></li>
-            <li class="link-item"><a href="#">Movies</a></li>
-            <li class="link-item"><a href="#">Kids</a></li>
-            <li class="link-item"><a href="#">Collections</a></li>
+            <li class="link-item"><a href="#">Programas de TV</a></li>
+            <li class="link-item"><a href="#">Filmes</a></li>
+            <li class="link-item"><a href="#">Infantil</a></li>
+            <li class="link-item"><a href="#">Coleções</a></li>
           </ul>
 
           <ul>
-            <h4 class="link-heading">Help</h4>
+            <h4 class="link-heading">Ajuda</h4>
 
-            <li class="link-item"><a href="#">Account & Billing</a></li>
-            <li class="link-item"><a href="#">Plans & Pricing</a></li>
-            <li class="link-item"><a href="#">Supported Devices</a></li>
-            <li class="link-item"><a href="#">Accessibility</a></li>
+            <li class="link-item"><a href="#">Conta e Cobrança</a></li>
+            <li class="link-item"><a href="#">Planos e Preços</a></li>
+            <li class="link-item"><a href="#">Dispositivos Compatíveis</a></li>
+            <li class="link-item"><a href="#">Acessibilidade</a></li>
           </ul>
         </div>
       </div>
@@ -311,8 +311,8 @@
         </div>
 
         <div class="wrapper">
-          <a href="#">Privacy policy</a>
-          <a href="#">Terms and conditions</a>
+          <a href="#">Política de Privacidade</a>
+          <a href="#">Termos e Condições</a>
         </div>
       </div>
 
@@ -322,12 +322,6 @@
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   <script src="main.js"></script>
-</body>
-
-</html>
-<!-- partial -->
-<script src="./script.js"></script>
-
 </body>
 
 </html>
