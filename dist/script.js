@@ -24,7 +24,7 @@ navbarFormCloseBtn.addEventListener("click", searchBarIsActive);
 // Variáveis para controle de exibição
 let camerasData = []; // Armazena todos os dados das câmeras
 let currentDisplayIndex = 0; // Índice atual de câmeras exibidas
-const camerasPerLoad = 33; // Número de câmeras por carregamento
+let camerasPerLoad = 0; // Número dinâmico de câmeras por carregamento
 
 // Função para buscar os dados das câmeras
 async function fetchCamerasData() {
@@ -40,13 +40,14 @@ async function fetchCamerasData() {
     // Verifica se a estrutura do JSON contém broadcasts.items
     if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
       camerasData = data.broadcasts.items;
+      camerasPerLoad = data.broadcasts.total; // Atualiza o valor de camerasPerLoad com o valor de "total"
     } else {
       throw new Error(
         "Estrutura do JSON inválida ou items não encontrados em broadcasts"
       );
     }
 
-    // Exibe as primeiras 28 câmeras
+    // Exibe as câmeras
     renderCameras();
   } catch (error) {
     console.error("Erro ao carregar os dados:", error);
@@ -107,7 +108,7 @@ function renderCameras() {
     moviesGrid.insertAdjacentHTML("beforeend", cameraCard);
   });
 
-  // Mostra ou oculta o botão "LOAD MORE"
+  // Mostra ou oculta o botão "CARREGAR MAIS"
   const loadMoreButton = document.querySelector(".load-more");
   if (currentDisplayIndex >= camerasData.length) {
     loadMoreButton.style.display = "none";
@@ -117,7 +118,7 @@ function renderCameras() {
 // Carrega as câmeras ao carregar a página
 document.addEventListener("DOMContentLoaded", () => fetchCamerasData());
 
-// Função para carregar mais câmeras ao clicar no botão "LOAD MORE"
+// Função para carregar mais câmeras ao clicar no botão "CARREGAR MAIS"
 const loadMoreButton = document.querySelector(".load-more");
 if (loadMoreButton) {
   loadMoreButton.addEventListener("click", renderCameras);
