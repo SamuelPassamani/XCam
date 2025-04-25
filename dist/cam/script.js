@@ -140,7 +140,7 @@ if (!videoId && !username) {
           const rewindControlBarButton = buttonContainer.querySelector(
             ".jw-icon-rewind"
           );
-          const forwardControlBarButton = rewindControlBarButton.cloneNode(false);
+          const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
           forwardControlBarButton.style.transform = "scaleX(-1)";
           forwardControlBarButton.ariaLabel = "Forward 10 Seconds";
           rewindControlBarButton.parentNode.insertBefore(
