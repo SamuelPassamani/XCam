@@ -1076,7 +1076,6 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* Novos estilos para o projeto */
-
 /* Seção específica para "live" */
 .live {
   margin-bottom: 60px;
@@ -1103,13 +1102,13 @@ input:focus, textarea:focus, select:focus {
 }
 
 .live-card .card-head {
-  height: 200px;
+  height: 225px; /* Altura fixa para corresponder às dimensões */
   position: relative;
 }
 
 .live-card .card-head img {
-  width: 100%;
-  height: 100%;
+  width: 400px; /* Largura fixa para corresponder às dimensões */
+  height: 225px; /* Altura fixa para corresponder às dimensões */
   object-fit: cover;
 }
 
@@ -1187,5 +1186,10 @@ input:focus, textarea:focus, select:focus {
 
   .live-card .card-head {
     height: 150px;
+  }
+
+  .live-card .card-head img {
+    width: 100%; /* Ajusta largura para telas menores */
+    height: 150px; /* Ajusta altura para telas menores */
   }
 }
