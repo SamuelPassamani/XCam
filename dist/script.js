@@ -24,30 +24,12 @@ navbarFormCloseBtn.addEventListener("click", searchBarIsActive);
 
 // Variáveis globais para controle da paginação
 let currentPage = 1;
-const moviesPerPage = 24;
 
-// Função para carregar filmes
-function loadMovies(page = 1, filters = {}) {
-  const {
-    quality,
-    minimumRating,
-    queryTerm,
-    genre,
-    sortBy,
-    orderBy
-  } = filters;
+// Função para carregar as câmeras ao vivo
+function loadLiveCameras() {
+  const apiUrl = `https://site.my.eu.org/1:/male.json`; // URL do JSON com os dados das câmeras
 
-  // Construção da URL da API com base nos filtros aplicados
-  const apiUrl =
-    `https://yts.mx/api/v2/list_movies.json?limit=${moviesPerPage}&page=${page}` +
-    (quality ? `&quality=${quality}` : "") +
-    (minimumRating ? `&minimum_rating=${minimumRating}` : "") +
-    (queryTerm ? `&query_term=${queryTerm}` : "") +
-    (genre ? `&genre=${genre}` : "") +
-    (sortBy ? `&sort_by=${sortBy}` : "") +
-    (orderBy ? `&order_by=${orderBy}` : "");
-
-  console.log("Fetching movies with URL:", apiUrl); // Log para depuração
+  console.log("Fetching live cameras with URL:", apiUrl); // Log para depuração
 
   fetch(apiUrl)
     .then((response) => {
@@ -57,29 +39,24 @@ function loadMovies(page = 1, filters = {}) {
       return response.json();
     })
     .then((data) => {
-      if (data.data && data.data.movies) {
-        const movies = data.data.movies;
-        const moviesGrid = document.querySelector(".movies-grid");
+      if (data && Array.isArray(data)) {
+        const cameras = data;
+        const camerasGrid = document.querySelector(".movies-grid"); // Reutilizando o container da grade de filmes
 
-        // Limpa a grade de filmes antes de adicionar novos
-        if (page === 1) {
-          moviesGrid.innerHTML = "";
-        }
+        // Limpa a grade antes de adicionar novos itens
+        camerasGrid.innerHTML = "";
 
-        // Adiciona os filmes à grade
-        movies.forEach((movie) => {
-          const movieCard = `
-          <a href="https://makingoff.eu.org/db/?id=${movie.imdb_code}" class="movie-card"> 
-            <div class="movie-card">
+        // Adiciona as câmeras à grade
+        cameras.forEach((camera) => {
+          const cameraCard = `
+          <a href="${camera.preview.src}" class="camera-card" target="_blank">
+            <div class="camera-card">
               <div class="card-head">
-                <img src="${movie.medium_cover_image}" alt="${movie.title}" class="card-img">
+                <img src="${camera.preview.poster}" alt="${camera.username}" class="card-img">
                 <div class="card-overlay">
-                  <div class="bookmark">
-                    <ion-icon name="bookmark"></ion-icon>
-                  </div>
-                  <div class="rating">
-                    <ion-icon name="star-outline"></ion-icon>
-                    <span>${movie.rating}</span>
+                  <div class="viewer-count">
+                    <ion-icon name="eye-outline"></ion-icon>
+                    <span>${camera.viewers} espectadores</span>
                   </div>
                   <div class="play">
                     <ion-icon name="play-circle-outline"></ion-icon>
@@ -87,63 +64,23 @@ function loadMovies(page = 1, filters = {}) {
                 </div>
               </div>
               <div class="card-body">
-                <h3 class="card-title">${movie.title}</h3>
+                <h3 class="card-title">${camera.username}</h3>
                 <div class="card-info">
-                  <span class="genre">${movie.genres.join(", ")}</span>
-                  <span class="year">${movie.year}</span>
+                  <span class="country">${camera.country || "Desconhecido"}</span>
+                  <span class="tags">${camera.tags.map(tag => tag.name).join(", ")}</span>
                 </div>
               </div>
             </div>
           </a>
           `;
-          moviesGrid.insertAdjacentHTML("beforeend", movieCard);
+          camerasGrid.insertAdjacentHTML("beforeend", cameraCard);
         });
       } else {
-        console.error("Nenhum filme encontrado.");
+        console.error("Nenhuma câmera ao vivo encontrada.");
       }
     })
-    .catch((error) => console.error("Erro ao carregar filmes:", error));
+    .catch((error) => console.error("Erro ao carregar as câmeras ao vivo:", error));
 }
 
-// Carrega os filmes quando a página é carregada
-window.addEventListener("DOMContentLoaded", () => loadMovies());
-
-// Função para carregar mais filmes ao clicar no botão "CARREGAR MAIS"
-const loadMoreButton = document.querySelector(".load-more");
-if (loadMoreButton) {
-  loadMoreButton.addEventListener("click", () => {
-    currentPage++;
-    const filters = getFilters();
-    loadMovies(currentPage, filters);
-  });
-}
-
-// Função para aplicar os filtros
-const applyFilters = () => {
-  currentPage = 1;
-  const filters = getFilters();
-  loadMovies(currentPage, filters);
-};
-
-// Função para obter os valores dos filtros
-const getFilters = () => {
-  const genre = document.querySelector('.filter-dropdowns select[name="genre"]')?.value;
-  const quality = document.querySelector(".filter-dropdowns select.quality-filter")?.value;
-  const minimumRating = document.querySelector(".filter-dropdowns select.rating-filter")?.value;
-  const sortBy = document.querySelector(".filter-dropdowns select.sort-by-filter")?.value;
-  const orderBy = document.querySelector(".filter-dropdowns select.order-by-filter")?.value;
-
-  return {
-    genre: genre && genre !== "all genres" ? genre : null,
-    quality: quality || null,
-    minimumRating: minimumRating || null,
-    sortBy: sortBy || null,
-    orderBy: orderBy || null
-  };
-};
-
-// Adiciona evento para aplicar os filtros
-const filterBar = document.querySelector(".filter-bar");
-if (filterBar) {
-  filterBar.addEventListener("change", applyFilters);
-}
+// Carrega as câmeras ao vivo quando a página é carregada
+window.addEventListener("DOMContentLoaded", () => loadLiveCameras());
