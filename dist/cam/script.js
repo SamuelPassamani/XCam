@@ -1,9 +1,8 @@
 const urlParams = new URLSearchParams(window.location.search);
 const videoId = urlParams.get("id"); // Obtém o valor do parâmetro 'id' na URL
-const username = urlParams.get("user"); // Obtém o valor do parâmetro 'user' na URL
 
-if (!videoId && !username) {
-  console.error("Nenhum ID ou USER foi fornecido na URL. Adicione ?id=valor ou ?user=valor na URL.");
+if (!videoId) {
+  console.error("Nenhum ID foi fornecido na URL. Adicione ?id=valor na URL.");
 } else {
   // Busca os dados do JSON
   fetch("https://site.my.eu.org/1:/male.json")
@@ -16,17 +15,10 @@ if (!videoId && !username) {
     .then((data) => {
       // Verifica se broadcasts.items existe no JSON
       if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
-        let camera;
-        if (videoId) {
-          // Busca pelo ID
-          camera = data.broadcasts.items.find((item) => item.id === videoId);
-        } else if (username) {
-          // Busca pelo USERNAME
-          camera = data.broadcasts.items.find((item) => item.username === username);
-        }
+        const camera = data.broadcasts.items.find((item) => item.id === videoId);
 
         if (!camera) {
-          console.error(`Nenhuma câmera encontrada com o ID: ${videoId} ou USER: ${username}`);
+          console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
           return;
         }
 
@@ -75,7 +67,7 @@ if (!videoId && !username) {
         playerInstance.on("ready", function () {
           const buttonId = "download-video-button";
           const iconPath =
-            "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDI0djI0SDB6Ii8+P[...]
+            "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDI0djI0SDB6Ii8+P[...]";
           const tooltipText = "Download Video";
 
           // Adiciona o botão de download personalizado
