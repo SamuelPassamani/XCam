@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>MakingOff / Filmes & Series</title>
+  <title>MakingOff / Câmeras ao Vivo</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="icon" href="https://lh3.googleusercontent.com/d/1cChjlT6Oxr16kUAZkqyw4yx8ieRHBbRx?authuser=0" type="image/x-icon">
@@ -25,8 +25,6 @@
         <nav>
           <ul class="navbar-nav">
             <li><a href="index.html" class="navbar-link">Início</a></li>
-            <li><a href="#" class="navbar-link">Dublados</a></li>
-            <li><a href="#category" class="navbar-link">Categorias</a></li>
             <li><a href="#live" class="navbar-link indicator">AO VIVO</a></li>
           </ul>
         </nav>
@@ -53,201 +51,10 @@
     </header>
 
     <main>
-      <section class="banner">
-        <div class="banner-card">
-          <img src="https://i.postimg.cc/Y9SMdz0P/John-Wick-3.jpg" alt="banner" class="banner-img">
-          <div class="card-content">
-            <div class="card-info">
-              <div class="genre">
-                <ion-icon name="film"></ion-icon>
-                <span>Ação/Thriller</span>
-              </div>
-              <div class="year">
-                <ion-icon name="calendar"></ion-icon>
-                <span>2019</span>
-              </div>
-              <div class="duration">
-                <ion-icon name="time"></ion-icon>
-                <span>2h 11min</span>
-              </div>
-              <div class="quality">4k</div>
-            </div>
-            <h2 class="card-title">John Wick: Capítulo 3 - Parabellum</h2>
-          </div>
-        </div>
-      </section>
-
-      <section class="movies">
-        <div class="filter-bar">
-          <div class="filter-dropdowns">
-            <select name="genre" class="genre">
-              <option value="all genres">Todos os Gêneros</option>
-              <option value="action">Ação</option>
-              <option value="adventure">Aventura</option>
-              <option value="animation">Animação</option>
-              <option value="biography">Biografia</option>
-              <option value="comedy">Comédia</option>
-              <option value="crime">Crime</option>
-              <option value="documentary">Documentário</option>
-              <option value="drama">Drama</option>
-              <option value="family">Família</option>
-              <option value="fantasy">Fantasia</option>
-              <option value="history">História</option>
-              <option value="horror">Terror</option>
-              <option value="music">Música</option>
-              <option value="mystery">Mistério</option>
-              <option value="romance">Romance</option>
-              <option value="sci-fi">Ficção Científica</option>
-              <option value="thriller">Suspense</option>
-              <option value="war">Guerra</option>
-              <option value="western">Faroeste</option>
-            </select>
-            <select name="quality" class="quality-filter">
-              <option value="">Qualidade</option>
-              <option value="480p">480p</option>
-              <option value="720p">720p</option>
-              <option value="1080p">1080p</option>
-              <option value="1080p.x265">1080p.x265</option>
-              <option value="2160p">2160p</option>
-              <option value="3D">3D</option>
-            </select>
-            <select name="minimumRating" class="rating-filter">
-              <option value="">Classificação Mínima</option>
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-            </select>
-            <select name="sortBy" class="sort-by-filter">
-              <option value="">Ordenar Por</option>
-              <option value="like_count">Curtidas</option>
-              <option value="year">Ano</option>
-              <option value="rating">Classificação</option>
-              <option value="title">Título</option>
-              <option value="runtime">Duração</option>
-              <option value="download_count">Downloads</option>
-            </select>
-            <select name="orderBy" class="order-by-filter">
-              <option value="">Ordem</option>
-              <option value="desc">Decrescente</option>
-              <option value="asc">Crescente</option>
-            </select>
-          </div>
-          <div class="filter-radios">
-            <input type="radio" name="grade" id="newest" checked>
-            <label for="newest">Recentes</label>
-            <input type="radio" name="grade" id="popular">
-            <label for="popular">Populares</label>
-            <input type="radio" name="grade" id="featured">
-            <label for="featured">Destaques</label>
-            <div class="checked-radio-bg"></div>
-          </div>
-        </div>
-
-        <div class="movies-grid">
-          <!-- Os filmes serão carregados aqui pela função loadMovies -->
-        </div>
-
-        <button class="load-more">CARREGAR MAIS</button>
-      </section>
-
-      <section class="category" id="category">
-        <h2 class="section-heading">Categorias</h2>
-        <div class="category-grid">
-          <div class="category-card">
-            <img src="https://i.postimg.cc/JzfWFmfC/action.jpg" alt="imagem" class="card-img">
-            <div class="name">Ação</div>
-            <div class="total">100</div>
-          </div>
-          <div class="category-card">
-            <img src="https://i.postimg.cc/CKpxqjL8/comedy.jpg" alt="imagem" class="card-img">
-            <div class="name">Comédia</div>
-            <div class="total">50</div>
-          </div>
-          <div class="category-card">
-            <img src="https://i.postimg.cc/3rfrBMxY/thriller.webp" alt="imagem" class="card-img">
-            <div class="name">Suspense</div>
-            <div class="total">20</div>
-          </div>
-          <div class="category-card">
-            <img src="https://i.postimg.cc/HkXpdV4k/horror.jpg" alt="imagem" class="card-img">
-            <div class="name">Terror</div>
-            <div class="total">80</div>
-          </div>
-          <div class="category-card">
-            <img src="https://i.postimg.cc/qRRVhRnn/adventure.jpg" alt="imagem" class="card-img">
-            <div class="name">Aventura</div>
-            <div class="total">100</div>
-          </div>
-          <div class="category-card">
-            <img src="https://i.postimg.cc/15pmZ8K5/animated.jpg" alt="imagem" class="card-img">
-            <div class="name">Animação</div>
-            <div class="total">50</div>
-          </div>
-          <div class="category-card">
-            <img src="https://i.postimg.cc/XvX6Xq95/crime.jpg" alt="imagem" class="card-img">
-            <div class="name">Crime</div>
-            <div class="total">20</div>
-          </div>
-          <div class="category-card">
-            <img src="https://i.postimg.cc/8568BYKP/sci-fi.jpg" alt="imagem" class="card-img">
-            <div class="name">Ficção Científica</div>
-            <div class="total">80</div>
-          </div>
-        </div>
-      </section>
-
       <section class="live" id="live">
-        <h2 class="section-heading">Programas de TV ao Vivo</h2>
-        <div class="live-grid">
-          <div class="live-card">
-            <div class="card-head">
-              <img src="https://i.postimg.cc/m26wBrZJ/planet.jpg" alt="imagem" class="card-img">
-              <div class="live-badge">AO VIVO</div>
-              <div class="total-viewers">305K espectadores</div>
-              <div class="play">
-                <ion-icon name="play-circle-outline"></ion-icon>
-              </div>
-            </div>
-            <div class="card-body">
-              <img src="https://i.postimg.cc/YCzQjqtt/bbcamerica.jpg" alt="imagem" class="avatar">
-              <h3 class="card-title">Planeta Terra II <br> Temporada 1 - Ilhas</h3>
-            </div>
-          </div>
-          <div class="live-card">
-            <div class="card-head">
-              <img src="https://i.postimg.cc/PrY8CrdP/got.jpg" alt="imagem" class="card-img">
-              <div class="live-badge">AO VIVO</div>
-              <div class="total-viewers">1.7M espectadores</div>
-              <div class="play">
-                <ion-icon name="play-circle-outline"></ion-icon>
-              </div>
-            </div>
-            <div class="card-body">
-              <img src="https://i.postimg.cc/ryWpJn3H/HBO-Logo-square.jpg" alt="imagem" class="avatar">
-              <h3 class="card-title">Game of Thrones <br> Temporada 5 - Misericórdia da Mãe</h3>
-            </div>
-          </div>
-          <div class="live-card">
-            <div class="card-head">
-              <img src="https://i.postimg.cc/RVLZr3MQ/vikins.jpg" alt="imagem" class="card-img">
-              <div class="live-badge">AO VIVO</div>
-              <div class="total-viewers">468K espectadores</div>
-              <div class="play">
-                <ion-icon name="play-circle-outline"></ion-icon>
-              </div>
-            </div>
-            <div class="card-body">
-              <img src="https://i.postimg.cc/ryWpJn3H/HBO-Logo-square.jpg" alt="imagem" class="avatar">
-              <h3 class="card-title">Vikings <br> Temporada 4 - O Que Poderia Ter Sido</h3>
-            </div>
-          </div>
+        <h2 class="section-heading">Câmeras ao Vivo</h2>
+        <div class="live-grid movies-grid">
+          <!-- As câmeras serão carregadas aqui pela função loadLiveCameras -->
         </div>
       </section>
     </main>
@@ -256,7 +63,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           <img src="https://i.imgur.com/1inVaQD.png" alt="imagem" class="footer-logo">
-          <p class="slogan">Filmes e Programas de TV, Cinema Online</p>
+          <p class="slogan">Câmeras ao Vivo / Streaming Online</p>
           <div class="social-link">
             <a href="#">
               <ion-icon name="logo-facebook"></ion-icon>
@@ -278,37 +85,23 @@
 
         <div class="footer-links">
           <ul>
-            <h4 class="link-heading">NetFilmes</h4>
-            <li class="link-item"><a href="#">Sobre nós</a></li>
-            <li class="link-item"><a href="#">Meu perfil</a></li>
-            <li class="link-item"><a href="#">Planos de preços</a></li>
-            <li class="link-item"><a href="#">Contatos</a></li>
-          </ul>
-          <ul>
-            <h4 class="link-heading">Navegar</h4>
-            <li class="link-item"><a href="#">TV ao Vivo</a></li>
-            <li class="link-item"><a href="#">Notícias ao Vivo</a></li>
-            <li class="link-item"><a href="#">Esportes ao Vivo</a></li>
-            <li class="link-item"><a href="#">Biblioteca de Streaming</a></li>
-          </ul>
-          <ul>
-            <li class="link-item"><a href="#">Programas de TV</a></li>
-            <li class="link-item"><a href="#">Filmes</a></li>
-            <li class="link-item"><a href="#">Infantil</a></li>
-            <li class="link-item"><a href="#">Coleções</a></li>
+            <h4 class="link-heading">Explorar</h4>
+            <li class="link-item"><a href="#">Câmeras ao Vivo</a></li>
+            <li class="link-item"><a href="#">Destaques</a></li>
+            <li class="link-item"><a href="#">Categorias</a></li>
+            <li class="link-item"><a href="#">Contato</a></li>
           </ul>
           <ul>
             <h4 class="link-heading">Ajuda</h4>
-            <li class="link-item"><a href="#">Conta e Faturamento</a></li>
-            <li class="link-item"><a href="#">Planos e Preços</a></li>
-            <li class="link-item"><a href="#">Dispositivos Suportados</a></li>
-            <li class="link-item"><a href="#">Acessibilidade</a></li>
+            <li class="link-item"><a href="#">Como Funciona</a></li>
+            <li class="link-item"><a href="#">Perguntas Frequentes</a></li>
+            <li class="link-item"><a href="#">Suporte</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-copyright">
         <div class="copyright">
-          <p>&copy; Copyright 2025 NetFilmes</p>
+          <p>&copy; Copyright 2025 - Câmeras ao Vivo</p>
         </div>
         <div class="wrapper">
           <a href="#">Política de Privacidade</a>
