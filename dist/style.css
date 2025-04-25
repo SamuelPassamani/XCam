@@ -1076,6 +1076,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* Novos estilos para o projeto */
+
 /* Seção específica para "live" */
 .live {
   margin-bottom: 60px;
@@ -1185,11 +1186,11 @@ input:focus, textarea:focus, select:focus {
   }
 
   .live-card .card-head {
-    height: 150px;
+    height: 150px; /* Ajusta altura para telas menores */
   }
 
   .live-card .card-head img {
-    width: 100%; /* Ajusta largura para telas menores */
-    height: 150px; /* Ajusta altura para telas menores */
+    width: 100%; /* Ajusta largura dinâmica */
+    height: 150px; /* Ajusta altura dinâmica */
   }
 }
