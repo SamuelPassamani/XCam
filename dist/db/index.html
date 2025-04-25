@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carregando...</title> <!-- Título inicial simplificado -->
+  <link rel="stylesheet" href="https://makingoff.eu.org/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" href="https://lh3.googleusercontent.com/d/1cChjlT6Oxr16kUAZkqyw4yx8ieRHBbRx?authuser=0" type="image/x-icon">
+</head>
+
+<body>
+  <div class="container"> 
+    <header>
+      <div class="navbar">
+        <button class="navbar-menu-btn">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="three"></span>
+        </button>
+
+        <a href="https://makingoff.eu.org" class="navbar-brand">
+          <img src="https://lh3.googleusercontent.com/d/1hy9uOjbblAx_bjymnBQoxvzjQRsM1BUk?authuser=0" alt="logo">
+        </a>
+
+        <nav>
+          <ul class="navbar-nav">
+            <li><a href="index.html" class="navbar-link">Início</a></li>
+            <li><a href="#" class="navbar-link">Dublados</a></li>
+            <li><a href="#category" class="navbar-link">Categorias</a></li>
+            <li><a href="#live" class="navbar-link indicator">AO VIVO</a></li>
+          </ul>
+        </nav>
+
+        <div class="navbar-actions">
+          <form action="#" class="navbar-form">
+            <input type="text" name="search" placeholder="Estou procurando..." class="navbar-form-search">
+            <button class="navbar-form-btn">
+              <ion-icon name="search"></ion-icon>
+            </button>
+            <button class="navbar-form-close">
+              <ion-icon name="close-circle-outline"></ion-icon>
+            </button>
+          </form>
+          <button class="navbar-search-btn">
+            <ion-icon name="search"></ion-icon>
+          </button>
+          <a href="#" class="navbar-signin">
+            <span>Entrar</span>
+            <ion-icon name="log-in"></ion-icon>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Banner -->
+      <section class="banner">
+        <div class="banner-card">
+          <img src="#" alt="Capa do Filme" class="banner-img">
+          <div class="card-content">
+            <div class="card-info">
+              <div class="genre">
+                <ion-icon name="film"></ion-icon>
+                <span id="movie-genre">Gênero</span>
+              </div>
+              <div class="year">
+                <ion-icon name="calendar"></ion-icon>
+                <span id="movie-year">Ano</span>
+              </div>
+              <div class="duration">
+                <ion-icon name="time"></ion-icon>
+                <span id="movie-duration">Duração</span>
+              </div>
+              <div class="quality" id="movie-quality">Qualidade</div>
+            </div>
+            <h2 class="card-title" id="movie-title">Título do Filme</h2>
+            <p class="movie-description" id="movie-description">Descrição do filme aparecerá aqui.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Nova seção: Capa e Player -->
+      <section class="movies">
+        <div class="media-container">
+          <!-- Coluna esquerda: Capa do filme -->
+          <div class="movie-cover">
+            <img src="#" alt="Capa do Filme" id="movie-cover-img">
+          </div>
+          <!-- Coluna direita: Player -->
+          <div class="movie-player">
+            <iframe id="movie-player" src="#" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="https://i.imgur.com/1inVaQD.png" alt="imagem" class="footer-logo">
+          <p class="slogan">Filmes e Programas de TV, Cinema Online</p>
+          <div class="social-link">
+            <a href="#">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+            <a href="#">
+              <ion-icon name="logo-twitter"></ion-icon>
+            </a>
+            <a href="#">
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+            <a href="#">
+              <ion-icon name="logo-tiktok"></ion-icon>
+            </a>
+            <a href="#">
+              <ion-icon name="logo-youtube"></ion-icon>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <ul>
+            <h4 class="link-heading">NetFilmes</h4>
+            <li class="link-item"><a href="#">Sobre nós</a></li>
+            <li class="link-item"><a href="#">Meu perfil</a></li>
+            <li class="link-item"><a href="#">Planos de preços</a></li>
+            <li class="link-item"><a href="#">Contatos</a></li>
+          </ul>
+          <ul>
+            <h4 class="link-heading">Navegar</h4>
+            <li class="link-item"><a href="#">TV ao Vivo</a></li>
+            <li class="link-item"><a href="#">Notícias ao Vivo</a></li>
+            <li class="link-item"><a href="#">Esportes ao Vivo</a></li>
+            <li class="link-item"><a href="#">Biblioteca de Streaming</a></li>
+          </ul>
+          <ul>
+            <li class="link-item"><a href="#">Programas de TV</a></li>
+            <li class="link-item"><a href="#">Filmes</a></li>
+            <li class="link-item"><a href="#">Infantil</a></li>
+            <li class="link-item"><a href="#">Coleções</a></li>
+          </ul>
+          <ul>
+            <h4 class="link-heading">Ajuda</h4>
+            <li class="link-item"><a href="#">Conta e Faturamento</a></li>
+            <li class="link-item"><a href="#">Planos e Preços</a></li>
+            <li class="link-item"><a href="#">Dispositivos Suportados</a></li>
+            <li class="link-item"><a href="#">Acessibilidade</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="copyright">
+          <p>&copy; Copyright 2025 NetFilmes</p>
+        </div>
+        <div class="wrapper">
+          <a href="#">Política de Privacidade</a>
+          <a href="#">Termos e Condições</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script src="./movie.js"></script>
+</body>
+
+</html>
