@@ -1,17 +1,24 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 :root {
-  --live-indicator-shadow: hsla(0, 79%, 63%, 0.5);
+  /* Atualizado com o novo esquema de cores */
+  --primary-red: #c02319;
+  --primary-yellow: #f9bc0c;
+  --primary-orange: #e35e08;
+  --secondary-orange: #dc8a43;
+  --light-beige: #edc77d;
+
+  --live-indicator-shadow: rgba(192, 35, 25, 0.5); /* Sombra do indicador ao vivo */
   --rich-blank-fogra-30: hsl(219, 32%, 10%);
   --rich-blank-fogra-29: hsl(222, 25%, 10%);
-  --live-indicator: hsl(0, 79%, 63%);
+  --live-indicator: var(--primary-red); /* Vermelho principal */
   --oxford-blue-50: hsla(218, 39%, 14%, 0.8);
   --oxford-blue: hsl(218, 39%, 14%);
-  --light-azure: hsl(214, 84%, 56%);
+  --light-azure: var(--primary-yellow); /* Amarelo principal */
   --off-white: hsl(0, 0%, 88%);
-  --yellow: hsl(45, 100%, 54%);
+  --yellow: var(--primary-yellow); /* Mantém o amarelo principal */
   --white: hsl(0, 0%, 100%);
-  --azure: hsl(211, 100%, 50%);
+  --azure: var(--primary-orange); /* Laranja principal */
 
   --font-family: "Inter", sans-serif;
 
@@ -97,7 +104,7 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--light-azure);
+  background: var(--primary-red); /* Vermelho principal */
   border-radius: 5em;
   border: 3px solid var(--rich-blank-fogra-29);
 }
@@ -157,7 +164,7 @@ nav {
 }
 
 .navbar-link:hover {
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 .indicator {
@@ -166,7 +173,7 @@ nav {
 
 .indicator::after {
   content: "";
-  background: var(--live-indicator);
+  background: var(--primary-red); /* Vermelho principal */
   position: absolute;
   top: calc(50% - 1px);
   right: -15px;
@@ -206,7 +213,7 @@ nav {
 .navbar-form-btn ion-icon,
 .navbar-search-btn ion-icon {
   font-size: 20px;
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal */
   --ionicon-stroke-width: 50px;
 }
 
@@ -228,13 +235,13 @@ nav {
 
 .navbar-signin ion-icon {
   font-size: 22px;
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal */
   margin-left: 5px;
   --ionicon-stroke-width: 30px;
 }
 
 .navbar-signin:hover span {
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 /* Adicionado para ajustar a proporção da imagem dentro do navbar */
@@ -285,7 +292,7 @@ nav {
 
 .banner-card .card-info ion-icon {
   font-size: 20px;
-  color: var(--azure);
+  color: var(--primary-orange); /* Laranja principal */
   margin-right: 5px;
 }
 
@@ -294,7 +301,7 @@ nav {
 }
 
 .banner-card .card-info .quality {
-  background: var(--azure);
+  background: var(--primary-yellow); /* Amarelo principal */
   padding: 2px 5px;
   border-radius: 5px;
   font-weight: var(--fw7);
@@ -303,11 +310,11 @@ nav {
 .banner-card .card-title {
   font-size: 3em;
   color: var(--white);
-  text-shadow: 2px 0 2px #0007;
+  text-shadow: 2px 0 2px rgba(0, 0, 0, 0.7); /* Mantém o destaque no texto */
 }
 
 .banner-card:hover .banner-img {
-  transform: scale(1:1);
+  transform: scale(1.1); /* Aumenta o leve zoom ao passar o mouse */
 }
 
 .banner-img {
@@ -329,7 +336,7 @@ nav {
   display: flex;
   justify-content: space-between; /* Distribuição uniforme */
   align-items: center;
-  background: var(--oxford-blue); /* Cor de fundo */
+  background: var(--secondary-orange); /* Laranja secundário */
   padding: 20px 30px;
   border-radius: 20px; /* Bordas arredondadas */
   margin: 0 100px 30px; /* Margens laterais e inferior */
@@ -342,26 +349,26 @@ nav {
   margin-right: 15px;
   padding: 8px 12px;
   border-radius: 5px;
-  background: var(--oxford-blue-50);
-  border: 1px solid var(--light-azure);
+  background: var(--primary-orange); /* Laranja principal */
+  border: 1px solid var(--primary-yellow); /* Amarelo principal */
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 .filter-bar select:hover {
-  background: var(--light-azure);
+  background: var(--primary-yellow); /* Destaque ao passar o mouse */
   color: var(--white);
 }
 
 .filter-bar option {
-  background: var(--oxford-blue);
+  background: var(--secondary-orange); /* Laranja secundário */
   color: var(--white);
 }
 
 /* Filtros por rádio */
 .filter-radios {
   position: relative;
-  background: var(--rich-blank-fogra-29);
+  background: var(--rich-blank-fogra-29); /* Fundo escuro */
   padding: 10px;
   border-radius: 15px;
   display: flex;
@@ -389,7 +396,7 @@ nav {
 .filter-radios input:checked + label,
 .filter-radios label:hover {
   color: var(--white);
-  background: var(--light-azure); /* Destaque para o item ativo */
+  background: var(--primary-yellow); /* Destaque para o item ativo */
 }
 
 /* Fundo dinâmico para rádios */
@@ -397,7 +404,7 @@ nav {
   --width: 85px;
   --left: 5px;
 
-  background: var(--oxford-blue);
+  background: var(--primary-orange); /* Fundo laranja principal */
   position: absolute;
   top: 5px;
   left: var(--left);
@@ -450,7 +457,7 @@ nav {
   cursor: pointer;
   border-radius: 10px;
   overflow: hidden; /* Evita conteúdo ultrapassando os limites */
-  background: var(--oxford-blue);
+  background: var(--secondary-orange); /* Laranja secundário */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -495,8 +502,8 @@ nav {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: var(--oxford-blue-50);
-  color: var(--white);
+  background: var(--light-beige); /* Bege claro */
+  color: var(--primary-red); /* Vermelho principal */
   font-size: var(--font-size-small);
   font-weight: var(--fw6);
   padding: 5px 10px;
@@ -508,7 +515,7 @@ nav {
 
 .movie-card .viewers ion-icon {
   font-size: 16px;
-  color: var(--light-azure);
+  color: var(--primary-orange); /* Laranja principal */
 }
 
 /* Tags */
@@ -535,20 +542,20 @@ nav {
   font-weight: var(--fw5);
   border: none;
   border-radius: 5px;
-  background: var(--oxford-blue);
+  background: var(--primary-orange); /* Laranja principal */
   color: var(--white);
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .pagination-button:hover {
-  background: var(--light-azure);
+  background: var(--primary-yellow); /* Amarelo principal no hover */
   transform: scale(1.05);
 }
 
 .pagination-button.active {
-  background: var(--light-azure);
-  color: var(--oxford-blue);
+  background: var(--primary-yellow); /* Amarelo principal ativo */
+  color: var(--secondary-orange); /* Laranja secundário */
   font-weight: var(--fw6);
 }
 
@@ -576,7 +583,7 @@ nav {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 20%, #000a);
+  background: linear-gradient(180deg, transparent 20%, rgba(0, 0, 0, 0.6)); /* Fundo com gradiente */
 }
 
 .category-card .name,
@@ -593,13 +600,13 @@ nav {
 }
 
 .category-card:hover .name {
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 .category-card .total {
   right: 20px;
   font-size: 18px;
-  background: var(--oxford-blue-50);
+  background: var(--primary-orange); /* Laranja principal */
   padding: 5px 8px;
   border-radius: 8px;
 }
@@ -632,11 +639,11 @@ nav {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 20%, #000a);
+  background: linear-gradient(180deg, transparent 20%, rgba(0, 0, 0, 0.6)); /* Fundo com gradiente */
 }
 
 .live-card:hover .card-img {
-  transform: scale(1.1);
+  transform: scale(1.1); /* Zoom ao passar o mouse */
 }
 
 .live-card .live-badge,
@@ -652,14 +659,14 @@ nav {
   top: 30px;
   font-size: var(--font-size-extra-small);
   font-weight: var(--fw5);
-  background: var(--live-indicator);
+  background: var(--primary-red); /* Vermelho principal */
 }
 
 .live-card .total-viewers {
   bottom: 30px;
   font-size: 15px;
   font-weight: var(--fw6);
-  background: var(--oxford-blue-50);
+  background: var(--light-beige); /* Bege claro */
 }
 
 .live-card .play {
@@ -679,6 +686,7 @@ nav {
 .live-card .play ion-icon {
   font-size: 60px;
   --ionicon-stroke-width: 20px;
+  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 .live-card .card-body {
@@ -699,13 +707,13 @@ nav {
 }
 
 .live-card:hover .card-title {
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 /*FOOTER*/
 
 footer {
-  background: var(--rich-blank-fogra-30);
+  background: var(--primary-red); /* Vermelho principal */
   padding: 80px var(--padding-x) 40px;
 }
 
@@ -713,7 +721,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px solid var(--oxford-blue-50);
+  border-bottom: 1px solid var(--light-beige); /* Bege claro */
   padding-bottom: 80px;
 }
 
@@ -731,6 +739,7 @@ footer {
   font-size: var(--font-size-small);
   line-height: 20px;
   margin-bottom: 20px;
+  color: var(--white); /* Texto em branco */
 }
 
 .social-link a {
@@ -740,6 +749,7 @@ footer {
 .social-link ion-icon {
   font-size: 25px;
   margin-right: 20px;
+  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 .footer-links {
@@ -752,10 +762,12 @@ footer {
 
 .link-heading {
   margin-bottom: 20px;
+  color: var(--white); /* Texto em branco */
 }
 
 .link-item {
   font-size: var(--font-size-small);
+  color: var(--off-white); /* Texto branco sujo */
 }
 
 ul .link-item:not(:last-child) {
@@ -763,7 +775,7 @@ ul .link-item:not(:last-child) {
 }
 
 .link-item:hover a {
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal no hover */
 }
 
 .footer-copyright {
@@ -771,6 +783,7 @@ ul .link-item:not(:last-child) {
   justify-content: space-between;
   align-items: center;
   padding-top: 40px;
+  color: var(--off-white); /* Texto branco sujo */
 }
 
 .footer-copyright p,
@@ -779,7 +792,7 @@ ul .link-item:not(:last-child) {
 }
 
 .wrapper a:hover {
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal no hover */
 }
 
 .wrapper a:not(:last-child) {
@@ -820,14 +833,14 @@ ul .link-item:not(:last-child) {
 
   .navbar-menu-btn span {
     display: block;
-    background: var(--off-white);
+    background: var(--off-white); /* Branco sujo */
     width: 25px;
     height: 2px;
     margin: 8px;
   }
 
   .navbar-menu-btn.active span {
-    background: var(--light-azure);
+    background: var(--primary-yellow); /* Amarelo principal */
   }
 
   .navbar-menu-btn .two {
@@ -870,7 +883,7 @@ ul .link-item:not(:last-child) {
     justify-content: center;
     align-items: flex-start;
     padding-left: var(--padding-x);
-    border-bottom: 1px solid var(--oxford-blue);
+    border-bottom: 1px solid var(--light-beige); /* Bege claro */
   }
 
   .navbar-nav li:not(:last-child) {
@@ -884,7 +897,7 @@ ul .link-item:not(:last-child) {
     left: var(--padding-x);
     right: var(--padding-x);
     height: 100%;
-    background: var(--rich-blank-fogra-29);
+    background: var(--rich-blank-fogra-29); /* Fundo escuro */
     margin-right: 0;
     display: flex;
     justify-content: space-between;
@@ -916,7 +929,7 @@ ul .link-item:not(:last-child) {
 
   .navbar-form-close ion-icon {
     font-size: 30px;
-    color: var(--light-azure);
+    color: var(--primary-yellow); /* Amarelo principal */
   }
 
   .navbar-search-btn {
@@ -1022,10 +1035,10 @@ ul .link-item:not(:last-child) {
   display: flex;
   align-items: center;
   gap: 30px;
-  background: var(--oxford-blue);
+  background: var(--secondary-orange); /* Laranja secundário */
   border-radius: 15px;
   padding: 20px;
-  box-shadow: var(--box-shadow-default);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra leve */
 }
 
 /* Estilo da imagem de perfil */
@@ -1040,7 +1053,7 @@ ul .link-item:not(:last-child) {
   width: 150px;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--oxford-blue-50);
+  background: var(--light-beige); /* Bege claro */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1055,7 +1068,7 @@ ul .link-item:not(:last-child) {
 
 /* Estilo dos detalhes de perfil */
 .user-profile .profile-details {
-  color: var(--off-white);
+  color: var(--off-white); /* Branco sujo */
   font-size: var(--font-size-medium);
 }
 
@@ -1070,7 +1083,7 @@ ul .link-item:not(:last-child) {
 }
 
 .user-profile .profile-details p strong {
-  color: var(--light-azure);
+  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 /* PLAYER SECTION STYLES */
@@ -1081,7 +1094,7 @@ ul .link-item:not(:last-child) {
   aspect-ratio: 16 / 9; /* Mantém proporção 16:9 */
   border-radius: 15px; /* Bordas arredondadas padrão */
   margin: 0 auto 30px auto; /* Centraliza horizontalmente e adiciona margem inferior */
-  box-shadow: var(--box-shadow-default); /* Sombra padrão */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra leve */
   overflow: hidden; /* Garante que nada ultrapasse os limites */
   max-width: 1200px; /* Limita a largura máxima em telas maiores */
 }
