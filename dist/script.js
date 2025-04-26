@@ -74,14 +74,10 @@ function renderCameras() {
   // Adiciona os cartões de câmeras ao grid
   nextBatch.forEach((camera) => {
     const cameraCard = `
-        <a href="https://xxx.filmes.net.eu.org/cam/?id=${
-          camera.id
-        }" class="movie-card"> 
+        <a href="https://xxx.filmes.net.eu.org/user/?id=${camera.username}" class="movie-card"> 
             <div class="movie-card">
                 <div class="card-head">
-                    <img src="${camera.preview.poster}" alt="${
-      camera.username
-    }" class="card-img">
+                    <img src="${camera.preview.poster}" alt="${camera.username}" class="card-img">
                     <div class="card-overlay">
                         <div class="bookmark">
                             <ion-icon name="bookmark"></ion-icon>
