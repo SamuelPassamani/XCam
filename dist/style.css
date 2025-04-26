@@ -1,24 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 :root {
-  /* Atualizado com o novo esquema de cores */
-  --primary-red: #c02319;
-  --primary-yellow: #f9bc0c;
-  --primary-orange: #e35e08;
-  --secondary-orange: #dc8a43;
-  --light-beige: #edc77d;
-
-  --live-indicator-shadow: rgba(192, 35, 25, 0.5); /* Sombra do indicador ao vivo */
+  --live-indicator-shadow: hsla(0, 79%, 63%, 0.5);
   --rich-blank-fogra-30: hsl(219, 32%, 10%);
   --rich-blank-fogra-29: hsl(222, 25%, 10%);
-  --live-indicator: var(--primary-red); /* Vermelho principal */
+  --live-indicator: hsl(0, 79%, 63%);
   --oxford-blue-50: hsla(218, 39%, 14%, 0.8);
   --oxford-blue: hsl(218, 39%, 14%);
-  --light-azure: var(--primary-yellow); /* Amarelo principal */
+  --light-azure: hsl(214, 84%, 56%);
   --off-white: hsl(0, 0%, 88%);
-  --yellow: var(--primary-yellow); /* Mantém o amarelo principal */
+  --yellow: hsl(45, 100%, 54%);
   --white: hsl(0, 0%, 100%);
-  --azure: var(--primary-orange); /* Laranja principal */
+  --azure: hsl(211, 100%, 50%);
 
   --font-family: "Inter", sans-serif;
 
@@ -104,7 +97,7 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-red); /* Vermelho principal */
+  background: var(--light-azure);
   border-radius: 5em;
   border: 3px solid var(--rich-blank-fogra-29);
 }
@@ -164,7 +157,7 @@ nav {
 }
 
 .navbar-link:hover {
-  color: var(--primary-yellow); /* Amarelo principal */
+  color: var(--light-azure);
 }
 
 .indicator {
@@ -173,7 +166,7 @@ nav {
 
 .indicator::after {
   content: "";
-  background: var(--primary-red); /* Vermelho principal */
+  background: var(--live-indicator);
   position: absolute;
   top: calc(50% - 1px);
   right: -15px;
@@ -213,7 +206,7 @@ nav {
 .navbar-form-btn ion-icon,
 .navbar-search-btn ion-icon {
   font-size: 20px;
-  color: var(--primary-yellow); /* Amarelo principal */
+  color: var(--light-azure);
   --ionicon-stroke-width: 50px;
 }
 
@@ -235,13 +228,13 @@ nav {
 
 .navbar-signin ion-icon {
   font-size: 22px;
-  color: var(--primary-yellow); /* Amarelo principal */
+  color: var(--light-azure);
   margin-left: 5px;
   --ionicon-stroke-width: 30px;
 }
 
 .navbar-signin:hover span {
-  color: var(--primary-yellow); /* Amarelo principal */
+  color: var(--light-azure);
 }
 
 /* Adicionado para ajustar a proporção da imagem dentro do navbar */
@@ -292,7 +285,7 @@ nav {
 
 .banner-card .card-info ion-icon {
   font-size: 20px;
-  color: var(--primary-orange); /* Laranja principal */
+  color: var(--azure);
   margin-right: 5px;
 }
 
@@ -301,7 +294,7 @@ nav {
 }
 
 .banner-card .card-info .quality {
-  background: var(--primary-yellow); /* Amarelo principal */
+  background: var(--azure);
   padding: 2px 5px;
   border-radius: 5px;
   font-weight: var(--fw7);
@@ -310,11 +303,11 @@ nav {
 .banner-card .card-title {
   font-size: 3em;
   color: var(--white);
-  text-shadow: 2px 0 2px rgba(0, 0, 0, 0.7); /* Mantém o destaque no texto */
+  text-shadow: 2px 0 2px #0007;
 }
 
 .banner-card:hover .banner-img {
-  transform: scale(1.1); /* Aumenta o leve zoom ao passar o mouse */
+  transform: scale(1:1);
 }
 
 .banner-img {
@@ -336,7 +329,7 @@ nav {
   display: flex;
   justify-content: space-between; /* Distribuição uniforme */
   align-items: center;
-  background: var(--secondary-orange); /* Laranja secundário */
+  background: var(--oxford-blue); /* Cor de fundo */
   padding: 20px 30px;
   border-radius: 20px; /* Bordas arredondadas */
   margin: 0 100px 30px; /* Margens laterais e inferior */
@@ -349,26 +342,26 @@ nav {
   margin-right: 15px;
   padding: 8px 12px;
   border-radius: 5px;
-  background: var(--primary-orange); /* Laranja principal */
-  border: 1px solid var(--primary-yellow); /* Amarelo principal */
+  background: var(--oxford-blue-50);
+  border: 1px solid var(--light-azure);
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 .filter-bar select:hover {
-  background: var(--primary-yellow); /* Destaque ao passar o mouse */
+  background: var(--light-azure);
   color: var(--white);
 }
 
 .filter-bar option {
-  background: var(--secondary-orange); /* Laranja secundário */
+  background: var(--oxford-blue);
   color: var(--white);
 }
 
 /* Filtros por rádio */
 .filter-radios {
   position: relative;
-  background: var(--rich-blank-fogra-29); /* Fundo escuro */
+  background: var(--rich-blank-fogra-29);
   padding: 10px;
   border-radius: 15px;
   display: flex;
@@ -396,7 +389,7 @@ nav {
 .filter-radios input:checked + label,
 .filter-radios label:hover {
   color: var(--white);
-  background: var(--primary-yellow); /* Destaque para o item ativo */
+  background: var(--light-azure); /* Destaque para o item ativo */
 }
 
 /* Fundo dinâmico para rádios */
@@ -404,7 +397,7 @@ nav {
   --width: 85px;
   --left: 5px;
 
-  background: var(--primary-orange); /* Fundo laranja principal */
+  background: var(--oxford-blue);
   position: absolute;
   top: 5px;
   left: var(--left);
@@ -457,7 +450,7 @@ nav {
   cursor: pointer;
   border-radius: 10px;
   overflow: hidden; /* Evita conteúdo ultrapassando os limites */
-  background: var(--secondary-orange); /* Laranja secundário */
+  background: var(--oxford-blue);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -502,8 +495,8 @@ nav {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: var(--light-beige); /* Bege claro */
-  color: var(--primary-red); /* Vermelho principal */
+  background: var(--oxford-blue-50);
+  color: var(--white);
   font-size: var(--font-size-small);
   font-weight: var(--fw6);
   padding: 5px 10px;
@@ -515,7 +508,7 @@ nav {
 
 .movie-card .viewers ion-icon {
   font-size: 16px;
-  color: var(--primary-orange); /* Laranja principal */
+  color: var(--light-azure);
 }
 
 /* Tags */
@@ -542,20 +535,20 @@ nav {
   font-weight: var(--fw5);
   border: none;
   border-radius: 5px;
-  background: var(--primary-orange); /* Laranja principal */
+  background: var(--oxford-blue);
   color: var(--white);
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .pagination-button:hover {
-  background: var(--primary-yellow); /* Amarelo principal no hover */
+  background: var(--light-azure);
   transform: scale(1.05);
 }
 
 .pagination-button.active {
-  background: var(--primary-yellow); /* Amarelo principal ativo */
-  color: var(--secondary-orange); /* Laranja secundário */
+  background: var(--light-azure);
+  color: var(--oxford-blue);
   font-weight: var(--fw6);
 }
 
@@ -583,7 +576,7 @@ nav {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 20%, rgba(0, 0, 0, 0.6)); /* Fundo com gradiente */
+  background: linear-gradient(180deg, transparent 20%, #000a);
 }
 
 .category-card .name,
@@ -600,13 +593,13 @@ nav {
 }
 
 .category-card:hover .name {
-  color: var(--primary-yellow); /* Amarelo principal */
+  color: var(--light-azure);
 }
 
 .category-card .total {
   right: 20px;
   font-size: 18px;
-  background: var(--primary-orange); /* Laranja principal */
+  background: var(--oxford-blue-50);
   padding: 5px 8px;
   border-radius: 8px;
 }
@@ -639,11 +632,11 @@ nav {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 20%, rgba(0, 0, 0, 0.6)); /* Fundo com gradiente */
+  background: linear-gradient(180deg, transparent 20%, #000a);
 }
 
 .live-card:hover .card-img {
-  transform: scale(1.1); /* Zoom ao passar o mouse */
+  transform: scale(1.1);
 }
 
 .live-card .live-badge,
@@ -659,14 +652,14 @@ nav {
   top: 30px;
   font-size: var(--font-size-extra-small);
   font-weight: var(--fw5);
-  background: var(--primary-red); /* Vermelho principal */
+  background: var(--live-indicator);
 }
 
 .live-card .total-viewers {
   bottom: 30px;
   font-size: 15px;
   font-weight: var(--fw6);
-  background: var(--light-beige); /* Bege claro */
+  background: var(--oxford-blue-50);
 }
 
 .live-card .play {
@@ -686,7 +679,6 @@ nav {
 .live-card .play ion-icon {
   font-size: 60px;
   --ionicon-stroke-width: 20px;
-  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 .live-card .card-body {
@@ -707,13 +699,13 @@ nav {
 }
 
 .live-card:hover .card-title {
-  color: var(--primary-yellow); /* Amarelo principal */
+  color: var(--light-azure);
 }
 
 /*FOOTER*/
 
 footer {
-  background: var(--primary-red); /* Vermelho principal */
+  background: var(--rich-blank-fogra-30);
   padding: 80px var(--padding-x) 40px;
 }
 
@@ -721,7 +713,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px solid var(--light-beige); /* Bege claro */
+  border-bottom: 1px solid var(--oxford-blue-50);
   padding-bottom: 80px;
 }
 
@@ -739,7 +731,6 @@ footer {
   font-size: var(--font-size-small);
   line-height: 20px;
   margin-bottom: 20px;
-  color: var(--white); /* Texto em branco */
 }
 
 .social-link a {
@@ -749,7 +740,6 @@ footer {
 .social-link ion-icon {
   font-size: 25px;
   margin-right: 20px;
-  color: var(--primary-yellow); /* Amarelo principal */
 }
 
 .footer-links {
@@ -762,12 +752,10 @@ footer {
 
 .link-heading {
   margin-bottom: 20px;
-  color: var(--white); /* Texto em branco */
 }
 
 .link-item {
   font-size: var(--font-size-small);
-  color: var(--off-white); /* Texto branco sujo */
 }
 
 ul .link-item:not(:last-child) {
@@ -775,7 +763,7 @@ ul .link-item:not(:last-child) {
 }
 
 .link-item:hover a {
-  color: var(--primary-yellow); /* Amarelo principal no hover */
+  color: var(--light-azure);
 }
 
 .footer-copyright {
@@ -783,7 +771,6 @@ ul .link-item:not(:last-child) {
   justify-content: space-between;
   align-items: center;
   padding-top: 40px;
-  color: var(--off-white); /* Texto branco sujo */
 }
 
 .footer-copyright p,
@@ -792,7 +779,7 @@ ul .link-item:not(:last-child) {
 }
 
 .wrapper a:hover {
-  color: var(--primary-yellow); /* Amarelo principal no hover */
+  color: var(--light-azure);
 }
 
 .wrapper a:not(:last-child) {
@@ -833,14 +820,14 @@ ul .link-item:not(:last-child) {
 
   .navbar-menu-btn span {
     display: block;
-    background: var(--off-white); /* Branco sujo */
+    background: var(--off-white);
     width: 25px;
     height: 2px;
     margin: 8px;
   }
 
   .navbar-menu-btn.active span {
-    background: var(--primary-yellow); /* Amarelo principal */
+    background: var(--light-azure);
   }
 
   .navbar-menu-btn .two {
@@ -883,7 +870,7 @@ ul .link-item:not(:last-child) {
     justify-content: center;
     align-items: flex-start;
     padding-left: var(--padding-x);
-    border-bottom: 1px solid var(--light-beige); /* Bege claro */
+    border-bottom: 1px solid var(--oxford-blue);
   }
 
   .navbar-nav li:not(:last-child) {
@@ -897,7 +884,7 @@ ul .link-item:not(:last-child) {
     left: var(--padding-x);
     right: var(--padding-x);
     height: 100%;
-    background: var(--rich-blank-fogra-29); /* Fundo escuro */
+    background: var(--rich-blank-fogra-29);
     margin-right: 0;
     display: flex;
     justify-content: space-between;
@@ -929,7 +916,7 @@ ul .link-item:not(:last-child) {
 
   .navbar-form-close ion-icon {
     font-size: 30px;
-    color: var(--primary-yellow); /* Amarelo principal */
+    color: var(--light-azure);
   }
 
   .navbar-search-btn {
@@ -1035,10 +1022,10 @@ ul .link-item:not(:last-child) {
   display: flex;
   align-items: center;
   gap: 30px;
-  background: var(--secondary-orange); /* Laranja secundário */
+  background: var(--oxford-blue);
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra leve */
+  box-shadow: var(--box-shadow-default);
 }
 
 /* Estilo da imagem de perfil */
@@ -1053,7 +1040,7 @@ ul .link-item:not(:last-child) {
   width: 150px;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--light-beige); /* Bege claro */
+  background: var(--oxford-blue-50);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1068,7 +1055,7 @@ ul .link-item:not(:last-child) {
 
 /* Estilo dos detalhes de perfil */
 .user-profile .profile-details {
-  color: var(--off-white); /* Branco sujo */
+  color: var(--off-white);
   font-size: var(--font-size-medium);
 }
 
@@ -1083,7 +1070,7 @@ ul .link-item:not(:last-child) {
 }
 
 .user-profile .profile-details p strong {
-  color: var(--primary-yellow); /* Amarelo principal */
+  color: var(--light-azure);
 }
 
 /* PLAYER SECTION STYLES */
@@ -1094,7 +1081,7 @@ ul .link-item:not(:last-child) {
   aspect-ratio: 16 / 9; /* Mantém proporção 16:9 */
   border-radius: 15px; /* Bordas arredondadas padrão */
   margin: 0 auto 30px auto; /* Centraliza horizontalmente e adiciona margem inferior */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra leve */
+  box-shadow: var(--box-shadow-default); /* Sombra padrão */
   overflow: hidden; /* Garante que nada ultrapasse os limites */
   max-width: 1200px; /* Limita a largura máxima em telas maiores */
 }
