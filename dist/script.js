@@ -41,7 +41,9 @@ async function fetchCamerasData() {
     if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
       camerasData = data.broadcasts.items;
 
-      // Renderiza a primeira página
+      // Depuração: Verifica os dados recebidos
+      console.log("Dados das câmeras:", camerasData);
+
       renderCameras();
       renderPagination();
     } else {
@@ -72,36 +74,39 @@ function renderCameras() {
   // Obtém as câmeras da página atual
   const currentBatch = camerasData.slice(startIndex, endIndex);
 
+  // Depuração: Verifica o lote atual de câmeras
+  console.log(`Exibindo câmeras da página ${currentPage}:`, currentBatch);
+
   // Adiciona os cartões de câmeras ao grid
   currentBatch.forEach((camera) => {
     const cameraCard = `
-        <a href="https://xxx.filmes.net.eu.org/user/?id=${camera.username}" class="movie-card"> 
-            <div class="movie-card">
-                <div class="card-head">
-                    <img src="${camera.preview.poster}" alt="${camera.username}" class="card-img">
-                    <div class="card-overlay">
-                        <div class="bookmark">
-                            <ion-icon name="bookmark"></ion-icon>
-                        </div>
-                        <div class="viewers">
-                            <ion-icon name="eye-outline"></ion-icon>
-                            <span>${camera.viewers}</span>
-                        </div>
-                        <div class="play">
-                            <ion-icon name="play-circle-outline"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <h3 class="card-title">@${camera.username}</h3>
-                    <div class="card-info">
-                        <span class="tags">${camera.tags
-                          .map((tag) => tag.name)
-                          .join(", ")}</span>
-                    </div>
-                </div>
-            </div>
-        </a>`;
+      <a href="https://xxx.filmes.net.eu.org/user/?id=${camera.username}" class="movie-card"> 
+          <div class="movie-card">
+              <div class="card-head">
+                  <img src="${camera.preview.poster}" alt="${camera.username}" class="card-img">
+                  <div class="card-overlay">
+                      <div class="bookmark">
+                          <ion-icon name="bookmark"></ion-icon>
+                      </div>
+                      <div class="viewers">
+                          <ion-icon name="eye-outline"></ion-icon>
+                          <span>${camera.viewers}</span>
+                      </div>
+                      <div class="play">
+                          <ion-icon name="play-circle-outline"></ion-icon>
+                      </div>
+                  </div>
+              </div>
+              <div class="card-body">
+                  <h3 class="card-title">@${camera.username}</h3>
+                  <div class="card-info">
+                      <span class="tags">${camera.tags
+                        .map((tag) => tag.name)
+                        .join(", ")}</span>
+                  </div>
+              </div>
+          </div>
+      </a>`;
     moviesGrid.insertAdjacentHTML("beforeend", cameraCard);
   });
 }
@@ -118,6 +123,9 @@ function renderPagination() {
   paginationContainer.innerHTML = "";
 
   const totalPages = Math.ceil(camerasData.length / camerasPerPage);
+
+  // Depuração: Verifica o total de páginas
+  console.log(`Total de câmeras: ${camerasData.length}, Total de páginas: ${totalPages}`);
 
   // Botão "ANTERIOR"
   if (currentPage > 1) {
