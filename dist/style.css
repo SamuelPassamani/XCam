@@ -1031,9 +1031,10 @@ ul .link-item:not(:last-child) {
   width: 100%; /* Ocupa toda a largura disponível */
   aspect-ratio: 16 / 9; /* Mantém proporção 16:9 */
   border-radius: 15px; /* Bordas arredondadas padrão */
-  margin-bottom: 30px; /* Espaçamento inferior */
+  margin: 0 auto 30px auto; /* Centraliza horizontalmente e adiciona margem inferior */
   box-shadow: var(--box-shadow-default); /* Sombra padrão */
   overflow: hidden; /* Garante que nada ultrapasse os limites */
+  max-width: 1200px; /* Limita a largura máxima em telas maiores */
 }
 
 /* Estilo do iframe dentro do player */
@@ -1044,15 +1045,23 @@ ul .link-item:not(:last-child) {
 }
 
 /* Responsividade para telas menores */
+@media screen and (max-width: 1024px) {
+  .player-container {
+    margin: 0 20px 30px 20px; /* Adiciona margens laterais menores em telas médias */
+  }
+}
+
 @media screen and (max-width: 768px) {
   .player-container {
     border-radius: 10px; /* Reduz bordas arredondadas em telas menores */
+    margin: 0 15px 30px 15px; /* Reduz margens laterais ainda mais */
   }
 }
 
 @media screen and (max-width: 576px) {
   .player-container {
-    border-radius: 5px; /* Reduz bordas arredondadas ainda mais para dispositivos pequenos */
+    border-radius: 5px; /* Reduz bordas arredondadas ainda mais em dispositivos pequenos */
+    margin: 0 10px 30px 10px; /* Ajusta margens laterais para dispositivos pequenos */
   }
 }
 
