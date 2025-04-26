@@ -976,7 +976,7 @@ ul .link-item:not(:last-child) {
   background: var(--oxford-blue);
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--box-shadow-default);
 }
 
 /* Estilo da imagem de perfil */
@@ -1007,6 +1007,7 @@ ul .link-item:not(:last-child) {
 /* Estilo dos detalhes de perfil */
 .user-profile .profile-details {
   color: var(--off-white);
+  font-size: var(--font-size-medium);
 }
 
 .user-profile .profile-details h3 {
@@ -1016,7 +1017,6 @@ ul .link-item:not(:last-child) {
 }
 
 .user-profile .profile-details p {
-  font-size: var(--font-size-medium);
   margin-bottom: 5px;
 }
 
@@ -1024,22 +1024,26 @@ ul .link-item:not(:last-child) {
   color: var(--light-azure);
 }
 
-/* Estilo para o player */
-.player iframe#live-player {
-  width: 100%;
-  height: 400px;
+/* Estilo do player */
+iframe#live-player {
+  width: 100%; /* Ocupa toda a largura disponível */
+  height: 500px; /* Altura adequada */
   border-radius: 15px;
   margin-bottom: 30px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--box-shadow-default);
 }
 
 /* Estilo para alinhar a bandeira e o texto */
+.country-flag-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .country-flag {
   height: 1em; /* Altura igual ao texto */
   width: auto; /* Largura proporcional à altura */
   vertical-align: middle; /* Alinha verticalmente com o texto */
-  display: inline-block; /* Garante que fique ao lado do texto */
-  margin-left: 5px; /* Espaçamento entre o texto e a bandeira */
 }
 
 /* Responsividade para telas menores */
@@ -1047,7 +1051,6 @@ ul .link-item:not(:last-child) {
   .user-profile {
     flex-direction: column;
     gap: 20px;
-    padding: 20px;
   }
 
   .user-profile .profile-container {
@@ -1064,8 +1067,8 @@ ul .link-item:not(:last-child) {
     text-align: center;
   }
 
-  .player iframe#live-player {
-    height: 300px;
+  iframe#live-player {
+    height: 300px; /* Altura reduzida para telas menores */
   }
 }
 
@@ -1083,7 +1086,7 @@ ul .link-item:not(:last-child) {
     font-size: var(--font-size-small);
   }
 
-  .player iframe#live-player {
-    height: 250px;
+  iframe#live-player {
+    height: 250px; /* Altura ainda menor para dispositivos móveis */
   }
 }
