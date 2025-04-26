@@ -55,23 +55,31 @@
       </div>
     </header>
 
-    <!-- Player Section -->
-    <section class="player">
-      <iframe id="live-player" src="" frameborder="0" allowfullscreen></iframe>
-    </section>
-
-    <!-- User Profile Section -->
-    <section class="user-profile">
-      <div class="profile-container">
-        <img id="profile-image" src="" alt="User Profile Image" class="profile-image">
-        <div class="profile-details">
-          <h3 id="username"></h3>
-          <p><strong>País:</strong> <span id="country"></span></p>
-          <p><strong>Sexo:</strong> <span id="gender"></span></p>
-          <p><strong>Orientação Sexual:</strong> <span id="sexual-orientation"></span></p>
+    <main>
+      <!-- Player Section -->
+      <section class="banner">
+        <div class="banner-card">
+          <iframe id="live-player" src="" frameborder="0" allowfullscreen class="banner-img"></iframe>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- User Profile Section -->
+      <section class="user-profile">
+        <div class="profile-container">
+          <div class="card-head">
+            <img id="profile-image" src="" alt="User Profile Image" class="card-img">
+          </div>
+          <div class="card-body">
+            <h3 id="username" class="card-title"></h3>
+            <div class="card-info">
+              <p><strong>País:</strong> <span id="country"></span></p>
+              <p><strong>Sexo:</strong> <span id="gender"></span></p>
+              <p><strong>Orientação Sexual:</strong> <span id="sexual-orientation"></span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
 
     <footer>
       <div class="footer-content">
