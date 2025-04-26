@@ -428,7 +428,7 @@ nav {
 
 @media screen and (max-width: 576px) {
   .movies-grid {
-    --grid-margin: 10px; /* Reduz margens laterais para dispositivos móveis */
+    --grid-margin: 5px; /* Reduz margens laterais para dispositivos móveis */
   }
 }
 
