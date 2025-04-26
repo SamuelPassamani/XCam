@@ -529,6 +529,38 @@ nav {
   transform: scale(1.05); /* Destaque ao hover */
 }
 
+/* Estilos para os botões de paginação */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination-button {
+  padding: 10px 20px;
+  font-size: var(--font-size-small);
+  font-weight: var(--fw5);
+  border: none;
+  border-radius: 5px;
+  background: var(--oxford-blue);
+  color: var(--white);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.pagination-button:hover {
+  background: var(--light-azure);
+  transform: scale(1.05);
+}
+
+.pagination-button.active {
+  background: var(--light-azure);
+  color: var(--oxford-blue);
+  font-weight: var(--fw6);
+}
+
 /*CATEGORY SECTION*/
 
 .category {
