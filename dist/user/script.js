@@ -45,19 +45,19 @@ if (!userId) {
 
 // Função para converter país em ícone de bandeira
 function getCountryFlag(countryCode) {
-  return `<img src="https://flagcdn.com/h40/${countryCode.toLowerCase()}.png" alt="${countryCode}" class="country-flag">`;
+  return `<img src="https://flagcdn.com/h40/${countryCode.toLowerCase()}.png" alt="${countryCode}" class="country-flag" style="height: 1em; vertical-align: middle;">`;
 }
 
 // Função para traduzir orientação sexual para português
 function translateOrientation(orientation) {
   const translations = {
-    "Straight": "Heterossexual",
-    "Gay": "Homossexual",
-    "Bisexual": "Bissexual",
-    "Lesbian": "Lésbica",
-    "Transgender": "Transgênero",
-    "Queer": "Queer",
-    "Other": "Outro"
+    "straight": "Heterossexual",
+    "gay": "Homossexual",
+    "bisexual": "Bissexual",
+    "lesbian": "Lésbica",
+    "transgender": "Transgênero",
+    "queer": "Queer",
+    "other": "Outro"
   };
   return translations[orientation] || orientation;
 }
