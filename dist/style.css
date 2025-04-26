@@ -1034,16 +1034,12 @@ iframe#live-player {
 }
 
 /* Estilo para alinhar a bandeira e o texto */
-.country-flag-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
 .country-flag {
   height: 1em; /* Altura igual ao texto */
   width: auto; /* Largura proporcional à altura */
   vertical-align: middle; /* Alinha verticalmente com o texto */
+  display: inline-block; /* Garante que fique ao lado do texto */
+  margin-left: 5px; /* Espaçamento entre o texto e a bandeira */
 }
 
 /* Responsividade para telas menores */
