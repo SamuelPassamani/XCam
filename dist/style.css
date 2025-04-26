@@ -294,8 +294,7 @@ nav {
 }
 
 .banner-card:hover .banner-img {
-  transform: none; /* Remove qualquer transformação */
-  box-shadow: var(--box-shadow-default); /* Mantém a sombra padrão */
+  transform: scale(1:1);
 }
 
 .banner-img {
@@ -1044,6 +1043,22 @@ iframe#live-player {
   iframe#live-player {
     border-radius: 5px; /* Reduz bordas arredondadas ainda mais em dispositivos muito pequenos */
   }
+}
+
+/* PLAYER SECTION STYLES */
+.player-container {
+  width: 100%; /* Ocupa toda a largura disponível */
+  aspect-ratio: 16 / 9; /* Mantém proporção 16:9 */
+  border-radius: 15px;
+  margin-bottom: 30px;
+  box-shadow: var(--box-shadow-default);
+  overflow: hidden; /* Garante que nada ultrapasse os limites */
+}
+
+.player-container iframe {
+  width: 100%; /* Garante que o iframe ocupe toda a largura do container */
+  height: 100%; /* Altura proporcional ao container */
+  border: none; /* Remove bordas extras */
 }
 
 /* Estilo para alinhar a bandeira e o texto */
