@@ -24,7 +24,7 @@ navbarFormCloseBtn.addEventListener("click", searchBarIsActive);
 // Variáveis para controle de exibição
 let camerasData = []; // Armazena todos os dados das câmeras
 let currentPage = 1; // Página atual
-const camerasPerPage = 30; // Número de câmeras por página
+const camerasPerPage = 24; // Número de câmeras por página
 
 // Função para buscar os dados das câmeras
 async function fetchCamerasData() {
@@ -41,9 +41,10 @@ async function fetchCamerasData() {
     if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
       camerasData = data.broadcasts.items;
 
-      // Depuração: Verifica os dados recebidos
-      console.log("Dados das câmeras:", camerasData);
+      // Depuração: Verifica o total de itens no array
+      console.log(`Total de itens carregados: ${camerasData.length}`);
 
+      // Renderiza a primeira página
       renderCameras();
       renderPagination();
     } else {
@@ -83,7 +84,7 @@ function renderCameras() {
       <a href="https://xxx.filmes.net.eu.org/user/?id=${camera.username}" class="movie-card"> 
           <div class="movie-card">
               <div class="card-head">
-                  <img src="${camera.preview.poster}" alt="${camera.username}" class="card-img">
+                  <img src="${camera.preview?.poster || camera.profileImageURL}" alt="${camera.username}" class="card-img">
                   <div class="card-overlay">
                       <div class="bookmark">
                           <ion-icon name="bookmark"></ion-icon>
@@ -125,7 +126,7 @@ function renderPagination() {
   const totalPages = Math.ceil(camerasData.length / camerasPerPage);
 
   // Depuração: Verifica o total de páginas
-  console.log(`Total de câmeras: ${camerasData.length}, Total de páginas: ${totalPages}`);
+  console.log(`Total de páginas: ${totalPages}`);
 
   // Botão "ANTERIOR"
   if (currentPage > 1) {
