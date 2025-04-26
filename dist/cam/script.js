@@ -12,7 +12,7 @@ if (!videoId) {
 
 // Função para buscar os dados da câmera e configurar o player
 function fetchCameraData(videoId) {
-  fetch("https://site.my.eu.org/1:/male.json")
+  fetch("https://site.my.eu.org/1:/male1.json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
