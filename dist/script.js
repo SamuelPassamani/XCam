@@ -24,7 +24,7 @@ navbarFormCloseBtn.addEventListener("click", searchBarIsActive);
 // Variáveis para controle de exibição
 let camerasData = []; // Armazena todos os dados das câmeras
 let currentPage = 1; // Página atual
-const camerasPerPage = 24; // Número de câmeras por página
+const camerasPerPage = 30; // Número de câmeras por página
 
 // Função para buscar os dados das câmeras
 async function fetchCamerasData() {
