@@ -237,6 +237,19 @@ nav {
   color: var(--light-azure);
 }
 
+/* Adicionado para ajustar a proporção da imagem dentro do navbar */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  max-height: 100%; /* Garante que o conteúdo do navbar não ultrapasse */
+}
+
+.navbar-brand img {
+  max-height: 100px; /* Ajusta para manter a altura da imagem dentro do navbar */
+  width: auto; /* Mantém a proporção da imagem */
+  object-fit: contain; /* Garante que a imagem não distorça */
+}
+
 /*BANNER SECTION*/
 
 .banner {
