@@ -1033,6 +1033,15 @@ ul .link-item:not(:last-child) {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Estilo para alinhar a bandeira e o texto */
+.country-flag {
+  height: 1em; /* Altura igual ao texto */
+  width: auto; /* Largura proporcional à altura */
+  vertical-align: middle; /* Alinha verticalmente com o texto */
+  display: inline-block; /* Garante que fique ao lado do texto */
+  margin-left: 5px; /* Espaçamento entre o texto e a bandeira */
+}
+
 /* Responsividade para telas menores */
 @media screen and (max-width: 768px) {
   .user-profile {
