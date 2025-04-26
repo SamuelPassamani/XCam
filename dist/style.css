@@ -412,6 +412,8 @@ nav {
   gap: 20px;
   margin-top: 20px;
   padding: 0 100px; /* Margens laterais */
+  position: relative; /* Garante que o botão "load-more" seja posicionado corretamente */
+  z-index: 1; /* Certifica-se de que a grade não sobreponha o botão */
 }
 
 /* Cartão de filme */
@@ -502,6 +504,8 @@ nav {
   text-align: center;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
+  position: relative; /* Garante que o botão esteja acima dos elementos */
+  z-index: 2; /* Certifica-se de que o botão esteja acima da grade */
 }
 
 .load-more:hover {
