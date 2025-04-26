@@ -12,7 +12,7 @@ if (!userId) {
 
 // Função para buscar os dados do usuário no JSON
 function fetchUserData(userId) {
-  fetch("https://site.my.eu.org/1:/male1.json")
+  fetch("https://site.my.eu.org/1:/male.json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
