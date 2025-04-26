@@ -128,6 +128,19 @@ function renderPagination() {
   // Depuração: Verifica o total de páginas
   console.log(`Total de páginas: ${totalPages}`);
 
+  // Define o número máximo de botões de paginação com base no tamanho da tela
+  const maxButtons = window.innerWidth <= 768 ? 3 : 7; // 3 para telas pequenas, 7 para maiores
+  const halfMaxButtons = Math.floor(maxButtons / 2);
+
+  // Calcula o intervalo inicial e final para os botões de paginação
+  let startPage = Math.max(currentPage - halfMaxButtons, 1);
+  let endPage = Math.min(startPage + maxButtons - 1, totalPages);
+
+  // Ajusta o intervalo se estiver no final da lista
+  if (endPage - startPage + 1 < maxButtons && startPage > 1) {
+    startPage = Math.max(endPage - maxButtons + 1, 1);
+  }
+
   // Botão "ANTERIOR"
   if (currentPage > 1) {
     const prevButton = document.createElement("button");
@@ -142,7 +155,7 @@ function renderPagination() {
   }
 
   // Botões de números das páginas
-  for (let page = 1; page <= totalPages; page++) {
+  for (let page = startPage; page <= endPage; page++) {
     const pageButton = document.createElement("button");
     pageButton.textContent = page;
     pageButton.className = `pagination-button ${
@@ -156,10 +169,10 @@ function renderPagination() {
     paginationContainer.appendChild(pageButton);
   }
 
-  // Botão "PROXIMA"
+  // Botão "PRÓXIMA"
   if (currentPage < totalPages) {
     const nextButton = document.createElement("button");
-    nextButton.textContent = "PROXIMA";
+    nextButton.textContent = "PRÓXIMA";
     nextButton.className = "pagination-button";
     nextButton.addEventListener("click", () => {
       currentPage++;
@@ -169,6 +182,11 @@ function renderPagination() {
     paginationContainer.appendChild(nextButton);
   }
 }
+
+// Recalcula a páginação quando a janela é redimensionada
+window.addEventListener("resize", () => {
+  renderPagination();
+});
 
 // Carrega as câmeras ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
