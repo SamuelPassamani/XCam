@@ -415,8 +415,8 @@ nav {
   /* Controle dinâmico de margens laterais */
   --grid-margin: 100px;
   padding: 0 var(--grid-margin); /* Margens laterais ajustáveis */
-  position: relative; /* Garante que o botão "load-more" seja posicionado corretamente */
-  z-index: 1; /* Certifica-se de que a grade não sobreponha o botão */
+  position: relative; /* Garante que os botões de paginação estejam posicionados corretamente */
+  z-index: 1; /* Certifica-se de que a grade não sobreponha outros elementos */
 }
 
 /* Responsividade: Ajusta margens laterais em telas menores */
@@ -505,28 +505,6 @@ nav {
   text-align: center;
   color: var(--off-white);
   margin-top: 7px;
-}
-
-/* Botão "Carregar Mais" */
-.load-more {
-  background: var(--oxford-blue);
-  display: block;
-  padding: 20px 50px;
-  margin: 30px auto 0; /* Centraliza o botão */
-  font-size: var(--font-size-small);
-  font-weight: var(--fw5);
-  border-radius: 15px;
-  color: var(--white);
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-  position: relative; /* Garante que o botão esteja acima dos elementos */
-  z-index: 2; /* Certifica-se de que o botão esteja acima da grade */
-}
-
-.load-more:hover {
-  background: var(--light-azure);
-  transform: scale(1.05); /* Destaque ao hover */
 }
 
 /* Estilos para os botões de paginação */
