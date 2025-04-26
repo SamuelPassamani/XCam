@@ -28,7 +28,7 @@ const camerasPerPage = 24; // Número de câmeras por página
 
 // Função para buscar os dados das câmeras
 async function fetchCamerasData() {
-  const url = "https://site.my.eu.org/1:/male1.json";
+  const url = "https://site.my.eu.org/1:/male.json";
 
   try {
     const response = await fetch(url);
