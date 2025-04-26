@@ -45,7 +45,7 @@ if (!userId) {
 
 // Função para converter país em ícone de bandeira
 function getCountryFlag(countryCode) {
-  return `<img src="https://flagcdn.com/h40/${countryCode.toLowerCase()}.png" alt="${countryCode}" class="country-flag" style="height: 1em; vertical-align: middle;">`;
+  return `<img src="https://flagcdn.com/h40/${countryCode.toLowerCase()}.png" alt="${countryCode}" class="country-flag" style="height: 1em; width: auto; vertical-align: middle;">`;
 }
 
 // Função para traduzir orientação sexual para português
