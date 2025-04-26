@@ -62,6 +62,9 @@ function renderCameras() {
     return;
   }
 
+  // Limpa o grid antes de adicionar novas câmeras
+  moviesGrid.innerHTML = "";
+
   // Obtém o próximo lote de câmeras a serem exibidas
   const nextBatch = camerasData.slice(
     currentDisplayIndex,
@@ -112,7 +115,15 @@ function renderCameras() {
 }
 
 // Carrega as câmeras ao carregar a página
-document.addEventListener("DOMContentLoaded", () => fetchCamerasData());
+document.addEventListener("DOMContentLoaded", () => {
+  fetchCamerasData();
+
+  // Adiciona o intervalo para recarregar automaticamente as câmeras a cada 1 minuto
+  setInterval(() => {
+    console.log("Recarregando câmeras...");
+    fetchCamerasData();
+  }, 60 * 1000); // 60 segundos
+});
 
 // Função para carregar mais câmeras ao clicar no botão "CARREGAR MAIS"
 const loadMoreButton = document.querySelector(".load-more");
