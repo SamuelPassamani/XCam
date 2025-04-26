@@ -75,7 +75,7 @@ function setupPlayer(camera) {
     ],
   });
 
-  playerInstance.on("ready", () => {
+  playerInstance.off("ready", () => {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     handleAdBlockDetection(playerInstance);
