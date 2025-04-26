@@ -964,3 +964,117 @@ ul .link-item:not(:last-child) {
     margin-bottom: 20px;
   }
 }
+
+/* USER PAGE STYLES */
+
+/* Geral para a seção de perfil do usuário */
+.user-profile {
+  margin: 30px var(--padding-x);
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  background: var(--oxford-blue);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo da imagem de perfil */
+.user-profile .profile-container {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.user-profile .profile-container .card-head {
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--oxford-blue-50);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-profile .profile-container .card-head img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Estilo dos detalhes de perfil */
+.user-profile .profile-details {
+  color: var(--off-white);
+}
+
+.user-profile .profile-details h3 {
+  font-size: var(--font-size-large);
+  font-weight: var(--fw6);
+  margin-bottom: 10px;
+}
+
+.user-profile .profile-details p {
+  font-size: var(--font-size-medium);
+  margin-bottom: 5px;
+}
+
+.user-profile .profile-details p strong {
+  color: var(--light-azure);
+}
+
+/* Estilo para o player */
+.player iframe#live-player {
+  width: 100%;
+  height: 400px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsividade para telas menores */
+@media screen and (max-width: 768px) {
+  .user-profile {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .user-profile .profile-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .user-profile .profile-container .card-head {
+    height: 120px;
+    width: 120px;
+  }
+
+  .user-profile .profile-details {
+    text-align: center;
+  }
+
+  .player iframe#live-player {
+    height: 300px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .user-profile {
+    padding: 15px;
+    margin: 15px;
+  }
+
+  .user-profile .profile-details h3 {
+    font-size: var(--font-size-medium);
+  }
+
+  .user-profile .profile-details p {
+    font-size: var(--font-size-small);
+  }
+
+  .player iframe#live-player {
+    height: 250px;
+  }
+}
