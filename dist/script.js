@@ -23,8 +23,8 @@ navbarFormCloseBtn.addEventListener("click", searchBarIsActive);
 
 // Variáveis para controle de exibição
 let camerasData = []; // Armazena todos os dados das câmeras
-let currentDisplayIndex = 0; // Índice atual de câmeras exibidas
-let camerasPerLoad = 0; // Número dinâmico de câmeras por carregamento
+let currentPage = 1; // Página atual
+const camerasPerPage = 24; // Número de câmeras por página
 
 // Função para buscar os dados das câmeras
 async function fetchCamerasData() {
@@ -40,15 +40,15 @@ async function fetchCamerasData() {
     // Verifica se a estrutura do JSON contém broadcasts.items
     if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
       camerasData = data.broadcasts.items;
-      camerasPerLoad = data.broadcasts.total; // Atualiza o valor de camerasPerLoad com o valor de "total"
+
+      // Renderiza a primeira página
+      renderCameras();
+      renderPagination();
     } else {
       throw new Error(
         "Estrutura do JSON inválida ou items não encontrados em broadcasts"
       );
     }
-
-    // Exibe as câmeras
-    renderCameras();
   } catch (error) {
     console.error("Erro ao carregar os dados:", error);
   }
@@ -65,17 +65,15 @@ function renderCameras() {
   // Limpa o grid antes de adicionar novas câmeras
   moviesGrid.innerHTML = "";
 
-  // Obtém o próximo lote de câmeras a serem exibidas
-  const nextBatch = camerasData.slice(
-    currentDisplayIndex,
-    currentDisplayIndex + camerasPerLoad
-  );
+  // Calcula o índice inicial e final com base na página atual
+  const startIndex = (currentPage - 1) * camerasPerPage;
+  const endIndex = startIndex + camerasPerPage;
 
-  // Atualiza o índice atual
-  currentDisplayIndex += camerasPerLoad;
+  // Obtém as câmeras da página atual
+  const currentBatch = camerasData.slice(startIndex, endIndex);
 
   // Adiciona os cartões de câmeras ao grid
-  nextBatch.forEach((camera) => {
+  currentBatch.forEach((camera) => {
     const cameraCard = `
         <a href="https://xxx.filmes.net.eu.org/user/?id=${camera.username}" class="movie-card"> 
             <div class="movie-card">
@@ -106,27 +104,64 @@ function renderCameras() {
         </a>`;
     moviesGrid.insertAdjacentHTML("beforeend", cameraCard);
   });
+}
 
-  // Mostra ou oculta o botão "CARREGAR MAIS"
-  const loadMoreButton = document.querySelector(".load-more");
-  if (currentDisplayIndex >= camerasData.length) {
-    loadMoreButton.style.display = "none";
+// Função para renderizar os botões de paginação
+function renderPagination() {
+  const paginationContainer = document.querySelector("#pagination");
+  if (!paginationContainer) {
+    console.error("Elemento #pagination não encontrado!");
+    return;
+  }
+
+  // Limpa o container antes de adicionar novos botões
+  paginationContainer.innerHTML = "";
+
+  const totalPages = Math.ceil(camerasData.length / camerasPerPage);
+
+  // Botão "ANTERIOR"
+  if (currentPage > 1) {
+    const prevButton = document.createElement("button");
+    prevButton.textContent = "ANTERIOR";
+    prevButton.className = "pagination-button";
+    prevButton.addEventListener("click", () => {
+      currentPage--;
+      renderCameras();
+      renderPagination();
+    });
+    paginationContainer.appendChild(prevButton);
+  }
+
+  // Botões de números das páginas
+  for (let page = 1; page <= totalPages; page++) {
+    const pageButton = document.createElement("button");
+    pageButton.textContent = page;
+    pageButton.className = `pagination-button ${
+      page === currentPage ? "active" : ""
+    }`;
+    pageButton.addEventListener("click", () => {
+      currentPage = page;
+      renderCameras();
+      renderPagination();
+    });
+    paginationContainer.appendChild(pageButton);
+  }
+
+  // Botão "PROXIMA"
+  if (currentPage < totalPages) {
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "PROXIMA";
+    nextButton.className = "pagination-button";
+    nextButton.addEventListener("click", () => {
+      currentPage++;
+      renderCameras();
+      renderPagination();
+    });
+    paginationContainer.appendChild(nextButton);
   }
 }
 
 // Carrega as câmeras ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
   fetchCamerasData();
-
-  // Adiciona o intervalo para recarregar automaticamente as câmeras a cada 1 minuto
-  setInterval(() => {
-    console.log("Recarregando câmeras...");
-    fetchCamerasData();
-  }, 60 * 1000); // 60 segundos
 });
-
-// Função para carregar mais câmeras ao clicar no botão "CARREGAR MAIS"
-const loadMoreButton = document.querySelector(".load-more");
-if (loadMoreButton) {
-  loadMoreButton.addEventListener("click", renderCameras);
-}
