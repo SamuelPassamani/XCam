@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://xxx.filmes.net.eu.org/style.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="navbar">
+        <button class="navbar-menu-btn">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="three"></span>
+        </button>
+
+        <a href="#" class="navbar-brand">
+          <img src="https://i.postimg.cc/KvjKVZXj/logo.png" alt="logo">
+        </a>
+
+        <nav>
+          <ul class="navbar-nav">
+            <li><a href="/" class="navbar-link">Home</a></li>
+            <li><a href="/#category" class="navbar-link">Category</a></li>
+            <li><a href="/#live" class="navbar-link indicator">LIVE</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Player Section -->
+    <section class="player">
+      <iframe id="live-player" src="" frameborder="0" allowfullscreen></iframe>
+    </section>
+
+    <!-- User Profile Section -->
+    <section class="user-profile">
+      <div class="profile-container">
+        <img id="profile-image" src="" alt="User Profile Image" class="profile-image">
+        <div class="profile-details">
+          <h3 id="username"></h3>
+          <p><strong>País:</strong> <span id="country"></span></p>
+          <p><strong>Sexo:</strong> <span id="gender"></span></p>
+          <p><strong>Orientação Sexual:</strong> <span id="sexual-orientation"></span></p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="https://i.postimg.cc/KvjKVZXj/logo.png" alt="logo" class="footer-logo">
+          <p class="slogan">Movies & TV Shows, Online Cinema, Movie Database HTML Template</p>
+        </div>
+        <div class="footer-links">
+          <ul>
+            <h4>CineFlix</h4>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">My profile</a></li>
+            <li><a href="#">Pricing plans</a></li>
+            <li><a href="#">Contacts</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
