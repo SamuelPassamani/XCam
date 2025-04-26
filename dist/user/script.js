@@ -62,7 +62,7 @@ function updateProfileInfo(camera) {
   if (profileImage) profileImage.src = camera.profileImageURL;
   if (username) username.textContent = `Usuário: ${camera.username}`;
   if (country) country.innerHTML = getCountryFlag(camera.country);
-  if (gender) gender.textContent = camera.gender;
+  if (gender) gender.textContent = translateGender(camera.gender);
   if (sexualOrientation)
     sexualOrientation.textContent = translateOrientation(
       camera.sexualOrientation
@@ -81,10 +81,23 @@ function translateOrientation(orientation) {
     straight: "Heterossexual",
     gay: "Homossexual",
     bisexual: "Bissexual",
+    bicurious: "Bicurioso",
     lesbian: "Lésbica",
     transgender: "Transgênero",
     queer: "Queer",
     other: "Outro",
+    unknown: "Não Definido",
   };
   return translations[orientation] || "Não especificado";
+}
+
+// Função para traduzir gêneros para português
+function translateGender(gender) {
+  const translations = {
+    male: "Homem",
+    female: "Mulher",
+    nonbinary: "Não-binário",
+    other: "Outro",
+  };
+  return translations[gender] || "Não especificado";
 }
