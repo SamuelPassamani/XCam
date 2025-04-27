@@ -1167,3 +1167,116 @@ ul .link-item:not(:last-child) {
     height: 250px; /* Altura ainda menor para dispositivos móveis */
   }
 }
+
+/* Tags Grid */
+/* 
+   Define um layout de grade responsivo para exibir os cartões de tags. 
+   Cada cartão tem tamanho mínimo de 200px e se adapta ao tamanho da tela.
+*/
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Tags Card */
+/* 
+   Estiliza os cartões individuais das tags, centralizando o conteúdo e adicionando bordas arredondadas. 
+   Inclui transições para efeitos de hover.
+*/
+.tags-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efeito de hover no cartão */
+/* 
+   Ao passar o mouse, o cartão aumenta de tamanho e exibe uma sombra.
+*/
+.tags-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Imagem do cartão */
+/* 
+   Define o tamanho da imagem como 100x100px, com bordas arredondadas e margem inferior para espaçamento.
+*/
+.tags-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* Título do cartão */
+/* 
+   Estiliza o título da tag com fonte maior e cor escura.
+*/
+.tags-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Texto de broadcasts */
+/* 
+   Exibe o número de broadcasts associados à tag em uma fonte menor e cor cinza.
+*/
+.tags-card-broadcasts {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Pagination */
+/* 
+   Container para os botões de paginação, centralizando-os com espaçamento entre os itens.
+*/
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+/* Botão de paginação */
+/* 
+   Estiliza os botões de paginação com bordas arredondadas, cor de fundo azul, e transições para hover.
+*/
+.pagination-button {
+  padding: 10px 15px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Efeito de hover no botão de paginação */
+/* 
+   Altera a cor de fundo do botão para um azul mais escuro ao passar o mouse.
+*/
+.pagination-button:hover {
+  background-color: #0056b3;
+}
+
+/* Botão de paginação ativo */
+/* 
+   Destaca o botão da página atual com cor de fundo mais escura e fonte em negrito.
+*/
+.pagination-button.active {
+  background-color: #0056b3;
+  font-weight: bold;
+}
