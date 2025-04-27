@@ -1,20 +1,22 @@
 // Script para manipular a página Tags com paginação
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Seleção de elementos DOM
   const tagsGrid = document.querySelector(".tags-grid");
   const paginationContainer = document.createElement("div");
   paginationContainer.classList.add("pagination-container");
   document.body.appendChild(paginationContainer);
 
+  // Obtém o parâmetro 'id' da URL
   const urlParams = new URLSearchParams(window.location.search);
-  const selectedTag = urlParams.get("id"); // Obtém o parâmetro 'id' da URL
+  const selectedTag = urlParams.get("id");
 
   // URLs dos arquivos JSON
   const TAGS_JSON_URL = "https://site.my.eu.org/1:/tags.json";
   const USERS_JSON_URL = "https://site.my.eu.org/1:/male.json";
 
-  // Variáveis para controle da paginação
-  const LIMIT = 30;
+  // Variáveis de controle de paginação
+  const LIMIT = 30; // Limite de itens por página
   let currentPage = 1;
   let totalPages = 1;
 
@@ -32,19 +34,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Função para exibir uma mensagem de erro
+  // Função para exibir mensagens de erro na grade
   function displayError(message) {
     tagsGrid.innerHTML = `<p class="error-message">${message}</p>`;
   }
 
-  // Função para renderizar os cards de tags
+  // Função para renderizar os cartões de tags
   function renderTagCards(tags) {
-    tagsGrid.innerHTML = ""; // Limpa o conteúdo atual da grade
+    tagsGrid.innerHTML = ""; // Limpa a grade existente
+
+    if (!tags || tags.length === 0) {
+      displayError("Nenhuma tag encontrada.");
+      return;
+    }
+
     tags.forEach((tag) => {
       const tagCard = document.createElement("div");
       tagCard.classList.add("tags-card");
 
-      // Adiciona imagem, nome da tag e o número de broadcasts
+      // Adiciona o conteúdo do cartão
       tagCard.innerHTML = `
         <img src="${tag.image}" alt="${tag.name}" class="tags-card-image">
         <div class="tags-card-content">
@@ -53,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       `;
 
-      // Ao clicar na tag, atualiza a URL e recarrega a grade
+      // Evento de clique para redirecionar e atualizar a grade
       tagCard.addEventListener("click", () => {
         const newUrl = `${window.location.pathname}?id=${tag.name}`;
         window.history.pushState({}, "", newUrl);
@@ -64,45 +72,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Função para atualizar a grade com usuários/broadcasts relacionados a uma tag
-  async function updateGrid(tagName) {
-    const usersData = await fetchData(USERS_JSON_URL);
-
-    if (!usersData) {
-      displayError("Erro ao carregar os usuários.");
-      return;
-    }
-
-    // Filtra os usuários/broadcasts que estão usando a tag
-    const filteredUsers = usersData.filter((user) =>
-      user.tags.includes(tagName)
-    );
-
-    // Atualiza o total de páginas
-    totalPages = Math.ceil(filteredUsers.length / LIMIT);
-
-    // Renderiza os dados da página atual
-    const startIndex = (currentPage - 1) * LIMIT;
-    const endIndex = startIndex + LIMIT;
-    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-
-    renderTagCards(
-      paginatedUsers.map((user) => ({
-        name: tagName,
-        image: user.profileImageURL,
-        broadcasts: user.broadcastCount,
-      }))
-    );
-
-    // Atualiza a paginação
-    renderPagination();
-  }
-
   // Função para renderizar os botões de paginação
   function renderPagination() {
     paginationContainer.innerHTML = ""; // Limpa os botões antigos
 
-    if (totalPages <= 1) return; // Sem paginação necessária se houver apenas uma página
+    if (totalPages <= 1) return; // Sem paginação necessária para uma única página
 
     for (let i = 1; i <= totalPages; i++) {
       const pageButton = document.createElement("button");
@@ -110,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (i === currentPage) pageButton.classList.add("active");
       pageButton.textContent = i;
 
-      // Evento para mudar de página ao clicar
+      // Evento para alterar a página ao clicar
       pageButton.addEventListener("click", () => {
         currentPage = i;
         updateGrid(selectedTag);
@@ -120,11 +94,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Inicializa a página
+  // Função para atualizar a grade com usuários/broadcasts relacionados à tag selecionada
+  async function updateGrid(tagName) {
+    const usersData = await fetchData(USERS_JSON_URL);
+
+    if (!usersData) {
+      displayError("Erro ao carregar os usuários.");
+      return;
+    }
+
+    // Filtra os usuários que utilizam a tag selecionada
+    const filteredUsers = usersData.filter((user) =>
+      user.tags.includes(tagName)
+    );
+
+    if (!filteredUsers || filteredUsers.length === 0) {
+      displayError("Nenhum usuário encontrado para esta tag.");
+      return;
+    }
+
+    // Calcula o total de páginas
+    totalPages = Math.ceil(filteredUsers.length / LIMIT);
+
+    // Determina os itens da página atual
+    const startIndex = (currentPage - 1) * LIMIT;
+    const endIndex = startIndex + LIMIT;
+    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+    // Renderiza os cartões de usuários da página atual
+    renderTagCards(
+      paginatedUsers.map((user) => ({
+        name: tagName,
+        image: user.profileImageURL || "https://via.placeholder.com/150",
+        broadcasts: user.broadcastCount || 0,
+      }))
+    );
+
+    // Atualiza os botões de paginação
+    renderPagination();
+  }
+
+  // Função para inicializar a página
   async function init() {
     const tagsData = await fetchData(TAGS_JSON_URL);
 
-    if (!tagsData) {
+    if (!tagsData || !tagsData.tags) {
       displayError("Erro ao carregar as tags.");
       return;
     }
@@ -133,14 +147,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Se uma tag foi selecionada, atualiza a grade com os usuários da tag
       updateGrid(selectedTag);
     } else {
-      // Caso contrário, exibe todas as tags disponíveis
-      renderTagCards(
-        tagsData.map((tag) => ({
-          name: tag.name,
-          image: tag.previewImage || "https://via.placeholder.com/150",
-          broadcasts: tag.broadcastCount || 0,
-        }))
-      );
+      // Exibe todas as tags disponíveis
+      const tags = Object.keys(tagsData.tags).map((tagName) => ({
+        name: tagName,
+        image: "https://via.placeholder.com/150", // Substitua se houver imagens específicas
+        broadcasts: tagsData.tags[tagName].length, // Número de usuários associados à tag
+      }));
+
+      renderTagCards(tags);
     }
   }
 
