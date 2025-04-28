@@ -501,26 +501,37 @@ nav {
   opacity: 1; /* Mostra o overlay no hover */
 }
 
-/* Corpo do cartão (informações) */
-.movie-card .card-body {
-  background: var(--oxford-blue); /* Fundo consistente */
-  padding: 15px; /* Espaçamento interno */
-  display: flex;
-  flex-direction: column;
-}
-
-.movie-card .card-title {
-  font-size: var(--font-size-medium);
-  font-weight: var(--fw6);
+/* Visualizações */
+.movie-card .viewers {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--oxford-blue-50);
   color: var(--white);
-  margin-bottom: 5px;
+  font-size: var(--font-size-small);
+  font-weight: var(--fw6);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
+.movie-card .viewers ion-icon {
+  font-size: 16px;
+  color: var(--light-azure);
+  display: inline-block; /* Corrige possíveis problemas de alinhamento */
+  vertical-align: middle; /* Alinha o ícone verticalmente com o texto */
+}
+
+/* Tags */
 .movie-card .tags {
   font-size: var(--font-size-extra-small);
   font-weight: var(--fw5);
+  text-align: center;
   color: var(--off-white);
-  margin-top: 5px;
+  margin-top: 7px;
+  margin-left: 15px;
 }
 
 /* Estilos para os botões de paginação */
