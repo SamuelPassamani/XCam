@@ -1059,7 +1059,7 @@ ul .link-item:not(:last-child) {
 .user-profile .profile-details {
   color: var(--off-white);
   font-size: var(--font-size-medium);
-  margin-top: 15px; /* Espaçamento superior */
+  margin-top: 5px; /* Espaçamento superior */
   margin-left: 15px; /* Espaçamento esquerdo */
 }
 
@@ -1092,8 +1092,8 @@ ul .link-item:not(:last-child) {
   border-radius: 50%; /* Torna a imagem circular */
   object-fit: cover;
   border: 1px solid var(--light-azure); /* Borda para destaque */
-  margin-top: 5px; /* Espaçamento superior */
-  margin-left: 5px; /* Espaçamento esquerdo */
+  margin-top: 10px; /* Espaçamento superior */
+  margin-left: 10px; /* Espaçamento esquerdo */
 }
 
 /* Estilo do nome e imagem lado a lado na página inicial */
@@ -1107,8 +1107,8 @@ ul .link-item:not(:last-child) {
   font-size: var(--font-size-small); /* Fonte menor para a página inicial */
   font-weight: var(--fw5);
   color: var(--off-white);
-  margin-top: 5px; /* Espaçamento superior */
-  margin-left: 5px; /* Espaçamento esquerdo */
+  margin-top: 10px; /* Espaçamento superior */
+  margin-left: 10px; /* Espaçamento esquerdo */
 }
 
 /* PLAYER SECTION STYLES */
@@ -1279,7 +1279,7 @@ ul .link-item:not(:last-child) {
 /* Efeito de hover no botão de paginação */
 .pagination-button:hover {
   background-color: #0056b3;
-}
+.user-profile-small
 
 /* Botão de paginação ativo */
 .pagination-button.active {
