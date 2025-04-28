@@ -1028,7 +1028,7 @@ ul .link-item:not(:last-child) {
   box-shadow: var(--box-shadow-default);
 }
 
-/* Estilo da imagem de perfil */
+/* Estilo da imagem de perfil na página do usuário */
 .user-profile .profile-container {
   display: flex;
   align-items: center;
@@ -1036,7 +1036,7 @@ ul .link-item:not(:last-child) {
 }
 
 .user-profile .profile-container .card-head {
-  height: 150px;
+  height: 150px; /* Tamanho grande para a página do usuário */
   width: 150px;
   border-radius: 50%;
   overflow: hidden;
@@ -1071,6 +1071,36 @@ ul .link-item:not(:last-child) {
 
 .user-profile .profile-details p strong {
   color: var(--light-azure);
+}
+
+/* INDEX PAGE STYLES */
+
+/* Estilo da imagem de perfil na página inicial (menor tamanho) */
+.user-profile-small {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-profile-small img {
+  width: 30px; /* Tamanho reduzido para a página inicial */
+  height: 30px;
+  border-radius: 50%; /* Torna a imagem circular */
+  object-fit: cover;
+  border: 1px solid var(--light-azure); /* Borda para destaque */
+}
+
+/* Estilo do nome e imagem lado a lado na página inicial */
+.user-profile-small .user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaçamento entre a imagem e o nome */
+}
+
+.user-profile-small .user-info h3 {
+  font-size: var(--font-size-small); /* Fonte menor para a página inicial */
+  font-weight: var(--fw5);
+  color: var(--off-white);
 }
 
 /* PLAYER SECTION STYLES */
