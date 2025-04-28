@@ -451,15 +451,14 @@ nav {
   border-radius: 10px;
   overflow: hidden; /* Evita conteúdo ultrapassando os limites */
   background: var(--oxford-blue);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex; /* Garante que o conteúdo interno se mantenha em proporção */
   flex-direction: column; /* Mantém o layout vertical */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra inicial */
+  transition: box-shadow 0.3s ease; /* Transição suave para a sombra */
 }
 
-/* Efeito hover no cartão de filme */
 .movie-card:hover {
-  transform: scale(1.05); /* Aumenta o cartão ligeiramente */
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Adiciona destaque ao hover */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Destaca o cartão no hover */
 }
 
 /* Cabeçalho do cartão */
@@ -479,7 +478,8 @@ nav {
 
 /* Evita cortar a imagem durante o hover */
 .movie-card:hover .card-img {
-  transform: scale(1.1); /* Aumenta a imagem suavemente */
+  transform: scale(1.1); /* Amplia a imagem suavemente */
+  object-position: center; /* Garante que a imagem seja centralizada ao ampliar */
 }
 
 /* Overlay do cartão */
