@@ -432,7 +432,7 @@ nav {
   z-index: 1; /* Certifica-se de que a grade não sobreponha outros elementos */
 }
 
-/* Responsividade: Ajusta margens laterais em telas menores */
+/* Responsividade: Ajusta margens laterais e dimensões em telas menores */
 @media screen and (max-width: 768px) {
   .movies-grid {
     --grid-margin: 50px; /* Reduz margens laterais para telas médias */
@@ -442,6 +442,22 @@ nav {
 @media screen and (max-width: 576px) {
   .movies-grid {
     --grid-margin: 5px; /* Reduz margens laterais para dispositivos móveis */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajusta dimensões do cartão */
+  }
+
+  .movie-card {
+    border-radius: 20px; /* Ajusta bordas para dispositivos móveis */
+    height: 150px; /* Altura igual a .category-card */
+    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
+  }
+
+  .movie-card .card-head {
+    height: 150px; /* Ajusta a altura do cabeçalho */
+  }
+
+  .movie-card .card-img {
+    height: 100%; /* Garante que a imagem preencha o cabeçalho */
+    object-fit: cover; /* Mantém a proporção da imagem */
   }
 }
 
