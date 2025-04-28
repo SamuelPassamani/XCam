@@ -449,6 +449,7 @@ nav {
     border-radius: 20px; /* Ajusta bordas para dispositivos móveis */
     height: 150px; /* Altura igual a .category-card */
     overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajusta a sombra para dispositivos móveis */
   }
 
   .movie-card .card-head {
@@ -539,6 +540,35 @@ nav {
   font-weight: var(--fw5);
   color: var(--off-white);
   margin: 0; /* Remove margens desnecessárias */
+}
+
+/* Visualizações */
+.movie-card .viewers {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--oxford-blue-50);
+  color: var(--white);
+  font-size: var(--font-size-small);
+  font-weight: var(--fw6);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.movie-card .viewers ion-icon {
+  font-size: 18px; /* Ajuste do tamanho do ícone */
+  color: var(--light-azure); /* Cor consistente com o tema */
+  display: inline-block; /* Garante um alinhamento adequado */
+  vertical-align: middle; /* Centraliza o ícone verticalmente ao lado do texto */
+  transition: transform 0.3s ease, color 0.3s ease; /* Adiciona suavidade ao hover */
+}
+
+.movie-card .viewers ion-icon:hover {
+  transform: scale(1.2); /* Leve aumento no hover */
+  color: var(--yellow); /* Destaque ao passar o mouse */
 }
 
 /* Estilos para a paginação */
