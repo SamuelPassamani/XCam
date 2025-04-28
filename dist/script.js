@@ -99,7 +99,12 @@ function renderCameras() {
                   </div>
               </div>
               <div class="card-body">
-                  <h3 class="card-title">@${camera.username}</h3>
+                  <div class="user-info">
+                      <!-- Imagem de perfil do usuário -->
+                      <img src="${camera.profileImageURL}" alt="${camera.username}" class="user-profile">
+                      <!-- Nome de usuário -->
+                      <h3 class="card-title">@${camera.username}</h3>
+                  </div>
                   <div class="card-info">
                       <span class="tags">${camera.tags
                         .map((tag) => tag.name)
