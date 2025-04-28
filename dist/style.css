@@ -447,18 +447,18 @@ nav {
 
   .movie-card {
     border-radius: 20px; /* Ajusta bordas para dispositivos móveis */
-    height: 150px; /* Altura igual a .category-card */
+    height: auto; /* Permite altura dinâmica baseada no conteúdo */
     overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajusta a sombra para dispositivos móveis */
   }
 
   .movie-card .card-head {
-    height: 150px; /* Ajusta a altura do cabeçalho */
+    height: auto; /* Ajusta dinamicamente a altura */
   }
 
   .movie-card .card-img {
-    height: 100%; /* Garante que a imagem preencha o cabeçalho */
-    object-fit: cover; /* Mantém a proporção da imagem */
+    height: auto; /* Garante que a altura seja proporcional */
+    object-fit: contain; /* Exibe a imagem inteira sem cortes */
   }
 }
 
