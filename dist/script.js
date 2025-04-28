@@ -99,9 +99,9 @@ function renderCameras() {
                   </div>
               </div>
               <div class="card-body">
-                  <div class="user-info">
+                  <div class="user-info user-profile-small">
                       <!-- Imagem de perfil do usuário -->
-                      <img src="${camera.profileImageURL}" alt="${camera.username}" class="user-profile">
+                      <img src="${camera.profileImageURL}" alt="${camera.username}" class="user-profile-small-img">
                       <!-- Nome de usuário -->
                       <h3 class="card-title">@${camera.username}</h3>
                   </div>
