@@ -501,70 +501,60 @@ nav {
   opacity: 1; /* Mostra o overlay no hover */
 }
 
-/* Visualizações */
-.movie-card .viewers {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--oxford-blue-50);
-  color: var(--white);
-  font-size: var(--font-size-small);
-  font-weight: var(--fw6);
-  padding: 5px 10px;
-  border-radius: 5px;
+/* Corpo do cartão */
+.movie-card .card-body {
+  padding: 15px;
   display: flex;
-  align-items: center;
-  gap: 5px;
+  flex-direction: column; /* Alinha os elementos na vertical */
+  align-items: flex-start; /* Alinha os elementos à esquerda */
 }
 
-.movie-card .viewers ion-icon {
-  font-size: 16px;
-  color: var(--light-azure);
-  display: inline-block; /* Corrige possíveis problemas de alinhamento */
-  vertical-align: middle; /* Alinha o ícone verticalmente com o texto */
+/* Nome do usuário */
+.movie-card .user-name {
+  font-size: var(--font-size-medium);
+  font-weight: var(--fw6);
+  color: var(--white);
+  margin-bottom: 5px; /* Espaçamento entre o nome e as tags */
 }
 
 /* Tags */
 .movie-card .tags {
   font-size: var(--font-size-extra-small);
   font-weight: var(--fw5);
-  text-align: center;
   color: var(--off-white);
-  margin-top: 7px;
-  margin-left: 50px;
-  margin-bottom: 10px;
+  margin: 0; /* Remove margens desnecessárias */
 }
 
-/* Estilos para os botões de paginação */
+/* Estilos para a paginação */
 .pagination {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Centraliza os botões */
   align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 10px; /* Espaçamento entre os botões */
+  margin-top: 30px; /* Espaçamento superior */
 }
 
 .pagination-button {
-  padding: 10px 20px;
+  padding: 10px 15px; /* Tamanho do botão */
   font-size: var(--font-size-small);
   font-weight: var(--fw5);
-  border: none;
-  border-radius: 5px;
-  background: var(--oxford-blue);
-  color: var(--white);
+  border: none; /* Remove borda padrão */
+  border-radius: 5px; /* Bordas arredondadas */
+  background: var(--oxford-blue); /* Cor de fundo padrão */
+  color: var(--white); /* Cor do texto */
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease, transform 0.2s ease; /* Transições suaves */
 }
 
 .pagination-button:hover {
-  background: var(--light-azure);
-  transform: scale(1.05);
+  background: var(--light-azure); /* Fundo no hover */
+  transform: scale(1.05); /* Leve aumento no hover */
 }
 
 .pagination-button.active {
-  background: var(--light-azure);
-  color: var(--oxford-blue);
-  font-weight: var(--fw6);
+  background: var(--light-azure); /* Fundo para o botão ativo */
+  color: var(--oxford-blue); /* Cor do texto no botão ativo */
+  font-weight: var(--fw6); /* Negrito para o botão ativo */
 }
 
 /*CATEGORY SECTION*/
