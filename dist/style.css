@@ -1102,8 +1102,8 @@ ul .link-item:not(:last-child) {
 }
 
 .user-profile-small img {
-  width: 30px; /* Tamanho reduzido para a página inicial */
-  height: 30px;
+  width: 60px; /* Tamanho reduzido para a página inicial */
+  height: 60px;
   border-radius: 50%; /* Torna a imagem circular */
   object-fit: cover;
   border: 1px solid var(--light-azure); /* Borda para destaque */
