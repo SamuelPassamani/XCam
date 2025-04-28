@@ -452,10 +452,13 @@ nav {
   overflow: hidden; /* Evita conteúdo ultrapassando os limites */
   background: var(--oxford-blue);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex; /* Garante que o conteúdo interno se mantenha em proporção */
+  flex-direction: column; /* Mantém o layout vertical */
 }
 
+/* Efeito hover no cartão de filme */
 .movie-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.05); /* Aumenta o cartão ligeiramente */
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Adiciona destaque ao hover */
 }
 
@@ -463,15 +466,23 @@ nav {
 .movie-card .card-head {
   position: relative;
   height: 250px;
+  overflow: hidden; /* Garante que a imagem não ultrapasse o container */
 }
 
 .movie-card .card-img {
   display: block;
   width: 100%;
-  height: 250px;
-  object-fit: cover; /* Ajusta a imagem para caber no espaço */
+  height: 100%;
+  object-fit: cover; /* Ajusta a imagem para caber no espaço sem cortar */
+  transition: transform 0.3s ease; /* Transição suave no hover */
 }
 
+/* Evita cortar a imagem durante o hover */
+.movie-card:hover .card-img {
+  transform: scale(1.1); /* Aumenta a imagem suavemente */
+}
+
+/* Overlay do cartão */
 .movie-card .card-overlay {
   position: absolute;
   top: 0;
@@ -490,35 +501,26 @@ nav {
   opacity: 1; /* Mostra o overlay no hover */
 }
 
-/* Visualizações */
-.movie-card .viewers {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--oxford-blue-50);
-  color: var(--white);
-  font-size: var(--font-size-small);
-  font-weight: var(--fw6);
-  padding: 5px 10px;
-  border-radius: 5px;
+/* Corpo do cartão (informações) */
+.movie-card .card-body {
+  background: var(--oxford-blue); /* Fundo consistente */
+  padding: 15px; /* Espaçamento interno */
   display: flex;
-  align-items: center;
-  gap: 5px;
+  flex-direction: column;
 }
 
-.movie-card .viewers ion-icon {
-  font-size: 16px;
-  color: var(--light-azure);
+.movie-card .card-title {
+  font-size: var(--font-size-medium);
+  font-weight: var(--fw6);
+  color: var(--white);
+  margin-bottom: 5px;
 }
 
-/* Tags */
 .movie-card .tags {
   font-size: var(--font-size-extra-small);
   font-weight: var(--fw5);
-  text-align: center;
   color: var(--off-white);
-  margin-top: 7px;
-  margin-left: 15px;
+  margin-top: 5px;
 }
 
 /* Estilos para os botões de paginação */
