@@ -643,7 +643,7 @@ nav {
    Especificidade Adicional para dist/user/index.html
 ============================ */
 
-/* Exemplo de uso específico para dist/user/index.html */
+/* Estilo específico para bandeiras dentro de perfis de usuário */
 .user-profile .country-flag {
   height: 1.5em; /* Altura ligeiramente maior */
   margin-left: 10px; /* Ajusta o espaçamento para o layout */
