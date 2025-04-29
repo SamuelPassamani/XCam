@@ -75,8 +75,14 @@ async function fetchCamerasData() {
 
 // Função para converter o código do país em ícone de bandeira
 function getCountryFlag(countryCode) {
-  if (!countryCode) return "Desconhecido";
-  return `<img src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}" class="country-flag">`;
+  if (!countryCode) {
+    console.warn("Código do país ausente ou inválido:", countryCode);
+    return `<div class="country">Desconhecido</div>`;
+  }
+  return `
+    <div class="country">
+      <img src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}" class="country-flag">
+    </div>`;
 }
 
 /* ============================
@@ -111,9 +117,7 @@ function renderCameras() {
           <div class="card-head">
             <img src="${camera.preview?.poster || camera.profileImageURL}" alt="${camera.username}" class="card-img">
             <div class="card-overlay">
-              <div class="country">
-                ${getCountryFlag(camera.countryCode)}
-              </div>
+              ${getCountryFlag(camera.countryCode)} <!-- Usa a função atualizada -->
               <div class="viewers">
                 <ion-icon name="eye-outline"></ion-icon>
                 <span>${camera.viewers}</span>
