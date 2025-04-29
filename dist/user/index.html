@@ -68,96 +68,104 @@
       <!-- User Profile Section -->
       <section class="user-profile">
         <div class="profile-container">
+          <!-- Cabeçalho do cartão com imagem de perfil -->
           <div class="card-head">
             <img id="profile-image" src="" alt="User Profile Image" class="card-img">
           </div>
+          <!-- Corpo do cartão com informações do usuário -->
           <div class="card-body">
             <h3 id="username" class="card-title"></h3>
             <div class="card-info">
-              <p><strong>País:</strong> <span id="country"></span></p>
-              <p><strong>Sexo:</strong> <span id="gender"></span></p>
-              <p><strong>Orientação Sexual:</strong> <span id="sexual-orientation"></span></p>
+              <!-- Exibição do país com bandeira -->
+              <p><strong>País:</strong>
+                <span id="country">
+                  <div class="country fallback">N/A</div>
+                </span>
+              </p>
+              <!-- Exibição do sexo -->
+              <p><strong>Sexo:</strong> <span id="gender">Não especificado</span></p>
+              <!-- Exibição da orientação sexual -->
+              <p><strong>Orientação Sexual:</strong> <span id="sexual-orientation">Não especificado</span></p>
             </div>
           </div>
         </div>
       </section>
-    </main>
 
-    <footer>
-      <div class="footer-content">
-        <div class="footer-brand">
-          <img src="https://site.my.eu.org/1:/logo.svg" alt="image" class="footer-logo">
-          <p class="slogan">Movies & TV Shows, Online Cinema, Movie Database HTML Template</p>
+      <footer>
+        <div class="footer-content">
+          <div class="footer-brand">
+            <img src="https://site.my.eu.org/1:/logo.svg" alt="image" class="footer-logo">
+            <p class="slogan">Movies & TV Shows, Online Cinema, Movie Database HTML Template</p>
 
-          <div class="social-link">
-            <a href="#">
-              <ion-icon name="logo-facebook"></ion-icon>
-            </a>
-            <a href="#">
-              <ion-icon name="logo-twitter"></ion-icon>
-            </a>
-            <a href="#">
-              <ion-icon name="logo-instagram"></ion-icon>
-            </a>
-            <a href="#">
-              <ion-icon name="logo-tiktok"></ion-icon>
-            </a>
-            <a href="#">
-              <ion-icon name="logo-youtube"></ion-icon>
-            </a>
+            <div class="social-link">
+              <a href="#">
+                <ion-icon name="logo-facebook"></ion-icon>
+              </a>
+              <a href="#">
+                <ion-icon name="logo-twitter"></ion-icon>
+              </a>
+              <a href="#">
+                <ion-icon name="logo-instagram"></ion-icon>
+              </a>
+              <a href="#">
+                <ion-icon name="logo-tiktok"></ion-icon>
+              </a>
+              <a href="#">
+                <ion-icon name="logo-youtube"></ion-icon>
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-links">
+            <ul>
+              <h4 class="link-heading">CineFlix</h4>
+
+              <li class="link-item"><a href="#">About us</a></li>
+              <li class="link-item"><a href="#">My profile</a></li>
+              <li class="link-item"><a href="#">Pricing plans</a></li>
+              <li class="link-item"><a href="#">Contacts</a></li>
+            </ul>
+
+            <ul>
+              <h4 class="link-heading">Browse</h4>
+
+              <li class="link-item"><a href="#">Live TV</a></li>
+              <li class="link-item"><a href="#">Live News</a></li>
+              <li class="link-item"><a href="#">Live Sports</a></li>
+              <li class="link-item"><a href="#">Streaming Library</a></li>
+            </ul>
+
+            <ul>
+
+              <li class="link-item"><a href="#">TV Shows</a></li>
+              <li class="link-item"><a href="#">Movies</a></li>
+              <li class="link-item"><a href="#">Kids</a></li>
+              <li class="link-item"><a href="#">Collections</a></li>
+            </ul>
+
+            <ul>
+              <h4 class="link-heading">Help</h4>
+
+              <li class="link-item"><a href="#">Account & Billing</a></li>
+              <li class="link-item"><a href="#">Plans & Pricing</a></li>
+              <li class="link-item"><a href="#">Supported Devices</a></li>
+              <li class="link-item"><a href="#">Accessibility</a></li>
+            </ul>
           </div>
         </div>
 
-        <div class="footer-links">
-          <ul>
-            <h4 class="link-heading">CineFlix</h4>
+        <div class="footer-copyright">
+          <div class="copyright">
+            <p>&copy; Copyright 2024 CineFlix</p>
+          </div>
 
-            <li class="link-item"><a href="#">About us</a></li>
-            <li class="link-item"><a href="#">My profile</a></li>
-            <li class="link-item"><a href="#">Pricing plans</a></li>
-            <li class="link-item"><a href="#">Contacts</a></li>
-          </ul>
-
-          <ul>
-            <h4 class="link-heading">Browse</h4>
-
-            <li class="link-item"><a href="#">Live TV</a></li>
-            <li class="link-item"><a href="#">Live News</a></li>
-            <li class="link-item"><a href="#">Live Sports</a></li>
-            <li class="link-item"><a href="#">Streaming Library</a></li>
-          </ul>
-
-          <ul>
-
-            <li class="link-item"><a href="#">TV Shows</a></li>
-            <li class="link-item"><a href="#">Movies</a></li>
-            <li class="link-item"><a href="#">Kids</a></li>
-            <li class="link-item"><a href="#">Collections</a></li>
-          </ul>
-
-          <ul>
-            <h4 class="link-heading">Help</h4>
-
-            <li class="link-item"><a href="#">Account & Billing</a></li>
-            <li class="link-item"><a href="#">Plans & Pricing</a></li>
-            <li class="link-item"><a href="#">Supported Devices</a></li>
-            <li class="link-item"><a href="#">Accessibility</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-copyright">
-        <div class="copyright">
-          <p>&copy; Copyright 2024 CineFlix</p>
+          <div class="wrapper">
+            <a href="#">Privacy policy</a>
+            <a href="#">Terms and conditions</a>
+          </div>
         </div>
 
-        <div class="wrapper">
-          <a href="#">Privacy policy</a>
-          <a href="#">Terms and conditions</a>
-        </div>
-      </div>
-
-    </footer>
+      </footer>
   </div>
 
   <script src="script.js"></script>
