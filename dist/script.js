@@ -57,6 +57,8 @@ async function fetchCamerasData() {
   }
 }
 
+"use strict";
+
 // Função para renderizar as câmeras
 function renderCameras() {
   const moviesGrid = document.querySelector("#movies-grid");
