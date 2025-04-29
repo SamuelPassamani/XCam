@@ -1,32 +1,41 @@
 "use strict";
 
+/* ============================
+        Variáveis Globais
+============================ */
 const header = document.querySelector("header");
 const nav = document.querySelector("nav");
 const navbarMenuBtn = document.querySelector(".navbar-menu-btn");
-
 const navbarForm = document.querySelector(".navbar-form");
 const navbarFormCloseBtn = document.querySelector(".navbar-form-close");
 const navbarSearchBtn = document.querySelector(".navbar-search-btn");
 
+let camerasData = []; // Dados das câmeras
+let currentPage = 1; // Página atual
+const camerasPerPage = 24; // Câmeras por página
+
+/* ============================
+        Funções de Navegação
+============================ */
+
+// Alterna o estado ativo do menu de navegação
 function navIsActive() {
   header.classList.toggle("active");
   nav.classList.toggle("active");
   navbarMenuBtn.classList.toggle("active");
 }
-
 navbarMenuBtn.addEventListener("click", navIsActive);
 
+// Alterna o estado ativo da barra de pesquisa
 const searchBarIsActive = () => navbarForm.classList.toggle("active");
-
 navbarSearchBtn.addEventListener("click", searchBarIsActive);
 navbarFormCloseBtn.addEventListener("click", searchBarIsActive);
 
-// Variáveis para controle de exibição
-let camerasData = []; // Armazena todos os dados das câmeras
-let currentPage = 1; // Página atual
-const camerasPerPage = 24; // Número de câmeras por página
+/* ============================
+        Função Fetch
+============================ */
 
-// Função para buscar os dados das câmeras
+// Busca os dados das câmeras
 async function fetchCamerasData() {
   const url = "https://site.my.eu.org/1:/male.json";
 
@@ -34,19 +43,15 @@ async function fetchCamerasData() {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Erro na requisição: ${response.status}`);
 
-    // Armazena os dados na variável global
     const data = await response.json();
 
-    // Verifica se a estrutura do JSON contém broadcasts.items
+    // Verifica se a estrutura do JSON é válida
     if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
       camerasData = data.broadcasts.items;
 
-      // Depuração: Verifica o total de itens no array
       console.log(`Total de itens carregados: ${camerasData.length}`);
-
-      // Renderiza a primeira página
-      renderCameras();
-      renderPagination();
+      renderCameras(); // Renderiza as câmeras
+      renderPagination(); // Renderiza a paginação
     } else {
       throw new Error(
         "Estrutura do JSON inválida ou items não encontrados em broadcasts"
@@ -57,9 +62,11 @@ async function fetchCamerasData() {
   }
 }
 
-"use strict";
+/* ============================
+        Renderização
+============================ */
 
-// Função para renderizar as câmeras
+// Renderiza as câmeras na página
 function renderCameras() {
   const moviesGrid = document.querySelector("#movies-grid");
   if (!moviesGrid) {
@@ -67,20 +74,14 @@ function renderCameras() {
     return;
   }
 
-  // Limpa o grid antes de adicionar novas câmeras
-  moviesGrid.innerHTML = "";
+  moviesGrid.innerHTML = ""; // Limpa o grid
 
-  // Calcula o índice inicial e final com base na página atual
   const startIndex = (currentPage - 1) * camerasPerPage;
   const endIndex = startIndex + camerasPerPage;
-
-  // Obtém as câmeras da página atual
   const currentBatch = camerasData.slice(startIndex, endIndex);
 
-  // Depuração: Verifica o lote atual de câmeras
   console.log(`Exibindo câmeras da página ${currentPage}:`, currentBatch);
 
-  // Adiciona os cartões de câmeras ao grid
   currentBatch.forEach((camera) => {
     const cameraCard = `
       <a href="https://xxx.filmes.net.eu.org/user/?id=${camera.username}" class="movie-card"> 
@@ -88,8 +89,8 @@ function renderCameras() {
               <div class="card-head">
                   <img src="${camera.preview?.poster || camera.profileImageURL}" alt="${camera.username}" class="card-img">
                   <div class="card-overlay">
-                      <div class="bookmark">
-                          <ion-icon name="bookmark"></ion-icon>
+                      <div class="country">
+                          <img src="https://flagcdn.com/w40/${camera.countryCode.toLowerCase()}.png" alt="${camera.country}" title="${camera.country}">
                       </div>
                       <div class="viewers">
                           <ion-icon name="eye-outline"></ion-icon>
@@ -102,9 +103,7 @@ function renderCameras() {
               </div>
               <div class="card-body">
                   <div class="user-info user-profile-small">
-                      <!-- Imagem de perfil do usuário -->
                       <img src="${camera.profileImageURL}" alt="${camera.username}" class="user-profile-small-img">
-                      <!-- Nome de usuário -->
                       <h3 class="card-title">@${camera.username}</h3>
                   </div>
                   <div class="card-info">
@@ -119,7 +118,7 @@ function renderCameras() {
   });
 }
 
-// Função para renderizar os botões de paginação
+// Renderiza os botões de paginação
 function renderPagination() {
   const paginationContainer = document.querySelector("#pagination");
   if (!paginationContainer) {
@@ -127,23 +126,17 @@ function renderPagination() {
     return;
   }
 
-  // Limpa o container antes de adicionar novos botões
-  paginationContainer.innerHTML = "";
-
+  paginationContainer.innerHTML = ""; // Limpa o container
   const totalPages = Math.ceil(camerasData.length / camerasPerPage);
 
-  // Depuração: Verifica o total de páginas
   console.log(`Total de páginas: ${totalPages}`);
 
-  // Define o número máximo de botões de paginação com base no tamanho da tela
-  const maxButtons = window.innerWidth <= 768 ? 3 : 7; // 3 para telas pequenas, 7 para maiores
+  const maxButtons = window.innerWidth <= 768 ? 3 : 7; // Botões por tamanho de tela
   const halfMaxButtons = Math.floor(maxButtons / 2);
 
-  // Calcula o intervalo inicial e final para os botões de paginação
   let startPage = Math.max(currentPage - halfMaxButtons, 1);
   let endPage = Math.min(startPage + maxButtons - 1, totalPages);
 
-  // Ajusta o intervalo se estiver no final da lista
   if (endPage - startPage + 1 < maxButtons && startPage > 1) {
     startPage = Math.max(endPage - maxButtons + 1, 1);
   }
@@ -161,7 +154,7 @@ function renderPagination() {
     paginationContainer.appendChild(prevButton);
   }
 
-  // Botões de números das páginas
+  // Botões de página
   for (let page = startPage; page <= endPage; page++) {
     const pageButton = document.createElement("button");
     pageButton.textContent = page;
@@ -190,7 +183,7 @@ function renderPagination() {
   }
 }
 
-// Recalcula a páginação quando a janela é redimensionada
+// Recalcula a paginação ao redimensionar a janela
 window.addEventListener("resize", () => {
   renderPagination();
 });
