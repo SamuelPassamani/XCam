@@ -77,11 +77,14 @@ async function fetchCamerasData() {
 function getCountryFlag(countryCode) {
   if (!countryCode) {
     console.warn("Código do país ausente ou inválido:", countryCode);
-    return `<div class="country">Desconhecido</div>`;
+    return `
+      <div class="country">
+        <span>Desconhecido</span>
+      </div>`;
   }
   return `
     <div class="country">
-      <img src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}" class="country-flag">
+      <img src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}">
     </div>`;
 }
 
