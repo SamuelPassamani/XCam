@@ -106,19 +106,23 @@ function updateProfileInfo(camera) {
  * @param {string} countryCode - O código do país (ex: "US", "BR").
  * @returns {string} - HTML contendo o ícone da bandeira ou um fallback.
  */
+
+/**
+ * Função para converter o código do país em um ícone de bandeira.
+ * Adiciona um fallback visual somente se o código do país estiver ausente ou inválido.
+ * @param {string} countryCode - Código do país (ex: "US", "BR").
+ * @returns {string} - HTML contendo o ícone da bandeira ou fallback.
+ */
 function getCountryFlag(countryCode) {
   if (!countryCode || typeof countryCode !== "string" || countryCode.length !== 2) {
-    console.warn("Código do país ausente ou inválido:", countryCode);
-    return `
-      <div class="country fallback">
-        N/A
-      </div>`;
+    return `<span class="country-fallback">N/A</span>`;
   }
-  // Retorna o HTML da bandeira com o código do país
+
+  // Retorna o HTML da bandeira com um fallback dinâmico via evento onerror
   return `
-    <div class="country">
-      <img src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}">
-    </div>`;
+    <img class="country-flag" src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}" 
+         onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<span class="country-fallback">N/A</span>');">
+  `;
 }
 
 /**
