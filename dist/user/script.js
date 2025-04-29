@@ -71,8 +71,17 @@ function updateProfileInfo(camera) {
 
 // Função para converter país em ícone de bandeira
 function getCountryFlag(countryCode) {
-  if (!countryCode) return "Desconhecido";
-  return `<img src="https://flagcdn.com/h40/${countryCode.toLowerCase()}.png" alt="${countryCode}" class="country-flag">`;
+  if (!countryCode) {
+    console.warn("Código do país ausente ou inválido:", countryCode);
+    return `
+      <div class="country">
+        <span>Desconhecido</span>
+      </div>`;
+  }
+  return `
+    <div class="country">
+      <img src="https://flagcdn.com/h40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}">
+    </div>`;
 }
 
 // Função para traduzir orientação sexual para português
