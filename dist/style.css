@@ -636,8 +636,8 @@ nav {
 
 /* Bandeiras alinhadas com texto */
 .country-flag {
-  height: 1em; /* Altura proporcional ao texto */
-  width: auto; /* Largura ajustada automaticamente */
+  height: 1em; /* Define a altura proporcional ao texto */
+  width: auto; /* Largura ajustada proporcionalmente */
   vertical-align: middle; /* Alinha verticalmente com o texto */
   display: inline-block; /* Exibe ao lado do texto */
   margin-left: 5px; /* Espaçamento entre o texto e a bandeira */
@@ -675,17 +675,17 @@ nav {
 
 /* Estilo quando não há bandeira disponível */
 .country.fallback {
-  display: flex; /* Alinha conteúdo no centro */
+  display: flex; /* Centraliza conteúdo no centro */
   justify-content: center;
   align-items: center;
   width: 36px;
   height: 24px;
   background-color: rgba(255, 0, 0, 0.2); /* Fundo vermelho claro */
-  color: var(--white);
-  font-size: 10px;
-  font-weight: var(--fw6);
-  border-radius: 4px;
-  border: 1px solid rgba(255, 0, 0, 0.5); /* Destaque para fallback */
+  color: var(--white); /* Utiliza uma variável para a cor branca */
+  font-size: 10px; /* Tamanho do texto menor */
+  font-weight: var(--fw6); /* Peso do texto em negrito */
+  border-radius: 4px; /* Bordas arredondadas */
+  border: 1px solid rgba(255, 0, 0, 0.5); /* Destaque para o fallback */
 }
 
 .country.fallback::after {
