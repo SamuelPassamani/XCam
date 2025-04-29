@@ -70,6 +70,16 @@ async function fetchCamerasData() {
 }
 
 /* ============================
+        Função Auxiliar
+============================ */
+
+// Função para converter o código do país em ícone de bandeira
+function getCountryFlag(countryCode) {
+  if (!countryCode) return "Desconhecido";
+  return `<img src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" title="${countryCode}" class="country-flag">`;
+}
+
+/* ============================
         Renderização
 ============================ */
 
@@ -102,7 +112,7 @@ function renderCameras() {
             <img src="${camera.preview?.poster || camera.profileImageURL}" alt="${camera.username}" class="card-img">
             <div class="card-overlay">
               <div class="country">
-                <img src="https://flagcdn.com/w40/${camera.countryCode?.toLowerCase()}.png" alt="${camera.country || "Desconhecido"}" title="${camera.country || "Desconhecido"}">
+                ${getCountryFlag(camera.countryCode)}
               </div>
               <div class="viewers">
                 <ion-icon name="eye-outline"></ion-icon>
@@ -197,7 +207,7 @@ function renderPagination() {
   }
 }
 
-// Recalcula a paginação ao redimensionar a janela
+// Recalcula a páginação ao redimensionar a janela
 window.addEventListener("resize", () => {
   renderPagination();
 });
