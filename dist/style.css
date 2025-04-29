@@ -650,10 +650,19 @@ nav {
 ============================ */
 
 /* Adaptação para bandeiras no perfil do usuário */
+.user-profile .country {
+  display: inline-flex; /* Alinha o texto e a bandeira */
+  align-items: center; /* Centraliza verticalmente a bandeira com o texto */
+}
+
 .user-profile .country-flag {
-  height: 1.5em; /* Maior que no texto comum */
-  margin-left: 10px; /* Espaçamento ajustado */
-  box-shadow: none; /* Remove a sombra padrão */
+  height: 1em; /* Alinha a altura da bandeira com o texto */
+  width: auto; /* Ajusta a largura proporcional à altura */
+  margin-left: 5px; /* Espaçamento entre a bandeira e o texto */
+}
+
+.user-profile .country-fallback {
+  display: none; /* Remove a mensagem "N/A" quando a bandeira é exibida */
 }
 
 /* ============================
