@@ -123,7 +123,7 @@ function renderCameras() {
   // Cria os cartões de câmera e adiciona ao grid
   currentBatch.forEach((camera) => {
     const cameraCard = `
-      <a href="https://xxx.filmes.net.eu.org/user/?id=${camera.username}" class="movie-card"> 
+      <a href="https://xcam.gay/user/?id=${camera.username}" class="movie-card"> 
         <div class="movie-card">
           <div class="card-head">
             <img src="${camera.preview?.poster || camera.profileImageURL}" alt="${camera.username}" class="card-img">
