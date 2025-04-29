@@ -61,7 +61,7 @@ function updatePlayer(camera) {
   const player = document.getElementById("live-player");
   if (player) {
     // Define o atributo 'src' do player para o link ao vivo do usuário
-    player.src = `https://xxx.filmes.net.eu.org/cam/?id=${camera.id}`;
+    player.src = `https://xcam.gay/cam/?id=${camera.id}`;
   } else {
     console.error("Elemento do player não encontrado no DOM.");
   }
