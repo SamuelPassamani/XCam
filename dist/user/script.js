@@ -87,7 +87,7 @@ function updateProfileInfo(camera) {
   if (username) username.textContent = `Usuário: ${camera.username}`;
 
   // Atualiza o país usando a função getCountryFlag
-  if (country) country.innerHTML = getCountryFlag(camera.countryCode);
+  if (country) country.innerHTML = getCountryFlag(camera.country); // Corrigido para usar `camera.country`
 
   // Atualiza o gênero traduzido para português
   if (gender) gender.textContent = translateGender(camera.gender);
@@ -107,7 +107,7 @@ function updateProfileInfo(camera) {
  * @returns {string} - HTML contendo o ícone da bandeira ou um fallback.
  */
 function getCountryFlag(countryCode) {
-  if (!countryCode) {
+  if (!countryCode || typeof countryCode !== "string" || countryCode.length !== 2) {
     console.warn("Código do país ausente ou inválido:", countryCode);
     return `
       <div class="country fallback">
