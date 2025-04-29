@@ -571,6 +571,27 @@ nav {
   color: var(--yellow); /* Destaque ao passar o mouse */
 }
 
+/* Estilo do ícone Play no hover */
+.movie-card .play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  z-index: 10;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.movie-card:hover .play {
+  transform: translate(-50%, -50%) scale(1.2); /* Ajusta o tamanho no hover */
+  opacity: 1; /* Exibe o ícone no hover */
+}
+
+.movie-card .play ion-icon {
+  font-size: 60px; /* Tamanho padrão do ícone */
+  --ionicon-stroke-width: 20px;
+}
+
 /* Estilos para a paginação */
 .pagination {
   display: flex;
