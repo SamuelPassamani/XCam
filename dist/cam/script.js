@@ -79,7 +79,7 @@ function setupPlayer(camera) {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     handleAdBlockDetection(playerInstance);
-    addForwardButton(playerInstance);
+    // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
   });
 }
 
@@ -123,7 +123,7 @@ function handleAdBlockDetection(playerInstance) {
   });
 }
 
-// Função para adicionar botão de avançar 10 segundos
+// Função para adicionar botão de avançar 10 segundos (desabilitada)
 function addForwardButton(playerInstance) {
   const playerContainer = playerInstance.getContainer();
   const rewindContainer = playerContainer.querySelector(".jw-display-icon-rewind");
