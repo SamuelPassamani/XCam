@@ -596,58 +596,87 @@ nav {
    Estilos para .movie-card
 ============================ */
 
-/* Estilo para o container da imagem do país */
+/* Container para a imagem do país */
 .movie-card .country {
   position: absolute;
   top: 10px; /* Alinhado ao canto superior */
   left: 10px; /* Alinhado ao canto esquerdo */
-  width: 36px; /* Ajustado para um tamanho ligeiramente maior */
-  height: 24px; /* Proporção ajustada para a bandeira */
-  opacity: 0; /* Inicialmente não visível */
+  width: 36px; /* Largura fixa para a bandeira */
+  height: 24px; /* Proporção ajustada da bandeira */
+  opacity: 0; /* Inicialmente invisível */
   z-index: 10; /* Aparece acima de outros elementos */
-  transition: opacity 0.3s ease, transform 0.3s ease; /* Transição suave para hover */
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Suavidade ao hover */
   background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
-  padding: 2px; /* Espaçamento interno para destacar a bandeira */
+  padding: 2px; /* Espaçamento interno */
   border-radius: 4px; /* Bordas arredondadas */
 }
 
-/* Exibe a imagem do país no hover */
+/* Exibição da bandeira ao passar o mouse */
 .movie-card:hover .country {
-  opacity: 1; /* Torna visível no hover */
-  transform: scale(1.1); /* Efeito de leve ampliação no hover */
+  opacity: 1; /* Torna visível */
+  transform: scale(1.1); /* Leve ampliação */
 }
 
-/* Estilo para a imagem da bandeira no contexto do .movie-card */
+/* Estilo específico para a imagem da bandeira dentro da .country */
 .movie-card .country img {
-  width: 100%; /* Preenche a largura do container */
-  height: 100%; /* Preenche a altura do container */
-  object-fit: cover; /* Garante que a imagem mantenha a proporção */
-  border-radius: 2px; /* Suaviza as bordas da bandeira */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra para destaque */
+  width: 100%; /* Preenche o container */
+  height: 100%; /* Proporção ajustada */
+  object-fit: cover; /* Garante que a proporção seja mantida */
+  border-radius: 2px; /* Suaviza as bordas */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Destaque com sombra */
 }
 
 /* ============================
    Estilos Globais para .country-flag
 ============================ */
 
-/* Estilo para bandeiras alinhadas com textos */
+/* Bandeiras alinhadas com texto */
 .country-flag {
-  height: 1em; /* Altura igual ao texto */
-  width: auto; /* Largura proporcional à altura */
+  height: 1em; /* Altura proporcional ao texto */
+  width: auto; /* Largura ajustada automaticamente */
   vertical-align: middle; /* Alinha verticalmente com o texto */
-  display: inline-block; /* Garante que fique ao lado do texto */
+  display: inline-block; /* Exibe ao lado do texto */
   margin-left: 5px; /* Espaçamento entre o texto e a bandeira */
 }
 
+/* Fallback para country-flag em casos de bandeira ausente */
+.country-flag::before {
+  content: "🏳️"; /* Exibe um ícone de fallback (bandeira em branco) */
+  display: inline-block; /* Garante alinhamento */
+}
+
 /* ============================
-   Especificidade Adicional para dist/user/index.html
+   Estilo Específico para dist/user/index.html
 ============================ */
 
-/* Estilo específico para bandeiras dentro de perfis de usuário */
+/* Adaptação para bandeiras no perfil do usuário */
 .user-profile .country-flag {
-  height: 1.5em; /* Altura ligeiramente maior */
-  margin-left: 10px; /* Ajusta o espaçamento para o layout */
-  box-shadow: none; /* Remove sombra se não for necessário */
+  height: 1.5em; /* Maior que no texto comum */
+  margin-left: 10px; /* Espaçamento ajustado */
+  box-shadow: none; /* Remove a sombra padrão */
+}
+
+/* ============================
+   Fallback para .country container
+============================ */
+
+/* Estilo quando não há bandeira disponível */
+.country.fallback {
+  display: flex; /* Alinha conteúdo no centro */
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 24px;
+  background-color: rgba(255, 0, 0, 0.2); /* Fundo vermelho claro */
+  color: var(--white);
+  font-size: 10px;
+  font-weight: var(--fw6);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 0, 0, 0.5); /* Destaque para fallback */
+}
+
+.country.fallback::after {
+  content: "N/A"; /* Texto para indicar ausência de bandeira */
 }
 
 /* Estilos para a paginação */
