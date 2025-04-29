@@ -592,6 +592,10 @@ nav {
   --ionicon-stroke-width: 20px;
 }
 
+/* ============================
+   Estilos para .movie-card
+============================ */
+
 /* Estilo para o container da imagem do país */
 .movie-card .country {
   position: absolute;
@@ -613,13 +617,37 @@ nav {
   transform: scale(1.1); /* Efeito de leve ampliação no hover */
 }
 
-/* Estilo para a imagem da bandeira */
+/* Estilo para a imagem da bandeira no contexto do .movie-card */
 .movie-card .country img {
   width: 100%; /* Preenche a largura do container */
   height: 100%; /* Preenche a altura do container */
   object-fit: cover; /* Garante que a imagem mantenha a proporção */
   border-radius: 2px; /* Suaviza as bordas da bandeira */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra para destaque */
+}
+
+/* ============================
+   Estilos Globais para .country-flag
+============================ */
+
+/* Estilo para bandeiras alinhadas com textos */
+.country-flag {
+  height: 1em; /* Altura igual ao texto */
+  width: auto; /* Largura proporcional à altura */
+  vertical-align: middle; /* Alinha verticalmente com o texto */
+  display: inline-block; /* Garante que fique ao lado do texto */
+  margin-left: 5px; /* Espaçamento entre o texto e a bandeira */
+}
+
+/* ============================
+   Especificidade Adicional para dist/user/index.html
+============================ */
+
+/* Exemplo de uso específico para dist/user/index.html */
+.user-profile .country-flag {
+  height: 1.5em; /* Altura ligeiramente maior */
+  margin-left: 10px; /* Ajusta o espaçamento para o layout */
+  box-shadow: none; /* Remove sombra se não for necessário */
 }
 
 /* Estilos para a paginação */
@@ -1252,15 +1280,6 @@ ul .link-item:not(:last-child) {
     border-radius: 5px; /* Reduz bordas arredondadas ainda mais em dispositivos pequenos */
     margin: 0 10px 30px 10px; /* Ajusta margens laterais para dispositivos pequenos */
   }
-}
-
-/* Estilo para alinhar a bandeira e o texto */
-.country-flag {
-  height: 1em; /* Altura igual ao texto */
-  width: auto; /* Largura proporcional à altura */
-  vertical-align: middle; /* Alinha verticalmente com o texto */
-  display: inline-block; /* Garante que fique ao lado do texto */
-  margin-left: 5px; /* Espaçamento entre o texto e a bandeira */
 }
 
 /* Responsividade para telas menores */
