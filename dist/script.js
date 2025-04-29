@@ -83,7 +83,7 @@ async function fetchCamerasData() {
  * @returns {string} - HTML do ícone de bandeira ou fallback.
  */
 function getCountryFlag(countryCode) {
-  if (!countryCode) {
+  if (!countryCode || typeof countryCode !== "string" || countryCode.length !== 2) {
     console.warn("Código do país ausente ou inválido:", countryCode);
     return `
       <div class="country fallback">
@@ -128,7 +128,7 @@ function renderCameras() {
           <div class="card-head">
             <img src="${camera.preview?.poster || camera.profileImageURL}" alt="${camera.username}" class="card-img">
             <div class="card-overlay">
-              ${getCountryFlag(camera.countryCode)} <!-- Insere a bandeira -->
+              ${getCountryFlag(camera.country)} <!-- Corrigido para usar camera.country -->
               <div class="viewers">
                 <ion-icon name="eye-outline"></ion-icon>
                 <span>${camera.viewers}</span>
@@ -169,26 +169,21 @@ function renderPagination() {
   // Limpa o container antes de adicionar novos botões
   paginationContainer.innerHTML = "";
 
-  // Calcula o total de páginas
   const totalPages = Math.ceil(camerasData.length / camerasPerPage);
 
   // Loga o total de páginas para depuração
   console.log(`Total de páginas: ${totalPages}`);
 
-  // Define o número máximo de botões exibidos com base na largura da tela
   const maxButtons = window.innerWidth <= 768 ? 3 : 7; // Ajusta para dispositivos móveis
   const halfMaxButtons = Math.floor(maxButtons / 2);
 
-  // Calcula o intervalo de páginas para os botões
   let startPage = Math.max(currentPage - halfMaxButtons, 1);
   let endPage = Math.min(startPage + maxButtons - 1, totalPages);
 
-  // Ajusta o intervalo se necessário
   if (endPage - startPage + 1 < maxButtons && startPage > 1) {
     startPage = Math.max(endPage - maxButtons + 1, 1);
   }
 
-  // Cria o botão "ANTERIOR", se aplicável
   if (currentPage > 1) {
     const prevButton = document.createElement("button");
     prevButton.textContent = "ANTERIOR";
@@ -201,13 +196,10 @@ function renderPagination() {
     paginationContainer.appendChild(prevButton);
   }
 
-  // Cria botões para cada página no intervalo
   for (let page = startPage; page <= endPage; page++) {
     const pageButton = document.createElement("button");
     pageButton.textContent = page;
-    pageButton.className = `pagination-button ${
-      page === currentPage ? "active" : ""
-    }`;
+    pageButton.className = `pagination-button ${page === currentPage ? "active" : ""}`;
     pageButton.addEventListener("click", () => {
       currentPage = page;
       renderCameras();
@@ -216,7 +208,6 @@ function renderPagination() {
     paginationContainer.appendChild(pageButton);
   }
 
-  // Cria o botão "PRÓXIMA", se aplicável
   if (currentPage < totalPages) {
     const nextButton = document.createElement("button");
     nextButton.textContent = "PRÓXIMA";
