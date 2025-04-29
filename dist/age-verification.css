@@ -5,8 +5,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: black;
-  color: white;
+  background: var(--rich-blank-fogra-29);
+  color: var(--white);
   z-index: 10000;
   display: flex;
   flex-direction: column;
@@ -18,13 +18,15 @@
 #age-verification-modal h1 {
   font-size: 2rem;
   margin-bottom: 20px;
+  color: var(--white);
 }
 
 #age-verification-modal p {
   max-width: 600px;
   margin-bottom: 30px;
-  font-size: 1rem;
+  font-size: var(--font-size-medium);
   line-height: 1.5;
+  color: var(--off-white);
 }
 
 #age-verification-modal .buttons {
@@ -34,41 +36,46 @@
 
 #age-verification-modal .buttons button {
   padding: 15px 25px;
-  font-size: 1rem;
+  font-size: var(--font-size-small);
+  font-weight: var(--fw5);
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 #age-verification-modal .buttons .enter {
-  background: #ff9900;
-  color: black;
+  background: var(--light-azure);
+  color: var(--white);
 }
 
 #age-verification-modal .buttons .enter:hover {
-  background: #e68a00;
+  background: var(--azure);
+  transform: scale(1.05);
 }
 
 #age-verification-modal .buttons .exit {
-  background: #333;
-  color: white;
+  background: var(--oxford-blue);
+  color: var(--white);
 }
 
 #age-verification-modal .buttons .exit:hover {
-  background: #555;
+  background: var(--oxford-blue-50);
+  transform: scale(1.05);
 }
 
 #age-verification-modal .footer {
   margin-top: 30px;
-  font-size: 0.9rem;
+  font-size: var(--font-size-extra-small);
+  color: var(--off-white);
 }
 
 #age-verification-modal .footer a {
-  color: #ff9900;
+  color: var(--light-azure);
   text-decoration: none;
 }
 
 #age-verification-modal .footer a:hover {
+  color: var(--azure);
   text-decoration: underline;
 }
