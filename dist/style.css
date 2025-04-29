@@ -592,6 +592,29 @@ nav {
   --ionicon-stroke-width: 20px;
 }
 
+/* Estilo para a imagem do país no hover */
+.movie-card .country {
+  position: absolute;
+  top: 10px; /* Alinhado ao canto superior */
+  left: 10px; /* Alinhado ao canto esquerdo */
+  width: 30px; /* Tamanho da imagem do país */
+  height: 20px; /* Proporção da bandeira */
+  opacity: 0; /* Inicialmente não visível */
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.movie-card:hover .country {
+  opacity: 1; /* Exibe a imagem do país no hover */
+}
+
+.movie-card .country img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Garante que a imagem mantenha a proporção */
+  border-radius: 3px; /* Bordas arredondadas para consistência visual */
+}
+
 /* Estilos para a paginação */
 .pagination {
   display: flex;
