@@ -47,11 +47,11 @@ function setupPlayer(camera) {
     displaytitle: true,
     displaydescription: true,
     abouttext: "Buy me a coffee ☕",
-    aboutlink: "https://xxx.filmes.net.eu.org/",
+    aboutlink: "https://xcam.gay/",
     skin: { name: "netflix" },
     logo: {
       file: "https://i.imgur.com/1inVaQD.png",
-      link: "https://xxx.filmes.net.eu.org",
+      link: "https://xcam.gay",
     },
     captions: {
       color: "#efcc00",
