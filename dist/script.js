@@ -122,11 +122,16 @@ function renderCameras() {
 
   // Cria os cartões de câmera e adiciona ao grid
   currentBatch.forEach((camera) => {
+    // Valida o profileImageURL e substitui por uma imagem padrão se estiver vazio ou inválido
+    const profileImageURL = camera.profileImageURL && camera.profileImageURL.trim() && camera.profileImageURL !== "null"
+      ? camera.profileImageURL
+      : "https://site.my.eu.org/0:/logo560.png";
+
     const cameraCard = `
       <a href="https://xcam.gay/user/?id=${camera.username}" class="movie-card"> 
         <div class="movie-card">
           <div class="card-head">
-            <img src="${camera.preview?.poster || camera.profileImageURL}" alt="${camera.username}" class="card-img">
+            <img src="${camera.preview?.poster || profileImageURL}" alt="${camera.username}" class="card-img">
             <div class="card-overlay">
               ${getCountryFlag(camera.country)} <!-- Corrigido para usar camera.country -->
               <div class="viewers">
@@ -140,13 +145,13 @@ function renderCameras() {
           </div>
           <div class="card-body">
             <div class="user-info user-profile-small">
-              <img src="${camera.profileImageURL}" alt="${camera.username}" class="user-profile-small-img">
+              <img src="${profileImageURL}" alt="${camera.username}" class="user-profile-small-img">
               <h3 class="card-title">@${camera.username}</h3>
             </div>
             <div class="card-info">
               <span class="tags">${camera.tags
-                .map((tag) => tag.name)
-                .join(", ")}</span>
+                .map((tag) => `#${tag.name}`)
+                .join(" ")}</span>
             </div>
           </div>
         </div>
