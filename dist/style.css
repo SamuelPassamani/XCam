@@ -2,16 +2,16 @@
 
 :root {
   --live-indicator-shadow: rgba(247, 37, 133, 0.5); /* Rosa translúcido */
-  --rich-blank-fogra-30: #3A0CA3; /* Azul Escuro */
-  --rich-blank-fogra-29: #7209B7; /* Roxo Escuro */
-  --live-indicator: #F72585; /* Rosa */
-  --oxford-blue-50: rgba(67, 97, 238, 0.8); /* Azul Claro translúcido */
+  --rich-blank-fogra-30: #7209B7; /* Roxo Escuro - Fundo Principal */
+  --rich-blank-fogra-29: #3A0CA3; /* Azul Escuro - Fundo Secundário */
+  --live-indicator: #FFBE0B; /* Amarelo - Indicador Vivo */
+  --oxford-blue-50: rgba(67, 97, 238, 0.5); /* Azul Claro translúcido */
   --oxford-blue: #4361EE; /* Azul Claro */
-  --light-azure: #FFBE0B; /* Amarelo */
-  --off-white: #FB8500; /* Laranja */
-  --yellow: #FFBE0B; /* Amarelo */
+  --light-azure: #F72585; /* Rosa - Destaques */
+  --off-white: #FFFFFF; /* Branco - Texto principal */
+  --yellow: #FB8500; /* Laranja - Pequenos Destaques */
   --white: #FFFFFF; /* Branco */
-  --azure: #4361EE; /* Azul Claro */
+  --azure: #3A0CA3; /* Azul Escuro - Complementar */
 
   --font-family: "Inter", sans-serif;
 
@@ -50,11 +50,11 @@ h3,
 h4,
 h5,
 h6 {
-  color: var(--white);
+  color: var(--off-white);
 }
 
 body {
-  background: var(--rich-blank-fogra-29);
+  background: var(--rich-blank-fogra-30); /* Fundo Principal */
   color: var(--off-white);
   -webkit-font-smoothing: antialiased;
 }
@@ -93,18 +93,18 @@ a {
 
 ::-webkit-scrollbar {
   background: transparent;
-  border-left: 1px solid var(--oxford-blue);
+  border-left: 1px solid var(--oxford-blue-50);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--light-azure);
   border-radius: 5em;
-  border: 3px solid var(--rich-blank-fogra-29);
+  border: 3px solid var(--rich-blank-fogra-30);
 }
 
 header,
 nav {
-  background: var(--rich-blank-fogra-29);
+  background: var(--rich-blank-fogra-30);
 }
 
 .container {
@@ -157,7 +157,7 @@ nav {
 }
 
 .navbar-link:hover {
-  color: var(--light-azure);
+  color: var(--light-azure); /* Rosa */
 }
 
 .indicator {
@@ -166,13 +166,13 @@ nav {
 
 .indicator::after {
   content: "";
-  background: var(--live-indicator);
+  background: var(--live-indicator); /* Amarelo */
   position: absolute;
   top: calc(50% - 1px);
   right: -15px;
   width: 4px;
   height: 4px;
-  box-shadow: 0 0 0 2px var(--live-indicator-shadow);
+  box-shadow: 0 0 0 2px var(--live-indicator-shadow); /* Rosa translúcido */
   border-radius: 5px;
 }
 
@@ -187,7 +187,7 @@ nav {
 }
 
 .navbar-form-search {
-  background: var(--oxford-blue);
+  background: var(--oxford-blue); /* Azul Claro */
   width: 100%;
   padding: 12px 20px;
   border-radius: 15px;
@@ -197,7 +197,7 @@ nav {
 }
 
 .navbar-form-btn {
-  background: var(--oxford-blue);
+  background: var(--oxford-blue); /* Azul Claro */
   position: absolute;
   top: calc(50% - 10px);
   right: 10px;
@@ -206,7 +206,7 @@ nav {
 .navbar-form-btn ion-icon,
 .navbar-search-btn ion-icon {
   font-size: 20px;
-  color: var(--light-azure);
+  color: var(--light-azure); /* Rosa */
   --ionicon-stroke-width: 50px;
 }
 
@@ -228,13 +228,13 @@ nav {
 
 .navbar-signin ion-icon {
   font-size: 22px;
-  color: var(--light-azure);
+  color: var(--light-azure); /* Rosa */
   margin-left: 5px;
   --ionicon-stroke-width: 30px;
 }
 
 .navbar-signin:hover span {
-  color: var(--light-azure);
+  color: var(--light-azure); /* Rosa */
 }
 
 /* Adicionado para ajustar a proporção da imagem dentro do navbar */
