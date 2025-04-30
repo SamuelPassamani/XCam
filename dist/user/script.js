@@ -18,7 +18,7 @@ if (!userId) {
  */
 function fetchUserData(userId) {
   // Faz a requisição para o arquivo JSON
-  fetch("https://site.my.eu.org/1:/male.json")
+  fetch("https://site.my.eu.org/0:/male.json")
     .then((response) => {
       if (!response.ok) {
         // Verifica se a requisição falhou e lança um erro
