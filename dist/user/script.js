@@ -81,8 +81,14 @@ function updateProfileInfo(camera) {
   const gender = document.getElementById("gender");
   const sexualOrientation = document.getElementById("sexual-orientation");
 
-  // Atualiza o elemento da imagem do perfil com a URL fornecida
-  if (profileImage) profileImage.src = camera.profileImageURL;
+  // Define uma imagem padrão caso profileImageURL seja inválido ou em branco
+  const profileImageURL =
+    camera.profileImageURL && camera.profileImageURL.trim() && camera.profileImageURL !== "null"
+      ? camera.profileImageURL
+      : "https://site.my.eu.org/0:/logo400.png";
+
+  // Atualiza o elemento da imagem do perfil com a URL fornecida ou padrão
+  if (profileImage) profileImage.src = profileImageURL;
 
   // Atualiza o username no elemento correspondente
   if (username) username.textContent = `Usuário: ${camera.username}`;
@@ -109,7 +115,7 @@ function updatePageTitle(camera) {
   const pageTitle = document.querySelector("title");
   if (pageTitle) {
     // Define o título dinamicamente com o nome do usuário
-    pageTitle.textContent = `XCam.Gay / Live @ ${camera.username}`;
+    pageTitle.textContent = `XCam @${camera.username}`;
   }
 }
 
