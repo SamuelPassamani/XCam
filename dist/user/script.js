@@ -85,7 +85,7 @@ function updateProfileInfo(camera) {
   const profileImageURL =
     camera.profileImageURL && camera.profileImageURL.trim() && camera.profileImageURL !== "null"
       ? camera.profileImageURL
-      : "https://site.my.eu.org/0:/logo1.png";
+      : "https://site.my.eu.org/0:/logo600.png";
 
   // Atualiza o elemento da imagem do perfil com a URL fornecida ou padrão
   if (profileImage) profileImage.src = profileImageURL;
