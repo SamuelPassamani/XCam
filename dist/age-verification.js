@@ -6,7 +6,7 @@ function confirmAge() {
 
 // Função para sair do site
 function exitSite() {
-  window.location.href = 'https://www.google.com'; // Redireciona para um site seguro
+  window.location.href = 'https://www.makingoff.eu.org'; // Redireciona para um site seguro
 }
 
 // Exibe o modal de verificação de idade se necessário
