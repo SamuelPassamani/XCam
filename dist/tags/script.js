@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selectedTag = urlParams.get("id");
 
   // URLs dos arquivos JSON
-  const TAGS_JSON_URL = "https://site.my.eu.org/1:/tags.json";
-  const USERS_JSON_URL = "https://site.my.eu.org/1:/male.json";
+  const TAGS_JSON_URL = "https://site.my.eu.org/0:/tags.json";
+  const USERS_JSON_URL = "https://site.my.eu.org/0:/male.json";
 
   // Variáveis de controle de paginação
   const LIMIT = 30; // Limite de itens por página
