@@ -40,9 +40,10 @@ function fetchUserData(userId) {
           return;
         }
 
-        // Atualiza o player e as informações do perfil com os dados do usuário
+        // Atualiza o player, as informações do perfil e o título da página com os dados do usuário
         updatePlayer(camera);
         updateProfileInfo(camera);
+        updatePageTitle(camera);
       } else {
         console.error("Estrutura do JSON inválida ou items não encontrados.");
       }
@@ -87,7 +88,7 @@ function updateProfileInfo(camera) {
   if (username) username.textContent = `Usuário: ${camera.username}`;
 
   // Atualiza o país usando a função getCountryFlag
-  if (country) country.innerHTML = getCountryFlag(camera.country); // Corrigido para usar `camera.country`
+  if (country) country.innerHTML = getCountryFlag(camera.country);
 
   // Atualiza o gênero traduzido para português
   if (gender) gender.textContent = translateGender(camera.gender);
@@ -97,6 +98,18 @@ function updateProfileInfo(camera) {
     sexualOrientation.textContent = translateOrientation(
       camera.sexualOrientation
     );
+  }
+}
+
+/**
+ * Função para atualizar o título da página com o nome do usuário.
+ * @param {Object} camera - Os dados da câmera do usuário.
+ */
+function updatePageTitle(camera) {
+  const pageTitle = document.querySelector("title");
+  if (pageTitle) {
+    // Define o título dinamicamente com o nome do usuário
+    pageTitle.textContent = `XCam.Gay / Live @ ${camera.username}`;
   }
 }
 
