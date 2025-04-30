@@ -125,7 +125,7 @@ function renderCameras() {
     // Valida o profileImageURL e substitui por uma imagem padrão se estiver vazio ou inválido
     const profileImageURL = camera.profileImageURL && camera.profileImageURL.trim() && camera.profileImageURL !== "null"
       ? camera.profileImageURL
-      : "https://site.my.eu.org/0:/logo1.png";
+      : "https://site.my.eu.org/0:/logo600.png";
 
     const cameraCard = `
       <a href="https://xcam.gay/user/?id=${camera.username}" class="movie-card"> 
