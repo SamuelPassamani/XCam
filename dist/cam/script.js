@@ -50,7 +50,7 @@ function setupPlayer(camera) {
     aboutlink: "https://xcam.gay/",
     skin: { name: "netflix" },
     logo: {
-      file: "https://i.imgur.com/1inVaQD.png",
+      file: "https://site.my.eu.org/0:/logo560.png",
       link: "https://xcam.gay",
     },
     captions: {
