@@ -44,7 +44,7 @@ const camerasPerPage = 24; // Número de câmeras exibidas por página
  * Os dados são armazenados na variável global `camerasData` após serem carregados.
  */
 async function fetchCamerasData() {
-  const url = "https://site.my.eu.org/1:/male.json";
+  const url = "https://site.my.eu.org/0:/male.json";
 
   try {
     // Faz uma requisição para buscar os dados JSON
