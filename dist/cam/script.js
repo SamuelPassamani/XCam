@@ -79,7 +79,38 @@ function setupPlayer(camera) {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     handleAdBlockDetection(playerInstance);
-    // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
+    handleAds(playerInstance); // Nova função para gerenciar ADS
+  });
+}
+
+// Função para gerenciar ADS
+function handleAds(playerInstance) {
+  const adsButton = document.getElementById("ads-button");
+  const adsContainer = document.getElementById("ads-container");
+  const player = document.getElementById("player");
+
+  let countdown = 5;
+
+  // Contagem regressiva
+  const countdownInterval = setInterval(() => {
+    countdown--;
+    if (countdown > 0) {
+      adsButton.textContent = `Aguarde... ${countdown}`;
+    } else {
+      clearInterval(countdownInterval); // Para o intervalo
+      adsButton.textContent = "Fechar Ads";
+      adsButton.disabled = false; // Habilita o botão
+      adsButton.style.cursor = "pointer"; // Atualiza o cursor
+    }
+  }, 1000);
+
+  // Evento de clique no botão para fechar o anúncio
+  adsButton.addEventListener("click", () => {
+    if (countdown <= 0) {
+      adsContainer.style.display = "none"; // Esconde o anúncio
+      adsButton.style.display = "none"; // Esconde o botão
+      player.classList.remove("player-disabled"); // Desbloqueia o player
+    }
   });
 }
 
