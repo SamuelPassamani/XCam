@@ -75,42 +75,49 @@ function setupPlayer(camera) {
     ],
   });
 
+  handleAds(playerInstance); // Chama a função de ADS
   playerInstance.off("ready", () => {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     handleAdBlockDetection(playerInstance);
-    handleAds(playerInstance); // Nova função para gerenciar ADS
   });
 }
 
 // Função para gerenciar ADS
 function handleAds(playerInstance) {
-  const adsButton = document.getElementById("ads-button");
-  const adsContainer = document.getElementById("ads-container");
-  const player = document.getElementById("player");
+  document.addEventListener("DOMContentLoaded", () => {
+    const adsButton = document.getElementById("ads-button");
+    const adsContainer = document.getElementById("ads-container");
+    const player = document.getElementById("player");
 
-  let countdown = 5;
-
-  // Contagem regressiva
-  const countdownInterval = setInterval(() => {
-    countdown--;
-    if (countdown > 0) {
-      adsButton.textContent = `Aguarde... ${countdown}`;
-    } else {
-      clearInterval(countdownInterval); // Para o intervalo
-      adsButton.textContent = "Fechar Ads";
-      adsButton.disabled = false; // Habilita o botão
-      adsButton.style.cursor = "pointer"; // Atualiza o cursor
+    if (!adsButton || !adsContainer || !player) {
+      console.error("Elementos de ADS não encontrados no DOM.");
+      return;
     }
-  }, 1000);
 
-  // Evento de clique no botão para fechar o anúncio
-  adsButton.addEventListener("click", () => {
-    if (countdown <= 0) {
-      adsContainer.style.display = "none"; // Esconde o anúncio
-      adsButton.style.display = "none"; // Esconde o botão
-      player.classList.remove("player-disabled"); // Desbloqueia o player
-    }
+    let countdown = 5; // Tempo inicial da contagem
+
+    // Inicia a contagem regressiva
+    const countdownInterval = setInterval(() => {
+      if (countdown > 1) {
+        countdown--;
+        adsButton.textContent = `Aguarde... ${countdown}`;
+      } else {
+        clearInterval(countdownInterval); // Para o intervalo
+        adsButton.textContent = "Fechar Ads";
+        adsButton.disabled = false; // Habilita o botão
+        adsButton.style.cursor = "pointer"; // Atualiza o cursor
+      }
+    }, 1000);
+
+    // Evento de clique no botão para fechar o ADS
+    adsButton.addEventListener("click", () => {
+      if (countdown <= 1) {
+        adsContainer.style.display = "none"; // Esconde o ADS
+        adsButton.style.display = "none"; // Esconde o botão
+        player.classList.remove("player-disabled"); // Desbloqueia o player
+      }
+    });
   });
 }
 
@@ -152,39 +159,4 @@ function handleAdBlockDetection(playerInstance) {
       location.reload();
     });
   });
-}
-
-// Função para adicionar botão de avançar 10 segundos (desabilitada)
-function addForwardButton(playerInstance) {
-  const playerContainer = playerInstance.getContainer();
-  const rewindContainer = playerContainer.querySelector(".jw-display-icon-rewind");
-  const forwardContainer = rewindContainer.cloneNode(true);
-  const forwardDisplayButton = forwardContainer.querySelector(".jw-icon-rewind");
-
-  forwardDisplayButton.style.transform = "scaleX(-1)";
-  forwardDisplayButton.ariaLabel = "Forward 10 Seconds";
-
-  const nextContainer = playerContainer.querySelector(".jw-display-icon-next");
-  nextContainer.parentNode.insertBefore(forwardContainer, nextContainer);
-
-  const buttonContainer = playerContainer.querySelector(".jw-button-container");
-  const rewindControlBarButton = buttonContainer.querySelector(".jw-icon-rewind");
-  const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
-
-  forwardControlBarButton.style.transform = "scaleX(-1)";
-  forwardControlBarButton.ariaLabel = "Forward 10 Seconds";
-
-  rewindControlBarButton.parentNode.insertBefore(
-    forwardControlBarButton,
-    rewindControlBarButton.nextElementSibling
-  );
-
-  [forwardDisplayButton, forwardControlBarButton].forEach((button) => {
-    button.onclick = () => {
-      playerInstance.seek(playerInstance.getPosition() + 10);
-    };
-  });
-
-  // Oculta o botão "Next"
-  playerContainer.querySelector(".jw-display-icon-next").style.display = "none";
 }
