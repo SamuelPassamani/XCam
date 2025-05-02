@@ -76,7 +76,7 @@ function setupPlayer(camera) {
   });
 
   handleAds(playerInstance); // Chama a função de ADS
-  playerInstance.off("ready", () => {
+  playerInstance.on("ready", () => {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     handleAdBlockDetection(playerInstance);
