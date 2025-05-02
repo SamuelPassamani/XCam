@@ -75,53 +75,11 @@ function setupPlayer(camera) {
     ],
   });
 
-  // Certifique-se de que o evento "ready" está configurado corretamente
-  playerInstance.on("ready", () => {
-    // Configurações adicionais do player
+  playerInstance.off("ready", () => {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     handleAdBlockDetection(playerInstance);
-
-    // Configura o ADS e inicia a contagem regressiva
-    handleAds(playerInstance);
-  });
-}
-
-// Função para gerenciar ADS
-function handleAds(playerInstance) {
-  document.addEventListener("DOMContentLoaded", () => {
-    const adsButton = document.getElementById("ads-button");
-    const adsContainer = document.getElementById("ads-container");
-    const player = document.getElementById("player");
-
-    if (!adsButton || !adsContainer || !player) {
-      console.error("Elementos de ADS não encontrados no DOM.");
-      return;
-    }
-
-    let countdown = 5; // Tempo inicial da contagem
-
-    // Inicia a contagem regressiva
-    const countdownInterval = setInterval(() => {
-      if (countdown > 1) {
-        countdown--;
-        adsButton.textContent = `Aguarde... ${countdown}`;
-      } else {
-        clearInterval(countdownInterval); // Para o intervalo
-        adsButton.textContent = "Fechar Ads";
-        adsButton.disabled = false; // Habilita o botão
-        adsButton.style.cursor = "pointer"; // Atualiza o cursor
-      }
-    }, 1000);
-
-    // Evento de clique no botão para fechar o ADS
-    adsButton.addEventListener("click", () => {
-      if (countdown <= 1) {
-        adsContainer.style.display = "none"; // Esconde o ADS
-        adsButton.style.display = "none"; // Esconde o botão
-        player.classList.remove("player-disabled"); // Desbloqueia o player
-      }
-    });
+    // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
   });
 }
 
