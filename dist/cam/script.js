@@ -75,11 +75,15 @@ function setupPlayer(camera) {
     ],
   });
 
-  handleAds(playerInstance); // Chama a função de ADS
+  // Certifique-se de que o evento "ready" está configurado corretamente
   playerInstance.on("ready", () => {
+    // Configurações adicionais do player
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     handleAdBlockDetection(playerInstance);
+
+    // Configura o ADS e inicia a contagem regressiva
+    handleAds(playerInstance);
   });
 }
 
@@ -159,4 +163,39 @@ function handleAdBlockDetection(playerInstance) {
       location.reload();
     });
   });
+}
+
+// Função para adicionar botão de avançar 10 segundos (desabilitada)
+function addForwardButton(playerInstance) {
+  const playerContainer = playerInstance.getContainer();
+  const rewindContainer = playerContainer.querySelector(".jw-display-icon-rewind");
+  const forwardContainer = rewindContainer.cloneNode(true);
+  const forwardDisplayButton = forwardContainer.querySelector(".jw-icon-rewind");
+
+  forwardDisplayButton.style.transform = "scaleX(-1)";
+  forwardDisplayButton.ariaLabel = "Forward 10 Seconds";
+
+  const nextContainer = playerContainer.querySelector(".jw-display-icon-next");
+  nextContainer.parentNode.insertBefore(forwardContainer, nextContainer);
+
+  const buttonContainer = playerContainer.querySelector(".jw-button-container");
+  const rewindControlBarButton = buttonContainer.querySelector(".jw-icon-rewind");
+  const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
+
+  forwardControlBarButton.style.transform = "scaleX(-1)";
+  forwardControlBarButton.ariaLabel = "Forward 10 Seconds";
+
+  rewindControlBarButton.parentNode.insertBefore(
+    forwardControlBarButton,
+    rewindControlBarButton.nextElementSibling
+  );
+
+  [forwardDisplayButton, forwardControlBarButton].forEach((button) => {
+    button.onclick = () => {
+      playerInstance.seek(playerInstance.getPosition() + 10);
+    };
+  });
+
+  // Oculta o botão "Next"
+  playerContainer.querySelector(".jw-display-icon-next").style.display = "none";
 }
