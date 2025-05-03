@@ -339,7 +339,7 @@ function createStreamCards(streams) {
                         <span class="viewers-badge">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.47[...]
                             </svg>
                             ${stream.viewers}
                         </span>
@@ -386,6 +386,81 @@ function createStreamCards(streams) {
   });
 }
 
+// Atualizar o evento de envio do chat
+document.querySelector(".chat-input").addEventListener("keypress", async (event) => {
+  if (event.key === "Enter") {
+    const input = event.target;
+    const message = input.value.trim();
+
+    if (message.length === 0) {
+      alert("Digite uma mensagem antes de enviar!");
+      return;
+    }
+
+    // Enviar a mensagem para a função serverless
+    try {
+      const response = await fetch("/.netlify/functions/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "Usuário", // Nome do usuário (pode ser dinâmico no futuro)
+          message,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Adiciona a mensagem ao chat localmente
+        const chatContainer = document.getElementById("chat-container");
+        const messageElement = document.createElement("div");
+        messageElement.className = "chat-message";
+        messageElement.innerHTML = `
+          <span class="font-semibold text-green-500">${data.username}:</span>
+          <span class="text-gray-300">${data.message}</span>
+        `;
+        chatContainer.appendChild(messageElement);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Limpa o campo de entrada
+        input.value = "";
+      } else {
+        alert(`Erro: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      alert("Erro ao enviar mensagem. Tente novamente.");
+    }
+  }
+});
+
+// Atualizar o chat em tempo real
+async function fetchMessages() {
+  try {
+    const response = await fetch("/.netlify/functions/chat");
+    const messages = await response.json();
+
+    const chatContainer = document.getElementById("chat-container");
+    chatContainer.innerHTML = ""; // Limpa o chat antes de recarregar
+
+    messages.forEach(({ username, message }) => {
+      const messageElement = document.createElement("div");
+      messageElement.className = "chat-message";
+      messageElement.innerHTML = `
+        <span class="font-semibold text-green-500">${username}:</span>
+        <span class="text-gray-300">${message}</span>
+      `;
+      chatContainer.appendChild(messageElement);
+    });
+
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } catch (error) {
+    console.error("Erro ao buscar mensagens:", error);
+  }
+}
+
+// Atualiza as mensagens a cada 5 segundos
+setInterval(fetchMessages, 5000);
+
 // Initialize the application
 document.addEventListener("DOMContentLoaded", function () {
   loadStreamsFromJSON()
@@ -402,84 +477,3 @@ document.addEventListener("DOMContentLoaded", function () {
                     `;
     });
 });
-// Simulate chat messages
-function simulateChat() {
-  const chatContainer = document.getElementById("chat-container");
-  const messages = [
-    {
-      name: "ArtEnthusiast",
-      color: "text-green-500",
-      message: "Adoro esse estilo de arte!"
-    },
-    {
-      name: "ColorLover",
-      color: "text-blue-400",
-      message: "Que cores vibrantes você está usando!"
-    },
-    {
-      name: "DesignFan",
-      color: "text-yellow-500",
-      message: "Qual técnica você está usando para essas linhas?"
-    },
-    {
-      name: "GalleryOwner",
-      color: "text-purple-400",
-      message: "Gostaria de expor seu trabalho na minha galeria!"
-    },
-    {
-      name: "ArtStudent",
-      color: "text-pink-400",
-      message: "Isso me inspira tanto para meus próprios projetos!"
-    }
-  ];
-  setInterval(() => {
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    const messageElement = document.createElement("div");
-    messageElement.className = "chat-message";
-    messageElement.innerHTML = `
-                    <span class="font-semibold ${randomMessage.color}">${randomMessage.name}:</span>
-                    <span class="text-gray-300">${randomMessage.message}</span>
-                `;
-    chatContainer.appendChild(messageElement);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    // Keep chat at a reasonable size
-    if (chatContainer.children.length > 20) {
-      chatContainer.removeChild(chatContainer.children[0]);
-    }
-  }, 5000);
-}
-simulateChat();
-
-(function () {
-  function c() {
-    var b = a.contentDocument || a.contentWindow.document;
-    if (b) {
-      var d = b.createElement("script");
-      d.innerHTML =
-        "window.__CF$cv$params={r:'93a339f834c7df41',t:'MTc0NjMxMTY3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-      b.getElementsByTagName("head")[0].appendChild(d);
-    }
-  }
-  if (document.body) {
-    var a = document.createElement("iframe");
-    a.height = 1;
-    a.width = 1;
-    a.style.position = "absolute";
-    a.style.top = 0;
-    a.style.left = 0;
-    a.style.border = "none";
-    a.style.visibility = "hidden";
-    document.body.appendChild(a);
-    if ("loading" !== document.readyState) c();
-    else if (window.addEventListener)
-      document.addEventListener("DOMContentLoaded", c);
-    else {
-      var e = document.onreadystatechange || function () {};
-      document.onreadystatechange = function (b) {
-        e(b);
-        "loading" !== document.readyState &&
-          ((document.onreadystatechange = e), c());
-      };
-    }
-  }
-})();
