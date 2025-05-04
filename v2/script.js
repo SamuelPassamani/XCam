@@ -81,16 +81,195 @@ function openStreamModal(stream) {
 
   // Map country codes to names
   const countryNames = {
-    us: "Estados Unidos",
+    af: "Afeganistão",
+    al: "Albânia",
+    dz: "Argélia",
+    ad: "Andorra",
+    ao: "Angola",
+    ag: "Antígua e Barbuda",
+    ar: "Argentina",
+    am: "Armênia",
+    au: "Austrália",
+    at: "Áustria",
+    az: "Azerbaijão",
+    bs: "Bahamas",
+    bh: "Bahrein",
+    bd: "Bangladesh",
+    bb: "Barbados",
+    by: "Belarus",
+    be: "Bélgica",
+    bz: "Belize",
+    bj: "Benim",
+    bt: "Butão",
+    bo: "Bolívia",
+    ba: "Bósnia e Herzegovina",
+    bw: "Botsuana",
     br: "Brasil",
-    co: "Colômbia",
-    it: "Itália",
-    fr: "França",
-    es: "Espanha",
-    de: "Alemanha",
-    uk: "Reino Unido",
+    bn: "Brunei",
+    bg: "Bulgária",
+    bf: "Burquina Faso",
+    bi: "Burundi",
+    cv: "Cabo Verde",
+    kh: "Camboja",
+    cm: "Camarões",
     ca: "Canadá",
-    jp: "Japão"
+    cf: "República Centro-Africana",
+    td: "Chade",
+    cl: "Chile",
+    cn: "China",
+    co: "Colômbia",
+    km: "Comores",
+    cg: "Congo",
+    cr: "Costa Rica",
+    ci: "Costa do Marfim",
+    hr: "Croácia",
+    cu: "Cuba",
+    cy: "Chipre",
+    cz: "República Tcheca",
+    cd: "República Democrática do Congo",
+    dk: "Dinamarca",
+    dj: "Djibuti",
+    dm: "Dominica",
+    do: "República Dominicana",
+    ec: "Equador",
+    eg: "Egito",
+    sv: "El Salvador",
+    gq: "Guiné Equatorial",
+    er: "Eritreia",
+    ee: "Estônia",
+    et: "Etiópia",
+    fj: "Fiji",
+    fi: "Finlândia",
+    fr: "França",
+    ga: "Gabão",
+    gm: "Gâmbia",
+    ge: "Geórgia",
+    de: "Alemanha",
+    gh: "Gana",
+    gr: "Grécia",
+    gd: "Granada",
+    gt: "Guatemala",
+    gn: "Guiné",
+    gw: "Guiné-Bissau",
+    gy: "Guiana",
+    ht: "Haiti",
+    hn: "Honduras",
+    hu: "Hungria",
+    is: "Islândia",
+    in: "Índia",
+    id: "Indonésia",
+    ir: "Irã",
+    iq: "Iraque",
+    ie: "Irlanda",
+    il: "Israel",
+    it: "Itália",
+    jm: "Jamaica",
+    jp: "Japão",
+    jo: "Jordânia",
+    kz: "Cazaquistão",
+    ke: "Quênia",
+    ki: "Kiribati",
+    kw: "Kuwait",
+    kg: "Quirguistão",
+    la: "Laos",
+    lv: "Letônia",
+    lb: "Líbano",
+    ls: "Lesoto",
+    lr: "Libéria",
+    ly: "Líbia",
+    li: "Liechtenstein",
+    lt: "Lituânia",
+    lu: "Luxemburgo",
+    mg: "Madagascar",
+    mw: "Malawi",
+    my: "Malásia",
+    mv: "Maldivas",
+    ml: "Mali",
+    mt: "Malta",
+    mh: "Ilhas Marshall",
+    mr: "Mauritânia",
+    mu: "Maurício",
+    mx: "México",
+    fm: "Micronésia",
+    md: "Moldávia",
+    mc: "Mônaco",
+    mn: "Mongólia",
+    me: "Montenegro",
+    ma: "Marrocos",
+    mz: "Moçambique",
+    mm: "Mianmar",
+    na: "Namíbia",
+    nr: "Nauru",
+    np: "Nepal",
+    nl: "Países Baixos",
+    nz: "Nova Zelândia",
+    ni: "Nicarágua",
+    ne: "Níger",
+    ng: "Nigéria",
+    kp: "Coreia do Norte",
+    no: "Noruega",
+    om: "Omã",
+    pk: "Paquistão",
+    pw: "Palau",
+    pa: "Panamá",
+    pg: "Papua-Nova Guiné",
+    py: "Paraguai",
+    pe: "Peru",
+    ph: "Filipinas",
+    pl: "Polônia",
+    pt: "Portugal",
+    qa: "Qatar",
+    ro: "Romênia",
+    ru: "Rússia",
+    rw: "Ruanda",
+    ws: "Samoa",
+    sm: "San Marino",
+    sa: "Arábia Saudita",
+    sn: "Senegal",
+    rs: "Sérvia",
+    sc: "Seicheles",
+    sl: "Serra Leoa",
+    sg: "Singapura",
+    sk: "Eslováquia",
+    si: "Eslovênia",
+    sb: "Ilhas Salomão",
+    so: "Somália",
+    za: "África do Sul",
+    kr: "Coreia do Sul",
+    ss: "Sudão do Sul",
+    es: "Espanha",
+    lk: "Sri Lanka",
+    sd: "Sudão",
+    sr: "Suriname",
+    se: "Suécia",
+    ch: "Suíça",
+    sy: "Síria",
+    tw: "Taiwan",
+    tj: "Tajiquistão",
+    tz: "Tanzânia",
+    th: "Tailândia",
+    tl: "Timor-Leste",
+    tg: "Togo",
+    to: "Tonga",
+    tt: "Trinidad e Tobago",
+    tn: "Tunísia",
+    tr: "Turquia",
+    tm: "Turcomenistão",
+    tv: "Tuvalu",
+    ug: "Uganda",
+    ua: "Ucrânia",
+    ae: "Emirados Árabes Unidos",
+    gb: "Reino Unido",
+    us: "Estados Unidos",
+    uy: "Uruguai",
+    uz: "Uzbequistão",
+    vu: "Vanuatu",
+    va: "Vaticano",
+    ve: "Venezuela",
+    vn: "Vietnã",
+    ye: "Iémen",
+    zm: "Zâmbia",
+    zw: "Zimbábue"
   };
 
   document.getElementById("modal-country").textContent =
@@ -105,7 +284,7 @@ function openStreamModal(stream) {
     profileImg.src = stream.profileImageURL;
   } else {
     // Default profile image if none provided
-    profileImg.src = "https://via.placeholder.com/80x80";
+    profileImg.src = "https://site.my.eu.org/0:/logo-600.png";
   }
 
   // Set player thumbnail
@@ -188,14 +367,52 @@ function openStreamModal(stream) {
 
 modalClose.addEventListener("click", function () {
   modal.classList.remove("active");
+
   // Reset ad overlay
-  document.getElementById("modal-ad-overlay").style.display = "none";
-  document.getElementById("modal-ad-timer").textContent = "Anúncio: 5s";
+  const adOverlay = document.getElementById("modal-ad-overlay");
+  adOverlay.style.display = "none";
+
+  // Reset ad timer
+  const adTimer = document.getElementById("modal-ad-timer");
+  adTimer.textContent = "Anúncio: 5s";
+
+  // Reset close button
   const closeBtn = document.getElementById("modal-ad-close-btn");
   closeBtn.textContent = "Aguarde...";
   closeBtn.classList.remove("bg-azul", "hover:bg-blue-600");
   closeBtn.classList.add("bg-gray-600", "cursor-not-allowed");
   closeBtn.disabled = true;
+
+  // Remove the dynamically added ad script (to clean up for the next modal display)
+  const adScript = document.getElementById("dynamic-ad-script");
+  if (adScript) {
+    adScript.remove();
+  }
+});
+
+function showAd() {
+  const adOverlay = document.getElementById("modal-ad-overlay");
+  adOverlay.style.display = "flex";
+
+  // Dynamically add the ad script
+  const adScript = document.createElement("script");
+  adScript.id = "dynamic-ad-script";
+  adScript.type = "text/javascript";
+  adScript.src =
+    "//www.highperformanceformat.com/f1784416e784eb3e8921b75e7a1b00c5/invoke.js";
+
+  // Create a container for the ad
+  const adContainer = document.getElementById("modal-ad-container");
+  adContainer.innerHTML = ""; // Clear any previous content
+  adContainer.appendChild(adScript);
+
+  // Start the ad timer
+  startAdTimer("modal-ad-timer", "modal-ad-close-btn");
+}
+
+// Call `showAd` whenever the modal is displayed
+document.getElementById("play-modal").addEventListener("click", function () {
+  showAd();
 });
 
 // Art style filter
@@ -244,6 +461,11 @@ document.querySelectorAll(".style-pill").forEach((pill) => {
   });
 });
 
+// Global variables for pagination
+let currentPage = 1;
+const itemsPerPage = 30;
+let allBroadcasts = [];
+
 // Load streams from JSON
 async function loadStreamsFromJSON() {
   try {
@@ -252,83 +474,41 @@ async function loadStreamsFromJSON() {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
+
+    // Store all broadcasts globally
+    allBroadcasts = data.broadcasts.items;
+
+    // Load the first page
+    loadPaginatedBroadcasts();
+
     return data;
   } catch (error) {
     console.error("Error loading streams:", error);
 
     // Fallback to sample data if fetch fails
-    return {
-      broadcasts: {
-        total: 787,
-        items: [
-          {
-            itemNumber: 1,
-            id: "54009215",
-            username: "PopArtCreator",
-            country: "br",
-            sexualOrientation: "straight",
-            profileImageURL: "",
-            preview: {
-              src: "",
-              poster:
-                "https://via.placeholder.com/400x225/1a1a1a/666666?text=Pop+Art+Stream"
-            },
-            viewers: 243,
-            broadcastType: "male",
-            gender: "male",
-            tags: []
-          },
-          {
-            itemNumber: 2,
-            id: "51008553",
-            username: "DigitalArtist",
-            country: "co",
-            sexualOrientation: "unknown",
-            profileImageURL: "https://via.placeholder.com/80x80",
-            preview: {
-              src: "",
-              poster:
-                "https://via.placeholder.com/400x225/1a1a1a/666666?text=Digital+Art"
-            },
-            viewers: 227,
-            broadcastType: "male",
-            gender: "male",
-            tags: [
-              {
-                name: "digital",
-                slug: "digital"
-              },
-              {
-                name: "neon",
-                slug: "neon"
-              },
-              {
-                name: "retro",
-                slug: "retro"
-              }
-            ]
-          },
-          {
-            itemNumber: 3,
-            id: "28498343",
-            username: "WarholFan",
-            country: "it",
-            sexualOrientation: "straight",
-            profileImageURL: "https://via.placeholder.com/80x80",
-            preview: {
-              src: "",
-              poster:
-                "https://via.placeholder.com/400x225/1a1a1a/666666?text=Warhol+Style"
-            },
-            viewers: 135,
-            broadcastType: "male_group",
-            gender: "male",
-            tags: []
-          }
-        ]
-      }
-    };
+    allBroadcasts = [
+      // Sample data here...
+    ];
+
+    // Load the first page of sample data
+    loadPaginatedBroadcasts();
   }
+}
+
+// Paginate and load broadcasts
+function loadPaginatedBroadcasts() {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const paginatedBroadcasts = allBroadcasts.slice(startIndex, endIndex);
+
+  // Create stream cards for the current page
+  createStreamCards({
+    broadcasts: { total: allBroadcasts.length, items: paginatedBroadcasts }
+  });
+
+  // Update pagination buttons
+  updatePaginationControls();
 }
 
 // Create stream cards
@@ -337,9 +517,10 @@ function createStreamCards(streams) {
   container.innerHTML = "";
 
   // Update stream count
-  document.getElementById(
-    "stream-count"
-  ).textContent = `${streams.broadcasts.total} transmissões`;
+  const streamCountElement = document.getElementById("stream-count");
+  if (streamCountElement) {
+    streamCountElement.textContent = `${streams.broadcasts.total} transmissões`;
+  }
 
   // Create cards for each stream
   streams.broadcasts.items.forEach((stream) => {
@@ -362,77 +543,164 @@ function createStreamCards(streams) {
 
     // Create HTML for the card
     card.innerHTML = `
-                    <div class="stream-thumbnail">
-                        <span class="live-badge">
-                            <span class="w-2 h-2 bg-white rounded-full mr-1 pulse"></span>
-                            AO VIVO
-                        </span>
-                        <span class="viewers-badge">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            ${stream.viewers}
-                        </span>
-                        <img src="${
-                          stream.preview && stream.preview.poster
-                            ? stream.preview.poster
-                            : `https://via.placeholder.com/400x225/1a1a1a/666666?text=${stream.username}`
-                        }" alt="${stream.username}">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-center">
-                            <img src="${
-                              stream.profileImageURL ||
-                              "https://via.placeholder.com/40x40"
-                            }" alt="${
+      <div class="stream-thumbnail">
+        <span class="live-badge">
+          <span class="w-2 h-2 bg-white rounded-full mr-1 pulse"></span>
+          AO VIVO
+        </span>
+        <span class="viewers-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          ${stream.viewers}
+        </span>
+        <img src="${
+          stream.preview?.poster ||
+          `https://via.placeholder.com/400x225/1a1a1a/666666?text=${stream.username}`
+        }" alt="${stream.username}">
+      </div>
+      <div class="p-4">
+        <div class="flex items-center">
+          <img src="${
+            stream.profileImageURL || "https://via.placeholder.com/40x40"
+          }" alt="${
       stream.username
     }" class="w-8 h-8 rounded-full border-2 border-azul mr-2">
-                            <h3 class="font-medium">${stream.username}</h3>
-                            <img src="https://flagcdn.com/w20/${
-                              stream.country
-                            }.png" alt="${
+          <h3 class="font-medium">${stream.username}</h3>
+<img src="https://flagcdn.com/w20/${stream.country}.png" alt="${
       stream.country
-    }" class="ml-auto w-5 h-5">
-                        </div>
-                        <div class="mt-2">
-                            <span class="text-sm text-gray-300">${artStyle}</span>
-                        </div>
-                        <div class="flex flex-wrap gap-1 mt-2">
-                            ${
-                              stream.tags && stream.tags.length > 0
-                                ? stream.tags
-                                    .slice(0, 2)
-                                    .map(
-                                      (tag) =>
-                                        `<span class="text-xs px-2 py-1 bg-opacity-30 bg-azul rounded-full">#${tag.name}</span>`
-                                    )
-                                    .join("")
-                                : `<span class="text-xs px-2 py-1 bg-opacity-30 bg-azul rounded-full">#PopArt</span>`
-                            }
-                        </div>
-                    </div>
-                `;
+    }" class="ml-auto country-flag">
+        </div>
+        <div class="mt-2">
+          <span class="text-sm text-gray-300">${artStyle}</span>
+        </div>
+        <div class="flex flex-wrap gap-1 mt-2">
+          ${
+            stream.tags?.length
+              ? stream.tags
+                  .slice(0, 2)
+                  .map(
+                    (tag) =>
+                      `<span class="text-xs px-2 py-1 bg-opacity-30 bg-azul rounded-full">#${tag.name}</span>`
+                  )
+                  .join("")
+              : `<span class="text-xs px-2 py-1 bg-opacity-30 bg-azul rounded-full">#PopArt</span>`
+          }
+        </div>
+      </div>
+    `;
 
     container.appendChild(card);
   });
 }
 
+// Atualiza os controles de paginação
+function updatePaginationControls() {
+  // Obtém o contêiner onde os botões de paginação serão inseridos
+  const paginationContainer = document.getElementById("pagination-controls");
+
+  // Limpa os controles de paginação existentes antes de adicionar novos
+  paginationContainer.innerHTML = "";
+
+  // Calcula o número total de páginas com base na quantidade total de itens e no número de itens por página
+  const totalPages = Math.ceil(allBroadcasts.length / itemsPerPage);
+
+  // Exibe o botão "Primeira Página" somente se não estiver na primeira página
+  if (currentPage > 1) {
+    const firstPageButton = document.createElement("button");
+    firstPageButton.textContent = "Primeira"; // Texto do botão
+    firstPageButton.className =
+      "bg-azul hover:bg-blue-600 text-white px-4 py-2 rounded-full mr-2"; // Estilo do botão
+    firstPageButton.onclick = () => {
+      currentPage = 1; // Define a página atual como a primeira página
+      loadPaginatedBroadcasts(); // Recarrega os itens da nova página
+    };
+    paginationContainer.appendChild(firstPageButton); // Adiciona o botão ao contêiner
+  }
+
+  // Exibe o botão "Página Anterior" somente se não estiver na primeira página
+  if (currentPage > 1) {
+    const prevButton = document.createElement("button");
+    prevButton.textContent = "<"; // Texto do botão
+    prevButton.className =
+      "bg-azul hover:bg-blue-600 text-white px-4 py-2 rounded-full mr-2"; // Estilo do botão
+    prevButton.onclick = () => {
+      currentPage--; // Reduz o número da página atual
+      loadPaginatedBroadcasts(); // Recarrega os itens da página atual
+    };
+    paginationContainer.appendChild(prevButton); // Adiciona o botão ao contêiner
+  }
+
+  // Define o número máximo de botões de páginas a serem exibidos
+  const maxPageButtons = 7;
+
+  // Calcula a primeira página a ser exibida, garantindo que não seja menor que 1
+  const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+
+  // Calcula a última página a ser exibida, garantindo que não exceda o total de páginas
+  const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+  // Adiciona os botões numerados para as páginas
+  for (let page = startPage; page <= endPage; page++) {
+    const pageButton = document.createElement("button");
+    pageButton.textContent = page; // Número da página exibido no botão
+
+    // Aplica estilos diferentes para destacar o botão da página atual
+    pageButton.className = `px-4 py-2 rounded-full ${
+      page === currentPage
+        ? "bg-azul text-white font-bold"
+        : "bg-gray-200 text-gray-800"
+    }`;
+
+    // Define a ação ao clicar no botão da página
+    pageButton.onclick = () => {
+      currentPage = page; // Atualiza a página atual para o número clicado
+      loadPaginatedBroadcasts(); // Recarrega os itens da nova página
+    };
+
+    paginationContainer.appendChild(pageButton); // Adiciona o botão ao contêiner
+  }
+
+  // Exibe o botão "Próxima Página" somente se não estiver na última página
+  if (currentPage < totalPages) {
+    const nextButton = document.createElement("button");
+    nextButton.textContent = ">"; // Texto do botão
+    nextButton.className =
+      "bg-azul hover:bg-blue-600 text-white px-4 py-2 rounded-full ml-2"; // Estilo do botão
+    nextButton.onclick = () => {
+      currentPage++; // Incrementa o número da página atual
+      loadPaginatedBroadcasts(); // Recarrega os itens da página atual
+    };
+    paginationContainer.appendChild(nextButton); // Adiciona o botão ao contêiner
+  }
+
+  // Exibe o botão "Última Página" somente se não estiver na última página
+  if (currentPage < totalPages) {
+    const lastPageButton = document.createElement("button");
+    lastPageButton.textContent = "Última"; // Texto do botão
+    lastPageButton.className =
+      "bg-azul hover:bg-blue-600 text-white px-4 py-2 rounded-full ml-2"; // Estilo do botão
+    lastPageButton.onclick = () => {
+      currentPage = totalPages; // Define a página atual como a última página
+      loadPaginatedBroadcasts(); // Recarrega os itens da nova página
+    };
+    paginationContainer.appendChild(lastPageButton); // Adiciona o botão ao contêiner
+  }
+}
+
 // Initialize the application
-document.addEventListener("DOMContentLoaded", function () {
-  loadStreamsFromJSON()
-    .then((data) => {
-      createStreamCards(data);
-    })
-    .catch((error) => {
-      console.error("Error initializing app:", error);
-      document.getElementById("streams-container").innerHTML = `
-                        <div class="col-span-full text-center py-10">
-                            <p class="text-vermelho text-lg">Erro ao carregar transmissões. Por favor, tente novamente mais tarde.</p>
-                            <button class="mt-4 bg-azul hover:bg-blue-600 text-white px-4 py-2 rounded-full">Tentar Novamente</button>
-                        </div>
-                    `;
-    });
+document.addEventListener("DOMContentLoaded", () => {
+  loadStreamsFromJSON().catch((error) => {
+    console.error("Error initializing app:", error);
+    const container = document.getElementById("streams-container");
+    container.innerHTML = `
+      <div class="col-span-full text-center py-10">
+        <p class="text-vermelho text-lg">Erro ao carregar transmissões. Por favor, tente novamente mais tarde.</p>
+        <button class="mt-4 bg-azul hover:bg-blue-600 text-white px-4 py-2 rounded-full">Tentar Novamente</button>
+      </div>
+    `;
+  });
 });
 
 // Simulate chat messages
