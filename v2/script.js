@@ -567,7 +567,7 @@ function createStreamCards(streams) {
           }" alt="${
       stream.username
     }" class="w-8 h-8 rounded-full border-2 border-azul mr-2">
-          <h3 class="font-medium">${stream.username}</h3>
+          <h3 class="font-medium">@${stream.username}</h3>
 <img src="https://flagcdn.com/w20/${stream.country}.png" alt="${
       stream.country
     }" class="ml-auto country-flag">
