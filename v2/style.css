@@ -274,11 +274,11 @@ body {
 }
 
 .country-flag {
-  width: 20px;
-  height: 14px;
+  height: 14px; /* Define a altura fixa */
+  width: auto; /* Ajusta a largura automaticamente para manter a proporção */
   margin-right: 6px;
   border-radius: 2px;
-  object-fit: cover;
+  object-fit: contain; /* Garante que a imagem se ajuste sem cortar ou distorcer */
 }
 
 .profile-image {
@@ -437,4 +437,132 @@ body {
   .stream-grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
+}
+
+/* Estilos para o modal de verificação de idade */
+#age-verification-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--rich-blank-fogra-29);
+  color: var(--white);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#age-verification-modal h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--white);
+}
+
+#age-verification-modal p {
+  max-width: 600px;
+  margin-bottom: 30px;
+  font-size: var(--font-size-medium);
+  line-height: 1.5;
+  color: var(--off-white);
+}
+
+#age-verification-modal .buttons {
+  display: flex;
+  gap: 15px;
+}
+
+#age-verification-modal .buttons button {
+  padding: 15px 25px;
+  font-size: var(--font-size-small);
+  font-weight: var(--fw5);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#age-verification-modal .buttons .enter {
+  background: var(--light-azure);
+  color: var(--white);
+}
+
+#age-verification-modal .buttons .enter:hover {
+  background: var(--azure);
+  transform: scale(1.05);
+}
+
+#age-verification-modal .buttons .exit {
+  background: var(--oxford-blue);
+  color: var(--white);
+}
+
+#age-verification-modal .buttons .exit:hover {
+  background: var(--oxford-blue-50);
+  transform: scale(1.05);
+}
+
+#age-verification-modal .footer {
+  margin-top: 30px;
+  font-size: var(--font-size-extra-small);
+  color: var(--off-white);
+}
+
+#age-verification-modal .footer a {
+  color: var(--light-azure);
+  text-decoration: none;
+}
+
+#age-verification-modal .footer a:hover {
+  color: var(--azure);
+  text-decoration: underline;
+}
+
+/* Contêiner de controles de paginação */
+#pagination-controls {
+  display: flex; /* Alinha os botões em linha */
+  justify-content: center; /* Centraliza os botões horizontalmente */
+  gap: 1rem; /* Espaçamento entre os botões */
+  margin-top: 1.5rem; /* Margem superior para separar os botões do conteúdo */
+}
+
+/* Estilo padrão dos botões de paginação */
+#pagination-controls button {
+  padding: 0.5rem 1rem; /* Espaçamento interno para aumentar a área clicável */
+  background-color: var(
+    --azul
+  ); /* Cor de fundo azul (definida como variável global) */
+  color: white; /* Cor do texto */
+  border: none; /* Remove bordas padrão */
+  border-radius: 0.5rem; /* Bordas arredondadas */
+  cursor: pointer; /* Mostra o cursor de "clique" ao passar o mouse */
+  transition: background-color 0.3s ease; /* Transição suave ao alterar a cor de fundo */
+}
+
+/* Estilo ao passar o mouse sobre o botão */
+#pagination-controls button:hover {
+  background-color: #005f9e; /* Cor de fundo azul mais escuro ao passar o mouse */
+}
+
+/* Estilo para botões desativados */
+#pagination-controls button:disabled {
+  background-color: #ccc; /* Cor de fundo cinza para botões desativados */
+  cursor: not-allowed; /* Cursor de "não permitido" ao passar o mouse */
+}
+
+/* Estilo para o botão da página atual */
+#pagination-controls button.current-page {
+  background-color: #005f9e; /* Azul mais escuro para destacar a página atual */
+  color: white; /* Cor do texto */
+  font-weight: bold; /* Texto em negrito para dar maior destaque */
+  cursor: default; /* Remove o cursor de clique para o botão da página atual */
+}
+
+/* Estilo ao passar o mouse sobre o botão da página atual (opcional, sem alteração) */
+#pagination-controls button.current-page:hover {
+  background-color: #005f9e; /* Mantém o fundo fixo no azul mais escuro */
+  cursor: default; /* Cursor permanece como padrão */
 }
