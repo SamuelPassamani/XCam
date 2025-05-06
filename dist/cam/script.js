@@ -78,7 +78,6 @@ function setupPlayer(camera) {
   playerInstance.off("ready", () => {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
-    handleAdBlockDetection(playerInstance);
     // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
   });
 }
@@ -109,18 +108,6 @@ function alignTimeSlider(playerInstance) {
   const spacer = buttonContainer.querySelector(".jw-spacer");
   const timeSlider = playerContainer.querySelector(".jw-slider-time");
   buttonContainer.replaceChild(timeSlider, spacer);
-}
-
-// Função para detectar bloqueadores de anúncios
-function handleAdBlockDetection(playerInstance) {
-  playerInstance.on("adBlock", () => {
-    const modal = document.querySelector("div.modal");
-    modal.style.display = "flex";
-
-    document.getElementById("close").addEventListener("click", () => {
-      location.reload();
-    });
-  });
 }
 
 // Função para adicionar botão de avançar 10 segundos (desabilitada)
