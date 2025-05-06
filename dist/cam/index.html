@@ -9,19 +9,19 @@
   <link rel="stylesheet" href="https://xcam.gay/style.css">
   <link rel="icon" type="image/svg+xml" href="https://site.my.eu.org/0:/logo.svg">
   <link rel="icon" type="image/png" href="https://site.my.eu.org/0:/logo.png">
-  <style>
-    /* Fullscreen Video CSS */
-    #player {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
 </head>
 
 <body>
   <!-- Player Section -->
   <div id="player"></div>
+
+  <!-- Ads Modal -->
+  <div class="ad-modal" id="ad-modal">
+    <div class="ad-modal-container">
+      <iframe src="https://v2.xcam.gay/ads.html" title="Advertisement"></iframe>
+      <button id="close-ad-btn">Aguarde... <span id="ad-countdown">15</span>s</button>
+    </div>
+  </div>
 
   <!-- ADBlock Modal -->
   <div class="modal">
