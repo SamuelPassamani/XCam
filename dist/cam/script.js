@@ -157,3 +157,35 @@ function addForwardButton(playerInstance) {
   // Oculta o botão "Next"
   playerContainer.querySelector(".jw-display-icon-next").style.display = "none";
 }
+
+// Nova funcionalidade: Exibição do modal de anúncios com contagem regressiva
+document.addEventListener("DOMContentLoaded", () => {
+  const adModal = document.getElementById("ad-modal");
+  const closeAdButton = document.getElementById("close-ad-btn");
+  const countdownElement = document.getElementById("ad-countdown");
+  const player = document.getElementById("player");
+
+  let countdown = 15;
+
+  // Contagem regressiva para o modal de anúncios
+  const interval = setInterval(() => {
+    countdown -= 1;
+    countdownElement.textContent = countdown;
+
+    if (countdown === 0) {
+      clearInterval(interval);
+      closeAdButton.textContent = "Fechar";
+      closeAdButton.classList.add("enabled");
+      closeAdButton.removeAttribute("disabled");
+      closeAdButton.style.cursor = "pointer";
+    }
+  }, 1000);
+
+  // Ação do botão "Fechar" no modal de anúncios
+  closeAdButton.addEventListener("click", () => {
+    if (countdown === 0) {
+      adModal.style.display = "none"; // Oculta o modal
+      player.style.display = "block"; // Exibe o player
+    }
+  });
+});
