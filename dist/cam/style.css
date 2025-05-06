@@ -969,3 +969,51 @@ Icone de Share.
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+/* Modal Styles */
+.modal, .ad-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 999;
+  font-family: "Rubik", Arial, sans-serif;
+  color: #fff;
+}
+
+.ad-modal-container {
+  width: 60rem;
+  background-color: #181919;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.ad-modal iframe {
+  width: 100%;
+  height: 30rem;
+  border: none;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.ad-modal button {
+  font-size: 1.6rem;
+  padding: 1rem 2rem;
+  background-color: #055689;
+  color: #fff;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: not-allowed; /* Desabilitado inicialmente */
+  transition: all 0.3s ease-in-out;
+}
+
+.ad-modal button.enabled {
+  cursor: pointer;
+  background-color: #10ac84;
+}
