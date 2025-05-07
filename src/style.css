@@ -1,0 +1,209 @@
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.banner-slide {
+  transition: transform 0.5s ease;
+}
+
+.stream-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+}
+
+.stream-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.filter-pill.active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.banner-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.banner-wrapper {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.gradient-overlay {
+  background: linear-gradient(
+    to right,
+    rgba(15, 23, 42, 0.9),
+    transparent 20%,
+    transparent 80%,
+    rgba(15, 23, 42, 0.9)
+  );
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Ad containers */
+.ad-container {
+  background-color: rgba(30, 41, 59, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 1px dashed #475569;
+  overflow: hidden;
+}
+
+.ad-container iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* Specific ad sizes */
+.ad-300x250 {
+  width: 300px;
+  height: 250px;
+}
+
+.ad-728x90 {
+  width: 728px;
+  height: 90px;
+}
+
+.ad-468x60 {
+  width: 468px;
+  height: 60px;
+}
+
+.ad-160x300 {
+  width: 160px;
+  height: 300px;
+}
+
+.ad-160x600 {
+  width: 160px;
+  height: 600px;
+}
+
+.ad-320x50 {
+  width: 320px;
+  height: 50px;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #1e293b;
+  margin: 5% auto;
+  width: 90%;
+  max-width: 900px;
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  z-index: 60;
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background-color: rgba(239, 68, 68, 0.8);
+}
+
+.modal-video {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #000;
+}
+
+.country-flag {
+  width: 1.5rem;
+  height: 1rem;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #3b82f6;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments for ads */
+@media (max-width: 768px) {
+  .ad-728x90,
+  .ad-468x60 {
+    width: 100%;
+    max-width: 468px;
+  }
+
+  .sidebar-ad {
+    display: none;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 10% auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .ad-728x90,
+  .ad-468x60 {
+    height: 60px;
+  }
+}
