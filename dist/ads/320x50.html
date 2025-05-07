@@ -4,14 +4,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ads 320x50</title>
     <style>
-        body {
+        html, body {
             margin: 0;
             padding: 0;
+            overflow: hidden; /* Bloqueia a barra de rolagem */
+            width: 100%;
+            height: 100%;
+        }
+        body {
             background-image: url('https://lh3.googleusercontent.com/d/1DLTzvLxRZOaXWbXFaOosYNfc9zfIWIpV?authuser=0');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            height: 100vh;
         }
         .ad-container {
             position: absolute;
