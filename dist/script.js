@@ -814,7 +814,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }" class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-medium text-white">${
+                                <h4 class="font-medium text-white">@${
                                   relatedStream.username
                                 }</h4>
                                 <div class="flex items-center text-xs text-slate-400">
