@@ -444,11 +444,13 @@ function renderBroadcasts(broadcastsList) {
     card.onclick = () => openModal(broadcast.id);
     // Create tags HTML
     const tagsHTML =
-      broadcast.tags.length > 0
+      broadcast.tags && broadcast.tags.length > 0
         ? broadcast.tags
             .map(
               (tag) =>
-                `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">#${tag}</span>`
+                `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">#${
+                  tag.name || tag
+                }</span>`
             )
             .join(" ")
         : "";
@@ -577,11 +579,11 @@ function openModal(broadcastId) {
       const tagElement = document.createElement("span");
       tagElement.className =
         "bg-xcam-blue bg-opacity-30 text-xcam-blue px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-opacity-50 transition-colors";
-      tagElement.textContent = `#${tag}`;
+      tagElement.textContent = `#${tag.name || tag}`; // Corrigido para acessar a propriedade correta ou usar o valor se for string
       tagElement.addEventListener("click", () => {
-        filters.search = tag;
-        searchInput.value = tag;
-        mobileSearchInput.value = tag;
+        filters.search = tag.name || tag; // Usar a propriedade correta
+        searchInput.value = tag.name || tag;
+        mobileSearchInput.value = tag.name || tag;
         closeModalHandler();
         filterBroadcasts();
       });
@@ -614,7 +616,7 @@ function openModal(broadcastId) {
           <h4 class="font-medium text-white mt-2">@${related.username}</h4>
           <div class="flex items-center text-sm text-gray-400">
             <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${related.country}.png)"></span>
-            <span>${related.viewers} viewers</span>
+            <span>${related.viewers} espectadores</span>
           </div>
         `;
     relatedBroadcasts.appendChild(relatedItem);
