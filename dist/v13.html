@@ -1,0 +1,461 @@
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XCam - Transmissões ao Vivo</title>
+  <link href="./v13.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'xcam-yellow': '#FFD700',
+            'xcam-pink': '#FF007F',
+            'xcam-orange': '#FF4500',
+            'xcam-blue': '#4169E1',
+            'xcam-purple': '#800080',
+          },
+          fontFamily: {
+            'inter': ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+</head>
+
+<body class="min-h-screen">
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden bg-xcam-blue p-4 rounded-lg shadow-lg max-w-xs">
+    <div class="flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span id="toast-message">Notificação</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-gray-900 to-black border-b border-gray-800 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex flex-wrap items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <div class="logo-shape">
+            <h1 class="text-3xl md:text-4xl logo-text">XCam</h1>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="#" class="text-white hover:text-xcam-yellow transition-colors">Início</a>
+          <a href="#" class="text-white hover:text-xcam-pink transition-colors">Explorar</a>
+          <a href="#" class="text-white hover:text-xcam-orange transition-colors">Categorias</a>
+          <a href="#" class="bg-gradient-to-r from-xcam-pink to-xcam-purple px-4 py-2 rounded-full font-medium hover:opacity-90 transition-opacity">Transmitir</a>
+        </nav>
+
+        <!-- Search Bar -->
+        <div class="hidden md:block w-full md:w-auto mt-4 md:mt-0 order-3 md:order-2">
+          <div class="relative">
+            <input type="text" id="search-input" placeholder="Buscar transmissões..." class="w-full md:w-64 lg:w-80 bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none order-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="md:hidden hidden mt-4 pb-2">
+        <div class="flex flex-col space-y-3">
+          <a href="#" class="text-white hover:text-xcam-yellow transition-colors">Início</a>
+          <a href="#" class="text-white hover:text-xcam-pink transition-colors">Explorar</a>
+          <a href="#" class="text-white hover:text-xcam-orange transition-colors">Categorias</a>
+          <a href="#" class="bg-gradient-to-r from-xcam-pink to-xcam-purple px-4 py-2 rounded-full font-medium hover:opacity-90 transition-opacity text-center">Transmitir</a>
+          <div class="relative mt-2">
+            <input type="text" id="mobile-search-input" placeholder="Buscar transmissões..." class="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Banner Carousel -->
+    <section class="mb-10 relative overflow-hidden rounded-xl retro-glow">
+      <div id="carousel" class="relative h-64 md:h-80 lg:h-96">
+        <div id="carousel-items" class="h-full">
+          <!-- Carousel items will be inserted here by JavaScript -->
+          <div class="carousel-item absolute inset-0 opacity-0 transition-opacity duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
+            <img src="" alt="Transmissão em destaque" class="w-full h-full object-cover">
+            <div class="absolute bottom-0 left-0 p-6 z-20">
+              <span class="bg-xcam-pink text-white px-2 py-1 rounded-md text-sm font-medium mb-2 inline-block">AO VIVO</span>
+              <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Carregando...</h2>
+              <p class="text-gray-300 mb-3"><span id="carousel-viewers">0</span> espectadores</p>
+              <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Assistir</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <button id="prev-slide" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button id="next-slide" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <!-- Carousel Indicators -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20" id="carousel-indicators">
+          <!-- Indicators will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Left Sidebar - Filters and Top Streamers -->
+      <aside class="w-full lg:w-1/4 space-y-6">
+        <!-- Filters -->
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+          <h3 class="text-xl font-bold mb-4 text-white">Filtros</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-gray-300 mb-2">País</label>
+              <select id="filter-country" class="w-full bg-gray-800 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+                <option value="">Todos os países</option>
+                <option value="br">Brasil</option>
+                <option value="us">Estados Unidos</option>
+                <option value="es">Espanha</option>
+                <option value="fr">França</option>
+                <option value="it">Itália</option>
+                <option value="de">Alemanha</option>
+                <option value="jp">Japão</option>
+                <option value="kr">Coreia do Sul</option>
+                <option value="ru">Rússia</option>
+                <option value="ca">Canadá</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2">Gênero</label>
+              <select id="filter-gender" class="w-full bg-gray-800 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+                <option value="">Todos</option>
+                <option value="male">Masculino</option>
+                <option value="female">Feminino</option>
+                <option value="trans">Trans</option>
+                <option value="couple">Casal</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2">Orientação</label>
+              <select id="filter-orientation" class="w-full bg-gray-800 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+                <option value="">Todas</option>
+                <option value="straight">Hetero</option>
+                <option value="gay">Gay</option>
+                <option value="lesbian">Lésbica</option>
+                <option value="bisexual">Bissexual</option>
+              </select>
+            </div>
+            <button id="apply-filters" class="w-full bg-gradient-to-r from-xcam-pink to-xcam-purple py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">Aplicar Filtros</button>
+          </div>
+        </div>
+
+        <!-- Top Streamers -->
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+          <h3 class="text-xl font-bold mb-4 text-white">Streamers em Alta</h3>
+          <div id="top-streamers" class="space-y-3">
+            <!-- Top streamers will be inserted here by JavaScript -->
+            <div class="animate-pulse">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                <div class="flex-1">
+                  <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+            <div class="animate-pulse">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                <div class="flex-1">
+                  <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+            <div class="animate-pulse">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                <div class="flex-1">
+                  <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ad Space (160x600) -->
+        <div class="ad-placeholder h-[600px] w-[160px] mx-auto rounded-lg">
+          <span>ANÚNCIO<br>160 x 600</span>
+        </div>
+      </aside>
+
+      <!-- Main Content - Broadcasts Grid -->
+      <div class="w-full lg:w-3/4">
+        <!-- Ad Space (728x90) -->
+        <div class="ad-placeholder h-[90px] w-full max-w-[728px] mx-auto mb-6 rounded-lg">
+          <span>ANÚNCIO 728 x 90</span>
+        </div>
+
+        <!-- Broadcasts Grid -->
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold mb-4 text-white">Transmissões ao Vivo</h2>
+
+          <!-- Loading State -->
+          <div id="loading-state" class="flex flex-col items-center justify-center py-12">
+            <span class="loader mb-4"></span>
+            <p class="text-gray-400">Carregando transmissões...</p>
+          </div>
+
+          <!-- Error State -->
+          <div id="error-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+            <svg class="w-16 h-16 text-xcam-pink mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="text-xl font-bold mb-2">Ops! Algo deu errado</h3>
+            <p class="text-gray-400 mb-4">Não foi possível carregar as transmissões.</p>
+            <button id="retry-button" class="bg-xcam-blue px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Tentar novamente</button>
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+            <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <h3 class="text-xl font-bold mb-2">Nenhuma transmissão encontrada</h3>
+            <p class="text-gray-400">Tente ajustar seus filtros ou volte mais tarde.</p>
+          </div>
+
+          <!-- Broadcasts Grid -->
+          <div id="broadcasts-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Broadcasts will be inserted here by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="flex justify-center items-center space-x-2 mt-8 hidden">
+          <button id="first-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Primeira</button>
+          <button id="prev-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Anterior</button>
+          <div id="page-numbers" class="flex space-x-2">
+            <!-- Page numbers will be inserted here by JavaScript -->
+          </div>
+          <button id="next-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Próxima</button>
+          <button id="last-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Última</button>
+        </div>
+
+        <!-- Ad Space (468x60) -->
+        <div class="ad-placeholder h-[60px] w-full max-w-[468px] mx-auto mt-8 rounded-lg">
+          <span>ANÚNCIO 468 x 60</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal for Broadcast -->
+  <div id="broadcast-modal" class="modal">
+    <span class="close-modal">&times;</span>
+    <div class="modal-content p-4 md:p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Video Player -->
+        <div class="lg:col-span-2">
+          <div class="relative aspect-video bg-black rounded-lg overflow-hidden">
+            <div id="modal-player" class="w-full h-full flex items-center justify-center">
+              <button id="play-button" class="bg-xcam-pink hover:bg-opacity-90 text-white rounded-full w-16 h-16 flex items-center justify-center">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </button>
+              <img id="modal-thumbnail" src="" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
+            </div>
+            <iframe id="modal-iframe" class="w-full h-full absolute inset-0 hidden" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+          <!-- Streamer Info -->
+          <div class="mt-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <img id="modal-avatar" src="" alt="Avatar" class="w-12 h-12 rounded-full mr-3">
+                <div>
+                  <h3 id="modal-username" class="text-xl font-bold">Carregando...</h3>
+                  <div class="flex items-center text-gray-400">
+                    <span id="modal-country-flag" class="flag-icon"></span>
+                    <span id="modal-country-name">Carregando...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="badge-live px-2 py-1 rounded-md text-white text-sm font-medium">AO VIVO</div>
+                <div class="text-gray-400 mt-1"><span id="modal-viewers">0</span> espectadores</div>
+              </div>
+            </div>
+
+            <!-- Tags and Details -->
+            <div class="mt-4 flex flex-wrap gap-2">
+              <span id="modal-gender" class="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">Gênero</span>
+              <span id="modal-orientation" class="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">Orientação</span>
+              <span id="modal-type" class="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">Tipo</span>
+            </div>
+
+            <div id="modal-tags" class="mt-3 flex flex-wrap gap-2">
+              <!-- Tags will be inserted here by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Broadcasts -->
+        <div class="lg:col-span-1">
+          <h3 class="text-xl font-bold mb-4">Transmissões Relacionadas</h3>
+          <div id="related-broadcasts" class="space-y-4">
+            <!-- Related broadcasts will be inserted here by JavaScript -->
+            <div class="animate-pulse">
+              <div class="aspect-video bg-gray-700 rounded-lg mb-2"></div>
+              <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+            </div>
+            <div class="animate-pulse">
+              <div class="aspect-video bg-gray-700 rounded-lg mb-2"></div>
+              <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+            </div>
+          </div>
+
+          <!-- Ad Space (300x250) -->
+          <div class="ad-placeholder h-[250px] w-[300px] mx-auto mt-6 rounded-lg">
+            <span>ANÚNCIO<br>300 x 250</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 border-t border-gray-800 mt-12 py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Logo and Description -->
+        <div>
+          <div class="logo-shape mb-4">
+            <h2 class="text-3xl logo-text">XCam</h2>
+          </div>
+          <p class="text-gray-400 mb-4">A melhor plataforma para transmissões ao vivo com design moderno e retro.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+              </svg>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+              </svg>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-white font-bold mb-4">Navegação</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Início</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Explorar</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Categorias</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Transmitir</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-4">Suporte</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Ajuda</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Contato</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Termos de Uso</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Privacidade</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Ad Space (320x50) -->
+        <div>
+          <div class="ad-placeholder h-[50px] w-[320px] mx-auto mb-4 rounded-lg">
+            <span>ANÚNCIO 320 x 50</span>
+          </div>
+          <p class="text-gray-500 text-sm text-center">© 2023 XCam. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      function c() {
+        var b = a.contentDocument || a.contentWindow.document;
+        if (b) {
+          var d = b.createElement('script');
+          d.innerHTML = "window.__CF$cv$params={r:'93cd3eb59322df41',t:'MTc0Njc1MjI3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+          b.getElementsByTagName('head')[0].appendChild(d)
+        }
+      }
+      if (document.body) {
+        var a = document.createElement('iframe');
+        a.height = 1;
+        a.width = 1;
+        a.style.position = 'absolute';
+        a.style.top = 0;
+        a.style.left = 0;
+        a.style.border = 'none';
+        a.style.visibility = 'hidden';
+        document.body.appendChild(a);
+        if ('loading' !== document.readyState) c();
+        else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+        else {
+          var e = document.onreadystatechange || function() {};
+          document.onreadystatechange = function(b) {
+            e(b);
+            'loading' !== document.readyState && (document.onreadystatechange = e, c())
+          }
+        }
+      }
+    })();
+  </script>
+  <script src="./v13.js"></script>
+</body>
+
+</html>
