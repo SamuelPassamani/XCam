@@ -1,17 +1,20 @@
 "use strict";
 
-// Obtém o valor do parâmetro 'id' na URL
+// Obtém os parâmetros 'id' e 'user' na URL
 const urlParams = new URLSearchParams(window.location.search);
 const videoId = urlParams.get("id");
+const username = urlParams.get("user");
 
-if (!videoId) {
-  console.error("Nenhum ID foi fornecido na URL. Adicione ?id=valor na URL.");
+if (!videoId && !username) {
+  console.error("Nenhum ID ou nome de usuário foi fornecido na URL. Adicione ?id=valor ou ?user=valor na URL.");
+} else if (username) {
+  fetchCameraDataByUsername(username);
 } else {
-  fetchCameraData(videoId);
+  fetchCameraDataById(videoId);
 }
 
-// Função para buscar os dados da câmera e configurar o player
-function fetchCameraData(videoId) {
+// Função para buscar os dados da câmera pelo parâmetro 'id' e configurar o player
+function fetchCameraDataById(videoId) {
   fetch("https://site.my.eu.org/0:/male.json")
     .then((response) => {
       if (!response.ok) {
@@ -25,6 +28,34 @@ function fetchCameraData(videoId) {
 
         if (!camera) {
           console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
+          return;
+        }
+
+        setupPlayer(camera);
+      } else {
+        console.error("Estrutura do JSON inválida ou items não encontrados.");
+      }
+    })
+    .catch((error) =>
+      console.error("Erro ao carregar o arquivo JSON:", error)
+    );
+}
+
+// Função para buscar os dados da câmera pelo parâmetro 'user' e configurar o player
+function fetchCameraDataByUsername(username) {
+  fetch("https://site.my.eu.org/0:/male.json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
+        const camera = data.broadcasts.items.find((item) => item.username === username);
+
+        if (!camera) {
+          console.error(`Nenhuma câmera encontrada com o nome de usuário: ${username}`);
           return;
         }
 
@@ -110,41 +141,6 @@ function alignTimeSlider(playerInstance) {
   const spacer = buttonContainer.querySelector(".jw-spacer");
   const timeSlider = playerContainer.querySelector(".jw-slider-time");
   buttonContainer.replaceChild(timeSlider, spacer);
-}
-
-// Função para adicionar botão de avançar 10 segundos (desabilitada)
-function addForwardButton(playerInstance) {
-  const playerContainer = playerInstance.getContainer();
-  const rewindContainer = playerContainer.querySelector(".jw-display-icon-rewind");
-  const forwardContainer = rewindContainer.cloneNode(true);
-  const forwardDisplayButton = forwardContainer.querySelector(".jw-icon-rewind");
-
-  forwardDisplayButton.style.transform = "scaleX(-1)";
-  forwardDisplayButton.ariaLabel = "Forward 10 Seconds";
-
-  const nextContainer = playerContainer.querySelector(".jw-display-icon-next");
-  nextContainer.parentNode.insertBefore(forwardContainer, nextContainer);
-
-  const buttonContainer = playerContainer.querySelector(".jw-button-container");
-  const rewindControlBarButton = buttonContainer.querySelector(".jw-icon-rewind");
-  const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
-
-  forwardControlBarButton.style.transform = "scaleX(-1)";
-  forwardControlBarButton.ariaLabel = "Forward 10 Seconds";
-
-  rewindControlBarButton.parentNode.insertBefore(
-    forwardControlBarButton,
-    rewindControlBarButton.nextElementSibling
-  );
-
-  [forwardDisplayButton, forwardControlBarButton].forEach((button) => {
-    button.onclick = () => {
-      playerInstance.seek(playerInstance.getPosition() + 10);
-    };
-  });
-
-  // Oculta o botão "Next"
-  playerContainer.querySelector(".jw-display-icon-next").style.display = "none";
 }
 
 // Nova funcionalidade: Exibição do modal de anúncios com contagem regressiva
