@@ -73,7 +73,7 @@ function fetchCameraDataByUsername(username) {
 function setupPlayer(camera) {
   const videoSrc = camera.preview.src && camera.preview.src !== null 
     ? camera.preview.src 
-    : "https://site.my.eu.org/0:/offline-720p.mp4";
+    : "https://i.imgur.com/wb6N5W4.mp4";
 
   const playerInstance = jwplayer("player").setup({
     controls: true,
@@ -142,7 +142,7 @@ function setupPlayer(camera) {
     // Função para recarregar o player com o vídeo de fallback com autoplay e loop
     const reloadWithFallback = () => {
       jwplayer("player").setup({
-        file: "https://site.my.eu.org/0:/offline-720p.mp4",
+        file: "https://i.imgur.com/wb6N5W4.mp4",
         autostart: true, // Autoplay ativado
         repeat: true, // Ativando o modo de repetição
         controls: false,
