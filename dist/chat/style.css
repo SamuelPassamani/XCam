@@ -1,0 +1,145 @@
+body {
+  background-color: transparent;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.emoji-picker {
+  display: none;
+  position: absolute;
+  bottom: 60px;
+  right: 10px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  width: 300px;
+  max-height: 300px;
+  z-index: 1000;
+}
+
+.emoji-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.emoji-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.emoji-tab {
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.emoji-tab.active {
+  border-bottom: 2px solid #4f46e5;
+  color: #4f46e5;
+}
+
+.emoji-content {
+  height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.emoji-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.emoji-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.emoji-content::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+.emoji-category {
+  display: none;
+}
+
+.emoji-category.active {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.emoji-btn {
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 5px;
+  transition: transform 0.1s;
+  display: inline-block;
+  text-align: center;
+}
+
+.emoji-btn:hover {
+  transform: scale(1.2);
+  background-color: #f3f4f6;
+  border-radius: 5px;
+}
+
+.message-bubble {
+  max-width: 80%;
+  word-wrap: break-word;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timestamp {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.chat-container {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.chat-header {
+  background: linear-gradient(90deg, #ff007f, #4169e1);
+}
+
+.messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 20px;
+}
