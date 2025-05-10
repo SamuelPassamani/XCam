@@ -365,6 +365,7 @@ const countryNames = {
   ne: "Níger",
   ng: "Nigéria",
   no: "Noruega",
+  sj: "Noruega",
   om: "Omã",
   pk: "Paquistão",
   pw: "Palau",
