@@ -69,9 +69,11 @@ function fetchCameraDataByUsername(username) {
     );
 }
 
-// Função para configurar o player
+// Função para configurar o player com tratamento de erros
 function setupPlayer(camera) {
-  const videoSrc = camera.preview.src && camera.preview.src !== null ? camera.preview.src : "https://site.my.eu.org/0:/offline-720p.mp4";
+  const videoSrc = camera.preview.src && camera.preview.src !== null 
+    ? camera.preview.src 
+    : "https://site.my.eu.org/0:/offline-720p.mp4";
 
   const playerInstance = jwplayer("player").setup({
     controls: true,
@@ -99,13 +101,29 @@ function setupPlayer(camera) {
         image: camera.preview.poster,
         sources: [
           {
-            file: videoSrc, // Usa o valor de videoSrc (padrão ou do JSON)
+            file: videoSrc,
             type: "video/m3u8",
             label: "Source",
           },
         ],
       },
     ],
+  });
+
+  // Lidando com erros do JW Player
+  playerInstance.on("error", (event) => {
+    console.error("Erro no JW Player:", event.message);
+
+    // Verifica se o erro é o 232600
+    if (event.code === 232600) {
+      const playerContainer = document.getElementById("player");
+      playerContainer.innerHTML = `
+        <div style="color: red; text-align: center; padding: 20px;">
+          <p><strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido.</p>
+          <p>Tente novamente mais tarde ou entre em contato com o suporte.</p>
+        </div>
+      `;
+    }
   });
 
   playerInstance.on("ready", () => {
