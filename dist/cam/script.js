@@ -69,7 +69,7 @@ function fetchCameraDataByUsername(username) {
     );
 }
 
-// Função para configurar o player com tratamento de erros
+// Função para configurar o player com tratamento de erros e fallback
 function setupPlayer(camera) {
   const videoSrc = camera.preview.src && camera.preview.src !== null 
     ? camera.preview.src 
@@ -115,40 +115,52 @@ function setupPlayer(camera) {
     console.error("Erro no JW Player:", event.message);
 
     const playerContainer = document.getElementById("player");
+    let countdown = 5; // Contagem regressiva de 5 segundos
 
-    // Tratamento específico para o erro 232600
+    // Função para exibir mensagem de erro com contagem regressiva
+    const displayErrorMessage = (message) => {
+      playerContainer.innerHTML = `
+        <div style="color: #FFF; background: #333; text-align: center; padding: 20px;">
+          <p>${message}</p>
+          <p>Recarregando o player em <span id="countdown">${countdown}</span> segundos...</p>
+        </div>
+      `;
+
+      // Atualizar a contagem regressiva
+      const interval = setInterval(() => {
+        countdown -= 1;
+        document.getElementById("countdown").textContent = countdown;
+
+        // Quando a contagem chegar a 0, recarregar o player com o vídeo de fallback
+        if (countdown === 0) {
+          clearInterval(interval);
+          reloadWithFallback(); // Chama a função para recarregar o player
+        }
+      }, 1000);
+    };
+
+    // Função para recarregar o player com o vídeo de fallback
+    const reloadWithFallback = () => {
+      jwplayer("player").setup({
+        file: "https://site.my.eu.org/0:/offline-720p.mp4",
+        autostart: true, // Autoplay ativado
+        controls: true,
+      });
+    };
+
+    // Tratamento específico para cada erro
     if (event.code === 232600) {
-      playerContainer.innerHTML = `
-        <div style="color: red; text-align: center; padding: 20px;">
-          <p><strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido.</p>
-          <p>Tente novamente mais tarde ou entre em contato com o suporte.</p>
-        </div>
-      `;
-    }
-
-    // Tratamento específico para o erro 232011
-    if (event.code === 232011) {
-      playerContainer.innerHTML = `
-        <div style="color: orange; text-align: center; padding: 20px;">
-          <p><strong>Erro de conexão.</strong> Não foi possível carregar o vídeo devido a problemas de rede ou configurações do navegador.</p>
-          <p>Verifique sua conexão com a internet, desative proxies ou extensões que possam interferir.</p>
-        </div>
-      `;
-    }
-
-    // Tratamento específico para o erro 232001
-    if (event.code === 232001) {
-      playerContainer.innerHTML = `
-        <div style="color: orange; text-align: center; padding: 20px;">
-          <p><strong>Erro de Conexão com o Servidor.</strong> Não foi possível se conectar ao servidor do vídeo.</p>
-          <p>Possíveis causas:</p>
-          <ul>
-            <li>O servidor está ocupado ou indisponível.</li>
-            <li>Problemas temporários de rede.</li>
-          </ul>
-          <p>Tente novamente mais tarde ou verifique sua conexão com a internet.</p>
-        </div>
-      `;
+      displayErrorMessage(
+        "<strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido."
+      );
+    } else if (event.code === 232011) {
+      displayErrorMessage(
+        "<strong>Erro de conexão.</strong> Não foi possível carregar o vídeo devido a problemas de rede ou configurações do navegador."
+      );
+    } else if (event.code === 232001) {
+      displayErrorMessage(
+        "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo."
+      );
     }
   });
 
