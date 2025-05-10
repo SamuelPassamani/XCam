@@ -995,8 +995,8 @@ Icone de Share.
 }
 
 .ad-modal iframe {
-  width: 100%;
-  height: 30rem;
+  width: 300px; /* Largura fixa */
+  height: 250px; /* Altura fixa */
   border: none;
   border-radius: 0.5rem;
   margin-bottom: 2rem;
