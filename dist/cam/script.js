@@ -96,7 +96,7 @@ function setupPlayer(camera) {
     },
     playlist: [
       {
-        title: camera.username,
+        title: `@${camera.username}`,
         description: camera.tags.map((tag) => `#${tag.name}`).join(" "),
         image: camera.preview.poster,
         sources: [
