@@ -40,7 +40,7 @@ function fetchCameraData(videoId) {
 
 // Função para configurar o player
 function setupPlayer(camera) {
-  const videoSrc = camera.preview.src && camera.preview.src !== null ? camera.preview.src : "https://site.my.eu.org/0:/offline.mp4";
+  const videoSrc = camera.preview.src && camera.preview.src !== null ? camera.preview.src : "https://site.my.eu.org/0:/offline-720p.mp4";
 
   const playerInstance = jwplayer("player").setup({
     controls: true,
