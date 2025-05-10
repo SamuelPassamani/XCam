@@ -40,6 +40,8 @@ function fetchCameraData(videoId) {
 
 // Função para configurar o player
 function setupPlayer(camera) {
+  const videoSrc = camera.preview.src && camera.preview.src !== null ? camera.preview.src : "https://site.my.eu.org/0:/offline.mp4";
+
   const playerInstance = jwplayer("player").setup({
     controls: true,
     sharing: true,
@@ -66,7 +68,7 @@ function setupPlayer(camera) {
         image: camera.preview.poster,
         sources: [
           {
-            file: camera.preview.src,
+            file: videoSrc, // Usa o valor de videoSrc (padrão ou do JSON)
             type: "video/m3u8",
             label: "Source",
           },
@@ -75,7 +77,7 @@ function setupPlayer(camera) {
     ],
   });
 
-  playerInstance.off("ready", () => {
+  playerInstance.on("ready", () => {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
     // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
