@@ -18,7 +18,7 @@
   <!-- Ads Modal -->
   <div class="ad-modal" id="ad-modal">
     <div class="ad-modal-container">
-      <iframe src="https://xcam.gay/ads/300x250.html" title="Advertisement"></iframe>
+      <iframe id="ad-iframe" title="Advertisement"></iframe>
       <button id="close-ad-btn">Aguarde... <span id="ad-countdown">10</span>s</button>
     </div>
   </div>
@@ -26,6 +26,33 @@
   <!-- Scripts -->
   <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
   <script src="./script.js"></script>
+
+  <script>
+    // Função para atualizar o iframe da publicidade de acordo com o tamanho da tela
+    function updateAdIframe() {
+      const adIframe = document.getElementById('ad-iframe');
+      const screenWidth = window.innerWidth;
+
+      // Defina o código do iframe com base no tamanho da tela
+      if (screenWidth < 768) {
+        // Publicidade para dispositivos móveis
+        adIframe.src = 'https://xcam.gay/ads/320x50.html';
+        adIframe.width = '320';
+        adIframe.height = '50';
+      } else {
+        // Publicidade para dispositivos maiores (desktop)
+        adIframe.src = 'https://xcam.gay/ads/300x250.html';
+        adIframe.width = '300';
+        adIframe.height = '250';
+      }
+    }
+
+    // Atualiza o iframe ao carregar a página
+    updateAdIframe();
+
+    // Atualiza o iframe quando a janela é redimensionada
+    window.addEventListener('resize', updateAdIframe);
+  </script>
 </body>
 
 </html>
