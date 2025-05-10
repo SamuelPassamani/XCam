@@ -987,8 +987,8 @@ Icone de Share.
 }
 
 .ad-modal-container {
-  width: 300px; /* Largura do contêiner igual ao anúncio */
-  height: calc(250px + 50px); /* Altura do anúncio (250px) + altura do botão (50px) */
+  width: auto;
+  height: auto;
   background-color: #181919;
   border-radius: 0.5rem;
   text-align: center;
@@ -1000,8 +1000,6 @@ Icone de Share.
 }
 
 .ad-modal iframe {
-  width: 300px; /* Largura fixa */
-  height: 250px; /* Altura fixa */
   border: none;
   border-radius: 0.5rem 0.5rem 0 0; /* Bordas arredondadas apenas na parte superior */
 }
@@ -1021,4 +1019,29 @@ Icone de Share.
 .ad-modal button.enabled {
   cursor: pointer;
   background-color: #10ac84;
+}
+
+/* Tamanhos específicos para diferentes resoluções */
+@media (min-width: 768px) {
+  .ad-modal iframe {
+    width: 300px;
+    height: 250px;
+  }
+
+  .ad-modal-container {
+    width: 300px;
+    height: calc(250px + 50px);
+  }
+}
+
+@media (max-width: 767px) {
+  .ad-modal iframe {
+    width: 320px;
+    height: 50px;
+  }
+
+  .ad-modal-container {
+    width: 320px;
+    height: calc(50px + 50px);
+  }
 }
