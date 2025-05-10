@@ -1,19 +1,25 @@
 "use strict";
 
-// Obtém os parâmetros 'id' e 'user' na URL
+// Obtendo os parâmetros 'id' e 'user' da URL
 const urlParams = new URLSearchParams(window.location.search);
 const videoId = urlParams.get("id");
 const username = urlParams.get("user");
 
+// Verifica se os parâmetros estão presentes e inicia a busca de dados
 if (!videoId && !username) {
-  console.error("Nenhum ID ou nome de usuário foi fornecido na URL. Adicione ?id=valor ou ?user=valor na URL.");
+  console.error(
+    "Nenhum ID ou nome de usuário foi fornecido na URL. Adicione ?id=valor ou ?user=valor na URL."
+  );
 } else if (username) {
   fetchCameraDataByUsername(username);
 } else {
   fetchCameraDataById(videoId);
 }
 
-// Função para buscar os dados da câmera pelo parâmetro 'id' e configurar o player
+/**
+ * Busca os dados da câmera pelo ID e configura o player.
+ * @param {string} videoId
+ */
 function fetchCameraDataById(videoId) {
   fetch("https://site.my.eu.org/0:/male.json")
     .then((response) => {
@@ -23,25 +29,22 @@ function fetchCameraDataById(videoId) {
       return response.json();
     })
     .then((data) => {
-      if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
-        const camera = data.broadcasts.items.find((item) => item.id === videoId);
-
-        if (!camera) {
-          console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
-          return;
-        }
-
-        setupPlayer(camera);
-      } else {
-        console.error("Estrutura do JSON inválida ou items não encontrados.");
+      const camera = data?.broadcasts?.items?.find((item) => item.id === videoId);
+      if (!camera) {
+        console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
+        return;
       }
+      setupPlayer(camera);
     })
     .catch((error) =>
       console.error("Erro ao carregar o arquivo JSON:", error)
     );
 }
 
-// Função para buscar os dados da câmera pelo parâmetro 'user' e configurar o player
+/**
+ * Busca os dados da câmera pelo nome de usuário e configura o player.
+ * @param {string} username
+ */
 function fetchCameraDataByUsername(username) {
   fetch("https://site.my.eu.org/0:/male.json")
     .then((response) => {
@@ -51,29 +54,24 @@ function fetchCameraDataByUsername(username) {
       return response.json();
     })
     .then((data) => {
-      if (data && data.broadcasts && Array.isArray(data.broadcasts.items)) {
-        const camera = data.broadcasts.items.find((item) => item.username === username);
-
-        if (!camera) {
-          console.error(`Nenhuma câmera encontrada com o nome de usuário: ${username}`);
-          return;
-        }
-
-        setupPlayer(camera);
-      } else {
-        console.error("Estrutura do JSON inválida ou items não encontrados.");
+      const camera = data?.broadcasts?.items?.find((item) => item.username === username);
+      if (!camera) {
+        console.error(`Nenhuma câmera encontrada com o nome de usuário: ${username}`);
+        return;
       }
+      setupPlayer(camera);
     })
     .catch((error) =>
       console.error("Erro ao carregar o arquivo JSON:", error)
     );
 }
 
-// Função para configurar o player com tratamento de erros, fallback e loop
+/**
+ * Configura o JW Player com o vídeo fornecido.
+ * @param {Object} camera
+ */
 function setupPlayer(camera) {
-  const videoSrc = camera.preview.src && camera.preview.src !== null 
-    ? camera.preview.src 
-    : "https://i.imgur.com/wb6N5W4.mp4";
+  const videoSrc = camera.preview.src || "https://i.imgur.com/wb6N5W4.mp4";
 
   const playerInstance = jwplayer("player").setup({
     controls: true,
@@ -97,7 +95,7 @@ function setupPlayer(camera) {
     playlist: [
       {
         title: `@${camera.username}`,
-        description: camera.tags.map((tag) => `#${tag.name}`).join(" "),
+        description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
         image: camera.preview.poster,
         sources: [
           {
@@ -111,87 +109,100 @@ function setupPlayer(camera) {
   });
 
   // Tratamento de erros do JW Player
-  playerInstance.on("error", (event) => {
-    console.error("Erro no JW Player:", event.message);
+  playerInstance.on("error", handlePlayerError);
 
-    const playerContainer = document.getElementById("player");
-    let countdown = 5; // Contagem regressiva de 5 segundos
-
-    // Função para exibir mensagem de erro com contagem regressiva
-    const displayErrorMessage = (message) => {
-      playerContainer.innerHTML = `
-        <div style="color: #FFF; background: #333; text-align: center; padding: 20px;">
-          <p>${message}</p>
-          <p>Recarregando o player em <span id="countdown">${countdown}</span> segundos...</p>
-        </div>
-      `;
-
-      // Atualizar a contagem regressiva
-      const interval = setInterval(() => {
-        countdown -= 1;
-        document.getElementById("countdown").textContent = countdown;
-
-        // Quando a contagem chegar a 0, recarregar o player com o vídeo de fallback
-        if (countdown === 0) {
-          clearInterval(interval);
-          reloadWithFallback(); // Chama a função para recarregar o player
-        }
-      }, 1000);
-    };
-
-    // Função para recarregar o player com o vídeo de fallback com autoplay e loop
-    const reloadWithFallback = () => {
-      jwplayer("player").setup({
-        file: "https://i.imgur.com/wb6N5W4.mp4",
-        autostart: true, // Autoplay ativado
-        repeat: true, // Ativando o modo de repetição
-        controls: false,
-      });
-    };
-
-    // Tratamento específico para cada erro
-    if (event.code === 232600) {
-      displayErrorMessage(
-        "<strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido."
-      );
-    } else if (event.code === 232011) {
-      displayErrorMessage(
-        "<strong>Erro de conexão.</strong> Não foi possível carregar o vídeo devido a problemas de rede ou configurações do navegador."
-      );
-    } else if (event.code === 232001) {
-      displayErrorMessage(
-        "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo."
-      );
-    }
-  });
-
+  // Configurações adicionais quando o player estiver pronto
   playerInstance.on("ready", () => {
     addDownloadButton(playerInstance);
     alignTimeSlider(playerInstance);
-    // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
+    // addForwardButton(playerInstance); // Botão desativado
   });
 }
 
-// Função para adicionar botão de download
+/**
+ * Lida com erros no JW Player.
+ * @param {Object} event
+ */
+function handlePlayerError(event) {
+  console.error("Erro no JW Player:", event.message);
+
+  const playerContainer = document.getElementById("player");
+  let countdown = 5;
+
+  const displayErrorMessage = (message) => {
+    playerContainer.innerHTML = `
+      <div style="color: #FFF; background: #333; text-align: center; padding: 20px;">
+        <p>${message}</p>
+        <p>Recarregando o player em <span id="countdown">${countdown}</span> segundos...</p>
+      </div>
+    `;
+
+    const interval = setInterval(() => {
+      countdown -= 1;
+      document.getElementById("countdown").textContent = countdown;
+
+      if (countdown === 0) {
+        clearInterval(interval);
+        reloadWithFallback();
+      }
+    }, 1000);
+  };
+
+  const reloadWithFallback = () => {
+    jwplayer("player").setup({
+      file: "https://i.imgur.com/wb6N5W4.mp4",
+      autostart: true,
+      repeat: true,
+      controls: false,
+    });
+  };
+
+  if (event.code === 232600) {
+    displayErrorMessage(
+      "<strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido."
+    );
+  } else if (event.code === 232011) {
+    displayErrorMessage(
+      "<strong>Erro de conexão.</strong> Não foi possível carregar o vídeo devido a problemas de rede ou configurações do navegador."
+    );
+  } else if (event.code === 232001) {
+    displayErrorMessage(
+      "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo."
+    );
+  }
+}
+
+/**
+ * Adiciona botão de download ao player.
+ * @param {Object} playerInstance
+ */
 function addDownloadButton(playerInstance) {
   const buttonId = "download-video-button";
   const iconPath =
-    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDI0djI0SDB6Ii8+P[...]";
+    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL[...]";
   const tooltipText = "Download Video";
 
-  playerInstance.addButton(iconPath, tooltipText, () => {
-    const playlistItem = playerInstance.getPlaylistItem();
-    const anchor = document.createElement("a");
-    anchor.setAttribute("href", playlistItem.file);
-    anchor.setAttribute("download", playlistItem.file.split("/").pop());
-    anchor.style.display = "none";
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-  }, buttonId);
+  playerInstance.addButton(
+    iconPath,
+    tooltipText,
+    () => {
+      const playlistItem = playerInstance.getPlaylistItem();
+      const anchor = document.createElement("a");
+      anchor.setAttribute("href", playlistItem.file);
+      anchor.setAttribute("download", playlistItem.file.split("/").pop());
+      anchor.style.display = "none";
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    },
+    buttonId
+  );
 }
 
-// Função para alinhar o time slider com outros controles
+/**
+ * Alinha o time slider com outros controles.
+ * @param {Object} playerInstance
+ */
 function alignTimeSlider(playerInstance) {
   const playerContainer = playerInstance.getContainer();
   const buttonContainer = playerContainer.querySelector(".jw-button-container");
@@ -200,7 +211,9 @@ function alignTimeSlider(playerInstance) {
   buttonContainer.replaceChild(timeSlider, spacer);
 }
 
-// Nova funcionalidade: Exibição do modal de anúncios com contagem regressiva
+/**
+ * Exibe o modal de anúncios com contagem regressiva.
+ */
 document.addEventListener("DOMContentLoaded", () => {
   const adModal = document.getElementById("ad-modal");
   const closeAdButton = document.getElementById("close-ad-btn");
@@ -209,7 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let countdown = 10;
 
-  // Contagem regressiva para o modal de anúncios
   const interval = setInterval(() => {
     countdown -= 1;
     countdownElement.textContent = countdown;
@@ -223,7 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 1000);
 
-  // Ação do botão "Fechar" no modal de anúncios
   closeAdButton.addEventListener("click", () => {
     if (countdown === 0) {
       adModal.style.display = "none"; // Oculta o modal
