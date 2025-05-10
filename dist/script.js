@@ -1,1053 +1,1030 @@
-document.addEventListener("DOMContentLoaded", function () {
-  // Global variables
-  let allStreams = [];
-  let displayedStreams = 0;
-  const streamsPerPage = 12;
-  let filteredStreams = [];
-  let uniqueTags = new Set();
-  let uniqueTypes = new Set();
-  let uniqueOrientations = new Set();
-  let uniqueCountries = new Map();
-  // DOM elements
-  const streamsGridTop = document.getElementById("streamsGridTop");
-  const streamsGridBottom = document.getElementById("streamsGridBottom");
-  const loadingIndicator = document.getElementById("loadingIndicator");
-  const loadMoreBtn = document.getElementById("loadMoreBtn");
-  const tagFilters = document.getElementById("tagFilters");
-  const typeFilters = document.getElementById("typeFilters");
-  const orientationFilters = document.getElementById("orientationFilters");
-  const countryFilter = document.getElementById("countryFilter");
-  const searchInput = document.getElementById("searchInput");
-  const sortButton = document.getElementById("sortButton");
-  const bannerWrapper = document.getElementById("bannerWrapper");
-  const bannerDots = document.getElementById("bannerDots");
-  const trendingStreamers = document.getElementById("trendingStreamers");
-  // Modal elements
-  const streamModal = document.getElementById("streamModal");
-  const closeModal = document.getElementById("closeModal");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalCountryFlag = document.getElementById("modalCountryFlag");
-  const modalCountryName = document.getElementById("modalCountryName");
-  const modalViewers = document
-    .getElementById("modalViewers")
-    .querySelector("span");
-  const modalTags = document.getElementById("modalTags");
-  const modalId = document.getElementById("modalId");
-  const modalType = document.getElementById("modalType");
-  const modalGender = document.getElementById("modalGender");
-  const modalOrientation = document.getElementById("modalOrientation");
-  const modalVideo = document.getElementById("modalVideo");
-  const relatedStreams = document.getElementById("relatedStreams");
-  // Country names mapping
-  const countryNames = {
-    af: "Afeganistão",
-    al: "Albânia",
-    dz: "Argélia",
-    ad: "Andorra",
-    ao: "Angola",
-    ag: "Antígua e Barbuda",
-    ar: "Argentina",
-    am: "Armênia",
-    au: "Austrália",
-    at: "Áustria",
-    az: "Azerbaijão",
-    bs: "Bahamas",
-    bh: "Bahrein",
-    bd: "Bangladesh",
-    bb: "Barbados",
-    by: "Belarus",
-    be: "Bélgica",
-    bz: "Belize",
-    bj: "Benin",
-    bt: "Butão",
-    bo: "Bolívia",
-    ba: "Bósnia e Herzegovina",
-    bw: "Botsuana",
-    br: "Brasil",
-    bn: "Brunei",
-    bg: "Bulgária",
-    bf: "Burquina Faso",
-    bi: "Burundi",
-    cv: "Cabo Verde",
-    kh: "Camboja",
-    cm: "Camarões",
-    ca: "Canadá",
-    cf: "República Centro-Africana",
-    td: "Chade",
-    cl: "Chile",
-    cn: "China",
-    co: "Colômbia",
-    km: "Comores",
-    cd: "República Democrática do Congo",
-    cg: "República do Congo",
-    cr: "Costa Rica",
-    ci: "Costa do Marfim",
-    hr: "Croácia",
-    cu: "Cuba",
-    cy: "Chipre",
-    cz: "Tchéquia",
-    dk: "Dinamarca",
-    dj: "Djibuti",
-    dm: "Dominica",
-    do: "República Dominicana",
-    ec: "Equador",
-    eg: "Egito",
-    sv: "El Salvador",
-    gq: "Guiné Equatorial",
-    er: "Eritreia",
-    ee: "Estônia",
-    et: "Etiópia",
-    fj: "Fiji",
-    fi: "Finlândia",
-    fr: "França",
-    ga: "Gabão",
-    gm: "Gâmbia",
-    ge: "Geórgia",
-    de: "Alemanha",
-    gh: "Gana",
-    gr: "Grécia",
-    gd: "Granada",
-    gt: "Guatemala",
-    gn: "Guiné",
-    gw: "Guiné-Bissau",
-    gy: "Guiana",
-    ht: "Haiti",
-    hn: "Honduras",
-    hu: "Hungria",
-    is: "Islândia",
-    in: "Índia",
-    id: "Indonésia",
-    ir: "Irã",
-    iq: "Iraque",
-    ie: "Irlanda",
-    il: "Israel",
-    it: "Itália",
-    jm: "Jamaica",
-    jp: "Japão",
-    jo: "Jordânia",
-    kz: "Cazaquistão",
-    ke: "Quênia",
-    ki: "Kiribati",
-    kw: "Kuwait",
-    kg: "Quirguistão",
-    la: "Laos",
-    lv: "Letônia",
-    lb: "Líbano",
-    ls: "Lesoto",
-    lr: "Libéria",
-    ly: "Líbia",
-    li: "Liechtenstein",
-    lt: "Lituânia",
-    lu: "Luxemburgo",
-    mg: "Madagascar",
-    mw: "Malawi",
-    my: "Malásia",
-    mv: "Maldivas",
-    ml: "Mali",
-    mt: "Malta",
-    mh: "Ilhas Marshall",
-    mr: "Mauritânia",
-    mu: "Maurício",
-    mx: "México",
-    fm: "Micronésia",
-    md: "Moldávia",
-    mc: "Mônaco",
-    mn: "Mongólia",
-    me: "Montenegro",
-    ma: "Marrocos",
-    mz: "Moçambique",
-    mm: "Mianmar",
-    na: "Namíbia",
-    nr: "Nauru",
-    np: "Nepal",
-    nl: "Países Baixos",
-    nz: "Nova Zelândia",
-    ni: "Nicarágua",
-    ne: "Níger",
-    ng: "Nigéria",
-    kp: "Coreia do Norte",
-    no: "Noruega",
-    om: "Omã",
-    pk: "Paquistão",
-    pw: "Palau",
-    pa: "Panamá",
-    pg: "Papua-Nova Guiné",
-    py: "Paraguai",
-    pe: "Peru",
-    ph: "Filipinas",
-    pl: "Polônia",
-    pt: "Portugal",
-    qa: "Catar",
-    ro: "Romênia",
-    ru: "Rússia",
-    rw: "Ruanda",
-    kn: "São Cristóvão e Nevis",
-    lc: "Santa Lúcia",
-    vc: "São Vicente e Granadinas",
-    ws: "Samoa",
-    sm: "San Marino",
-    st: "São Tomé e Príncipe",
-    sa: "Arábia Saudita",
-    sn: "Senegal",
-    rs: "Sérvia",
-    sc: "Seicheles",
-    sl: "Serra Leoa",
-    sg: "Singapura",
-    sk: "Eslováquia",
-    si: "Eslovênia",
-    sb: "Ilhas Salomão",
-    so: "Somália",
-    za: "África do Sul",
-    kr: "Coreia do Sul",
-    ss: "Sudão do Sul",
-    es: "Espanha",
-    lk: "Sri Lanka",
-    sd: "Sudão",
-    sr: "Suriname",
-    se: "Suécia",
-    ch: "Suíça",
-    sy: "Síria",
-    tw: "Taiwan",
-    tj: "Tajiquistão",
-    tz: "Tanzânia",
-    th: "Tailândia",
-    tg: "Togo",
-    to: "Tonga",
-    tt: "Trinidad e Tobago",
-    tn: "Tunísia",
-    tr: "Turquia",
-    tm: "Turcomenistão",
-    tv: "Tuvalu",
-    ug: "Uganda",
-    ua: "Ucrânia",
-    ae: "Emirados Árabes Unidos",
-    uk: "Reino Unido",
-    us: "Estados Unidos",
-    uy: "Uruguai",
-    uz: "Uzbequistão",
-    vu: "Vanuatu",
-    va: "Vaticano",
-    ve: "Venezuela",
-    vn: "Vietnã",
-    ye: "Iêmen",
-    zm: "Zâmbia",
-    zw: "Zimbábue"
-  };
-  // Broadcast type mapping
-  const broadcastTypes = {
-    male: "Individual",
-    male_group: "Grupo",
-    couple: "Casal",
-    trans: "Trans"
-  };
-  // Orientation mapping
-  const orientationTypes = {
-    straight: "Heterossexual",
-    gay: "Gay",
-    bisexual: "Bissexual"
-  };
-  // Fetch streams data
-  async function fetchStreams() {
-    try {
-      const response = await fetch("https://site.my.eu.org/0:/male.json");
-      if (!response.ok) {
-        throw new Error("Falha ao carregar os dados");
+// Variáveis globais
+let allBroadcasts = [];
+let filteredBroadcasts = [];
+let currentPage = 1;
+let currentFilters = {
+  country: "all",
+  gender: "all",
+  orientation: "all",
+  search: ""
+};
+// Dados de fallback para caso a API falhe
+const fallbackData = {
+  broadcasts: {
+    total: 9,
+    items: [
+      {
+        itemNumber: 1,
+        id: "fallback1",
+        username: "user_brasil",
+        country: "br",
+        sexualOrientation: "straight",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 296,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "fitness"
+          },
+          {
+            name: "music"
+          }
+        ]
+      },
+      {
+        itemNumber: 2,
+        id: "fallback2",
+        username: "user_espanha",
+        country: "es",
+        sexualOrientation: "gay",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 245,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "dance"
+          }
+        ]
+      },
+      {
+        itemNumber: 3,
+        id: "fallback3",
+        username: "user_italia",
+        country: "it",
+        sexualOrientation: "bisexual",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 189,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "gaming"
+          },
+          {
+            name: "sports"
+          }
+        ]
+      },
+      {
+        itemNumber: 4,
+        id: "fallback4",
+        username: "user_franca",
+        country: "fr",
+        sexualOrientation: "straight",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 178,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "music"
+          }
+        ]
+      },
+      {
+        itemNumber: 5,
+        id: "fallback5",
+        username: "user_alemanha",
+        country: "de",
+        sexualOrientation: "gay",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 156,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "fitness"
+          },
+          {
+            name: "travel"
+          }
+        ]
+      },
+      {
+        itemNumber: 6,
+        id: "fallback6",
+        username: "user_eua",
+        country: "us",
+        sexualOrientation: "straight",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 142,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "gaming"
+          }
+        ]
+      },
+      {
+        itemNumber: 7,
+        id: "fallback7",
+        username: "user_canada",
+        country: "ca",
+        sexualOrientation: "bisexual",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 128,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "art"
+          },
+          {
+            name: "music"
+          }
+        ]
+      },
+      {
+        itemNumber: 8,
+        id: "fallback8",
+        username: "user_mexico",
+        country: "mx",
+        sexualOrientation: "straight",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 115,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "dance"
+          },
+          {
+            name: "fitness"
+          }
+        ]
+      },
+      {
+        itemNumber: 9,
+        id: "fallback9",
+        username: "user_portugal",
+        country: "pt",
+        sexualOrientation: "gay",
+        profileImageURL:
+          "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam",
+        preview: {
+          src: "",
+          poster: "https://via.placeholder.com/400x300/121212/FFFFFF?text=XCam"
+        },
+        viewers: 103,
+        broadcastType: "male",
+        gender: "male",
+        tags: [
+          {
+            name: "travel"
+          },
+          {
+            name: "cooking"
+          }
+        ]
       }
-      const data = await response.json();
-      return data.broadcasts.items;
-    } catch (error) {
-      console.error("Erro ao buscar dados:", error);
-      loadingIndicator.innerHTML = `
-                        <div class="text-center text-red-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <p>Erro ao carregar transmissões. Por favor, tente novamente mais tarde.</p>
-                        </div>
-                    `;
-      return [];
-    }
+    ]
   }
-  // Initialize the application
-  async function init() {
-    // Fetch streams data
-    allStreams = await fetchStreams();
-    filteredStreams = [...allStreams];
-    if (allStreams.length === 0) {
-      return;
-    }
-    // Extract unique filters
-    processFilters();
-    // Hide loading indicator
-    loadingIndicator.style.display = "none";
-    // Display streams
-    displayStreams();
-    // Populate banner with top streams
-    populateBanner();
-    // Populate trending streamers
-    populateTrendingStreamers();
-    // Setup event listeners
-    setupEventListeners();
+};
+// Mapeamento de países em ordem alfabética
+const countryNames = {
+  af: "Afeganistão",
+  al: "Albânia",
+  dz: "Argélia",
+  as: "Samoa Americana",
+  ad: "Andorra",
+  ao: "Angola",
+  ag: "Antígua e Barbuda",
+  ar: "Argentina",
+  am: "Armênia",
+  au: "Austrália",
+  at: "Áustria",
+  az: "Azerbaijão",
+  bs: "Bahamas",
+  bh: "Bahrein",
+  bd: "Bangladesh",
+  bb: "Barbados",
+  by: "Belarus",
+  be: "Bélgica",
+  bz: "Belize",
+  bj: "Benin",
+  bm: "Bermudas",
+  bt: "Butão",
+  bo: "Bolívia",
+  ba: "Bósnia e Herzegovina",
+  bw: "Botsuana",
+  br: "Brasil",
+  bn: "Brunei",
+  bg: "Bulgária",
+  bf: "Burquina Faso",
+  bi: "Burundi",
+  cv: "Cabo Verde",
+  kh: "Camboja",
+  cm: "Camarões",
+  ca: "Canadá",
+  cf: "República Centro-Africana",
+  td: "Chade",
+  cl: "Chile",
+  cn: "China",
+  co: "Colômbia",
+  km: "Comores",
+  cg: "Congo",
+  cd: "República Democrática do Congo",
+  cr: "Costa Rica",
+  ci: "Costa do Marfim",
+  hr: "Croácia",
+  cu: "Cuba",
+  cy: "Chipre",
+  cz: "República Tcheca",
+  dk: "Dinamarca",
+  dj: "Djibuti",
+  dm: "Dominica",
+  do: "República Dominicana",
+  ec: "Equador",
+  eg: "Egito",
+  sv: "El Salvador",
+  gq: "Guiné Equatorial",
+  er: "Eritreia",
+  ee: "Estônia",
+  sz: "Essuatíni",
+  et: "Etiópia",
+  fj: "Fiji",
+  fi: "Finlândia",
+  fr: "França",
+  ga: "Gabão",
+  gm: "Gâmbia",
+  ge: "Geórgia",
+  de: "Alemanha",
+  gh: "Gana",
+  gb: "Reino Unido",
+  en: "Inglaterra",
+  sc: "Escócia",
+  wa: "País de Gales",
+  ni: "Irlanda do Norte",
+  gr: "Grécia",
+  gd: "Granada",
+  gt: "Guatemala",
+  gn: "Guiné",
+  gw: "Guiné-Bissau",
+  gy: "Guiana",
+  ht: "Haiti",
+  hn: "Honduras",
+  hu: "Hungria",
+  is: "Islândia",
+  in: "Índia",
+  id: "Indonésia",
+  ir: "Irã",
+  iq: "Iraque",
+  ie: "Irlanda",
+  il: "Israel",
+  it: "Itália",
+  jm: "Jamaica",
+  jp: "Japão",
+  jo: "Jordânia",
+  kz: "Cazaquistão",
+  ke: "Quênia",
+  ki: "Kiribati",
+  kp: "Coreia do Norte",
+  kr: "Coreia do Sul",
+  kw: "Kuwait",
+  kg: "Quirguistão",
+  la: "Laos",
+  lv: "Letônia",
+  lb: "Líbano",
+  ls: "Lesoto",
+  lr: "Libéria",
+  ly: "Líbia",
+  li: "Liechtenstein",
+  lt: "Lituânia",
+  lu: "Luxemburgo",
+  mg: "Madagascar",
+  mw: "Malawi",
+  my: "Malásia",
+  mv: "Maldivas",
+  ml: "Mali",
+  mt: "Malta",
+  mh: "Ilhas Marshall",
+  mr: "Mauritânia",
+  mu: "Maurício",
+  mx: "México",
+  fm: "Micronésia",
+  md: "Moldávia",
+  mc: "Mônaco",
+  mn: "Mongólia",
+  me: "Montenegro",
+  ma: "Marrocos",
+  mz: "Moçambique",
+  mm: "Mianmar",
+  na: "Namíbia",
+  nr: "Nauru",
+  np: "Nepal",
+  nl: "Holanda",
+  nz: "Nova Zelândia",
+  ni: "Nicarágua",
+  ne: "Níger",
+  ng: "Nigéria",
+  no: "Noruega",
+  om: "Omã",
+  pk: "Paquistão",
+  pw: "Palau",
+  pa: "Panamá",
+  pg: "Papua-Nova Guiné",
+  py: "Paraguai",
+  pe: "Peru",
+  ph: "Filipinas",
+  pl: "Polônia",
+  pt: "Portugal",
+  qa: "Catar",
+  ro: "Romênia",
+  ru: "Rússia",
+  rw: "Ruanda",
+  ws: "Samoa",
+  sm: "San Marino",
+  st: "São Tomé e Príncipe",
+  sa: "Arábia Saudita",
+  sn: "Senegal",
+  rs: "Sérvia",
+  sc: "Seicheles",
+  sl: "Serra Leoa",
+  sg: "Singapura",
+  sk: "Eslováquia",
+  si: "Eslovênia",
+  sb: "Ilhas Salomão",
+  so: "Somália",
+  za: "África do Sul",
+  es: "Espanha",
+  lk: "Sri Lanka",
+  sd: "Sudão",
+  sr: "Suriname",
+  se: "Suécia",
+  ch: "Suíça",
+  sy: "Síria",
+  tw: "Taiwan",
+  tj: "Tajiquistão",
+  tz: "Tanzânia",
+  th: "Tailândia",
+  tg: "Togo",
+  to: "Tonga",
+  tt: "Trinidad e Tobago",
+  tn: "Tunísia",
+  tr: "Turquia",
+  tm: "Turcomenistão",
+  tv: "Tuvalu",
+  ug: "Uganda",
+  ua: "Ucrânia",
+  ae: "Emirados Árabes Unidos",
+  us: "Estados Unidos",
+  uy: "Uruguai",
+  uz: "Uzbequistão",
+  vu: "Vanuatu",
+  va: "Vaticano",
+  ve: "Venezuela",
+  vn: "Vietnã",
+  ye: "Iêmen",
+  zm: "Zâmbia",
+  zw: "Zimbábue"
+};
+// Traduções de gênero e orientação
+const genderTranslations = {
+  male: "Masculino",
+  female: "Feminino",
+  trans: "Trans",
+  couple: "Casal"
+};
+const orientationTranslations = {
+  straight: "Hetero",
+  gay: "Gay",
+  lesbian: "Lésbica",
+  bisexual: "Bissexual",
+  bicurious: "Bicurioso"
+};
+// Função para carregar dados da API
+async function fetchBroadcasts() {
+  try {
+    const response = await fetch("https://site.my.eu.org/0:/male.json");
+    if (!response.ok) throw new Error("Falha na requisição");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao carregar dados:", error);
+    showToast("Erro ao carregar transmissões. Usando dados locais.", "error");
+    return fallbackData;
   }
-  // Process filters from data
-  function processFilters() {
-    allStreams.forEach((stream) => {
-      // Process tags
-      if (stream.tags && stream.tags.length > 0) {
-        stream.tags.forEach((tag) => uniqueTags.add(tag.name));
-      }
-      // Process broadcast types
-      if (stream.broadcastType) {
-        uniqueTypes.add(stream.broadcastType);
-      }
-      // Process orientations
-      if (stream.sexualOrientation) {
-        uniqueOrientations.add(stream.sexualOrientation);
-      }
-      // Process countries
-      if (stream.country) {
-        if (uniqueCountries.has(stream.country)) {
-          uniqueCountries.set(
-            stream.country,
-            uniqueCountries.get(stream.country) + 1
-          );
-        } else {
-          uniqueCountries.set(stream.country, 1);
-        }
-      }
-    });
-    // Populate tag filters
-    tagFilters.innerHTML = "";
-    Array.from(uniqueTags)
-      .sort()
-      .slice(0, 10)
-      .forEach((tag) => {
-        const button = document.createElement("button");
-        button.className =
-          "filter-pill px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-full text-sm";
-        button.textContent = tag;
-        button.dataset.tag = tag;
-        button.addEventListener("click", () => {
-          button.classList.toggle("active");
-          applyFilters();
-        });
-        tagFilters.appendChild(button);
-      });
-    // Populate type filters
-    typeFilters.innerHTML = "";
-    Array.from(uniqueTypes).forEach((type) => {
-      const button = document.createElement("button");
-      button.className =
-        "filter-pill px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-full text-sm";
-      button.textContent = broadcastTypes[type] || type;
-      button.dataset.type = type;
-      button.addEventListener("click", () => {
-        button.classList.toggle("active");
-        applyFilters();
-      });
-      typeFilters.appendChild(button);
-    });
-    // Populate orientation filters
-    orientationFilters.innerHTML = "";
-    Array.from(uniqueOrientations).forEach((orientation) => {
-      const button = document.createElement("button");
-      button.className =
-        "filter-pill px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-full text-sm";
-      button.textContent = orientationTypes[orientation] || orientation;
-      button.dataset.orientation = orientation;
-      button.addEventListener("click", () => {
-        button.classList.toggle("active");
-        applyFilters();
-      });
-      orientationFilters.appendChild(button);
-    });
-    // Populate country filter
-    countryFilter.innerHTML = '<option value="">Todos os países</option>';
-    Array.from(uniqueCountries.entries())
-      .sort((a, b) => b[1] - a[1]) // Sort by count
-      .forEach(([country, count]) => {
-        const option = document.createElement("option");
-        option.value = country;
-        option.textContent = `${countryNames[country] || country} (${count})`;
-        countryFilter.appendChild(option);
-      });
-  }
-  // Display streams in the grid
-  function displayStreams() {
-    // Clear existing streams if resetting
-    if (displayedStreams === 0) {
-      streamsGridTop.innerHTML = "";
-      streamsGridBottom.innerHTML = "";
+}
+// Função para filtrar transmissões
+function filterBroadcasts(broadcasts, filters) {
+  return broadcasts.filter((broadcast) => {
+    // Filtro por país
+    if (
+      filters.country &&
+      filters.country !== "all" &&
+      broadcast.country !== filters.country
+    ) {
+      return false;
     }
-    // Get the next batch of streams
-    const nextStreams = filteredStreams.slice(
-      displayedStreams,
-      displayedStreams + streamsPerPage
-    );
-    // Update displayed count
-    displayedStreams += nextStreams.length;
-    // Create and append stream cards
-    nextStreams.forEach((stream, index) => {
-      const card = createStreamCard(stream);
-      // First 6 streams go to top grid, rest to bottom grid
-      if (displayedStreams <= 6 || (displayedStreams > 6 && index < 6)) {
-        streamsGridTop.appendChild(card);
-      } else {
-        streamsGridBottom.appendChild(card);
-      }
-    });
-    // Hide load more button if all streams are displayed
-    if (displayedStreams >= filteredStreams.length) {
-      loadMoreBtn.style.display = "none";
-    } else {
-      loadMoreBtn.style.display = "flex";
+    // Filtro por gênero
+    if (
+      filters.gender &&
+      filters.gender !== "all" &&
+      broadcast.gender !== filters.gender
+    ) {
+      return false;
     }
+    // Filtro por orientação
+    if (
+      filters.orientation &&
+      filters.orientation !== "all" &&
+      broadcast.sexualOrientation !== filters.orientation
+    ) {
+      return false;
+    }
+    // Filtro por pesquisa de username
+    if (
+      filters.search &&
+      !broadcast.username.toLowerCase().includes(filters.search.toLowerCase())
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
+// Função para ordenar transmissões por número de espectadores
+function sortBroadcastsByViewers(broadcasts) {
+  return [...broadcasts].sort((a, b) => b.viewers - a.viewers);
+}
+// Função para paginar resultados
+function paginateBroadcasts(broadcasts, page, itemsPerPage = 15) {
+  const startIndex = (page - 1) * itemsPerPage;
+  return broadcasts.slice(startIndex, startIndex + itemsPerPage);
+}
+// Função para renderizar o carrossel
+function renderCarousel(topBroadcasts) {
+  const carouselContainer = document.getElementById("main-carousel");
+  carouselContainer.innerHTML = "";
+  topBroadcasts.slice(0, 5).forEach((broadcast, index) => {
+    const slide = document.createElement("div");
+    slide.className = `carousel-slide ${index === 0 ? "active" : ""}`;
+    slide.innerHTML = `
+          <div class="carousel-image" style="background-image: url('${
+            broadcast.preview.poster
+          }')">
+            <div class="carousel-overlay"></div>
+            <div class="carousel-content">
+              <div class="carousel-badge">AO VIVO</div>
+              <h2 class="carousel-username">@${broadcast.username}</h2>
+              <div class="carousel-info">
+                <span class="carousel-country">
+                  <img src="https://flagcdn.com/w20/${
+                    broadcast.country
+                  }.png" alt="${broadcast.country}">
+                </span>
+                <span class="carousel-viewers">
+                  <i class="fas fa-eye"></i> ${formatViewers(broadcast.viewers)}
+                </span>
+              </div>
+              <button class="carousel-button" onclick="openModal('${
+                broadcast.id
+              }')">Assistir</button>
+            </div>
+          </div>
+        `;
+    carouselContainer.appendChild(slide);
+  });
+  // Adicionar controles
+  const controls = document.createElement("div");
+  controls.className = "carousel-controls";
+  controls.innerHTML = `
+        <div class="carousel-control" onclick="prevSlide()">
+          <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="carousel-control" onclick="nextSlide()">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      `;
+  carouselContainer.appendChild(controls);
+  // Adicionar indicadores
+  const indicators = document.createElement("div");
+  indicators.className = "carousel-indicators";
+  topBroadcasts.slice(0, 5).forEach((_, index) => {
+    const indicator = document.createElement("span");
+    indicator.className = `carousel-indicator ${index === 0 ? "active" : ""}`;
+    indicator.onclick = () => changeSlide(index);
+    indicators.appendChild(indicator);
+  });
+  carouselContainer.appendChild(indicators);
+  // Iniciar rotação automática
+  startCarouselRotation();
+}
+// Função para renderizar o grid de transmissões
+function renderBroadcastGrid(broadcasts, page = 1) {
+  const gridContainer = document.getElementById("broadcasts-grid");
+  gridContainer.innerHTML = "";
+  if (broadcasts.length === 0) {
+    gridContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📺</div>
+            <h3>Nenhuma transmissão encontrada</h3>
+            <p>Tente ajustar seus filtros ou volte mais tarde.</p>
+          </div>
+        `;
+    return;
   }
-  // Create a stream card element
-  function createStreamCard(stream) {
+  const paginatedBroadcasts = paginateBroadcasts(broadcasts, page);
+  paginatedBroadcasts.forEach((broadcast) => {
     const card = document.createElement("div");
-    card.className =
-      "stream-card bg-slate-800 rounded-lg overflow-hidden shadow-lg";
-    card.dataset.id = stream.id;
-    // Determine thumbnail source
-    let thumbnailSrc = "";
-    if (stream.profileImageURL) {
-      thumbnailSrc = stream.profileImageURL;
-    } else if (stream.preview && stream.preview.poster) {
-      thumbnailSrc = stream.preview.poster;
-    } else {
-      // Create a colored placeholder with initials
-      const colors = [
-        "#3b82f6",
-        "#10b981",
-        "#ef4444",
-        "#8b5cf6",
-        "#f59e0b",
-        "#ec4899"
-      ];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      thumbnailSrc = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="none"><rect width="400" height="300" fill="${randomColor.replace(
-        "#",
-        "%23"
-      )}"/><text x="50%" y="50%" font-family="Arial" font-size="42" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">${stream.username
-        .substring(0, 2)
-        .toUpperCase()}</text></svg>`;
-    }
-    // Create country flag element if country exists
-    let countryElement = "";
-    if (stream.country) {
-      countryElement = `
-                        <div class="absolute top-2 left-2 flex items-center bg-black/70 text-xs px-2 py-1 rounded-full text-white">
-                            <img src="https://flagcdn.com/w20/${stream.country.toLowerCase()}.png" 
-                                 alt="${
-                                   countryNames[stream.country] ||
-                                   stream.country
-                                 }" 
-                                 class="w-4 h-3 mr-1">
-                            <span>${
-                              countryNames[stream.country] || stream.country
-                            }</span>
-                        </div>
-                    `;
-    }
-    // Create tags element if tags exist
-    let tagsElement = "";
-    if (stream.tags && stream.tags.length > 0) {
-      const tagsList = stream.tags
-        .slice(0, 3)
-        .map(
-          (tag) =>
-            `<span class="text-xs bg-slate-700 px-2 py-1 rounded-full">#${tag.name}</span>`
-        )
-        .join("");
-      tagsElement = `
-                        <div class="mt-3 flex flex-wrap gap-1">
-                            ${tagsList}
-                        </div>
-                    `;
+    card.className = "broadcast-card";
+    card.onclick = () => openModal(broadcast.id);
+    // Preparar tags HTML se existirem
+    let tagsHTML = "";
+    if (broadcast.tags && broadcast.tags.length > 0) {
+      tagsHTML = `
+            <div class="card-tags">
+              ${broadcast.tags
+                .map((tag) => `<span class="tag">#${tag.name || tag}</span>`)
+                .join("")}
+            </div>
+          `;
     }
     card.innerHTML = `
-                    <div class="relative aspect-video">
-                        <img src="${thumbnailSrc}" alt="${
-      stream.username
-    }" class="w-full h-full object-cover">
-                        ${countryElement}
-                        <div class="absolute bottom-2 right-2 bg-red-600 text-xs px-2 py-1 rounded-full text-white font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            ${stream.viewers.toLocaleString()}
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-white mb-1">@${
-                          stream.username
-                        }</h3>
-                        <p class="text-sm text-slate-400">${
-                          broadcastTypes[stream.broadcastType] ||
-                          stream.broadcastType ||
-                          "Transmissão"
-                        }</p>
-                        ${tagsElement}
-                    </div>
-                `;
-    // Add click event to open modal
-    card.addEventListener("click", () => {
-      openStreamModal(stream);
-    });
-    return card;
-  }
-  // Populate banner with top streams
-  function populateBanner() {
-    // Get top 5 streams by viewers
-    const topStreams = [...allStreams]
-      .sort((a, b) => b.viewers - a.viewers)
-      .slice(0, 5);
-    bannerWrapper.innerHTML = "";
-    bannerDots.innerHTML = "";
-    topStreams.forEach((stream, index) => {
-      // Create banner slide
-      const slide = document.createElement("div");
-      slide.className = "banner-slide min-w-full h-64 md:h-80 relative";
-      // Determine thumbnail source
-      let thumbnailSrc = "";
-      if (stream.profileImageURL) {
-        thumbnailSrc = stream.profileImageURL;
-      } else if (stream.preview && stream.preview.poster) {
-        thumbnailSrc = stream.preview.poster;
-      } else {
-        // Create a colored placeholder
-        const colors = [
-          "#3b82f6",
-          "#10b981",
-          "#ef4444",
-          "#8b5cf6",
-          "#f59e0b",
-          "#ec4899"
-        ];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        thumbnailSrc = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none"><rect width="1200" height="600" fill="${randomColor.replace(
-          "#",
-          "%23"
-        )}"/><text x="50%" y="50%" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">${
-          stream.username
-        }</text></svg>`;
-      }
-      slide.innerHTML = `
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent z-10"></div>
-                        <img src="${thumbnailSrc}" alt="${
-        stream.username
-      }" class="w-full h-full object-cover">
-                        <div class="absolute bottom-0 left-0 w-full p-6 z-20">
-                            <div class="flex items-center mb-2">
-                                <div class="bg-red-600 text-xs px-2 py-1 rounded-full text-white font-semibold mr-2">AO VIVO</div>
-                                <div class="text-sm text-white flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    ${stream.viewers.toLocaleString()}
-                                </div>
-                            </div>
-                            <h3 class="text-xl md:text-2xl font-bold text-white">@${
-                              stream.username
-                            }</h3>
-                            <p class="text-slate-300">${
-                              broadcastTypes[stream.broadcastType] ||
-                              stream.broadcastType ||
-                              "Transmissão"
-                            }</p>
-                        </div>
-                    `;
-      // Add click event to open modal
-      slide.addEventListener("click", () => {
-        openStreamModal(stream);
-      });
-      bannerWrapper.appendChild(slide);
-      // Create dot indicator
-      const dot = document.createElement("button");
-      dot.className = "h-2 w-2 rounded-full bg-white/50 hover:bg-white/80";
-      dot.setAttribute("data-index", index);
-      dot.addEventListener("click", () => {
-        currentBannerIndex = index;
-        updateBanner();
-      });
-      bannerDots.appendChild(dot);
-    });
-    // Initialize banner slider
-    initBannerSlider();
-  }
-  // Initialize banner slider functionality
-  let currentBannerIndex = 0;
-  let bannerInterval;
-
-  function initBannerSlider() {
-    const totalBanners = bannerWrapper.children.length;
-    if (totalBanners === 0) return;
-
-    function updateBanner() {
-      bannerWrapper.style.transform = `translateX(-${
-        currentBannerIndex * 100
-      }%)`;
-      // Update dots
-      document.querySelectorAll("#bannerDots button").forEach((dot, index) => {
-        if (index === currentBannerIndex) {
-          dot.classList.add("bg-white");
-          dot.classList.remove("bg-white/50");
-        } else {
-          dot.classList.remove("bg-white");
-          dot.classList.add("bg-white/50");
-        }
-      });
-    }
-    document.getElementById("nextBanner").addEventListener("click", () => {
-      currentBannerIndex = (currentBannerIndex + 1) % totalBanners;
-      updateBanner();
-      resetBannerInterval();
-    });
-    document.getElementById("prevBanner").addEventListener("click", () => {
-      currentBannerIndex =
-        (currentBannerIndex - 1 + totalBanners) % totalBanners;
-      updateBanner();
-      resetBannerInterval();
-    });
-    // Auto rotate banner
-    function startBannerInterval() {
-      bannerInterval = setInterval(() => {
-        currentBannerIndex = (currentBannerIndex + 1) % totalBanners;
-        updateBanner();
-      }, 5000);
-    }
-
-    function resetBannerInterval() {
-      clearInterval(bannerInterval);
-      startBannerInterval();
-    }
-    // Initialize banner
-    updateBanner();
-    startBannerInterval();
-  }
-  // Populate trending streamers
-  function populateTrendingStreamers() {
-    // Get top 5 streamers by viewers
-    const topStreamers = [...allStreams]
-      .sort((a, b) => b.viewers - a.viewers)
-      .slice(0, 5);
-    trendingStreamers.innerHTML = "";
-    topStreamers.forEach((streamer) => {
-      const streamerItem = document.createElement("div");
-      streamerItem.className =
-        "flex items-center p-2 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer";
-      // Determine avatar source
-      let avatarSrc = "";
-      if (streamer.profileImageURL) {
-        avatarSrc = `<img src="${streamer.profileImageURL}" alt="${streamer.username}" class="w-full h-full object-cover">`;
-      } else {
-        // Create a colored placeholder with initials
-        const colors = [
-          "#3b82f6",
-          "#10b981",
-          "#ef4444",
-          "#8b5cf6",
-          "#f59e0b",
-          "#ec4899"
-        ];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        avatarSrc = `
-                            <div class="w-full h-full rounded-full flex items-center justify-center" style="background-color: ${randomColor};">
-                                <span class="text-white font-bold">${streamer.username
-                                  .substring(0, 2)
-                                  .toUpperCase()}</span>
-                            </div>
-                        `;
-      }
-      streamerItem.innerHTML = `
-                        <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
-                            ${avatarSrc}
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-medium text-white">${
-                              streamer.username
-                            }</h4>
-                            <p class="text-xs text-slate-400">${
-                              broadcastTypes[streamer.broadcastType] ||
-                              streamer.broadcastType ||
-                              "Transmissão"
-                            }</p>
-                        </div>
-                        <div class="text-xs text-slate-400 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            ${streamer.viewers.toLocaleString()}
-                        </div>
-                    `;
-      // Add click event to open modal
-      streamerItem.addEventListener("click", () => {
-        openStreamModal(streamer);
-      });
-      trendingStreamers.appendChild(streamerItem);
-    });
-  }
-  // Open stream modal
-  function openStreamModal(stream) {
-    // Set modal content
-    modalTitle.textContent = "@" + stream.username;
-    // Set country info
-    if (stream.country) {
-      modalCountryFlag.src = `https://flagcdn.com/w20/${stream.country.toLowerCase()}.png`;
-      modalCountryName.textContent =
-        countryNames[stream.country] || stream.country;
-      document.getElementById("modalCountry").style.display = "flex";
-    } else {
-      document.getElementById("modalCountry").style.display = "none";
-    }
-    // Set viewers
-    modalViewers.textContent = stream.viewers.toLocaleString();
-    // Set tags
-    modalTags.innerHTML = "";
-    if (stream.tags && stream.tags.length > 0) {
-      stream.tags.forEach((tag) => {
-        const tagElement = document.createElement("span");
-        tagElement.className = "px-3 py-1 bg-slate-700 rounded-full text-sm";
-        tagElement.textContent = `#${tag.name}`;
-        modalTags.appendChild(tagElement);
-      });
-    } else {
-      modalTags.innerHTML = '<span class="text-slate-400">Sem tags</span>';
-    }
-    // Set info details
-    modalId.textContent = stream.id;
-    modalType.textContent =
-      broadcastTypes[stream.broadcastType] ||
-      stream.broadcastType ||
-      "Não especificado";
-    modalGender.textContent = stream.gender || "Não especificado";
-    modalOrientation.textContent =
-      orientationTypes[stream.sexualOrientation] ||
-      stream.sexualOrientation ||
-      "Não especificado";
-    // Set video player
-    if (stream.preview && stream.preview.poster) {
-      modalVideo.innerHTML = `
-        <div class="w-full h-full bg-black flex items-center justify-center relative">
-            <img src="${stream.preview.poster}" alt="${stream.username}" class="w-full h-full object-contain">
-            <div class="absolute inset-0 flex items-center justify-center">
-                <button id="playStream" class="bg-blue-600/80 hover:bg-blue-700 text-white rounded-full p-4 transform transition-transform hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </button>
+          <div class="card-thumbnail">
+            <img src="${broadcast.preview.poster}" alt="${
+      broadcast.username
+    }" loading="lazy">
+            <div class="card-overlay">
+              <div class="play-button">
+                <i class="fas fa-play"></i>
+              </div>
             </div>
-        </div>
-    `;
-
-      // Add click event to load iframe dynamically
-      document.getElementById("playStream").addEventListener("click", () => {
-        modalVideo.innerHTML = `
-            <iframe 
-                src="https://xcam.gay/cam/?id=${stream.id}" 
-                class="w-full h-full" 
-                frameborder="0" 
-                allowfullscreen>
-            </iframe>`;
-      });
-    } else {
-      // Create a colored placeholder
-      const colors = [
-        "#3b82f6",
-        "#10b981",
-        "#ef4444",
-        "#8b5cf6",
-        "#f59e0b",
-        "#ec4899"
-      ];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      modalVideo.innerHTML = `
-        <div class="w-full h-full flex items-center justify-center" style="background-color: ${randomColor};">
-            <div class="text-center">
-                <div class="text-5xl font-bold mb-2">${stream.username}</div>
-                <div class="text-xl">Clique para iniciar a transmissão</div>
+            <div class="live-badge">AO VIVO</div>
+          </div>
+          <div class="card-info">
+            <div class="card-header">
+              <h3 class="card-username">@${broadcast.username}</h3>
+              <div class="card-country">
+                <img src="https://flagcdn.com/w20/${
+                  broadcast.country
+                }.png" alt="${broadcast.country}" title="${getCountryName(
+      broadcast.country
+    )}">
+              </div>
             </div>
+            <div class="card-viewers">
+              <i class="fas fa-eye"></i> ${formatViewers(broadcast.viewers)}
+            </div>
+            ${tagsHTML}
+          </div>
+        `;
+    gridContainer.appendChild(card);
+  });
+  // Renderizar paginação
+  renderPagination(broadcasts.length, page);
+}
+// Função para renderizar a paginação
+function renderPagination(totalItems, currentPage) {
+  const paginationContainer = document.getElementById("pagination");
+  const totalPages = Math.ceil(totalItems / 15);
+  if (totalPages <= 1) {
+    paginationContainer.innerHTML = "";
+    return;
+  }
+  let paginationHTML = `
+        <button class="pagination-button" ${
+          currentPage === 1 ? "disabled" : ""
+        } onclick="changePage(1)">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button class="pagination-button" ${
+          currentPage === 1 ? "disabled" : ""
+        } onclick="changePage(${currentPage - 1})">
+          <i class="fas fa-angle-left"></i>
+        </button>
+      `;
+  // Lógica para mostrar páginas (atual, 2 antes e 2 depois)
+  const startPage = Math.max(1, currentPage - 2);
+  const endPage = Math.min(totalPages, currentPage + 2);
+  for (let i = startPage; i <= endPage; i++) {
+    paginationHTML += `
+          <button class="pagination-number ${
+            i === currentPage ? "active" : ""
+          }" onclick="changePage(${i})">
+            ${i}
+          </button>
+        `;
+  }
+  paginationHTML += `
+        <button class="pagination-button" ${
+          currentPage === totalPages ? "disabled" : ""
+        } onclick="changePage(${currentPage + 1})">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button class="pagination-button" ${
+          currentPage === totalPages ? "disabled" : ""
+        } onclick="changePage(${totalPages})">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      `;
+  paginationContainer.innerHTML = paginationHTML;
+}
+// Função para abrir o modal de transmissão
+function openModal(broadcastId) {
+  const broadcast = allBroadcasts.find((b) => b.id === broadcastId);
+  if (!broadcast) return;
+  const modal = document.getElementById("broadcast-modal");
+  const modalContent = document.getElementById("modal-content");
+  // Preparar tags HTML se existirem
+  let tagsHTML = "";
+  if (broadcast.tags && broadcast.tags.length > 0) {
+    tagsHTML = `
+          <div class="modal-tags">
+            ${broadcast.tags
+              .map((tag) => `<span class="tag">#${tag.name || tag}</span>`)
+              .join("")}
+          </div>
+        `;
+  }
+  modalContent.innerHTML = `
+        <div class="modal-header">
+          <h2 class="modal-title">@${broadcast.username}</h2>
+          <button class="modal-close" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-    `;
-    }
-    // Find related streams (same tags or country)
-    const relatedStreamsList = findRelatedStreams(stream);
-    relatedStreams.innerHTML = "";
-    if (relatedStreamsList.length > 0) {
-      relatedStreamsList.forEach((relatedStream) => {
-        const relatedItem = document.createElement("div");
-        relatedItem.className =
-          "flex items-center p-2 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer";
-        // Determine thumbnail source
-        let thumbnailSrc = "";
-        if (relatedStream.profileImageURL) {
-          thumbnailSrc = relatedStream.profileImageURL;
-        } else if (relatedStream.preview && relatedStream.preview.poster) {
-          thumbnailSrc = relatedStream.preview.poster;
-        } else {
-          // Create a colored placeholder
-          const colors = [
-            "#3b82f6",
-            "#10b981",
-            "#ef4444",
-            "#8b5cf6",
-            "#f59e0b",
-            "#ec4899"
-          ];
-          const randomColor = colors[Math.floor(Math.random() * colors.length)];
-          thumbnailSrc = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="60" viewBox="0 0 80 60" fill="none"><rect width="80" height="60" fill="${randomColor.replace(
-            "#",
-            "%23"
-          )}"/><text x="50%" y="50%" font-family="Arial" font-size="16" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">${relatedStream.username
-            .substring(0, 2)
-            .toUpperCase()}</text></svg>`;
-        }
-        relatedItem.innerHTML = `
-                            <div class="w-12 h-9 overflow-hidden mr-3">
-                                <img src="${thumbnailSrc}" alt="${
-          relatedStream.username
-        }" class="w-full h-full object-cover">
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-white">@${
-                                  relatedStream.username
-                                }</h4>
-                                <div class="flex items-center text-xs text-slate-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    ${relatedStream.viewers.toLocaleString()}
-                                </div>
-                            </div>
-                        `;
-        // Add click event to open modal for related stream
-        relatedItem.addEventListener("click", () => {
-          openStreamModal(relatedStream);
-        });
-        relatedStreams.appendChild(relatedItem);
-      });
-    } else {
-      relatedStreams.innerHTML =
-        '<p class="text-slate-400">Nenhuma transmissão relacionada encontrada</p>';
-    }
-    // Show modal
-    streamModal.style.display = "block";
-    document.body.style.overflow = "hidden"; // Prevent scrolling
+        <div class="modal-body">
+          <div class="modal-player">
+            <div class="player-container" id="player-container">
+              <div class="player-placeholder" style="background-image: url('${
+                broadcast.preview.poster
+              }')">
+                <div class="play-button-large" onclick="loadPlayer('${
+                  broadcast.id
+                }')">
+                  <i class="fas fa-play"></i>
+                </div>
+              </div>
+            </div>
+            <div class="modal-info">
+              <div class="streamer-info">
+                <div class="streamer-avatar">
+                  <img src="${broadcast.profileImageURL}" alt="${
+    broadcast.username
+  }">
+                </div>
+                <div class="streamer-details">
+                  <h3>@${broadcast.username}</h3>
+                  <div class="streamer-meta">
+                    <span class="country">
+                      <img src="https://flagcdn.com/w20/${
+                        broadcast.country
+                      }.png" alt="${broadcast.country}">
+                      ${getCountryName(broadcast.country)}
+                    </span>
+                    <span class="viewers">
+                      <i class="fas fa-eye"></i> ${formatViewers(
+                        broadcast.viewers
+                      )} espectadores
+                    </span>
+                  </div>
+                </div>
+              </div>
+              ${tagsHTML}
+              <div class="additional-info">
+                <span class="info-item">
+                  <i class="fas fa-venus-mars"></i> ${
+                    genderTranslations[broadcast.gender] || broadcast.gender
+                  }
+                </span>
+                <span class="info-item">
+                  <i class="fas fa-heart"></i> ${
+                    orientationTranslations[broadcast.sexualOrientation] ||
+                    broadcast.sexualOrientation
+                  }
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="related-broadcasts">
+            <h3>Transmissões Relacionadas</h3>
+            <div class="related-grid" id="related-grid">
+              <!-- Será preenchido dinamicamente -->
+            </div>
+          </div>
+        </div>
+      `;
+  modal.classList.add("active");
+  document.body.classList.add("modal-open");
+  // Carregar transmissões relacionadas
+  loadRelatedBroadcasts(broadcast);
+}
+// Função para carregar o player
+function loadPlayer(broadcastId) {
+  const playerContainer = document.getElementById("player-container");
+  playerContainer.innerHTML = `
+        <iframe 
+          src="https://xcam.gay/cam/?id=${broadcastId}" 
+          frameborder="0" 
+          allowfullscreen
+          class="player-iframe">
+        </iframe>
+      `;
+}
+// Função para carregar transmissões relacionadas
+function loadRelatedBroadcasts(currentBroadcast) {
+  const relatedGrid = document.getElementById("related-grid");
+  // Filtrar transmissões com mesmo gênero ou país, excluindo a atual
+  const related = allBroadcasts
+    .filter(
+      (b) =>
+        b.id !== currentBroadcast.id &&
+        (b.gender === currentBroadcast.gender ||
+          b.country === currentBroadcast.country)
+    )
+    .slice(0, 4);
+  if (related.length === 0) {
+    relatedGrid.innerHTML =
+      "<p>Nenhuma transmissão relacionada encontrada.</p>";
+    return;
   }
-  // Find related streams based on tags or country
-  function findRelatedStreams(stream) {
-    const related = [];
-    const streamId = stream.id;
-    // First try to find streams with matching tags
-    if (stream.tags && stream.tags.length > 0) {
-      const streamTags = stream.tags.map((tag) => tag.name);
-      allStreams.forEach((otherStream) => {
-        if (otherStream.id === streamId) return; // Skip the current stream
-        if (otherStream.tags && otherStream.tags.length > 0) {
-          const otherTags = otherStream.tags.map((tag) => tag.name);
-          // Check for tag overlap
-          const hasCommonTag = streamTags.some((tag) =>
-            otherTags.includes(tag)
-          );
-          if (hasCommonTag) {
-            related.push(otherStream);
-          }
-        }
-      });
-    }
-    // If we don't have enough related streams by tags, add some by country
-    if (related.length < 3 && stream.country) {
-      allStreams.forEach((otherStream) => {
-        if (otherStream.id === streamId) return; // Skip the current stream
-        if (related.some((s) => s.id === otherStream.id)) return; // Skip already added streams
-        if (otherStream.country === stream.country) {
-          related.push(otherStream);
-        }
-      });
-    }
-    // If still not enough, add some by broadcast type
-    if (related.length < 3 && stream.broadcastType) {
-      allStreams.forEach((otherStream) => {
-        if (otherStream.id === streamId) return; // Skip the current stream
-        if (related.some((s) => s.id === otherStream.id)) return; // Skip already added streams
-        if (otherStream.broadcastType === stream.broadcastType) {
-          related.push(otherStream);
-        }
-      });
-    }
-    // Sort by viewers and limit to 3
-    return related.sort((a, b) => b.viewers - a.viewers).slice(0, 3);
-  }
-  // Apply filters to streams
-  function applyFilters() {
-    // Get active tag filters
-    const activeTags = Array.from(
-      document.querySelectorAll("#tagFilters .filter-pill.active")
-    ).map((button) => button.dataset.tag);
-    // Get active type filters
-    const activeTypes = Array.from(
-      document.querySelectorAll("#typeFilters .filter-pill.active")
-    ).map((button) => button.dataset.type);
-    // Get active orientation filters
-    const activeOrientations = Array.from(
-      document.querySelectorAll("#orientationFilters .filter-pill.active")
-    ).map((button) => button.dataset.orientation);
-    // Get country filter
-    const selectedCountry = countryFilter.value;
-    // Get search query
-    const searchQuery = searchInput.value.toLowerCase().trim();
-    // Filter streams
-    filteredStreams = allStreams.filter((stream) => {
-      // Filter by tags
-      if (activeTags.length > 0) {
-        if (!stream.tags || stream.tags.length === 0) return false;
-        const streamTags = stream.tags.map((tag) => tag.name);
-        const hasMatchingTag = activeTags.some((tag) =>
-          streamTags.includes(tag)
-        );
-        if (!hasMatchingTag) return false;
-      }
-      // Filter by broadcast type
-      if (
-        activeTypes.length > 0 &&
-        !activeTypes.includes(stream.broadcastType)
-      ) {
-        return false;
-      }
-      // Filter by orientation
-      if (
-        activeOrientations.length > 0 &&
-        !activeOrientations.includes(stream.sexualOrientation)
-      ) {
-        return false;
-      }
-      // Filter by country
-      if (selectedCountry && stream.country !== selectedCountry) {
-        return false;
-      }
-      // Filter by search query
-      if (searchQuery) {
-        const usernameMatch = stream.username
-          .toLowerCase()
-          .includes(searchQuery);
-        const tagMatch =
-          stream.tags &&
-          stream.tags.some((tag) =>
-            tag.name.toLowerCase().includes(searchQuery)
-          );
-        if (!usernameMatch && !tagMatch) {
-          return false;
-        }
-      }
-      return true;
-    });
-    // Reset displayed streams and show filtered results
-    displayedStreams = 0;
-    displayStreams();
-  }
-  // Setup event listeners
-  function setupEventListeners() {
-    // Load more button
-    loadMoreBtn.addEventListener("click", displayStreams);
-    // Country filter
-    countryFilter.addEventListener("change", applyFilters);
-    // Search input
-    searchInput.addEventListener("input", debounce(applyFilters, 300));
-    // Sort button
-    let sortAscending = false;
-    sortButton.addEventListener("click", () => {
-      sortAscending = !sortAscending;
-      if (sortAscending) {
-        filteredStreams.sort((a, b) => a.viewers - b.viewers);
-        sortButton.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
-                            </svg>
-                            Ordenar (Crescente)
-                        `;
-      } else {
-        filteredStreams.sort((a, b) => b.viewers - a.viewers);
-        sortButton.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
-                            </svg>
-                            Ordenar (Decrescente)
-                        `;
-      }
-      // Reset displayed streams and show sorted results
-      displayedStreams = 0;
-      displayStreams();
-    });
-    // Modal close button
-    closeModal.addEventListener("click", () => {
-      streamModal.style.display = "none";
-      document.body.style.overflow = ""; // Restore scrolling
-    });
-    // Close modal when clicking outside
-    window.addEventListener("click", (event) => {
-      if (event.target === streamModal) {
-        streamModal.style.display = "none";
-        document.body.style.overflow = ""; // Restore scrolling
-      }
-    });
-    // Close modal with Escape key
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && streamModal.style.display === "block") {
-        streamModal.style.display = "none";
-        document.body.style.overflow = ""; // Restore scrolling
-      }
-    });
-  }
-  // Debounce function for search input
-  function debounce(func, delay) {
-    let timeout;
-    return function () {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), delay);
+  relatedGrid.innerHTML = "";
+  related.forEach((broadcast) => {
+    const relatedCard = document.createElement("div");
+    relatedCard.className = "related-card";
+    relatedCard.onclick = () => {
+      closeModal();
+      setTimeout(() => openModal(broadcast.id), 300);
     };
+    relatedCard.innerHTML = `
+          <div class="related-thumbnail">
+            <img src="${broadcast.preview.poster}" alt="${
+      broadcast.username
+    }" loading="lazy">
+            <div class="related-overlay">
+              <div class="related-play">
+                <i class="fas fa-play"></i>
+              </div>
+            </div>
+            <div class="related-badge">AO VIVO</div>
+          </div>
+          <div class="related-info">
+            <h4>@${broadcast.username}</h4>
+            <div class="related-meta">
+              <span class="related-country">
+                <img src="https://flagcdn.com/w20/${
+                  broadcast.country
+                }.png" alt="${broadcast.country}">
+              </span>
+              <span class="related-viewers">
+                <i class="fas fa-eye"></i> ${formatViewers(broadcast.viewers)}
+              </span>
+            </div>
+          </div>
+        `;
+    relatedGrid.appendChild(relatedCard);
+  });
+}
+// Função para fechar o modal
+function closeModal() {
+  const modal = document.getElementById("broadcast-modal");
+  modal.classList.remove("active");
+  document.body.classList.remove("modal-open");
+  // Limpar o player para parar qualquer reprodução
+  setTimeout(() => {
+    const playerContainer = document.getElementById("player-container");
+    if (playerContainer) {
+      playerContainer.innerHTML = "";
+    }
+  }, 300);
+}
+// Função para formatar número de espectadores
+function formatViewers(viewers) {
+  if (viewers >= 1000) {
+    return (viewers / 1000).toFixed(1) + "k";
   }
-  // Initialize the application
-  init();
-});
+  return viewers.toString();
+}
+// Função para obter nome do país a partir do código
+function getCountryName(countryCode) {
+  return countryNames[countryCode] || countryCode.toUpperCase();
+}
+// Função para mostrar notificações toast
+function showToast(message, type = "info") {
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  const icons = {
+    success: "fas fa-check-circle",
+    error: "fas fa-exclamation-circle",
+    info: "fas fa-info-circle",
+    warning: "fas fa-exclamation-triangle"
+  };
+  toast.innerHTML = `
+        <div class="toast-icon">
+          <i class="${icons[type]}"></i>
+        </div>
+        <div class="toast-message">${message}</div>
+      `;
+  const toastContainer = document.getElementById("toast-container");
+  toastContainer.appendChild(toast);
+  // Animar entrada
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+  // Remover após 3 segundos
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 3000);
+}
+// Função para controle do carrossel
+let carouselInterval;
+let currentSlide = 0;
 
-(function () {
-  function c() {
-    var b = a.contentDocument || a.contentWindow.document;
-    if (b) {
-      var d = b.createElement("script");
-      d.innerHTML =
-        "window.__CF$cv$params={r:'93bdd1dad4c39882',t:'MTc0NjU5MDUyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-      b.getElementsByTagName("head")[0].appendChild(d);
-    }
+function startCarouselRotation() {
+  carouselInterval = setInterval(() => {
+    nextSlide();
+  }, 5000);
+}
+
+function stopCarouselRotation() {
+  clearInterval(carouselInterval);
+}
+
+function changeSlide(index) {
+  const slides = document.querySelectorAll(".carousel-slide");
+  const indicators = document.querySelectorAll(".carousel-indicator");
+  if (slides.length === 0) return;
+  if (index >= slides.length) index = 0;
+  if (index < 0) index = slides.length - 1;
+  // Remover classe active de todos
+  slides.forEach((slide) => slide.classList.remove("active"));
+  indicators.forEach((indicator) => indicator.classList.remove("active"));
+  // Adicionar classe active ao slide atual
+  slides[index].classList.add("active");
+  indicators[index].classList.add("active");
+  currentSlide = index;
+  // Reiniciar rotação
+  stopCarouselRotation();
+  startCarouselRotation();
+}
+
+function nextSlide() {
+  changeSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  changeSlide(currentSlide - 1);
+}
+// Toggle do menu mobile
+function toggleMobileMenu() {
+  const mobileMenu = document.getElementById("mobile-menu");
+  mobileMenu.classList.toggle("active");
+}
+// Função para aplicar filtros
+function applyFilters() {
+  currentFilters.country = document.getElementById("country-filter").value;
+  currentFilters.gender = document.getElementById("gender-filter").value;
+  currentFilters.orientation = document.getElementById(
+    "orientation-filter"
+  ).value;
+  filteredBroadcasts = filterBroadcasts(allBroadcasts, currentFilters);
+  currentPage = 1;
+  renderBroadcastGrid(filteredBroadcasts, currentPage);
+  showToast("Filtros aplicados com sucesso!", "success");
+}
+// Função para mudar de página
+function changePage(page) {
+  currentPage = page;
+  renderBroadcastGrid(filteredBroadcasts, currentPage);
+  // Scroll para o topo do grid
+  document.getElementById("broadcasts-grid").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+// Função para popular opções de países no filtro
+function populateCountryOptions() {
+  const countrySelect = document.getElementById("country-filter");
+  if (!countrySelect) return;
+  // Obter países únicos das transmissões
+  const uniqueCountries = [...new Set(allBroadcasts.map((b) => b.country))];
+  // Adicionar opção "Todos"
+  countrySelect.innerHTML = '<option value="all">Todos os países</option>';
+  // Adicionar opções para cada país
+  uniqueCountries.forEach((countryCode) => {
+    const option = document.createElement("option");
+    option.value = countryCode;
+    option.textContent = getCountryName(countryCode);
+    countrySelect.appendChild(option);
+  });
+}
+// Configurar pesquisa
+function setupSearch() {
+  const searchInput = document.getElementById("search-input");
+  const mobileSearchInput = document.getElementById("mobile-search-input");
+  // Função de debounce para evitar muitas chamadas
+  let searchTimeout;
+
+  function performSearch(value) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentFilters.search = value;
+      filteredBroadcasts = filterBroadcasts(allBroadcasts, currentFilters);
+      currentPage = 1;
+      renderBroadcastGrid(filteredBroadcasts, currentPage);
+    }, 300);
   }
-  if (document.body) {
-    var a = document.createElement("iframe");
-    a.height = 1;
-    a.width = 1;
-    a.style.position = "absolute";
-    a.style.top = 0;
-    a.style.left = 0;
-    a.style.border = "none";
-    a.style.visibility = "hidden";
-    document.body.appendChild(a);
-    if ("loading" !== document.readyState) c();
-    else if (window.addEventListener)
-      document.addEventListener("DOMContentLoaded", c);
-    else {
-      var e = document.onreadystatechange || function () {};
-      document.onreadystatechange = function (b) {
-        e(b);
-        "loading" !== document.readyState &&
-          ((document.onreadystatechange = e), c());
-      };
-    }
+  searchInput.addEventListener("input", (e) => {
+    const value = e.target.value;
+    mobileSearchInput.value = value;
+    performSearch(value);
+  });
+  mobileSearchInput.addEventListener("input", (e) => {
+    const value = e.target.value;
+    searchInput.value = value;
+    performSearch(value);
+  });
+}
+// Inicialização da aplicação
+async function initApp() {
+  // Mostrar estado de carregamento
+  document.getElementById("broadcasts-grid").innerHTML = `
+        <div class="loading-state">
+          <div class="loader"></div>
+          <p>Carregando transmissões...</p>
+        </div>
+      `;
+  try {
+    // Carregar dados da API
+    const data = await fetchBroadcasts();
+    allBroadcasts = data.broadcasts.items;
+    // Ordenar por número de espectadores
+    allBroadcasts = sortBroadcastsByViewers(allBroadcasts);
+    // Aplicar filtros iniciais
+    filteredBroadcasts = [...allBroadcasts];
+    // Renderizar carrossel com top 5
+    renderCarousel(allBroadcasts.slice(0, 5));
+    // Renderizar grid de transmissões
+    renderBroadcastGrid(filteredBroadcasts, currentPage);
+    // Preencher opções de países no filtro
+    populateCountryOptions();
+    // Configurar pesquisa
+    setupSearch();
+    // Mostrar toast de sucesso
+    showToast("Transmissões carregadas com sucesso!", "success");
+  } catch (error) {
+    console.error("Erro na inicialização:", error);
+    document.getElementById("broadcasts-grid").innerHTML = `
+          <div class="error-state">
+            <div class="error-icon">❌</div>
+            <h3>Ops! Algo deu errado</h3>
+            <p>Não foi possível carregar as transmissões.</p>
+            <button onclick="initApp()">Tentar novamente</button>
+          </div>
+        `;
   }
-})();
+}
+// Fechar modal ao clicar fora
+window.addEventListener("click", (e) => {
+  const modal = document.getElementById("broadcast-modal");
+  if (e.target === modal) {
+    closeModal();
+  }
+});
+// Iniciar a aplicação quando o DOM estiver pronto
+document.addEventListener("DOMContentLoaded", initApp);
