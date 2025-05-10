@@ -69,7 +69,7 @@ function fetchCameraDataByUsername(username) {
     );
 }
 
-// Função para configurar o player com tratamento de erros e fallback
+// Função para configurar o player com tratamento de erros, fallback e loop
 function setupPlayer(camera) {
   const videoSrc = camera.preview.src && camera.preview.src !== null 
     ? camera.preview.src 
@@ -139,12 +139,13 @@ function setupPlayer(camera) {
       }, 1000);
     };
 
-    // Função para recarregar o player com o vídeo de fallback
+    // Função para recarregar o player com o vídeo de fallback com autoplay e loop
     const reloadWithFallback = () => {
       jwplayer("player").setup({
         file: "https://site.my.eu.org/0:/offline-720p.mp4",
         autostart: true, // Autoplay ativado
-        controls: true,
+        repeat: true, // Ativando o modo de repetição
+        controls: false,
       });
     };
 
