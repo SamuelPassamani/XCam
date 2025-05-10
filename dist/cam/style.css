@@ -988,14 +988,15 @@ Icone de Share.
 
 .ad-modal-container {
   width: 300px; /* Largura do contêiner igual ao anúncio */
-  height: 250px; /* Altura do contêiner igual ao anúncio */
+  height: calc(250px + 50px); /* Altura do anúncio (250px) + altura do botão (50px) */
   background-color: #181919;
-  padding: 0; /* Remove padding para alinhar com o iframe */
   border-radius: 0.5rem;
   text-align: center;
   display: flex;
   flex-direction: column; /* Garante que o botão fique abaixo do iframe */
   align-items: center;
+  justify-content: space-between; /* Espaçamento uniforme entre o iframe e o botão */
+  padding: 0; /* Remove padding interno para alinhamento preciso */
 }
 
 .ad-modal iframe {
@@ -1011,11 +1012,10 @@ Icone de Share.
   background-color: #055689;
   color: #fff;
   border: none;
-  border-radius: 0 0 0.3rem 0.3rem; /* Bordas arredondadas apenas na parte inferior */
+  border-radius: 0 0 0.5rem 0.5rem; /* Bordas arredondadas somente na parte inferior */
   cursor: not-allowed; /* Desabilitado inicialmente */
   transition: all 0.3s ease-in-out;
   width: 100%; /* Preenche a largura do contêiner */
-  margin-top: 0; /* Remove margens entre o botão e o iframe */
 }
 
 .ad-modal button.enabled {
