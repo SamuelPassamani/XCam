@@ -431,14 +431,14 @@ const genderTranslations = {
   male: "Masculino",
   female: "Feminino",
   trans: "Trans",
-  couple: "Casal"
 };
 const orientationTranslations = {
   straight: "Hetero",
   gay: "Gay",
   lesbian: "Lésbica",
   bisexual: "Bissexual",
-  bicurious: "Bicurioso"
+  bicurious: "Bicurioso",
+  unknown: "Não Definido"
 };
 // Função para carregar dados da API
 async function fetchBroadcasts() {
