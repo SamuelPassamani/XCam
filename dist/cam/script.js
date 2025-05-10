@@ -135,6 +135,21 @@ function setupPlayer(camera) {
         </div>
       `;
     }
+
+    // Tratamento específico para o erro 232001
+    if (event.code === 232001) {
+      playerContainer.innerHTML = `
+        <div style="color: orange; text-align: center; padding: 20px;">
+          <p><strong>Erro de Conexão com o Servidor.</strong> Não foi possível se conectar ao servidor do vídeo.</p>
+          <p>Possíveis causas:</p>
+          <ul>
+            <li>O servidor está ocupado ou indisponível.</li>
+            <li>Problemas temporários de rede.</li>
+          </ul>
+          <p>Tente novamente mais tarde ou verifique sua conexão com a internet.</p>
+        </div>
+      `;
+    }
   });
 
   playerInstance.on("ready", () => {
@@ -143,6 +158,7 @@ function setupPlayer(camera) {
     // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
   });
 }
+
 // Função para adicionar botão de download
 function addDownloadButton(playerInstance) {
   const buttonId = "download-video-button";
