@@ -110,17 +110,28 @@ function setupPlayer(camera) {
     ],
   });
 
-  // Lidando com erros do JW Player
+  // Tratamento de erros do JW Player
   playerInstance.on("error", (event) => {
     console.error("Erro no JW Player:", event.message);
 
-    // Verifica se o erro é o 232600
+    const playerContainer = document.getElementById("player");
+
+    // Tratamento específico para o erro 232600
     if (event.code === 232600) {
-      const playerContainer = document.getElementById("player");
       playerContainer.innerHTML = `
         <div style="color: red; text-align: center; padding: 20px;">
           <p><strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido.</p>
           <p>Tente novamente mais tarde ou entre em contato com o suporte.</p>
+        </div>
+      `;
+    }
+
+    // Tratamento específico para o erro 232011
+    if (event.code === 232011) {
+      playerContainer.innerHTML = `
+        <div style="color: orange; text-align: center; padding: 20px;">
+          <p><strong>Erro de conexão.</strong> Não foi possível carregar o vídeo devido a problemas de rede ou configurações do navegador.</p>
+          <p>Verifique sua conexão com a internet, desative proxies ou extensões que possam interferir.</p>
         </div>
       `;
     }
@@ -132,7 +143,6 @@ function setupPlayer(camera) {
     // addForwardButton(playerInstance); // DESABILITADO: Função para adicionar botão de avançar 10 segundos.
   });
 }
-
 // Função para adicionar botão de download
 function addDownloadButton(playerInstance) {
   const buttonId = "download-video-button";
