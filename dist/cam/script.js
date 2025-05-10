@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const countdownElement = document.getElementById("ad-countdown");
   const player = document.getElementById("player");
 
-  let countdown = 15;
+  let countdown = 10;
 
   // Contagem regressiva para o modal de anúncios
   const interval = setInterval(() => {
