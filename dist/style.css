@@ -223,67 +223,80 @@ body.modal-open {
 .carousel-content {
   position: absolute;
   bottom: 48px;
-  left: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
   z-index: 2;
   max-width: 600px;
   animation: fadeIn 0.5s;
 }
 
+/* Badge "AO VIVO" */
 .carousel-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
   display: inline-block;
-  background: linear-gradient(90deg, #ff007f, #ff4500);
+  background: linear-gradient(90deg, #ff4500, #ff007f);
   color: white;
-  padding: 4px 12px;
+  padding: 6px 16px;
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
-  margin-bottom: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: pulse 1.5s infinite;
 }
 
+/* Username */
 .carousel-username {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
-  margin: 0 0 16px 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  margin: 16px 0 8px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
+/* Informações do streamer (país e espectadores) */
 .carousel-info {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .carousel-country img {
   height: 20px;
-  vertical-align: middle;
-  margin-right: 8px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .carousel-viewers {
   display: flex;
   align-items: center;
-  gap: 8px;
+  color: #cccccc;
+  font-size: 16px;
 }
 
+/* Botão "Assistir" */
 .carousel-button {
+  display: inline-block;
   background: linear-gradient(135deg, #ff007f, #800080);
   color: white;
-  border: none;
+  font-size: 18px;
+  font-weight: 600;
   padding: 12px 24px;
   border-radius: 4px;
-  font-weight: 600;
+  text-transform: uppercase;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .carousel-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 0, 127, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(255, 0, 127, 0.5);
 }
 
+/* Controles do Carrossel */
 .carousel-controls {
   position: absolute;
   top: 50%;
@@ -313,6 +326,7 @@ body.modal-open {
   opacity: 1;
 }
 
+/* Indicadores do Carrossel */
 .carousel-indicators {
   position: absolute;
   bottom: 24px;
