@@ -221,10 +221,7 @@ body.modal-open {
 }
 
 .carousel-content {
-  position: absolute;
-  bottom: 48px;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Removeremos o `position` e ajustes relacionados */
   text-align: center;
   z-index: 2;
   max-width: 600px;
@@ -235,20 +232,24 @@ body.modal-open {
 .carousel-badge {
   position: absolute;
   top: 16px;
-  left: 16px;
+  right: 16px;
   display: inline-block;
   background: linear-gradient(90deg, #ff4500, #ff007f);
   color: white;
-  padding: 6px 16px;
+  padding: 10px 26px;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 17px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: pulse 1.5s infinite;
 }
 
 /* Username */
 .carousel-username {
+  position: absolute;
+  top: 310px; /* Ajuste conforme necessário */
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 28px;
   font-weight: 700;
   color: #ffffff;
@@ -258,6 +259,10 @@ body.modal-open {
 
 /* Informações do streamer (país e espectadores) */
 .carousel-info {
+  position: absolute;
+  top: 16px; /* Ajuste conforme necessário */
+  left: 70px;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -266,7 +271,7 @@ body.modal-open {
 }
 
 .carousel-country img {
-  height: 20px;
+  height: 23px;
   border-radius: 4px;
 }
 
@@ -274,26 +279,32 @@ body.modal-open {
   display: flex;
   align-items: center;
   color: #cccccc;
-  font-size: 16px;
+  font-size: 20px;
 }
 
-/* Botão "Assistir" */
 .carousel-button {
-  display: inline-block;
-  background: linear-gradient(135deg, #ff007f, #800080);
+  display: block;
+  position: absolute;
+  background: linear-gradient(
+    135deg,
+    #ff007f,
+    #800080
+  ); /* Gradiente do botão */
   color: white;
+  bottom: 50px;
+  left: 50%; /* Posiciona o botão no centro horizontal */
+  transform: translateX(-50%); /* Centraliza o botão no eixo X */
   font-size: 18px;
   font-weight: 600;
   padding: 12px 24px;
   border-radius: 4px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.2s ease-in-out; /* Transição suave */
 }
 
 .carousel-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(255, 0, 127, 0.5);
+  transform: translateX(-50%) scale(1.1); /* Cresce 10% ao passar o mouse */
 }
 
 /* Controles do Carrossel */
