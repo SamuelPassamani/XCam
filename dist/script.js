@@ -496,7 +496,7 @@ function sortBroadcastsByViewers(broadcasts) {
   return [...broadcasts].sort((a, b) => b.viewers - a.viewers);
 }
 // Função para paginar resultados
-function paginateBroadcasts(broadcasts, page, itemsPerPage = 15) {
+function paginateBroadcasts(broadcasts, page, itemsPerPage = 30) {
   const startIndex = (page - 1) * itemsPerPage;
   return broadcasts.slice(startIndex, startIndex + itemsPerPage);
 }
@@ -504,7 +504,7 @@ function paginateBroadcasts(broadcasts, page, itemsPerPage = 15) {
 function renderCarousel(topBroadcasts) {
   const carouselContainer = document.getElementById("main-carousel");
   carouselContainer.innerHTML = "";
-  topBroadcasts.slice(0, 5).forEach((broadcast, index) => {
+  topBroadcasts.slice(0, 10).forEach((broadcast, index) => {
     const slide = document.createElement("div");
     slide.className = `carousel-slide ${index === 0 ? "active" : ""}`;
     slide.innerHTML = `
