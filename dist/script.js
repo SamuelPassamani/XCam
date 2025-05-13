@@ -8,6 +8,10 @@ let currentFilters = {
   orientation: "all",
   search: ""
 };
+
+// Constante global para número de transmissões por página
+const itemsPerPage = 30; // Número de transmissões por página
+
 // Dados de fallback para caso a API falhe
 const fallbackData = {
   broadcasts: {
@@ -501,7 +505,7 @@ function sortBroadcastsByViewers(broadcasts) {
 }
 
 // Função para paginar resultados
-function paginateBroadcasts(broadcasts, page, itemsPerPage = 30) {
+function paginateBroadcasts(broadcasts, page, itemsPerPage = itemsPerPage) {
   const startIndex = (page - 1) * itemsPerPage;
   return broadcasts.slice(startIndex, startIndex + itemsPerPage);
 }
@@ -581,7 +585,11 @@ function renderBroadcastGrid(broadcasts, page = 1) {
         `;
     return;
   }
-  const paginatedBroadcasts = paginateBroadcasts(broadcasts, page);
+  const paginatedBroadcasts = paginateBroadcasts(
+    broadcasts,
+    page,
+    itemsPerPage
+  );
   paginatedBroadcasts.forEach((broadcast) => {
     // Substituir valores padrão para "poster" e "profileImageURL" se necessário
     const posterURL = broadcast.preview.poster || defaultPosterURL;
@@ -633,55 +641,65 @@ function renderBroadcastGrid(broadcasts, page = 1) {
     gridContainer.appendChild(card);
   });
   // Renderizar paginação
-  renderPagination(broadcasts.length, page);
+  renderPagination(broadcasts.total || broadcasts.length, page, itemsPerPage);
 }
 
-// Função para renderizar a paginação
-function renderPagination(totalItems, currentPage) {
+// Função para calcular e renderizar a paginação
+function renderPagination(
+  totalItems,
+  currentPage,
+  itemsPerPage = itemsPerPage
+) {
   const paginationContainer = document.getElementById("pagination");
-  const totalPages = Math.ceil(totalItems / 15);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   if (totalPages <= 1) {
     paginationContainer.innerHTML = "";
     return;
   }
+
   let paginationHTML = `
-        <button class="pagination-button" ${
-          currentPage === 1 ? "disabled" : ""
-        } onclick="changePage(1)">
-          <i class="fas fa-angle-double-left"></i>
-        </button>
-        <button class="pagination-button" ${
-          currentPage === 1 ? "disabled" : ""
-        } onclick="changePage(${currentPage - 1})">
-          <i class="fas fa-angle-left"></i>
-        </button>
-      `;
-  // Lógica para mostrar páginas (atual, 2 antes e 2 depois)
+    <button class="pagination-button" ${
+      currentPage === 1 ? "disabled" : ""
+    } onclick="changePage(1)">
+      <i class="fas fa-angle-double-left"></i>
+    </button>
+    <button class="pagination-button" ${
+      currentPage === 1 ? "disabled" : ""
+    } onclick="changePage(${currentPage - 1})">
+      <i class="fas fa-angle-left"></i>
+    </button>
+  `;
+
   const startPage = Math.max(1, currentPage - 2);
   const endPage = Math.min(totalPages, currentPage + 2);
+
   for (let i = startPage; i <= endPage; i++) {
     paginationHTML += `
-          <button class="pagination-number ${
-            i === currentPage ? "active" : ""
-          }" onclick="changePage(${i})">
-            ${i}
-          </button>
-        `;
+      <button class="pagination-number ${
+        i === currentPage ? "active" : ""
+      }" onclick="changePage(${i})">
+        ${i}
+      </button>
+    `;
   }
+
   paginationHTML += `
-        <button class="pagination-button" ${
-          currentPage === totalPages ? "disabled" : ""
-        } onclick="changePage(${currentPage + 1})">
-          <i class="fas fa-angle-right"></i>
-        </button>
-        <button class="pagination-button" ${
-          currentPage === totalPages ? "disabled" : ""
-        } onclick="changePage(${totalPages})">
-          <i class="fas fa-angle-double-right"></i>
-        </button>
-      `;
+    <button class="pagination-button" ${
+      currentPage === totalPages ? "disabled" : ""
+    } onclick="changePage(${currentPage + 1})">
+      <i class="fas fa-angle-right"></i>
+    </button>
+    <button class="pagination-button" ${
+      currentPage === totalPages ? "disabled" : ""
+    } onclick="changePage(${totalPages})">
+      <i class="fas fa-angle-double-right"></i>
+    </button>
+  `;
+
   paginationContainer.innerHTML = paginationHTML;
 }
+
 function openModal(broadcastId) {
   const broadcast = allBroadcasts.find((b) => b.id === broadcastId);
   if (!broadcast) return;
@@ -952,10 +970,9 @@ function applyFilters() {
   renderBroadcastGrid(filteredBroadcasts, currentPage);
   showToast("Filtros aplicados com sucesso!", "success");
 }
-// Função para mudar de página
 function changePage(page) {
   currentPage = page;
-  renderBroadcastGrid(filteredBroadcasts, currentPage);
+  renderBroadcastGrid(filteredBroadcasts, currentPage, itemsPerPage);
   // Scroll para o topo do grid
   document.getElementById("broadcasts-grid").scrollIntoView({
     behavior: "smooth"
