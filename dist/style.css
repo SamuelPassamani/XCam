@@ -433,7 +433,7 @@ body.modal-open {
 .section-title {
   font-size: 24px;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 0px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -644,6 +644,37 @@ body.modal-open {
   border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
+}
+
+/* Estilização para o botão "Atualizar" */
+.update-button {
+  display: inline-block;
+  background: linear-gradient(
+    135deg,
+    #ff007f,
+    #800080
+  ); /* Gradiente do botão */
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out; /* Transição suave */
+  border: none;
+  margin-left: auto; /* Alinha à direita dentro da linha */
+}
+
+.update-button:hover {
+  transform: scale(1.1); /* Cresce 10% ao passar o mouse */
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 /* Paginação */
