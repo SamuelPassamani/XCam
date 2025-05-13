@@ -34,7 +34,7 @@ function fetchCameraDataById(videoId) {
         console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
         return;
       }
-      setupPlayer(camera);
+      setupPlayer(camera, camera.username); // Passa o username para fallback
     })
     .catch((error) =>
       console.error("Erro ao carregar o arquivo JSON:", error)
@@ -59,7 +59,7 @@ function fetchCameraDataByUsername(username) {
         console.error(`Nenhuma câmera encontrada com o nome de usuário: ${username}`);
         return;
       }
-      setupPlayer(camera);
+      setupPlayer(camera, username); // Passa o username para fallback
     })
     .catch((error) =>
       console.error("Erro ao carregar o arquivo JSON:", error)
@@ -68,11 +68,65 @@ function fetchCameraDataByUsername(username) {
 
 /**
  * Configura o JW Player com o vídeo fornecido.
+ * Se `camera.preview.src` for inválido, realiza um fallback para buscar `edgeURL` ou `cdnURL`.
  * @param {Object} camera
+ * @param {string} username
  */
-function setupPlayer(camera) {
-  const videoSrc = camera.preview.src || "https://i.imgur.com/wb6N5W4.mp4";
+function setupPlayer(camera, username) {
+  // Verifica se `camera.preview.src` é válido
+  if (!camera.preview?.src) {
+    console.warn("Nenhum valor válido para 'camera.preview.src'. Iniciando fallback...");
 
+    // Fallback: Consulta o endpoint da Cam4
+    fetch(`https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`, {
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "accept-language": "pt-BR,pt;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+        priority: "u=1, i",
+        "sec-ch-ua": "\"Chromium\";v=\"136\", \"Microsoft Edge\";v=\"136\", \"Not.A/Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "sec-gpc": "1",
+      },
+      referrer: `https://pt.cam4.com/${username}`,
+      referrerPolicy: "strict-origin-when-cross-origin",
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Erro ao acessar o endpoint Cam4: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((streamData) => {
+        const fallbackSrc = streamData.edgeURL || streamData.cdnURL;
+        if (!fallbackSrc) {
+          throw new Error("Nenhum valor válido encontrado para 'edgeURL' ou 'cdnURL' no fallback.");
+        }
+
+        // Configura o player com o fallbackSrc
+        initializeJWPlayer(camera, fallbackSrc);
+      })
+      .catch((error) => {
+        console.error("Erro durante o fallback:", error);
+      });
+  } else {
+    // Configura o player normalmente com `camera.preview.src`
+    initializeJWPlayer(camera, camera.preview.src);
+  }
+}
+
+/**
+ * Inicializa o JW Player com o arquivo de vídeo fornecido.
+ * @param {Object} camera
+ * @param {string} videoSrc
+ */
+function initializeJWPlayer(camera, videoSrc) {
   const playerInstance = jwplayer("player").setup({
     controls: true,
     sharing: true,
