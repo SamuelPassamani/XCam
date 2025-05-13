@@ -1059,7 +1059,7 @@ function startAutoUpdate() {
   setInterval(() => {
     console.log("Atualizando transmissões...");
     initApp();
-  }, 30000); // 30 segundos em milissegundos
+  }, 60000); // 60 segundos em milissegundos
 }
 
 // Fechar modal ao clicar fora
