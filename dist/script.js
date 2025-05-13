@@ -431,7 +431,7 @@ const countryNames = {
 const genderTranslations = {
   male: "Masculino",
   female: "Feminino",
-  trans: "Trans",
+  trans: "Trans"
 };
 const orientationTranslations = {
   straight: "Hetero",
@@ -988,34 +988,51 @@ function setupSearch() {
 }
 // Inicialização da aplicação
 async function initApp() {
-  // Mostrar estado de carregamento
-  document.getElementById("broadcasts-grid").innerHTML = `
+  // Mostrar estado de carregamento apenas na primeira inicialização
+  if (allBroadcasts.length === 0) {
+    document.getElementById("broadcasts-grid").innerHTML = `
         <div class="loading-state">
           <div class="loader"></div>
           <p>Carregando transmissões...</p>
         </div>
       `;
+  } else {
+    // Exibir toast para indicar que está atualizando
+    showToast("Atualizando transmissões...", "info");
+  }
+
   try {
     // Carregar dados da API
     const data = await fetchBroadcasts();
-    allBroadcasts = data.broadcasts.items;
+    const newBroadcasts = data.broadcasts.items;
+
     // Ordenar por número de espectadores
-    allBroadcasts = sortBroadcastsByViewers(allBroadcasts);
-    // Aplicar filtros iniciais
-    filteredBroadcasts = [...allBroadcasts];
-    // Renderizar carrossel com top 5
-    renderCarousel(allBroadcasts.slice(0, 5));
-    // Renderizar grid de transmissões
-    renderBroadcastGrid(filteredBroadcasts, currentPage);
-    // Preencher opções de países no filtro
-    populateCountryOptions();
-    // Configurar pesquisa
-    setupSearch();
-    // Mostrar toast de sucesso
-    showToast("Transmissões carregadas com sucesso!", "success");
+    const sortedBroadcasts = sortBroadcastsByViewers(newBroadcasts);
+
+    // Atualizar somente se houver mudanças
+    if (JSON.stringify(sortedBroadcasts) !== JSON.stringify(allBroadcasts)) {
+      allBroadcasts = sortedBroadcasts;
+      filteredBroadcasts = [...allBroadcasts];
+
+      // Renderizar carrossel com top 5
+      renderCarousel(allBroadcasts.slice(0, 5));
+
+      // Renderizar grid de transmissões
+      renderBroadcastGrid(filteredBroadcasts, currentPage);
+
+      // Atualizar opções de países no filtro
+      populateCountryOptions();
+
+      // Exibir toast de sucesso após a atualização
+      showToast("Transmissões atualizadas com sucesso!", "success");
+    } else {
+      // Exibir toast informando que não houve mudanças
+      showToast("Nenhuma atualização foi necessária.", "info");
+    }
   } catch (error) {
-    console.error("Erro na inicialização:", error);
-    document.getElementById("broadcasts-grid").innerHTML = `
+    console.error("Erro na atualização:", error);
+    if (allBroadcasts.length === 0) {
+      document.getElementById("broadcasts-grid").innerHTML = `
           <div class="error-state">
             <div class="error-icon">❌</div>
             <h3>Ops! Algo deu errado</h3>
@@ -1023,8 +1040,28 @@ async function initApp() {
             <button onclick="initApp()">Tentar novamente</button>
           </div>
         `;
+    } else {
+      // Exibir toast de erro, mas manter os dados existentes
+      showToast(
+        "Erro ao atualizar transmissões. Mantendo dados atuais.",
+        "error"
+      );
+    }
   }
 }
+
+// Função para inicializar atualizações automáticas
+function startAutoUpdate() {
+  // Executar a função initApp imediatamente
+  initApp();
+
+  // Configurar a execução automática a cada 15 segundos
+  setInterval(() => {
+    console.log("Atualizando transmissões...");
+    initApp();
+  }, 30000); // 30 segundos em milissegundos
+}
+
 // Fechar modal ao clicar fora
 window.addEventListener("click", (e) => {
   const modal = document.getElementById("broadcast-modal");
@@ -1032,5 +1069,6 @@ window.addEventListener("click", (e) => {
     closeModal();
   }
 });
-// Iniciar a aplicação quando o DOM estiver pronto
-document.addEventListener("DOMContentLoaded", initApp);
+
+// Iniciar a aplicação e configurar atualizações automáticas quando o DOM estiver pronto
+document.addEventListener("DOMContentLoaded", startAutoUpdate);
