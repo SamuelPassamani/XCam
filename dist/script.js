@@ -491,26 +491,34 @@ function filterBroadcasts(broadcasts, filters) {
     return true;
   });
 }
+// URLs padrão para "poster" e "profileImageURL" em branco ou nulo
+const defaultPosterURL = "https://i.imgur.com/a9m3Ero.gif";
+const defaultProfileImageURL = "https://i.imgur.com/NJCC13E.png";
+
 // Função para ordenar transmissões por número de espectadores
 function sortBroadcastsByViewers(broadcasts) {
   return [...broadcasts].sort((a, b) => b.viewers - a.viewers);
 }
+
 // Função para paginar resultados
 function paginateBroadcasts(broadcasts, page, itemsPerPage = 30) {
   const startIndex = (page - 1) * itemsPerPage;
   return broadcasts.slice(startIndex, startIndex + itemsPerPage);
 }
+
 // Função para renderizar o carrossel
 function renderCarousel(topBroadcasts) {
   const carouselContainer = document.getElementById("main-carousel");
   carouselContainer.innerHTML = "";
   topBroadcasts.slice(0, 10).forEach((broadcast, index) => {
+    // Substituir valores padrão para "poster" e "profileImageURL" se necessário
+    const posterURL = broadcast.preview.poster || defaultPosterURL;
+    const profileImageURL = broadcast.profileImageURL || defaultProfileImageURL;
+
     const slide = document.createElement("div");
     slide.className = `carousel-slide ${index === 0 ? "active" : ""}`;
     slide.innerHTML = `
-          <div class="carousel-image" style="background-image: url('${
-            broadcast.preview.poster
-          }')">
+          <div class="carousel-image" style="background-image: url('${posterURL}')">
             <div class="carousel-overlay"></div>
             <div class="carousel-content">
               <div class="carousel-badge">AO VIVO</div>
@@ -558,6 +566,7 @@ function renderCarousel(topBroadcasts) {
   // Iniciar rotação automática
   startCarouselRotation();
 }
+
 // Função para renderizar o grid de transmissões
 function renderBroadcastGrid(broadcasts, page = 1) {
   const gridContainer = document.getElementById("broadcasts-grid");
@@ -574,9 +583,14 @@ function renderBroadcastGrid(broadcasts, page = 1) {
   }
   const paginatedBroadcasts = paginateBroadcasts(broadcasts, page);
   paginatedBroadcasts.forEach((broadcast) => {
+    // Substituir valores padrão para "poster" e "profileImageURL" se necessário
+    const posterURL = broadcast.preview.poster || defaultPosterURL;
+    const profileImageURL = broadcast.profileImageURL || defaultProfileImageURL;
+
     const card = document.createElement("div");
     card.className = "broadcast-card";
     card.onclick = () => openModal(broadcast.id);
+
     // Preparar tags HTML se existirem
     let tagsHTML = "";
     if (broadcast.tags && broadcast.tags.length > 0) {
@@ -588,11 +602,10 @@ function renderBroadcastGrid(broadcasts, page = 1) {
             </div>
           `;
     }
+
     card.innerHTML = `
           <div class="card-thumbnail">
-            <img src="${broadcast.preview.poster}" alt="${
-      broadcast.username
-    }" loading="lazy">
+            <img src="${posterURL}" alt="${broadcast.username}" loading="lazy">
             <div class="card-overlay">
               <div class="play-button">
                 <i class="fas fa-play"></i>
@@ -622,6 +635,7 @@ function renderBroadcastGrid(broadcasts, page = 1) {
   // Renderizar paginação
   renderPagination(broadcasts.length, page);
 }
+
 // Função para renderizar a paginação
 function renderPagination(totalItems, currentPage) {
   const paginationContainer = document.getElementById("pagination");
@@ -668,12 +682,16 @@ function renderPagination(totalItems, currentPage) {
       `;
   paginationContainer.innerHTML = paginationHTML;
 }
-// Função para abrir o modal de transmissão
 function openModal(broadcastId) {
   const broadcast = allBroadcasts.find((b) => b.id === broadcastId);
   if (!broadcast) return;
+
+  const posterURL = broadcast.preview.poster || defaultPosterURL;
+  const profileImageURL = broadcast.profileImageURL || defaultProfileImageURL;
+
   const modal = document.getElementById("broadcast-modal");
   const modalContent = document.getElementById("modal-content");
+
   // Preparar tags HTML se existirem
   let tagsHTML = "";
   if (broadcast.tags && broadcast.tags.length > 0) {
