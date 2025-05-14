@@ -689,7 +689,7 @@ Animações do botão.
 }
 
 .jw-state-paused .jw-icon-playback:hover .jw-svg-icon-play {
-  background-image: url("https://app.makingoff.eu.org/img/play.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/play.svg");
 }
 
 /*
@@ -706,7 +706,7 @@ Animações do botão.
 }
 
 .jw-icon-playback:hover .jw-svg-icon-pause {
-  background-image: url("https://app.makingoff.eu.org/img/pause.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/pause.svg");
 }
 
 /*
@@ -723,7 +723,7 @@ Animações do botão.
 }
 
 .jw-icon-settings:hover .jw-svg-icon-settings {
-  background-image: url("https://app.makingoff.eu.org/img/settings.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/settings.svg");
 }
 
 /*
@@ -740,7 +740,7 @@ Animações do botão.
 }
 
 .jwplayer.jw-skin-netflix .jw-submenu-quality:hover .jw-svg-icon-quality-100 {
-  background-image: url("https://app.makingoff.eu.org/img/quality.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/quality.svg");
 }
 
 /*
@@ -757,7 +757,7 @@ Animações do botão.
 }
 
 .jw-settings-close:hover .jw-svg-icon-close {
-  background-image: url("https://app.makingoff.eu.org/img/close.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/close.svg");
 }
 
 /*
@@ -774,7 +774,7 @@ Animações do botão.
 }
 
 .jwplayer.jw-skin-netflix .jw-submenu-captions:hover .jw-svg-icon-cc-off {
-  background-image: url("https://app.makingoff.eu.org/img/cc-off.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/cc-off.svg");
 }
 
 .jw-icon-cc .jw-svg-icon-cc-off path {
@@ -788,7 +788,7 @@ Animações do botão.
 }
 
 .jw-icon-cc:hover .jw-svg-icon-cc-off {
-  background-image: url("https://app.makingoff.eu.org/img/cc-off.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/cc-off.svg");
 }
 
 .jw-icon-cc .jw-svg-icon-cc-on path {
@@ -802,7 +802,7 @@ Animações do botão.
 }
 
 .jw-icon-cc:hover .jw-svg-icon-cc-on {
-  background-image: url("https://app.makingoff.eu.org/img/cc-on.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/cc-on.svg");
 }
 
 /*
@@ -819,7 +819,7 @@ Animações do botão.
 }
 
 .jw-icon-volume:hover .jw-svg-icon-volume-100 {
-  background-image: url("https://app.makingoff.eu.org/img/volume-100.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/volume-100.svg");
 }
 
 .jw-svg-icon-volume-50 path {
@@ -833,7 +833,7 @@ Animações do botão.
 }
 
 .jw-icon-volume:hover .jw-svg-icon-volume-50 {
-  background-image: url("https://app.makingoff.eu.org/img/volume-50.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/volume-50.svg");
 }
 
 .jw-svg-icon-volume-0 path {
@@ -847,7 +847,7 @@ Animações do botão.
 }
 
 .jw-icon-volume:hover .jw-svg-icon-volume-0 {
-  background-image: url("https://app.makingoff.eu.org/img/volume-0.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/volume-0.svg");
 }
 
 /*
@@ -864,7 +864,7 @@ Animações do botão.
 }
 
 .jw-icon-fullscreen:hover .jw-svg-icon-fullscreen-on {
-  background-image: url("https://app.makingoff.eu.org/img/fullscreen-on.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/fullscreen-on.svg");
 }
 
 .jw-svg-icon-fullscreen-off path {
@@ -878,7 +878,7 @@ Animações do botão.
 }
 
 .jw-icon-fullscreen:hover .jw-svg-icon-fullscreen-off {
-  background-image: url("https://app.makingoff.eu.org/img/fullscreen-off.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/fullscreen-off.svg");
 }
 
 /* Added New Icons - 06-26-22 */
@@ -900,7 +900,7 @@ Icone de Share.
 }
 
 .jwplayer.jw-skin-netflix .jw-settings-sharing:hover .jw-svg-icon-sharing {
-  background-image: url("https://app.makingoff.eu.org/img/sharing.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/sharing.svg");
   background-repeat: no-repeat;
   background-position: center;
   -webkit-transition: 0.2s;
@@ -925,7 +925,7 @@ Icone de Share.
   .jwplayer.jw-skin-netflix
   .jw-submenu-audioTracks:hover
   .jw-svg-icon-audio-tracks {
-  background-image: url("https://app.makingoff.eu.org/img/audio.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/audio.svg");
 }
 
 /*
@@ -942,7 +942,7 @@ Icone de Share.
 }
 
 .jwplayer.jw-skin-netflix .jw-icon-pip:hover .jw-svg-icon-pip-on {
-  background-image: url("https://app.makingoff.eu.org/img/pip-off.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/pip-off.svg");
 }
 
 .jwplayer.jw-skin-netflix .jw-svg-icon-pip-off path {
@@ -956,7 +956,7 @@ Icone de Share.
 }
 
 .jwplayer.jw-skin-netflix .jw-icon-pip:hover .jw-svg-icon-pip-off {
-  background-image: url("https://app.makingoff.eu.org/img/pip-on.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/pip-on.svg");
 }
 
 /* Buffer Netflix */
@@ -965,7 +965,7 @@ Icone de Share.
 }
 
 .jwplayer.jw-skin-netflix .jw-svg-icon-buffer {
-  background-image: url("https://app.makingoff.eu.org/img/buffer.svg");
+  background-image: url("https://site.my.eu.org/0:/src/player/buffer.svg");
   background-size: contain;
   background-repeat: no-repeat;
 }
