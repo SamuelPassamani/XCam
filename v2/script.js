@@ -469,7 +469,7 @@ let allBroadcasts = [];
 // Load streams from JSON
 async function loadStreamsFromJSON() {
   try {
-    const response = await fetch("https://site.my.eu.org/0:/male.json");
+    const response = await fetch("https://xcam.moviele.workers.dev/?limit=1500");
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
