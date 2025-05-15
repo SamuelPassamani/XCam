@@ -18,7 +18,7 @@ const fallbackData = {
     total: 9,
     items: [
       {
-        itemNumber: 1,
+        XCamId: 1,
         id: "fallback1",
         username: "user_brasil",
         country: "br",
@@ -42,7 +42,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 2,
+        XCamId: 2,
         id: "fallback2",
         username: "user_espanha",
         country: "es",
@@ -63,7 +63,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 3,
+        XCamId: 3,
         id: "fallback3",
         username: "user_italia",
         country: "it",
@@ -87,7 +87,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 4,
+        XCamId: 4,
         id: "fallback4",
         username: "user_franca",
         country: "fr",
@@ -108,7 +108,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 5,
+        XCamId: 5,
         id: "fallback5",
         username: "user_alemanha",
         country: "de",
@@ -132,7 +132,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 6,
+        XCamId: 6,
         id: "fallback6",
         username: "user_eua",
         country: "us",
@@ -153,7 +153,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 7,
+        XCamId: 7,
         id: "fallback7",
         username: "user_canada",
         country: "ca",
@@ -177,7 +177,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 8,
+        XCamId: 8,
         id: "fallback8",
         username: "user_mexico",
         country: "mx",
@@ -201,7 +201,7 @@ const fallbackData = {
         ]
       },
       {
-        itemNumber: 9,
+        XCamId: 9,
         id: "fallback9",
         username: "user_portugal",
         country: "pt",
