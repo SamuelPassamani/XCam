@@ -1167,7 +1167,7 @@ const orientationTranslations = {
 // Função para carregar dados da API
 async function fetchBroadcasts() {
   try {
-    const response = await fetch("https://site.my.eu.org/0:/src/male.json");
+    const response = await fetch("https://xcam.site.my.eu.org/0:/src/male.json");
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
     return data;
