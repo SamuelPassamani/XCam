@@ -1167,7 +1167,7 @@ const orientationTranslations = {
 // Função para carregar dados da API
 async function fetchBroadcasts() {
   try {
-    const response = await fetch("https://xcam.moviele.workers.dev/?limit=1000&format=json");
+    const response = await fetch("https://xcam.moviele.workers.dev/v1/?limit=10000&format=json");
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
     return data;
