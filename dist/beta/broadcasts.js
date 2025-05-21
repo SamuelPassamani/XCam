@@ -28,12 +28,13 @@ loadMoreBtn.style.display = "none";
 function buildApiUrl(filters) {
   const params = new URLSearchParams({ page: "1", limit: "30", format: "json" });
 
-  if (filters.gender) params.set("gender", filters.gender);
-  if (filters.country) params.set("country", filters.country);
-  if (filters.orientation) params.set("orientation", filters.orientation);
-  if (filters.minViewers) params.set("minViewers", filters.minViewers);
+  // SERIALIZAÇÃO EXATA
+  if (filters.gender) params.set("gender", filters.gender); // string
+  if (filters.country) params.set("country", filters.country); // string
+  if (filters.orientation) params.set("orientation", filters.orientation); // string
+  if (filters.minViewers) params.set("minViewers", filters.minViewers); // inteiro
   if (Array.isArray(filters.tags) && filters.tags.length > 0) {
-    params.set("tags", filters.tags.join(","));
+    params.set("tags", filters.tags.join(",")); // string separada por vírgula
   }
 
   return `https://xcam.moviele.workers.dev/v1/?${params.toString()}`;
