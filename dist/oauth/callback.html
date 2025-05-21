@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OAuth Callback – XCam</title>
+
+  <!-- Descrição breve para SEO e acessibilidade -->
+  <meta name="description" content="OAuth2 callback handler for Imgur authorization in the XCam Web App." />
+
+  <!-- Ícone opcional -->
+  <link rel="icon" href="/favicon.ico" />
+
+  <!-- Estilo mínimo opcional -->
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    .loader {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: #666;
+    }
+  </style>
+
+  <!-- Módulo que trata a lógica do OAuth -->
+  <script type="module">
+    import { handleOAuthCallback } from '/scripts/auth.js';
+
+    // Executa a função ao carregar a página
+    window.addEventListener("DOMContentLoaded", handleOAuthCallback);
+  </script>
+</head>
+<body>
+  <h1>Conectando com Imgur...</h1>
+  <p class="loader">Aguarde enquanto finalizamos sua autenticação.</p>
+</body>
+</html>
