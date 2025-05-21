@@ -20,7 +20,10 @@ loadMoreBtn.textContent = "Carregar mais transmissões";
 loadMoreBtn.className = "load-more-button";
 loadMoreBtn.style.display = "none"; // escondido inicialmente
 
-// Monta a URL da API com base nos filtros definidos
+/**
+ * Monta a URL da API com base nos filtros definidos.
+ * Corrigido para usar o endpoint /v1/ (conforme documentação da API).
+ */
 function buildApiUrl(filters) {
   const params = new URLSearchParams({ page: "1", limit: "1000", format: "json" });
 
@@ -30,24 +33,41 @@ function buildApiUrl(filters) {
   if (filters.minViewers) params.set("minViewers", filters.minViewers);
   if (filters.tags?.length) params.set("tags", filters.tags.join(","));
 
-  return `https://xcam.moviele.workers.dev/?${params.toString()}`;
+  // Corrigido: endpoint agora usa /v1/
+  return `https://xcam.moviele.workers.dev/v1/?${params.toString()}`;
 }
 
-// Busca os dados da API com base na URL montada
+/**
+ * Busca os dados da API com base na URL montada.
+ * Incluído log para depuração do formato da resposta.
+ * Corrigido para aceitar diferentes formatos de resposta.
+ */
 async function fetchBroadcasts() {
   const url = buildApiUrl(filters);
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
-    return Array.isArray(data.broadcasts?.items) ? data.broadcasts.items : [];
+
+    // Log para depuração do formato da resposta da API.
+    console.log("Resposta da API:", data);
+
+    // Tenta encontrar o array de transmissões, tolerando diferentes estruturas.
+    if (Array.isArray(data.items)) return data.items;
+    if (Array.isArray(data.broadcasts?.items)) return data.broadcasts.items;
+    if (Array.isArray(data.broadcasts)) return data.broadcasts;
+    return [];
   } catch (error) {
     console.error("Erro ao carregar dados:", error);
+    // Exibe mensagem visual de erro ao usuário (UX aprimorada)
+    showErrorMessage("Não foi possível carregar as transmissões. Tente novamente mais tarde.");
     return [];
   }
 }
 
-// Renderiza um card de transmissão individual
+/**
+ * Renderiza um card de transmissão individual.
+ */
 function renderBroadcastCard(data) {
   const poster = data.preview?.poster;
   const username = data.username;
@@ -85,7 +105,9 @@ function renderBroadcastCard(data) {
   grid.appendChild(card);
 }
 
-// Renderiza o próximo lote de transmissões
+/**
+ * Renderiza o próximo lote de transmissões.
+ */
 function renderNextBatch() {
   const start = (currentPage - 1) * itemsPerPage;
   const end = currentPage * itemsPerPage;
@@ -93,13 +115,15 @@ function renderNextBatch() {
   batch.forEach(renderBroadcastCard);
   currentPage++;
 
-  // Oculta o botão se não há mais transmissões a carregar
+  // Oculta o botão se não há mais transmissões a carregar.
   if (currentPage * itemsPerPage >= allItems.length) {
     loadMoreBtn.style.display = "none";
   }
 }
 
-// Exibe uma mensagem amigável se nenhum resultado for retornado
+/**
+ * Exibe uma mensagem amigável se nenhum resultado for retornado.
+ */
 function showEmptyMessage() {
   const empty = document.createElement("div");
   empty.className = "empty-state";
@@ -107,7 +131,20 @@ function showEmptyMessage() {
   grid.appendChild(empty);
 }
 
-// Inicializa o carregamento e renderização da primeira página de resultados
+/**
+ * Exibe uma mensagem de erro visual ao usuário.
+ */
+function showErrorMessage(message) {
+  const errorDiv = document.createElement("div");
+  errorDiv.className = "error-state";
+  errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i><h3>Erro</h3><p>${message}</p>`;
+  grid.innerHTML = "";
+  grid.appendChild(errorDiv);
+}
+
+/**
+ * Inicializa o carregamento e renderização da primeira página de resultados.
+ */
 async function loadFilteredBroadcasts() {
   currentPage = 1;
   allItems = [];
@@ -127,17 +164,18 @@ async function loadFilteredBroadcasts() {
 
     allItems = result;
     renderNextBatch();
-  grid.parentElement.appendChild(loadMoreBtn);
+    grid.parentElement.appendChild(loadMoreBtn);
     loadMoreBtn.style.display = "block";
-
   } catch (err) {
     console.error("Erro ao processar transmissões:", err);
     loader.remove();
-    showEmptyMessage();
+    showErrorMessage("Erro desconhecido ao processar transmissões.");
   }
 }
 
-// Configura os eventos iniciais
+/**
+ * Configura os eventos iniciais.
+ */
 export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", () => {
     renderNextBatch();
@@ -145,12 +183,16 @@ export function setupBroadcasts() {
   loadFilteredBroadcasts();
 }
 
-// Recarrega a grade de transmissões
+/**
+ * Recarrega a grade de transmissões.
+ */
 export function refreshBroadcasts() {
   loadFilteredBroadcasts();
 }
 
-// Aplica novos filtros e reinicia a grade
+/**
+ * Aplica novos filtros e reinicia a grade.
+ */
 export function applyBroadcastFilters(newFilters) {
   filters = { ...filters, ...newFilters };
   loadFilteredBroadcasts();
