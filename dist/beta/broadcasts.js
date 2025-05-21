@@ -24,13 +24,15 @@ loadMoreBtn.style.display = "none";
  * Monta a URL da API com base nos filtros definidos.
  */
 function buildApiUrl(filters) {
-  const params = new URLSearchParams({ page: "1", limit: "1000", format: "json" });
+  const params = new URLSearchParams({ page: "1", limit: "30", format: "json" });
 
   if (filters.gender) params.set("gender", filters.gender);
   if (filters.country) params.set("country", filters.country);
   if (filters.orientation) params.set("orientation", filters.orientation);
   if (filters.minViewers) params.set("minViewers", filters.minViewers);
-  if (filters.tags?.length) params.set("tags", filters.tags.join(","));
+  if (Array.isArray(filters.tags) && filters.tags.length > 0) {
+    params.set("tags", filters.tags.join(","));
+  }
 
   return `https://xcam.moviele.workers.dev/v1/?${params.toString()}`;
 }
