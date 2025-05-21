@@ -34,7 +34,7 @@ function buildApiUrl(filters) {
     params.set("tags", filters.tags.join(","));
   }
 
-  return `https://xcam.moviele.workers.dev/v1/?${params.toString()}`;
+  return `https://xcam.moviele.workers.dev/?${params.toString()}`;
 }
 
 /**
