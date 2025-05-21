@@ -18,11 +18,10 @@ const loadMoreBtn = document.createElement("button");
 loadMoreBtn.id = "load-more";
 loadMoreBtn.textContent = "Carregar mais transmissões";
 loadMoreBtn.className = "load-more-button";
-loadMoreBtn.style.display = "none"; // escondido inicialmente
+loadMoreBtn.style.display = "none";
 
 /**
  * Monta a URL da API com base nos filtros definidos.
- * Corrigido para usar o endpoint /v1/ (conforme documentação da API).
  */
 function buildApiUrl(filters) {
   const params = new URLSearchParams({ page: "1", limit: "1000", format: "json" });
@@ -33,14 +32,12 @@ function buildApiUrl(filters) {
   if (filters.minViewers) params.set("minViewers", filters.minViewers);
   if (filters.tags?.length) params.set("tags", filters.tags.join(","));
 
-  // Corrigido: endpoint agora usa /v1/
   return `https://xcam.moviele.workers.dev/v1/?${params.toString()}`;
 }
 
 /**
  * Busca os dados da API com base na URL montada.
- * Incluído log para depuração do formato da resposta.
- * Corrigido para aceitar diferentes formatos de resposta.
+ * Compatível com o formato fornecido: data.broadcasts.items
  */
 async function fetchBroadcasts() {
   const url = buildApiUrl(filters);
@@ -49,17 +46,21 @@ async function fetchBroadcasts() {
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
 
-    // Log para depuração do formato da resposta da API.
-    console.log("Resposta da API:", data);
+    // Checa se a resposta está no formato esperado
+    if (
+      data &&
+      typeof data === "object" &&
+      data.broadcasts &&
+      Array.isArray(data.broadcasts.items)
+    ) {
+      return data.broadcasts.items;
+    }
 
-    // Tenta encontrar o array de transmissões, tolerando diferentes estruturas.
-    if (Array.isArray(data.items)) return data.items;
-    if (Array.isArray(data.broadcasts?.items)) return data.broadcasts.items;
-    if (Array.isArray(data.broadcasts)) return data.broadcasts;
+    // Caso o formato não seja esperado, retorna array vazio e loga para depuração
+    console.warn("Formato inesperado da resposta da API:", data);
     return [];
   } catch (error) {
     console.error("Erro ao carregar dados:", error);
-    // Exibe mensagem visual de erro ao usuário (UX aprimorada)
     showErrorMessage("Não foi possível carregar as transmissões. Tente novamente mais tarde.");
     return [];
   }
@@ -115,14 +116,13 @@ function renderNextBatch() {
   batch.forEach(renderBroadcastCard);
   currentPage++;
 
-  // Oculta o botão se não há mais transmissões a carregar.
   if (currentPage * itemsPerPage >= allItems.length) {
     loadMoreBtn.style.display = "none";
   }
 }
 
 /**
- * Exibe uma mensagem amigável se nenhum resultado for retornado.
+ * Exibe mensagem amigável se nenhum resultado for retornado.
  */
 function showEmptyMessage() {
   const empty = document.createElement("div");
@@ -132,7 +132,7 @@ function showEmptyMessage() {
 }
 
 /**
- * Exibe uma mensagem de erro visual ao usuário.
+ * Exibe mensagem de erro visual ao usuário.
  */
 function showErrorMessage(message) {
   const errorDiv = document.createElement("div");
