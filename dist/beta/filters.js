@@ -5,19 +5,36 @@ export function setupFilters() {
   const button = document.getElementById("apply-filters");
 
   button.addEventListener("click", () => {
+    // Coleta os valores dos filtros
     const genderLabel = document.getElementById("gender-filter").value;
     const orientationLabel = document.getElementById("orientation-filter").value;
     const countryLabel = document.getElementById("country-filter").value;
-    const minViewersInput = document.getElementById("min-viewers");
-    const tagsInput = document.getElementById("tags");
+    const minViewersInput = document.getElementById("min-viewers").value;
+    const tagsInput = document.getElementById("tags").value;
 
-    const filters = {
-      gender: reverseTranslate("gender", genderLabel),
-      orientation: reverseTranslate("sexPreference", orientationLabel),
-      country: getCountryCode(countryLabel),
-      minViewers: minViewersInput?.value || null,
-      tags: tagsInput?.value?.split(",").map(tag => tag.trim()).filter(Boolean) || []
-    };
+    // Tradução reversa/códigos corretos
+    const filters = {};
+
+    const genderValue = reverseTranslate("gender", genderLabel);
+    if (genderValue) filters.gender = genderValue;
+
+    const orientationValue = reverseTranslate("sexPreference", orientationLabel);
+    if (orientationValue) filters.orientation = orientationValue;
+
+    const countryValue = getCountryCode(countryLabel);
+    if (countryValue) filters.country = countryValue;
+
+    if (minViewersInput && !isNaN(parseInt(minViewersInput))) {
+      filters.minViewers = parseInt(minViewersInput, 10);
+    }
+
+    // tags: converter para array de slug (sem espaços, somente texto minúsculo)
+    if (tagsInput) {
+      filters.tags = tagsInput
+        .split(",")
+        .map(tag => tag.trim().toLowerCase().replace(/\s+/g, "-"))
+        .filter(Boolean);
+    }
 
     applyBroadcastFilters(filters);
   });
