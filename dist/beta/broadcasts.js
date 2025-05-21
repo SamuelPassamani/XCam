@@ -16,7 +16,7 @@ loader.innerHTML = '<div class="loader"></div><p>Carregando transmissões...</p>
 
 const loadMoreBtn = document.createElement("button");
 loadMoreBtn.id = "load-more";
-loadMoreBtn.textContent = "Carregar mais transmissões";
+loadMoreBtn.textContent = "CARREGAR MAIS";
 loadMoreBtn.className = "load-more-button";
 loadMoreBtn.style.display = "none";
 
