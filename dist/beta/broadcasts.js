@@ -16,15 +16,17 @@ loader.innerHTML = '<div class="loader"></div><p>Carregando transmissões...</p>
 
 const loadMoreBtn = document.createElement("button");
 loadMoreBtn.id = "load-more";
-loadMoreBtn.textContent = "CARREGAR MAIS";
+loadMoreBtn.textContent = "Carregar mais transmissões";
 loadMoreBtn.className = "load-more-button";
 loadMoreBtn.style.display = "none";
 
 /**
  * Monta a URL da API com base nos filtros definidos.
+ * Só adiciona parâmetros se houver valor válido.
+ * tags é serializada como string separada por vírgula.
  */
 function buildApiUrl(filters) {
-  const params = new URLSearchParams({ page: "1", limit: "1000", format: "json" });
+  const params = new URLSearchParams({ page: "1", limit: "30", format: "json" });
 
   if (filters.gender) params.set("gender", filters.gender);
   if (filters.country) params.set("country", filters.country);
@@ -34,12 +36,11 @@ function buildApiUrl(filters) {
     params.set("tags", filters.tags.join(","));
   }
 
-  return `https://xcam.moviele.workers.dev/?${params.toString()}`;
+  return `https://xcam.moviele.workers.dev/v1/?${params.toString()}`;
 }
 
 /**
- * Busca os dados da API com base na URL montada.
- * Compatível com o formato fornecido: data.broadcasts.items
+ * Busca os dados da API conforme formato oficial (data.broadcasts.items).
  */
 async function fetchBroadcasts() {
   const url = buildApiUrl(filters);
@@ -48,7 +49,6 @@ async function fetchBroadcasts() {
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
 
-    // Checa se a resposta está no formato esperado
     if (
       data &&
       typeof data === "object" &&
@@ -58,7 +58,7 @@ async function fetchBroadcasts() {
       return data.broadcasts.items;
     }
 
-    // Caso o formato não seja esperado, retorna array vazio e loga para depuração
+    // Caso o formato não seja esperado, loga para depuração
     console.warn("Formato inesperado da resposta da API:", data);
     return [];
   } catch (error) {
@@ -68,9 +68,6 @@ async function fetchBroadcasts() {
   }
 }
 
-/**
- * Renderiza um card de transmissão individual.
- */
 function renderBroadcastCard(data) {
   const poster = data.preview?.poster;
   const username = data.username;
@@ -101,16 +98,13 @@ function renderBroadcastCard(data) {
         <i class="fas fa-eye"></i> ${viewers}
       </div>
       <div class="card-tags">
-        ${tags.map(tag => `<span class="tag">${tag.name}</span>`).join('')}
+        ${tags.map(tag => `<span class="tag">${tag.name || tag} </span>`).join('')}
       </div>
     </div>
   `;
   grid.appendChild(card);
 }
 
-/**
- * Renderiza o próximo lote de transmissões.
- */
 function renderNextBatch() {
   const start = (currentPage - 1) * itemsPerPage;
   const end = currentPage * itemsPerPage;
@@ -123,9 +117,6 @@ function renderNextBatch() {
   }
 }
 
-/**
- * Exibe mensagem amigável se nenhum resultado for retornado.
- */
 function showEmptyMessage() {
   const empty = document.createElement("div");
   empty.className = "empty-state";
@@ -133,9 +124,6 @@ function showEmptyMessage() {
   grid.appendChild(empty);
 }
 
-/**
- * Exibe mensagem de erro visual ao usuário.
- */
 function showErrorMessage(message) {
   const errorDiv = document.createElement("div");
   errorDiv.className = "error-state";
@@ -144,9 +132,6 @@ function showErrorMessage(message) {
   grid.appendChild(errorDiv);
 }
 
-/**
- * Inicializa o carregamento e renderização da primeira página de resultados.
- */
 async function loadFilteredBroadcasts() {
   currentPage = 1;
   allItems = [];
@@ -175,9 +160,6 @@ async function loadFilteredBroadcasts() {
   }
 }
 
-/**
- * Configura os eventos iniciais.
- */
 export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", () => {
     renderNextBatch();
@@ -185,16 +167,10 @@ export function setupBroadcasts() {
   loadFilteredBroadcasts();
 }
 
-/**
- * Recarrega a grade de transmissões.
- */
 export function refreshBroadcasts() {
   loadFilteredBroadcasts();
 }
 
-/**
- * Aplica novos filtros e reinicia a grade.
- */
 export function applyBroadcastFilters(newFilters) {
   filters = { ...filters, ...newFilters };
   loadFilteredBroadcasts();
