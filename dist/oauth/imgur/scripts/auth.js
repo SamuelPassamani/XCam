@@ -17,7 +17,7 @@ export function handleOAuthCallback() {
   }
 
   // Envia o código ao seu backend (Cloudflare Worker)
-  fetch("https://xcam.moviele.workers.dev/imgur/token", {
+  fetch("https://xcam.aserio.workers.dev/imgur/token", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
