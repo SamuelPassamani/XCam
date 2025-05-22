@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/*"
+  to = "https://moff-app.aserio.workers.dev/:splat"
+  status = 200
+  force = true
