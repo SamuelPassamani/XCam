@@ -2,7 +2,7 @@
   <img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Logo" width="300"/>
 </p>
 
-# 📡 XCam — Plataforma Modular para Transmissões ao Vivo
+# 📡 Plataforma Modular para Transmissões ao Vivo
 
 XCam é uma plataforma moderna, modular e responsiva voltada à exibição de transmissões ao vivo, com foco em performance, organização de código, arquitetura limpa e escalabilidade.
 
