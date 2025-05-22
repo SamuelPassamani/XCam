@@ -5,6 +5,7 @@ Este diretório contém a configuração de roteamento da API do XCam via Netlif
 ## Objetivo
 
 Encaminhar todas as requisições feitas para `https://api.xcam.gay/` diretamente ao Worker da Cloudflare:
+
 ```
 https://xcam.aserio.workers.dev/
 ```
