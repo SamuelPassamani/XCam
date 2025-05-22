@@ -18,9 +18,9 @@ function jsonToCsv(items) {
 // === Lista de domínios permitidos para CORS ===
 const ALLOWED_ORIGINS = [
   "https://xcam.gay",
+  "https://api.xcam.gay",
   "https://beta.xcam.gay",
-  "https://bbv2d1tfzkqqn3jm.canva-hosted-embed.com",
-  "https://bbv5cdqch9awmt8y.canva-hosted-embed.com",
+  "https://status.xcam.gay",
   "https://script.google.com"
 ];
 
