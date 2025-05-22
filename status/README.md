@@ -1,61 +1,90 @@
-# 📶 XCam Status Page — `https://status.xcam.gay`
+# 📶 XCam Status Page
 
-Esta página exibe em tempo real o status de disponibilidade da infraestrutura principal da plataforma **XCam**: o frontend e a API pública.
+<img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Logo" width="200" />
 
----
-
-## 📌 Subdomínio: `status.xcam.gay`
-
-- Este projeto pode ser hospedado separadamente via **Netlify**
-- O subdomínio deve ser configurado no painel DNS do **GoDaddy**
-- CNAME → `seu-projeto-status.netlify.app`
+Página pública de monitoramento da infraestrutura principal da plataforma **XCam**, com foco em simplicidade, clareza visual e atualização automática.
 
 ---
 
-## 📊 Verificações realizadas
+## 🌐 URL Oficial
 
-| Serviço monitorado     | URL alvo                       | Intervalo |
-|------------------------|--------------------------------|-----------|
-| 🌐 Aplicativo Web      | https://xcam.gay               | 60s       |
-| 🔌 API Pública (Worker)| https://api.xcam.gay           | 60s       |
+🔗 Acesse diretamente: [https://status.xcam.gay](https://status.xcam.gay)
 
 ---
 
-## 🧪 Como funciona
-
-- O arquivo `status.html` utiliza JavaScript nativo para realizar `fetch()` em cada serviço monitorado
-- Exibe uma bolinha verde (🟢) para online ou vermelha (🔴) para offline
-- O layout segue o design visual do frontend `XCam Web App`
-
----
-
-## 📁 Estrutura do diretório
+## 📂 Estrutura de Diretório
 
 ```
-/status/
-├── status.html     ← Página de status responsiva e dinâmica
-└── README.md       ← Este arquivo com instruções técnicas e de deploy
+/xcam/status/
+├── index.html       ← Página principal (status em tempo real)
+└── README.md        ← Este documento com informações técnicas
 ```
 
 ---
 
-## 🚀 Como fazer deploy no Netlify
+## 🔧 Serviços Monitorados
 
-1. Crie um novo site em [https://app.netlify.com](https://app.netlify.com)
-2. Escolha o repositório do GitHub `SamuelPassamani/XCam`
-3. Defina:
-   - **Build command**: _(deixe em branco)_
+| Serviço              | URL                     | Status |
+|----------------------|--------------------------|--------|
+| XCam Web App         | https://xcam.gay         | 🟢 / 🔴 |
+| XCam API (Worker)    | https://api.xcam.gay     | 🟢 / 🔴 |
+
+- Verificação automática a cada 30 segundos
+- Indicadores visuais:
+  - 🟢 Online
+  - 🔴 Offline
+
+---
+
+## 🧠 Como Funciona
+
+- A verificação usa `fetch()` com `mode: 'no-cors'` para evitar erros CORS
+- O resultado é atualizado no DOM com base no `response.ok`
+- Atualização manual via botão “🔄 Atualizar”
+- Estilo adaptado do [XCam Web App](https://github.com/SamuelPassamani/XCam) com tema escuro e responsividade
+
+---
+
+## 🧩 Recursos Técnicos
+
+- ✔️ Página estática (sem backend)
+- ✔️ Atualização assíncrona com `async/await`
+- ✔️ Layout com `flexbox`, responsivo para desktop e mobile
+- ✔️ Compatível com navegadores modernos
+- ✔️ HTML + CSS + JS organizados em único arquivo
+
+---
+
+## 🛠 Instalação e Deploy (Netlify)
+
+1. Clone o repositório [SamuelPassamani/XCam](https://github.com/SamuelPassamani/XCam)
+2. Acesse [https://app.netlify.com](https://app.netlify.com) e crie novo projeto
+3. Configure:
+   - **Base directory**: (deixe vazio)
    - **Publish directory**: `status`
-4. Após o deploy, vá em `Domain Settings` e adicione o subdomínio: `status.xcam.gay`
-5. No **GoDaddy**, aponte o DNS `CNAME` de `status.xcam.gay` para `nomedosite.netlify.app`
+   - **Build command**: (vazio)
+4. Aponte o DNS do subdomínio `status.xcam.gay` no GoDaddy para o domínio Netlify (`*.netlify.app`) via CNAME
 
 ---
 
-## ✅ Status e Atualização
+## 📘 Documentação Técnica da Página
 
-- A página se atualiza automaticamente a cada minuto (`setInterval`)
-- Um botão “Atualizar” também força a verificação manual
+- Verifica status do Web App e da API XCam
+- Atualização a cada 30 segundos com fallback manual
+- Exibe status com ícones coloridos (🟢/🔴)
+- Layout moderno, minimalista e de alta legibilidade
+- Código limpo com separação clara entre estrutura, estilo e lógica
+- Projetado para manutenção fácil e futura expansão
+- Totalmente estático, ideal para hospedagem gratuita
+- Compatível com qualquer CDN ou host (Netlify, GitHub Pages, etc.)
+- Reutilizável: pode ser adaptada para monitorar outros serviços
 
 ---
 
-🛠 Desenvolvido com foco em monitoramento leve, sem backend, ideal para status page pública.
+## 📌 Licença
+
+Distribuído sob licença MIT – veja `LICENSE`.
+
+---
+
+📊 Desenvolvido com foco em monitoramento público, simplicidade e clareza.
