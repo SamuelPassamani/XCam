@@ -21,7 +21,7 @@ if (!videoId && !username) {
  * @param {string} videoId
  */
 function fetchCameraDataById(videoId) {
-  fetch("https://xcam.moviele.workers.dev/v1/?limit=1500&format=json")
+  fetch("https://xcam.aserio.workers.dev/v1/?limit=1500&format=json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
@@ -46,7 +46,7 @@ function fetchCameraDataById(videoId) {
  * @param {string} username
  */
 function fetchCameraDataByUsername(username) {
-  fetch("https://xcam.moviele.workers.dev/v1/?limit=1500&format=json")
+  fetch("https://xcam.aserio.workers.dev/v1/?limit=1500&format=json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
