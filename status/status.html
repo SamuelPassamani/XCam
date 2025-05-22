@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Status - XCam</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="icon" href="../dist/favicon.ico" />
+  </head>
+  <body>
+    <main class="broadcasts-section">
+      <div class="header-row">
+        <h1 class="section-title">
+          <i class="fas fa-signal"></i> Status do Sistema
+        </h1>
+        <button class="update-button" onclick="updateStatus()">Atualizar</button>
+      </div>
+      <div class="status-grid">
+        <div class="status-card" id="statusApp">
+          <h3 class="card-username">XCam Web App</h3>
+          <div class="card-viewers">
+            <span class="status-indicator" id="indicatorApp"></span>
+            <span id="textApp">Verificando...</span>
+          </div>
+        </div>
+        <div class="status-card" id="statusApi">
+          <h3 class="card-username">XCam API</h3>
+          <div class="card-viewers">
+            <span class="status-indicator" id="indicatorApi"></span>
+            <span id="textApi">Verificando...</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      async function checkStatus(url) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          return res.ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      async function updateStatus() {
+        const statusApp = await checkStatus("https://xcam.gay");
+        const statusApi = await checkStatus("https://api.xcam.gay");
+
+        const appEl = document.getElementById("statusApp");
+        const apiEl = document.getElementById("statusApi");
+
+        const indicatorApp = document.getElementById("indicatorApp");
+        const indicatorApi = document.getElementById("indicatorApi");
+
+        const textApp = document.getElementById("textApp");
+        const textApi = document.getElementById("textApi");
+
+        if (statusApp) {
+          appEl.classList.add("online");
+          appEl.classList.remove("offline");
+          indicatorApp.style.backgroundColor = "#4caf50";
+          textApp.textContent = "Online";
+        } else {
+          appEl.classList.add("offline");
+          appEl.classList.remove("online");
+          indicatorApp.style.backgroundColor = "#f44336";
+          textApp.textContent = "Offline";
+        }
+
+        if (statusApi) {
+          apiEl.classList.add("online");
+          apiEl.classList.remove("offline");
+          indicatorApi.style.backgroundColor = "#4caf50";
+          textApi.textContent = "Online";
+        } else {
+          apiEl.classList.add("offline");
+          apiEl.classList.remove("online");
+          indicatorApi.style.backgroundColor = "#f44336";
+          textApi.textContent = "Offline";
+        }
+      }
+
+      updateStatus();
+    </script>
+
+    <style>
+      .status-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+      .status-card {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 16px;
+        flex: 1;
+        min-width: 280px;
+        transition: transform 0.3s;
+      }
+      .status-card:hover {
+        transform: translateY(-5px);
+      }
+      .status-indicator {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+    </style>
+  </body>
+</html>
