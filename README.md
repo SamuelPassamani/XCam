@@ -9,7 +9,7 @@ Este documento descreve a estrutura técnica do projeto **XCam**, uma plataforma
 - **Frontend puro (Vanilla JS, HTML, CSS)**
 - **Modularização por responsabilidade**: dados, filtros, renderização e modal.
 - **Separado por módulos ES6 (import/export)**
-- **Fonte de dados externa**: `https://xcam.moviele.workers.dev/v1/?limit=1500&format=json`
+- **Fonte de dados externa**: `https://api.xcam.gay/?limit=1500&format=json`
 - **Autoatualização com intervalo configurável**
 
 ---
