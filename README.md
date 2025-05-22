@@ -123,7 +123,7 @@ XCam é uma plataforma moderna, modular e responsiva voltada à exibição de tr
 ### JSON com filtros
 
 ```
-GET https://api.xcam.gay/?gender=male&country=br&tags=feet,latino
+GET https://api.xcam.gay/?country=br&tags=feet,latino
 ```
 
 ### Exportar CSV
