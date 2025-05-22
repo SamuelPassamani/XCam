@@ -1,140 +1,169 @@
-# Documentação Técnica — Projeto XCam
+<p align="center">
+  <img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Logo" width="300"/>
+</p>
 
-Este documento descreve a estrutura técnica do projeto **XCam**, uma plataforma modular para exibição de transmissões ao vivo, com foco em performance, clareza e responsividade.
+# 📡 XCam — Plataforma Modular para Transmissões ao Vivo
 
----
-
-## ✏️ Visão Geral da Arquitetura
-
-- **Frontend puro (Vanilla JS, HTML, CSS)**
-- **Modularização por responsabilidade**: dados, filtros, renderização e modal.
-- **Separado por módulos ES6 (import/export)**
-- **Fonte de dados externa**: `https://api.xcam.gay/?limit=1500&format=json`
-- **Autoatualização com intervalo configurável**
+XCam é uma plataforma moderna, modular e responsiva voltada à exibição de transmissões ao vivo, com foco em performance, organização de código, arquitetura limpa e escalabilidade.
 
 ---
 
-## 🔗 Módulos e Funções
+## 📁 Estrutura Geral do Projeto
 
-### data.js
-
-Responsável por buscar e armazenar os dados recebidos da API.
-
-```js
-fetchBroadcasts(url): Promise<Array>
-getAllBroadcasts(): Array
-getFilteredBroadcasts(): Array
-setFilteredBroadcasts(list: Array): void
-resetFilters(): void
-startAutoUpdate(callback: Function, interval?: number): void
 ```
-
-### filters.js
-
-Aplica regras de filtragem, ordenação e paginação.
-
-```js
-filterBroadcasts(broadcasts: Array, filters: Object): Array
-sortBroadcastsByViewers(broadcasts: Array): Array
-paginateBroadcasts(broadcasts: Array, page: number, perPage: number): Array
-```
-
-### domUtils.js
-
-Manipula o DOM: cria elementos, substitui conteúdo e mostra notificacões.
-
-```js
-renderBroadcastGrid(container, broadcasts, page, perPage, onClick)
-renderCarousel(container, broadcasts, max, onClick)
-renderPagination(container, total, current, perPage, onChange)
-createBroadcastCard(broadcast, onClick): HTMLElement
-showToast(message: string, type?: string): void
-formatViewers(n: number): string
-```
-
-### playerUtils.js
-
-Carrega o player e transmissões relacionadas dentro do modal.
-
-```js
-loadPlayer(container: HTMLElement, id: string): void
-renderRelatedBroadcasts(container: HTMLElement, allBroadcasts: Array, currentId: string, onClick): void
-```
-
-### translations.js / translations-reverse.js
-
-Dicionários para tradução bidirecional de códigos:
-
-```js
-countryNames['fr'] => 'França'
-genderTranslations['male'] => 'Masculino'
-orientationTranslations['gay'] => 'Gay'
-```
-
-Usado em:
-
-- `openModal()` para exibir descrições legíveis
-- `populateCountryOptions()` para popular select
-
-### main.js
-
-Script principal que integra os módulos anteriores.
-
-```js
-initApp(): Promise<void>
-updateUI(): void
-openModal(id: string): void
-setupFilters(), setupSearch(), setupMobileMenu(): void
+/XCam
+├── dist/               # Frontend modular e responsivo
+│   ├── beta/           # Versão mais recente do Web App (ES Modules)
+│   └── cam/            # Player dedicado
+│
+├── api/                # Infraestrutura de API
+│   ├── netlify/        # Proxy reverso Netlify → Worker Cloudflare
+│   ├── oauth/imgur/    # Upload de imagem com OAuth2
+│   └── workers/        # Worker principal da API pública
+│
+├── status/             # Página pública de status
+├── README.md           # Documentação geral
+└── CHANGELOG.md        # Registro técnico de versões
 ```
 
 ---
 
-## 🌐 index.html
+## 🧠 Tecnologias e Padrões
 
-- Contêineres com `id` específicos para:
-  - `#main-carousel`, `#broadcasts-grid`, `#pagination`
-  - Filtros: `#country-filter`, `#gender-filter`, `#orientation-filter`
-  - Modal: `#broadcast-modal > #modal-content`
-  - `#related-grid` dentro do modal
-  - `#toast-container` para notificações
-
----
-
-## 🎨 style.css (Tailwind + Custom)
-
-- Cores: `primary`, `secondary`, `dark`, `accent`
-- Classes para:
-  - `.broadcast-card`, `.carousel-slide`, `.modal`, `.related-card`
-  - `.live-badge`, `.tag`, `.toast.toast-success|error|info`
-  - `.pagination-button`, `.modal-player`, `.modal-related`
-- Usa animações (`fadeIn`, `slideUp`, `pulse`)
+- Frontend: **HTML5 + CSS3 + JS (ES6 Modules)** sem frameworks pesados
+- Backend/API: **Cloudflare Worker** com suporte a GraphQL + REST
+- Gateway: **Netlify Redirect Proxy**
+- Uploads: **Imgur API + OAuth2**
+- Deploy: **CI/CD GitHub + Netlify + Cloudflare**
 
 ---
 
-## ⚖️ Convenções
+## 🔗 Links Oficiais
 
-- Todos os módulos usam `export` para suas funções principais
-- Estilos são definidos por classes reutilizáveis
-- IDs no HTML são usados como ponto de referência para DOM
-- Toasts desaparecem após 3 segundos com transição CSS
-- Debounce na busca é de 300ms
-- Página padrão é 1; cada página exibe 30 resultados
-
----
-
-## ✅ Testes e Comportamentos Esperados
-
-- `initApp()` popula tudo corretamente e atualiza a cada 60s
-- Clicar em um card chama `openModal(id)` com:
-  - player via `<iframe>`
-  - recomendações por `country` ou `gender`
-- Mudança de filtros invoca `updateUI()`
-- Campo de busca reduz resultados em tempo real
+| Área         | Subdomínio                 | Destino                     |
+|--------------|----------------------------|-----------------------------|
+| Web App      | [xcam.gay](https://xcam.gay)        | Netlify Frontend           |
+| API Pública  | [api.xcam.gay](https://api.xcam.gay) | Worker Cloudflare via Proxy|
+| Status Page  | [status.xcam.gay](https://status.xcam.gay) | Netlify estático     |
 
 ---
 
-## 📌 Conclusão
+## 🚀 Funcionalidades Principais
 
-O projeto XCam segue padrões modernos de desenvolvimento, com separação de responsabilidades, modularização via ES Modules, e organização clara entre lógica, apresentação e interatividade.
+### 🔥 XCam Web App
 
-Essa documentação oferece referência rápida para manutenção, extensão ou debugging do sistema.
+- Carregamento dinâmico e filtrável de transmissões
+- Scroll infinito, lazy loading e player modal
+- Filtros: país, gênero, orientação, tags, número mínimo de viewers
+- Multilíngue com tradução reversa (PT/EN)
+
+### ⚙️ XCam API Pública
+
+- Endpoint `/` com paginação, CSV, filtros dinâmicos:
+  - `gender`, `country`, `orientation`, `minViewers`, `tags`
+- Rota `/user/<username>` com info completa (profile + streamInfo)
+- Rota `/user/<username>/liveInfo` com status da transmissão
+
+### 🖼️ XCam Imgur API
+
+- Upload de imagens via URL com autenticação segura (OAuth2)
+- Callback automatizado (`callback.html`)
+- Scripts gerenciados em `/api/oauth/imgur`
+
+### 📶 Status Page
+
+- Verifica disponibilidade de `xcam.gay` e `api.xcam.gay` a cada 60s
+- Indicadores visuais (🟢 Online | 🔴 Offline)
+- Responsiva e sem backend
+
+---
+
+## 📦 Última Versão
+
+**`XCam V.2.0` — Maio de 2025**
+
+- API completa com rotas REST + CSV
+- Nova arquitetura de diretórios
+- Deploy automatizado GitHub → Netlify
+- Subdomínios dedicados ativos
+- Página de status pública e funcional
+
+---
+
+## 📄 Documentação Técnica (por módulo)
+
+### 🧭 API Gateway
+
+```toml
+[[redirects]]
+  from = "/api/*"
+  to = "https://xcam.aserio.workers.dev/:splat"
+  status = 200
+  force = true
+```
+
+### 📡 Worker API (Cloudflare)
+
+- `/` → Lista paginada com filtros
+- `/user/<username>?section=info,streamInfo`
+- `/user/<username>/liveInfo`
+
+🔗 [Documentação da API](https://api.xcam.gay)  
+📁 [worker/index.js](./api/workers/index.js)
+
+### 🖼️ OAuth2 com Imgur
+
+- Auth URL: `https://api.imgur.com/oauth2/authorize`
+- Callback: `/api/oauth/imgur/callback.html`
+
+---
+
+## 🧪 Exemplos de Uso
+
+### JSON com filtros
+
+```
+GET https://api.xcam.gay/?gender=male&country=br&tags=feet,latino
+```
+
+### Exportar CSV
+
+```
+GET https://api.xcam.gay/?format=csv&limit=50
+```
+
+### Info do modelo
+
+```
+GET https://api.xcam.gay/user/kleotwink
+```
+
+---
+
+## 🧩 Deploy / CI-CD
+
+- GitHub → Netlify: Web App + Status Page
+- Cloudflare: Worker implantado manualmente
+- DNS via GoDaddy apontado para `*.xcam.gay`
+
+🔧 [Checklist de Deploy](./api/netlify/deploy-check.md)
+
+---
+
+## 📈 Status Monitor
+
+Verifica:
+- [xcam.gay](https://xcam.gay)
+- [api.xcam.gay](https://api.xcam.gay)
+
+📄 Página: [`status/status.html`](./status/status.html)
+
+---
+
+## 🧠 Créditos
+
+**Autor:** Samuel Passamani  
+**GitHub:** [github.com/SamuelPassamani](https://github.com/SamuelPassamani)  
+**Domínio oficial:** [xcam.gay](https://xcam.gay)
+
+> Projeto mantido com foco em performance, simplicidade e clareza.
