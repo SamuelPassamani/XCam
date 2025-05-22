@@ -1167,7 +1167,7 @@ const orientationTranslations = {
 // Função para carregar dados da API
 async function fetchBroadcasts() {
   try {
-    const response = await fetch("https://xcam.aserio.workers.dev/?limit=1500");
+    const response = await fetch("https://api.xcam.gay/?limit=1500");
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
     return data;

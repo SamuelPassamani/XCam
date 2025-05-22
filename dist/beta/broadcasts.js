@@ -55,7 +55,7 @@ function buildApiUrl(filters) {
     params.set("tags", filters.tags.join(","));
   }
 
-  return `https://xcam.aserio.workers.dev/v1/?${params.toString()}`;
+  return `https://api.xcam.gay/?${params.toString()}`;
 }
 
 /**

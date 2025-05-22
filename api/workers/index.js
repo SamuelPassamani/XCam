@@ -20,7 +20,8 @@ const ALLOWED_ORIGINS = [
   "https://xcam.gay",
   "https://beta.xcam.gay",
   "https://bbv2d1tfzkqqn3jm.canva-hosted-embed.com",
-  "https://bbv5cdqch9awmt8y.canva-hosted-embed.com"
+  "https://bbv5cdqch9awmt8y.canva-hosted-embed.com",
+  "https://script.google.com"
 ];
 
 // === Retorna headers CORS dinâmicos ===
@@ -56,11 +57,17 @@ function buildCam4Body(offset, limit) {
             country
             sexualOrientation
             profileImageURL
-            preview { src poster }
+            preview {
+              src
+              poster
+            }
             viewers
             broadcastType
             gender
-            tags { name slug }
+            tags {
+              name
+              slug
+            }
           }
         }
       }
@@ -68,56 +75,60 @@ function buildCam4Body(offset, limit) {
   });
 }
 
-// === Busca info básica do perfil ===
-async function fetchUserInfo(username) {
+// === Handler: Perfil de usuário estático (/info) ===
+async function handleUserProfile(username, corsHeaders) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/info`;
-  const response = await fetch(apiUrl, {
-    headers: {
-      accept: "application/json",
-      "accept-language": "pt-BR,pt;q=0.9,en;q=0.8",
-      referer: `https://pt.cam4.com/${username}`
-    }
-  });
-  if (!response.ok) throw new Error(`Erro CAM4 (info): ${response.status}`);
-  return await response.json();
-}
 
-// === Busca streamInfo ===
-async function fetchStreamInfo(username) {
-  const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`;
-  const response = await fetch(apiUrl, {
-    headers: {
-      accept: "application/json",
-      "accept-language": "pt-BR,pt;q=0.9,en;q=0.8",
-      referer: `https://pt.cam4.com/${username}`
-    }
-  });
-  if (!response.ok) throw new Error(`Erro CAM4 (streamInfo): ${response.status}`);
-  return await response.json();
-}
-
-// === Handler principal da rota /user/<username> com suporte a filtros ===
-async function handleUserWithFilters(username, sections, corsHeaders) {
   try {
-    const result = {};
+    const response = await fetch(apiUrl, {
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "accept-language": "pt-BR,pt;q=0.9,en;q=0.8",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        referer: `https://pt.cam4.com/${username}`
+      }
+    });
 
-    if (sections.includes("info") || sections.includes("all")) {
-      result.info = await fetchUserInfo(username);
-    }
+    if (!response.ok) throw new Error(`Erro CAM4: ${response.status}`);
+    const data = await response.json();
 
-    if (sections.includes("streamInfo") || sections.includes("all")) {
-      result.streamInfo = await fetchStreamInfo(username);
-    }
-
-    return new Response(JSON.stringify(result, null, 2), {
+    return new Response(JSON.stringify(data, null, 2), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
 
   } catch (err) {
-    return new Response(JSON.stringify({
-      error: "Erro ao buscar dados do usuário",
-      details: err.message
-    }), {
+    return new Response(JSON.stringify({ error: "Falha ao buscar perfil", details: err.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+  }
+}
+
+// === Handler: Dados ao vivo (/streamInfo) ===
+async function handleLiveInfo(username, corsHeaders) {
+  const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      headers: {
+        accept: "application/json, text/plain, */*",
+        "accept-language": "pt-BR,pt;q=0.9,en;q=0.8",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        referer: `https://pt.cam4.com/${username}`
+      }
+    });
+
+    if (!response.ok) throw new Error(`Erro CAM4: ${response.status}`);
+    const data = await response.json();
+
+    return new Response(JSON.stringify(data, null, 2), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Falha ao buscar streamInfo", details: err.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
@@ -132,35 +143,26 @@ export default {
     const corsHeaders = getCorsHeaders(origin);
     const pathname = url.pathname;
 
+    // Pré-voo CORS
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders });
     }
 
-    // === /user/<username>/liveInfo ===
+    // === Rota /user/<username>/liveInfo ===
     if (pathname.startsWith("/user/") && pathname.endsWith("/liveInfo")) {
-      const username = pathname.split("/")[2];
-      try {
-        const data = await fetchStreamInfo(username);
-        return new Response(JSON.stringify(data, null, 2), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      } catch (err) {
-        return new Response(JSON.stringify({ error: err.message }), {
-          status: 500,
-          headers: corsHeaders
-        });
-      }
+      const parts = pathname.split("/").filter(Boolean);
+      const username = parts[1];
+      return await handleLiveInfo(username, corsHeaders);
     }
 
-    // === /user/<username>?section=info,streamInfo ===
+    // === Rota /user/<username> ===
     if (pathname.startsWith("/user/")) {
       const username = pathname.split("/")[2];
-      const sectionsParam = url.searchParams.get("section") || "all";
-      const sections = sectionsParam.split(",").map(s => s.trim().toLowerCase());
-      return await handleUserWithFilters(username, sections, corsHeaders);
+      return await handleUserProfile(username, corsHeaders);
     }
 
     // === Rota principal ("/"): Listagem de transmissões ===
+
     const cache = caches.default;
     const cachedResponse = await cache.match(request);
     if (cachedResponse) {
@@ -181,13 +183,15 @@ export default {
       const pageSize = limitParam ? parseInt(limitParam, 10) || 30 : 30;
 
       const limit = 300;
+
       const firstResponse = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
         method: "POST",
         headers: {
           "accept": "*/*",
           "content-type": "application/json",
           "apollographql-client-name": "CAM4-client",
-          "apollographql-client-version": "25.5.15-113220utc"
+          "apollographql-client-version": "25.5.15-113220utc",
+          "sec-fetch-mode": "cors"
         },
         body: buildCam4Body(0, limit)
       });
@@ -205,7 +209,8 @@ export default {
             "accept": "*/*",
             "content-type": "application/json",
             "apollographql-client-name": "CAM4-client",
-            "apollographql-client-version": "25.5.15-113220utc"
+            "apollographql-client-version": "25.5.15-113220utc",
+            "sec-fetch-mode": "cors"
           },
           body: buildCam4Body(offset, limit)
         }).then(res => res.json()));
@@ -240,7 +245,10 @@ export default {
             items: pagedItems
           }
         }, null, 2), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json"
+          }
         });
       }
 
@@ -255,4 +263,3 @@ export default {
     }
   }
 };
-// === Fim do código ===
