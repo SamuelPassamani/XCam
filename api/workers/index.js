@@ -18,6 +18,7 @@ function jsonToCsv(items) {
 // === Lista de domínios permitidos para CORS ===
 const ALLOWED_ORIGINS = [
   "https://xcam.gay",
+  "https://beta.xcam.gay",
   "https://script.google.com"
 ];
 
@@ -29,6 +30,7 @@ function getCorsHeaders(origin) {
     "Vary": "Origin"
   };
 
+  
   if (ALLOWED_ORIGINS.includes(origin)) {
     headers["Access-Control-Allow-Origin"] = origin;
   }
