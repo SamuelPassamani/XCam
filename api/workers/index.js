@@ -25,17 +25,21 @@ const ALLOWED_ORIGINS = [
   "https://script.google.com"
 ];
 
-// === Headers CORS dinâmicos ===
+// === Headers CORS dinâmicos (versão corrigida) ===
 function getCorsHeaders(origin) {
-  const isAllowed = ALLOWED_ORIGINS.includes(origin);
-  return {
-    "Access-Control-Allow-Origin": isAllowed ? origin : "null",
+  const headers = {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Vary": "Origin"
   };
-}
 
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+
+  return headers;
+}
+// === Função: Constrói o corpo da requisição GraphQL CAM4 ===
 // === Corpo da requisição GraphQL CAM4 ===
 function buildCam4Body(offset, limit) {
   return JSON.stringify({
