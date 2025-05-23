@@ -1,0 +1,8 @@
+name = "xcam-api"
+main = "index.js"
+compatibility_date = "2024-05-01"
+
+# Optional: ambiente de produção
+workers_dev = true
+route = ""
+account_id = "962d0bd07aad1f73db41e18f45cb7470"  # pegue no painel da Cloudflare
