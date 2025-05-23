@@ -1215,8 +1215,8 @@ function filterBroadcasts(broadcasts, filters) {
   });
 }
 // URLs padrão para "poster" e "profileImageURL" em branco ou nulo
-const defaultPosterURL = "https://i.imgur.com/a9m3Ero.gif";
-const defaultProfileImageURL = "https://i.imgur.com/NJCC13E.png";
+const defaultPosterURL = "https://drive.xcam.gay/0:/src/img/previewPoster.gif";
+const defaultProfileImageURL = "https://drive.xcam.gay/0:/src/img/profileImageURL.png";
 
 // Função para ordenar transmissões por número de espectadores
 function sortBroadcastsByViewers(broadcasts) {

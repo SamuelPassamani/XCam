@@ -21,7 +21,7 @@ if (!videoId && !username) {
  * @param {string} videoId
  */
 function fetchCameraDataById(videoId) {
-  fetch("https://xcam.aserio.workers.dev/v1/?limit=1500&format=json")
+  fetch("https://api.xcam.gay/?limit=1500&format=json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
@@ -46,7 +46,7 @@ function fetchCameraDataById(videoId) {
  * @param {string} username
  */
 function fetchCameraDataByUsername(username) {
-  fetch("https://xcam.aserio.workers.dev/v1/?limit=1500&format=json")
+  fetch("https://api.xcam.gay/?limit=1500&format=json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
@@ -137,7 +137,7 @@ function initializeJWPlayer(camera, videoSrc) {
     aboutlink: "https://xcam.gay/",
     skin: { name: "netflix" },
     logo: {
-      file: "https://site.my.eu.org/0:/logo2.png",
+      file: "https://drive.xcam.gay/0:/logo2.png",
       link: "https://xcam.gay",
     },
     captions: {
@@ -204,7 +204,7 @@ function handlePlayerError(event) {
 
   const reloadWithFallback = () => {
     jwplayer("player").setup({
-      file: "https://i.imgur.com/wb6N5W4.mp4",
+      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
       autostart: true,
       repeat: true,
       controls: false,
