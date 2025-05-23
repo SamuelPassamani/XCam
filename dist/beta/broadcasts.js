@@ -18,10 +18,10 @@ function createEl(type, props = {}, children = []) {
 }
 
 let currentPage = 1;
-const itemsPerPage = 30;
+const itemsPerPage = 1000;
 let allItems = [];
 let filters = {
-  gender: "male",
+  gender: "",
   country: "",
   orientation: "",
   minViewers: null,
