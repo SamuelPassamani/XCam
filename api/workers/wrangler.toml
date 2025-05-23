@@ -1,4 +1,4 @@
-name = "xcam-api"
+name = "xcam"
 main = "index.js"
 compatibility_date = "2024-05-01"
 
