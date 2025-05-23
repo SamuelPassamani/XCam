@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Logo" width="300"/>
+  <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam Logo" width="300"/>
 </p>
 
 # 📡 Plataforma Modular para Transmissões ao Vivo
