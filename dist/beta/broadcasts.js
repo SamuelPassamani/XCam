@@ -1,4 +1,3 @@
-
 import { t } from "./i18n.js";
 
 /**
@@ -8,7 +7,7 @@ function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
   Object.entries(props).forEach(([key, value]) => {
     if (key === "text") el.textContent = value;
-    else if (key === "html") el.innerHTML = value;
+    else if (key === "html") el.innerHTML = value; // Só use se confiar no valor!
     else if (key.startsWith("on") && typeof value === "function") el[key] = value;
     else el.setAttribute(key, value);
   });
@@ -29,7 +28,7 @@ let filters = {
   tags: []
 };
 
-const grid = document.getElementById("broadcasts-grid");
+let grid;
 const loader = createEl("div", { class: "loading-state" }, [
   createEl("div", { class: "loader" }),
   createEl("p", { text: t("loading") })
@@ -60,21 +59,7 @@ function buildApiUrl(filters) {
 }
 
 /**
- * Adapta a estrutura da API para o formato usado na renderização.
- */
-function normalizeBroadcast(b) {
-  return {
-    id: b.id || b.XCamId,
-    username: b.username || "Sem nome",
-    country: b.country || "xx",
-    viewers: b.viewers ?? 0,
-    poster: b.preview?.poster || "",
-    tags: (b.tags || []).map(tag => tag.name || tag)
-  };
-}
-
-/**
- * Busca os dados da API e aplica normalização.
+ * Busca os dados da API conforme formato oficial (data.broadcasts.items).
  */
 async function fetchBroadcasts() {
   const url = buildApiUrl(filters);
@@ -89,7 +74,7 @@ async function fetchBroadcasts() {
       data.broadcasts &&
       Array.isArray(data.broadcasts.items)
     ) {
-      return data.broadcasts.items.map(normalizeBroadcast);
+      return data.broadcasts.items;
     }
 
     console.warn("Formato inesperado da resposta da API:", data);
@@ -105,7 +90,12 @@ async function fetchBroadcasts() {
  * Renderização segura do card de transmissão.
  */
 function renderBroadcastCard(data) {
-  const { poster, username, viewers, country, tags } = data;
+  // Segurança: nunca utilize innerHTML com dados externos/dinâmicos.
+  const poster = data.preview?.poster;
+  const username = data.username;
+  const viewers = data.viewers;
+  const country = data.country || "xx";
+  const tags = Array.isArray(data.tags) ? data.tags : [];
 
   if (!poster || !username || viewers == null) return;
 
@@ -114,9 +104,10 @@ function renderBroadcastCard(data) {
     alt: `País: ${country}`
   });
 
+  // Tags seguras
   const tagsDiv = createEl("div", { class: "card-tags" });
   tags.forEach(tag => {
-    const tagSpan = createEl("span", { class: "tag", text: tag });
+    const tagSpan = createEl("span", { class: "tag", text: tag.name || tag });
     tagsDiv.appendChild(tagSpan);
   });
 
@@ -226,3 +217,9 @@ export function applyBroadcastFilters(newFilters) {
   filters = { ...filters, ...newFilters };
   loadFilteredBroadcasts();
 }
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  grid = document.getElementById("broadcasts-grid");
+});
