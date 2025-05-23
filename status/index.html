@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Status do Sistema - XCam</title>
-  <link rel="icon" type="image/png" href="https://xcam.site.my.eu.org/0:/logo2.png">
+  <link rel="icon" href="https://xcam.site.my.eu.org/0:/logo2.png" type="image/png">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,6 +12,9 @@
       color: #fff;
       margin: 0;
       padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     h1 {
       text-align: center;
@@ -67,10 +70,21 @@
       margin: 2rem auto 0;
       display: block;
     }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-top: auto;
+      padding-top: 2rem;
+    }
+    footer a {
+      color: #e6007e;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam Logo" class="logo">
+  <img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Logo" class="logo">
   <h1>Status do Sistema</h1>
   <div class="container">
     <div class="card">
@@ -96,12 +110,21 @@
     </div>
   </div>
   <button onclick="checkStatus()">ATUALIZAR</button>
+
+  <footer>
+    &copy; <span id="year"></span> XCam • <a href="mailto:contato@xcam.gay">contato@xcam.gay</a>
+  </footer>
+
   <script>
+    function updateYear() {
+      document.getElementById("year").textContent = new Date().getFullYear();
+    }
+
     async function checkService(url, dotId) {
       const dot = document.querySelector(`#${dotId} .dot`);
       const text = document.querySelector(`#${dotId} span`);
       try {
-        const res = await fetch(url, { mode: 'no-cors' });
+        await fetch(url, { mode: 'no-cors' });
         dot.className = 'dot online';
         text.textContent = 'Online';
       } catch (e) {
@@ -116,6 +139,7 @@
       checkService('https://drive.xcam.gay/', 'drive-status');
     }
 
+    updateYear();
     checkStatus();
     setInterval(checkStatus, 30000);
   </script>
