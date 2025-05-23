@@ -1,3 +1,4 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b3bf1a04-7e16-40b3-8972-676895751821/deploy-status)](https://app.netlify.com/projects/xcam-api/deploys)
 
 <p align="center">
   <img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Web App Logo" width="180"/>
@@ -18,6 +19,7 @@ Inclui proxy reverso com Netlify, Worker do Cloudflare e integração OAuth2 com
 - **Repositório:** Diretório [`/api/netlify`](./netlify)
 
 ### 🧭 Exemplo de redirecionamento
+
 ```
 GET https://api.xcam.gay/user/kleotwink
 → Internamente redirecionado para:
@@ -37,6 +39,7 @@ GET https://xcam.aserio.workers.dev/user/kleotwink
 - **Versão atual implantada:** `XCam API V.19.1`
 
 ### ✅ Funcionalidades da rota `/`
+
 - Filtros por query string: `country`, `orientation`, `tags`, `page`, `limit`
 - Ordenação automática por número de viewers
 - Suporte a exportação CSV (`?format=csv`)
