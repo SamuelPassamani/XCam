@@ -392,7 +392,7 @@ const serviceaccounts = [
                                 <hr class="solid">
                                 <center>
                                    <p id="hidereset">
-                                      <marquee>Nenhum processo de inscrição disponível, entre em contato com seu administrador para obter ID e senha em contato@site.my.eu.org</marquee>
+                                      <marquee>Nenhum processo de inscrição disponível, entre em contato com seu administrador para obter ID e senha em contato@xcam.gay</marquee>
                                    </p>
                                 </center>
                              </form>
