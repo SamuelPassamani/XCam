@@ -21,6 +21,7 @@ const ALLOWED_ORIGINS = [
   "https://api.xcam.gay",
   "https://beta.xcam.gay",
   "https://status.xcam.gay",
+  "https://drive.xcam.gay",
   "https://script.google.com"
 ];
 
