@@ -70,7 +70,7 @@
   </style>
 </head>
 <body>
-  <img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Logo" class="logo">
+  <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam Logo" class="logo">
   <h1>Status do Sistema</h1>
   <div class="container">
     <div class="card">
@@ -83,6 +83,13 @@
     <div class="card">
       <a href="https://api.xcam.gay" target="_blank">XCam API</a>
       <div class="status" id="api-status">
+        <div class="dot offline"></div>
+        <span>Verificando...</span>
+      </div>
+    </div>
+    <div class="card">
+      <a href="https://drive.xcam.gay" target="_blank">XCam Drive</a>
+      <div class="status" id="drive-status">
         <div class="dot offline"></div>
         <span>Verificando...</span>
       </div>
@@ -106,6 +113,7 @@
     function checkStatus() {
       checkService('https://xcam.gay/status.html', 'web-status');
       checkService('https://api.xcam.gay/', 'api-status');
+      checkService('https://drive.xcam.gay/', 'drive-status');
     }
 
     checkStatus();
