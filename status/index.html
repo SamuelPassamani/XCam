@@ -91,25 +91,26 @@
       <a href="https://xcam.gay" target="_blank">XCam Web App</a>
       <div class="status" id="web-status">
         <div class="dot offline"></div>
-        <span>Verificando...</span>
+        <span>⏳ Verificando...</span>
       </div>
     </div>
     <div class="card">
       <a href="https://api.xcam.gay" target="_blank">XCam API</a>
       <div class="status" id="api-status">
         <div class="dot offline"></div>
-        <span>Verificando...</span>
+        <span>⏳ Verificando...</span>
       </div>
     </div>
     <div class="card">
       <a href="https://drive.xcam.gay" target="_blank">XCam Drive</a>
       <div class="status" id="drive-status">
         <div class="dot offline"></div>
-        <span>Verificando...</span>
+        <span>⏳ Verificando...</span>
       </div>
     </div>
   </div>
-  <button onclick="checkStatus()">ATUALIZAR</button>
+
+  <button onclick="checkStatus()">🔄 ATUALIZAR</button>
 
   <footer>
     &copy; <span id="year"></span> XCam • <a href="mailto:contato@xcam.gay">contato@xcam.gay</a>
@@ -120,23 +121,28 @@
       document.getElementById("year").textContent = new Date().getFullYear();
     }
 
-    async function checkService(url, dotId) {
+    async function checkService(url, dotId, name) {
       const dot = document.querySelector(`#${dotId} .dot`);
       const text = document.querySelector(`#${dotId} span`);
+      text.textContent = "⏳ Verificando...";
       try {
-        await fetch(url, { mode: 'no-cors' });
-        dot.className = 'dot online';
-        text.textContent = 'Online';
+        await fetch(url, { mode: "no-cors" });
+        dot.className = "dot online";
+        text.textContent = "🟢 Online";
+        console.log(`[STATUS] ✅ ${name}: Online`);
       } catch (e) {
-        dot.className = 'dot offline';
-        text.textContent = 'Offline';
+        dot.className = "dot offline";
+        text.textContent = "🔴 Offline";
+        console.warn(`[STATUS] ⚠️ ${name}: Offline`, e);
       }
     }
 
     function checkStatus() {
-      checkService('https://xcam.gay/status.html', 'web-status');
-      checkService('https://api.xcam.gay/', 'api-status');
-      checkService('https://drive.xcam.gay/', 'drive-status');
+      console.clear();
+      console.log("[INFO] Iniciando verificação de status...");
+      checkService("https://xcam.gay/status.html", "web-status", "Web App");
+      checkService("https://api.xcam.gay/", "api-status", "API");
+      checkService("https://drive.xcam.gay/", "drive-status", "Drive");
     }
 
     updateYear();
