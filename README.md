@@ -1,10 +1,15 @@
+
 <p align="center">
   <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam Logo" width="300"/>
 </p>
 
-# 📡 Plataforma Modular para Transmissões ao Vivo
+# 📦 XCam v2.0 – Plataforma Modular para Transmissões ao Vivo
 
-XCam é uma plataforma moderna, modular e responsiva voltada à exibição de transmissões ao vivo, com foco em performance, organização de código, arquitetura limpa e escalabilidade.
+XCam Web App: [![Netlify Status](https://api.netlify.com/api/v1/badges/ded26182-8393-4141-ab43-7ba4c85cc568/deploy-status)](https://app.netlify.com/projects/xcamgay/deploys)  
+XCam Beta: [![Netlify Status](https://api.netlify.com/api/v1/badges/a275d640-eef5-44cd-bebd-dd4301f59428/deploy-status)](https://app.netlify.com/projects/xcam-beta/deploys)  
+XCam API: [![Netlify Status](https://api.netlify.com/api/v1/badges/b3bf1a04-7e16-40b3-8972-676895751821/deploy-status)](https://app.netlify.com/projects/xcam-api/deploys)  
+XCam Drive: [![Netlify Status](https://api.netlify.com/api/v1/badges/03b67a1e-db8a-493b-bfc7-d6f494ce2396/deploy-status)](https://app.netlify.com/projects/xcam-drive/deploys)  
+XCam Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/1672f90b-0206-4302-988e-de804cc49dc0/deploy-status)](https://app.netlify.com/projects/xcam-status/deploys)
 
 ---
 
@@ -12,158 +17,66 @@ XCam é uma plataforma moderna, modular e responsiva voltada à exibição de tr
 
 ```
 /XCam
-├── dist/               # Frontend modular e responsivo
-│   ├── beta/           # Versão mais recente do Web App (ES Modules)
-│   └── cam/            # Player dedicado
+├── dist/                 # Frontend modular e responsivo
+│   ├── beta/             # Web App moderno com ES Modules
+│   ├── cam/              # Player dedicado
+│   ├── chat/             # Integração de chat
+│   └── user/             # Perfil público
 │
-├── api/                # Infraestrutura de API
-│   ├── netlify/        # Proxy reverso Netlify → Worker Cloudflare
-│   ├── oauth/imgur/    # Upload de imagem com OAuth2
-│   └── workers/        # Worker principal da API pública
+├── api/
+│   ├── workers/          # Cloudflare Worker com API pública
+│   ├── oauth/imgur/      # Upload de imagem via OAuth2 (Imgur)
+│   └── netlify/          # Proxy reverso Netlify → Worker
 │
-├── status/             # Página pública de status
-├── README.md           # Documentação geral
-└── CHANGELOG.md        # Registro técnico de versões
+├── drive/                # Repositório público de arquivos e mídia (CDN leve)
+├── status/               # Página pública de status
+├── README.md             # Documentação geral
+└── CHANGELOG.md          # Histórico técnico de versões
 ```
 
 ---
 
-## 🧠 Tecnologias e Padrões
+## 🧠 Tecnologias e Arquitetura
 
-- Frontend: **HTML5 + CSS3 + JS (ES6 Modules)** sem frameworks pesados
-- Backend/API: **Cloudflare Worker** com suporte a GraphQL + REST
-- Gateway: **Netlify Redirect Proxy**
-- Uploads: **Imgur API + OAuth2**
-- Deploy: **CI/CD GitHub + Netlify + Cloudflare**
-
----
-
-## 🔗 Links Oficiais
-
-| Área         | Subdomínio                 | Destino                     |
-|--------------|----------------------------|-----------------------------|
-| Web App      | [xcam.gay](https://xcam.gay)        | Netlify Frontend           |
-| API Pública  | [api.xcam.gay](https://api.xcam.gay) | Worker Cloudflare via Proxy|
-| Status Page  | [status.xcam.gay](https://status.xcam.gay) | Netlify estático     |
+- **Frontend:** HTML5, TailwindCSS (CDN), JavaScript (ESModules)
+- **Back-end:** Cloudflare Workers (serverless)
+- **API CAM4:** GraphQL com filtros dinâmicos
+- **CORS e Cache:** controle completo via Worker
+- **Internacionalização:** i18n.js e fallback multilíngue
+- **Acessibilidade:** ARIA, navegação por teclado
+- **Assets públicos:** via `/drive` com links diretos
 
 ---
 
-## 🚀 Funcionalidades Principais
+## 🗂️ Armazenamento Público – `/drive`
 
-### 🔥 XCam Web App
+A pasta `/drive` serve arquivos estáticos via `https://drive.xcam.gay/`. Pode conter:
 
-- Carregamento dinâmico e filtrável de transmissões
-- Scroll infinito, lazy loading e player modal
-- Filtros: país, gênero, orientação, tags, número mínimo de viewers
-- Multilíngue com tradução reversa (PT/EN)
-
-### ⚙️ XCam API Pública
-
-- Endpoint `/` com paginação, CSV, filtros dinâmicos:
-  - `gender`, `country`, `orientation`, `minViewers`, `tags`
-- Rota `/user/<username>` com info completa (profile + streamInfo)
-- Rota `/user/<username>/liveInfo` com status da transmissão
-
-### 🖼️ XCam Imgur API
-
-- Upload de imagens via URL com autenticação segura (OAuth2)
-- Callback automatizado (`callback.html`)
-- Scripts gerenciados em `/api/oauth/imgur`
-
-### 📶 Status Page
-
-- Verifica disponibilidade de `xcam.gay` e `api.xcam.gay` a cada 60s
-- Indicadores visuais (🟢 Online | 🔴 Offline)
-- Responsiva e sem backend
+- Logos, banners, vídeos e imagens públicas
+- Exportações técnicas e arquivos de integração
+- Recursos acessados dinamicamente no front-end
 
 ---
 
-## 📦 Última Versão
+## 🚀 API Pública
 
-**`XCam V.2.0` — Maio de 2025**
-
-- API completa com rotas REST + CSV
-- Nova arquitetura de diretórios
-- Deploy automatizado GitHub → Netlify
-- Subdomínios dedicados ativos
-- Página de status pública e funcional
-
----
-
-## 📄 Documentação Técnica (por módulo)
-
-### 🧭 API Gateway
-
-```toml
-[[redirects]]
-  from = "/api/*"
-  to = "https://xcam.aserio.workers.dev/:splat"
-  status = 200
-  force = true
+Exemplo:
 ```
-
-### 📡 Worker API (Cloudflare)
-
-- `/` → Lista paginada com filtros
-- `/user/<username>?section=info,streamInfo`
-- `/user/<username>/liveInfo`
-
-🔗 [Documentação da API](https://api.xcam.gay)  
-📁 [worker/index.js](./api/workers/index.js)
-
-### 🖼️ OAuth2 com Imgur
-
-- Auth URL: `https://api.imgur.com/oauth2/authorize`
-- Callback: `/api/oauth/imgur/callback.html`
-
----
-
-## 🧪 Exemplos de Uso
-
-### JSON com filtros
-
-```
-GET https://api.xcam.gay/?country=br&tags=feet,latino
-```
-
-### Exportar CSV
-
-```
-GET https://api.xcam.gay/?format=csv&limit=50
-```
-
-### Info do modelo
-
-```
-GET https://api.xcam.gay/user/kleotwink
+GET https://api.xcam.gay/?page=1&limit=30&format=json&gender=male
 ```
 
 ---
 
-## 🧩 Deploy / CI-CD
+## 📌 Histórico de Versões
 
-- GitHub → Netlify: Web App + Status Page
-- Cloudflare: Worker implantado manualmente
-- DNS via GoDaddy apontado para `*.xcam.gay`
-
-🔧 [Checklist de Deploy](./api/netlify/deploy-check.md)
+1. **v1.0** – Estrutura modular inicial
+2. **v1.5** – Integração com API CAM4
+3. **v2.0** – CORS fixado, cache controlado, API pública robusta
 
 ---
 
-## 📈 Status Monitor
+## 👨‍💻 Autor
 
-Verifica:
-- [xcam.gay](https://xcam.gay)
-- [api.xcam.gay](https://api.xcam.gay)
-
-📄 Página: [`status/status.html`](./status/status.html)
-
----
-
-## 🧠 Créditos
-
-**Autor:** Samuel Passamani  
-**GitHub:** [github.com/SamuelPassamani](https://github.com/SamuelPassamani)  
-**Domínio oficial:** [xcam.gay](https://xcam.gay)
-
-> Projeto mantido com foco em performance, simplicidade e clareza.
+Desenvolvido por **Samuel Passamani**  
+📧 contato@xcam.gay  
+🌐 Idealizador do XCam e da arquitetura escalável deste sistema.
