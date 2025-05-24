@@ -91,7 +91,7 @@ async function handleUserProfile(username, corsHeaders) {
     if (!response.ok) throw new Error(`Erro CAM4: ${response.status}`);
     const data = await response.json();
     return new Response(JSON.stringify(data, null, 2), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
+      headers: { "Cache-Control": "no-store",  ...corsHeaders, "Content-Type": "application/json" }
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: "Falha ao buscar perfil", details: err.message }), {
@@ -114,7 +114,7 @@ async function handleLiveInfo(username, corsHeaders) {
     if (!response.ok) throw new Error(`Erro CAM4: ${response.status}`);
     const data = await response.json();
     return new Response(JSON.stringify(data, null, 2), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
+      headers: { "Cache-Control": "no-store",  ...corsHeaders, "Content-Type": "application/json" }
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: "Falha ao buscar streamInfo", details: err.message }), {
@@ -144,15 +144,6 @@ export default {
     if (pathname.startsWith("/user/")) {
       const username = pathname.split("/")[2];
       return await handleUserProfile(username, corsHeaders);
-    }
-
-    const cache = caches.default;
-    const cachedResponse = await cache.match(request);
-    if (cachedResponse) {
-      return new Response(cachedResponse.body, {
-        ...cachedResponse,
-        headers: { ...Object.fromEntries(cachedResponse.headers), ...corsHeaders }
-      });
     }
 
     try {
@@ -242,10 +233,8 @@ export default {
             }
           })
         : new Response(JSON.stringify(responseData, null, 2), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
+            headers: { "Cache-Control": "no-store",  ...corsHeaders, "Content-Type": "application/json" }
           });
-
-      ctx.waitUntil(cache.put(request, finalResponse.clone()));
       return finalResponse;
 
     } catch (err) {
