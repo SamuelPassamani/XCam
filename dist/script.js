@@ -1806,10 +1806,10 @@ async function initApp() {
 
 // Função para inicializar atualizações automáticas
 function startAutoUpdate() {
-  // Executar a função initApp imediatamente
-  initApp();
+  // Executar a função fetchBroadcasts imediatamente
+  fetchBroadcasts();
 
-  // Configurar a execução automática a cada 15 segundos
+  // Configurar a execução automática a cada 20 segundos
   setInterval(() => {
     console.log("Atualizando transmissões...");
     initApp();
