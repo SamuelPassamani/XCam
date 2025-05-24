@@ -31,14 +31,6 @@ export function setupFilters() {
       filters.minViewers = parseInt(minViewersInput, 10);
     }
 
-    // 5. tags: array de slugs, limpos e minúsculos
-    if (tagsInput) {
-      filters.tags = tagsInput
-        .split(",")
-        .map(tag => tag.trim().toLowerCase().replace(/\s+/g, "-"))
-        .filter(Boolean);
-    }
-
-    applyBroadcastFilters(filters);
+    // 5. tags: array de slugs, limpos e minúsculosapplyBroadcastFilters(filters);
   });
 }

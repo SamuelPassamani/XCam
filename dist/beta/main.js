@@ -15,5 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupModal();
   populateFilterOptions(); // Preenche os selects dinamicamente
   setupFilters();
-  setupBroadcasts(); // Garante carregamento inicial automático
+  setupBroadcasts();
+  refreshBroadcasts(); // Garante carregamento inicial automático
 });
