@@ -1804,18 +1804,6 @@ async function initApp() {
   }
 }
 
-// Função para inicializar atualizações automáticas
-function startAutoUpdate() {
-  // Executar a função fetchBroadcasts imediatamente
-  fetchBroadcasts();
-
-  // Configurar a execução automática a cada 20 segundos
-  setInterval(() => {
-    console.log("Atualizando transmissões...");
-    initApp();
-  }, 20000); // 20 segundos em milissegundos
-}
-
 // Fechar modal ao clicar fora
 window.addEventListener("click", (e) => {
   const modal = document.getElementById("broadcast-modal");
@@ -1825,4 +1813,4 @@ window.addEventListener("click", (e) => {
 });
 
 // Iniciar a aplicação e configurar atualizações automáticas quando o DOM estiver pronto
-document.addEventListener("DOMContentLoaded", startAutoUpdate);
+document.addEventListener(DOMContentLoaded);
