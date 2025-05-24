@@ -3,3 +3,9 @@
   to = "https://xcam.aserio.workers.dev/:splat"
   status = 200
   force = true
+    [redirects.headers]
+    Access-Control-Allow-Origin = ""
+    Access-Control-Allow-Headers = ""
+    Access-Control-Allow-Methods = ""
+    Access-Control-Allow-Credentials = ""
+    Vary = ""
