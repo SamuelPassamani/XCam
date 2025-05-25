@@ -1,39 +1,7 @@
 "use strict";
 
-// Obtendo os parâmetros 'user' e 'id' da URL
-const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get("user");
-const videoId = urlParams.get("id");
-
-
-/**
- * Busca os dados da câmera pelo ID e configura o player.
- * @param {string} videoId
- */
-function fetchCameraDataById(videoId) {
-  fetch("https://api.xcam.gay/?limit=1500&format=json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const camera = data?.broadcasts?.items?.find((item) => item.id === videoId);
-      if (!camera) {
-        console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
-        return;
-      }
-      setupPlayer(camera, camera.username); // Passa o username para fallback
-    })
-    .catch((error) =>
-      console.error("Erro ao carregar o arquivo JSON:", error)
-    );
-}
-
 /**
  * Configura o JW Player com o vídeo fornecido.
- * Se `camera.preview.src` for inválido, realiza um fallback para buscar `edgeURL` ou `cdnURL`.
  * @param {Object} camera
  * @param {string} username
  */
