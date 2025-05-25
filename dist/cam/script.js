@@ -5,46 +5,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get("user");
 const videoId = urlParams.get("id");
 
-// Verifica se os parâmetros estão presentes e inicia a busca de dados
-if (!videoId && !username) {
-  console.error(
-    "Nenhum ID ou nome de usuário foi fornecido na URL. Adicione ?id=valor ou ?user=valor na URL."
-  );
-} else if (username) {
-  fetchCameraDataByUsername(username);
-} else {
-  fetchCameraDataById(videoId);
-}
-
-
-// [REMOVIDO] Função 'fetchCameraDataByUsername' substituída por lógica unificada.
-      return response.json();
-    })
-    .then((data) => {
-      const videoSrc = data.edgeURL || data.cdnURL;
-      if (!videoSrc) {
-        console.warn("Nenhum stream válido encontrado. Aplicando fallback local.");
-        reloadWithFallback();
-        return;
-      }
-
-      // Constrói objeto 'camera' parcial para manter compatibilidade com setupPlayer
-      const camera = {
-        username: username,
-        preview: {
-          poster: "https://drive.xcam.gay/0:/logo2.png"
-        },
-        tags: []
-      };
-
-      setupPlayer(camera, username, videoSrc); // videoSrc passado explicitamente
-    })
-    .catch((error) => {
-      console.error("Erro ao carregar informações do usuário:", error);
-      reloadWithFallback();
-    });
-}
-
 
 /**
  * Busca os dados da câmera pelo ID e configura o player.
@@ -296,21 +256,7 @@ if (params.has("user") || params.has("id")) {
     console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
     reloadWithFallback();
     return;
-}/liveInfo`)
-          .then((res) => res.json())
-          .then((liveData) => {
-            const streamURL = liveData.edgeURL || liveData.cdnURL;
-            if (!streamURL) {
-              console.warn("Nenhum stream válido encontrado via liveInfo.");
-              reloadWithFallback();
-              return;
-            }
-            setupPlayer(camera, camera.username, streamURL);
-          })
-          .catch((err) => {
-            console.error("Erro ao buscar stream em liveInfo:", err);
-            reloadWithFallback();
-          });
+// [REMOVIDO] Trecho quebrado referente a /liveInfo substituído por fallback local.);
       } else {
         // Caso padrão: usar preview.src
         setupPlayer(camera, camera.username, camera.preview.src);
