@@ -28,7 +28,7 @@ preloadVideo.href = "https://drive.xcam.gay/0:/src/file/error.mp4";
 document.head.appendChild(preloadVideo);
 
 // Exibe a imagem de loading até o player ser carregado
-const playerContainer = document.getElementById("player");
+const playerContainer = document.getElementById("loading-container");
 playerContainer.innerHTML =
   '<img src="' +
   preloadImage.src +
@@ -41,7 +41,6 @@ playerContainer.innerHTML =
  * @param {string} videoSrc - URL do vídeo m3u8.
  */
 function setupPlayer(camera, username, videoSrc) {
-  // Remove tela de carregamento, se existir
   const playerContainer = document.getElementById("player");
   playerContainer.innerHTML = ""; // Limpa o conteúdo
 
@@ -85,6 +84,10 @@ function setupPlayer(camera, username, videoSrc) {
       }
     }
   });
+
+  // ✅ Exibe o player e oculta a imagem de carregamento
+  document.getElementById("player").style.display = "block";
+  document.getElementById("loading-container").style.display = "none";
 }
 
 // === Lógica principal: leitura da URL e carregamento dos dados ===

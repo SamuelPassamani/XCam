@@ -1,24 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XCam.Gay / Live Player</title>
-  <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="https://xcam.gay/style.css">
-  <link rel="icon" type="image/svg+xml" href="https://drive.xcam.gay/0:/logo2.svg">
-  <link rel="icon" type="image/png" href="https://drive.xcam.gay/0:/logo2.png">
+
+  <!-- Estilos principais -->
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="https://xcam.gay/style.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="https://drive.xcam.gay/0:/logo2.svg" />
+  <link rel="icon" type="image/png" href="https://drive.xcam.gay/0:/logo2.png" />
 </head>
 
 <body>
-  <!-- Player Section -->
-  <div id="player"></div>
+  <!-- Seção de Carregamento -->
+  <div id="loading-container">
+    <img src="https://drive.xcam.gay/0:/src/img/loading.gif" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />
+  </div>
 
-  <!-- Ads Modal -->
+  <!-- Seção do Player (inicialmente oculta até estar configurado) -->
+  <div id="player" style="display:none;"></div>
+
+  <!-- Modal de Anúncios -->
   <div class="ad-modal" id="ad-modal">
     <div class="ad-modal-container">
-      <iframe id="ad-iframe" title="Advertisement"></iframe>
+      <iframe id="ad-iframe" title="Advertisement" frameborder="0"></iframe>
       <button id="close-ad-btn">Aguarde... <span id="ad-countdown">10</span>s</button>
     </div>
   </div>
@@ -27,31 +36,26 @@
   <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
   <script src="./script.js"></script>
 
+  <!-- Lógica de Redimensionamento da Publicidade -->
   <script>
-    // Função para atualizar o iframe da publicidade de acordo com o tamanho da tela
     function updateAdIframe() {
-      const adIframe = document.getElementById('ad-iframe');
+      const adIframe = document.getElementById("ad-iframe");
       const screenWidth = window.innerWidth;
 
-      // Defina o código do iframe com base no tamanho da tela
       if (screenWidth < 768) {
-        // Publicidade para dispositivos móveis
-        adIframe.src = 'https://xcam.gay/ads/320x50.html';
-        adIframe.width = '320';
-        adIframe.height = '50';
+        adIframe.src = "https://xcam.gay/ads/320x50.html";
+        adIframe.width = "320";
+        adIframe.height = "50";
       } else {
-        // Publicidade para dispositivos maiores (desktop)
-        adIframe.src = 'https://xcam.gay/ads/300x250.html';
-        adIframe.width = '300';
-        adIframe.height = '250';
+        adIframe.src = "https://xcam.gay/ads/300x250.html";
+        adIframe.width = "300";
+        adIframe.height = "250";
       }
     }
 
-    // Atualiza o iframe ao carregar a página
+    // Inicialização da publicidade responsiva
     updateAdIframe();
-
-    // Atualiza o iframe quando a janela é redimensionada
-    window.addEventListener('resize', updateAdIframe);
+    window.addEventListener("resize", updateAdIframe);
   </script>
 </body>
 
