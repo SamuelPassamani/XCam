@@ -21,7 +21,15 @@ const ALLOWED_ORIGINS = [
   "https://beta.xcam.gay",
   "https://player.xcam.gay",
   "https://status.xcam.gay",
-  "https://script.google.com"
+  "https://drive.xcam.gay",
+  "https://script.google.com",
+  "https://script.googleusercontent.com",
+  "https://web-sandbox.oaiusercontent.com",
+  "https://persistent.oaistatic.com",
+  "https://openai.com",
+  "https://ab.chatgpt.com",
+  "https://chatgpt.com",
+  "https://cdn.oaistatic.com"
 ];
 
 // === Headers CORS dinâmicos (versão corrigida) ===
