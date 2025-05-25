@@ -1,138 +1,192 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Status da Plataforma XCam</title>
+  <link rel="icon" href="https://drive.xcam.gay/0:/logo2.png" type="image/png">
+  <link rel="stylesheet" href="https://xcam.gay/style.css">
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 2rem;
-      line-height: 1.6;
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
     }
-    h1, h2 {
-      text-align: center;
+
+    .slide-up {
+      animation: slideUp 0.6s ease-out;
     }
-    ul {
-      list-style: none;
-      padding: 0;
-      max-width: 500px;
-      margin: 2rem auto;
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
-    li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.5rem 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 0.75rem;
-      background-color: gray;
+
+    .status-tooltip {
+      position: relative;
+      cursor: pointer;
     }
-    .online {
-      background-color: #4CAF50;
+
+    .status-tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      background: #333;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
     }
-    .offline {
-      background-color: #F44336;
+
+    .status-tooltip:hover::after {
+      opacity: 1;
     }
-    .status-text {
-      display: flex;
-      align-items: center;
-    }
-    .badges {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      max-width: 600px;
-      margin: 2rem auto;
-    }
-    footer {
-      text-align: center;
-      margin-top: 3rem;
-      color: #777;
+
+    .header-logo {
+      max-width: 140px;
+      display: block;
+      margin: 2rem auto 1rem;
     }
   </style>
 </head>
-<body>
-  <h1>Status da Plataforma XCam</h1>
 
-  <ul>
-    <li id="web-status"><span class="status-text"><div class="dot"></div>🌐 Web App</span></li>
-    <li id="api-status"><span class="status-text"><div class="dot"></div>🧠 API</span></li>
-    <li id="drive-status"><span class="status-text"><div class="dot"></div>📁 Drive</span></li>
-    <li id="player-status"><span class="status-text"><div class="dot"></div>🎬 Player</span></li>
-    <li id="status-status"><span class="status-text"><div class="dot"></div>📊 Status</span></li>
-    <li id="beta-status"><span class="status-text"><div class="dot"></div>🧪 Beta App</span></li>
-  </ul>
+<body class="page-status fade-in">
+  <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam Logo" class="header-logo slide-up">
+  <main class="broadcasts-section">
+    <h1 class="section-title slide-up">📡 Status da Plataforma XCam</h1>
+    <div class="broadcasts-grid slide-up">
+      <div class="broadcast-card" id="web-status">
+        <div class="card-info">
+          <strong>🌐 XCam Web App</strong>
+          <div class="card-viewers status-tooltip" data-tooltip="Domínio principal da plataforma">
+            <div class="dot"></div><span>⏳ Verificando...</span>
+          </div>
+        </div>
+      </div>
+      <div class="broadcast-card" id="beta-status">
+        <div class="card-info">
+          <strong>🧪 XCam Beta App</strong>
+          <div class="card-viewers status-tooltip" data-tooltip="Versão experimental da interface">
+            <div class="dot"></div><span>⏳ Verificando...</span>
+          </div>
+        </div>
+      </div>
+      <div class="broadcast-card" id="api-status">
+        <div class="card-info">
+          <strong>🧠 XCam API</strong>
+          <div class="card-viewers status-tooltip" data-tooltip="Interface de dados para todos os serviços">
+            <div class="dot"></div><span>⏳ Verificando...</span>
+          </div>
+        </div>
+      </div>
+      <div class="broadcast-card" id="player-status">
+        <div class="card-info">
+          <strong>🎬 XCam Player</strong>
+          <div class="card-viewers status-tooltip" data-tooltip="Responsável por exibir as transmissões">
+            <div class="dot"></div><span>⏳ Verificando...</span>
+          </div>
+        </div>
+      </div>
+      <div class="broadcast-card" id="drive-status">
+        <div class="card-info">
+          <strong>📁 XCam Drive</strong>
+          <div class="card-viewers status-tooltip" data-tooltip="Armazenamento interno e externo de ativos">
+            <div class="dot"></div><span>⏳ Verificando...</span>
+          </div>
+        </div>
+      </div>
+      <div class="broadcast-card" id="status-status">
+        <div class="card-info">
+          <strong>📊 XCam Status</strong>
+          <div class="card-viewers status-tooltip" data-tooltip="Esta página de monitoramento de sistema">
+            <div class="dot"></div><span>⏳ Verificando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <section class="badges">
-    <h2>Status dos Deploys</h2>
-    <div>
-      <strong>XCam Status</strong><br />
-      <a href="https://app.netlify.com/projects/xcam-status/deploys">
-        <img src="https://api.netlify.com/api/v1/badges/1672f90b-0206-4302-988e-de804cc49dc0/deploy-status" alt="Netlify Status - XCam Status"/>
-      </a>
-    </div>
-    <div>
-      <strong>XCam Player</strong><br />
-      <a href="https://app.netlify.com/projects/xcam-player/deploys">
-        <img src="https://api.netlify.com/api/v1/badges/79ab9858-1962-4eb5-813b-1667de77b4e3/deploy-status" alt="Netlify Status - XCam Player"/>
-      </a>
-    </div>
-    <div>
-      <strong>XCam Web App</strong><br />
-      <a href="https://app.netlify.com/projects/xcamgay/deploys">
-        <img src="https://api.netlify.com/api/v1/badges/ded26182-8393-4141-ab43-7ba4c85cc568/deploy-status" alt="Netlify Status - XCam Web App"/>
-      </a>
-    </div>
-    <div>
-      <strong>XCam API</strong><br />
-      <a href="https://app.netlify.com/projects/xcam-api/deploys">
-        <img src="https://api.netlify.com/api/v1/badges/b3bf1a04-7e16-40b3-8972-676895751821/deploy-status" alt="Netlify Status - XCam API"/>
-      </a>
-    </div>
-    <div>
-      <strong>XCam Beta App</strong><br />
-      <a href="https://app.netlify.com/projects/xcam-beta/deploys">
-        <img src="https://api.netlify.com/api/v1/badges/a275d640-eef5-44cd-bebd-dd4301f59428/deploy-status" alt="Netlify Status - XCam Beta App"/>
-      </a>
-    </div>
-    <div>
-      <strong>XCam Drive</strong><br />
-      <a href="https://app.netlify.com/projects/xcam-drive/deploys">
-        <img src="https://api.netlify.com/api/v1/badges/03b67a1e-db8a-493b-bfc7-d6f494ce2396/deploy-status" alt="Netlify Status - XCam Drive"/>
-      </a>
-    </div>
-  </section>
+    <section class="badges slide-up">
+      <h2 class="section-title">🚀 Deploys Ativos</h2>
+      <div class="broadcasts-grid">
+        <div class="broadcast-card">
+          <div class="card-info"><strong>XCam Web App</strong><a href="https://app.netlify.com/projects/xcamgay/deploys"><img src="https://api.netlify.com/api/v1/badges/ded26182-8393-4141-ab43-7ba4c85cc568/deploy-status" alt="Status Web App" /></a></div>
+        </div>
+        <div class="broadcast-card">
+          <div class="card-info"><strong>XCam Beta App</strong><a href="https://app.netlify.com/projects/xcam-beta/deploys"><img src="https://api.netlify.com/api/v1/badges/a275d640-eef5-44cd-bebd-dd4301f59428/deploy-status" alt="Status Beta App" /></a></div>
+        </div>
+        <div class="broadcast-card">
+          <div class="card-info"><strong>XCam API</strong><a href="https://app.netlify.com/projects/xcam-api/deploys"><img src="https://api.netlify.com/api/v1/badges/b3bf1a04-7e16-40b3-8972-676895751821/deploy-status" alt="Status API" /></a></div>
+        </div>
+        <div class="broadcast-card">
+          <div class="card-info"><strong>XCam Player</strong><a href="https://app.netlify.com/projects/xcam-player/deploys"><img src="https://api.netlify.com/api/v1/badges/79ab9858-1962-4eb5-813b-1667de77b4e3/deploy-status" alt="Status Player" /></a></div>
+        </div>
+        <div class="broadcast-card">
+          <div class="card-info"><strong>XCam Drive</strong><a href="https://app.netlify.com/projects/xcam-drive/deploys"><img src="https://api.netlify.com/api/v1/badges/03b67a1e-db8a-493b-bfc7-d6f494ce2396/deploy-status" alt="Status Drive" /></a></div>
+        </div>
+        <div class="broadcast-card">
+          <div class="card-info"><strong>XCam Status</strong><a href="https://app.netlify.com/projects/xcam-status/deploys"><img src="https://api.netlify.com/api/v1/badges/1672f90b-0206-4302-988e-de804cc49dc0/deploy-status" alt="Status Status" /></a></div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-  <footer>
-    <p>&copy; <span id="year"></span> XCam Platform</p>
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam" class="footer-logo">
+        <p class="footer-description">XCam é uma plataforma de transmissões ao vivo onde você pode assistir e interagir com streamers de todo o mundo.</p>
+      </div>
+      <div class="footer-links">
+        <a href="//xcam.gay" class="footer-link">Início</a>
+        <a href="#" class="footer-link">Explorar</a>
+        <a href="#" class="footer-link">Categorias</a>
+        <a href="#" class="footer-link">Sobre</a>
+        <a href="#" class="footer-link">Termos</a>
+        <a href="#" class="footer-link">Privacidade</a>
+      </div>
+      <div class="footer-copyright">&copy; <span id="year"></span> XCam. Todos os direitos reservados.</div>
+    </div>
   </footer>
 
   <script>
     function updateYear() {
       document.getElementById("year").textContent = new Date().getFullYear();
     }
-
     async function checkService(url, dotId, name) {
       const dot = document.querySelector(`#${dotId} .dot`);
-      const text = document.querySelector(`#${dotId} span`);
-      text.textContent = "⏳ Verificando...";
+      const span = document.querySelector(`#${dotId} .card-viewers span`);
+      if (span) span.textContent = "⏳ Verificando...";
       try {
-        await fetch(url, { mode: "no-cors" });
+        await fetch(url, {
+          mode: "no-cors"
+        });
         dot.className = "dot online";
-        text.textContent = "🟢 Online";
+        if (span) span.textContent = "🟢 Online";
         console.log(`[STATUS] ✅ ${name}: Online`);
       } catch (e) {
         dot.className = "dot offline";
-        text.textContent = "🔴 Offline";
+        if (span) span.textContent = "🔴 Offline";
         console.warn(`[STATUS] ⚠️ ${name}: Offline`, e);
       }
     }
@@ -140,17 +194,23 @@
     function checkStatus() {
       console.clear();
       console.log("[INFO] Iniciando verificação de status...");
-      checkService("https://status.xcam.gay/", "status-status", "Status");
-      checkService("https://player.xcam.gay/", "player-status", "Player");
       checkService("https://xcam.gay/", "web-status", "Web App");
-      checkService("https://api.xcam.gay/", "api-status", "API");
-      checkService("https://drive.xcam.gay/", "drive-status", "Drive");
       checkService("https://beta.xcam.gay/", "beta-status", "Beta App");
+      checkService("https://api.xcam.gay/", "api-status", "API");
+      checkService("https://player.xcam.gay/", "player-status", "Player");
+      checkService("https://drive.xcam.gay/", "drive-status", "Drive");
+      checkService("https://status.xcam.gay/", "status-status", "Status");
     }
-
     updateYear();
     checkStatus();
     setInterval(checkStatus, 30000);
+    document.addEventListener("DOMContentLoaded", () => {
+      const fadeElements = document.querySelectorAll(".fade-in");
+      fadeElements.forEach((el) => el.classList.add("fade-in"));
+      const slideElements = document.querySelectorAll(".slide-up");
+      slideElements.forEach((el) => el.classList.add("slide-up"));
+    });
   </script>
 </body>
+
 </html>

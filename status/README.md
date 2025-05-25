@@ -1,90 +1,110 @@
-# 📶 XCam Status Page
+# 📶 XCam Status V2.1
 
-<img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Logo" width="200" />
+<img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam Logo" width="180"/>
 
-Página pública de monitoramento da infraestrutura principal da plataforma **XCam**, com foco em simplicidade, clareza visual e atualização automática.
+**XCam Status V2.1** é a central pública de monitoramento da infraestrutura da plataforma **XCam**. Projetado com foco em clareza, confiabilidade e identidade visual, ele oferece um panorama em tempo real do estado operacional dos principais serviços que compõem o ecossistema XCam.
 
 ---
 
 ## 🌐 URL Oficial
 
-🔗 Acesse diretamente: [https://status.xcam.gay](https://status.xcam.gay)
+🔗 [https://status.xcam.gay](https://status.xcam.gay)
 
 ---
 
-## 📂 Estrutura de Diretório
+## ✨ Visão Geral
 
-```
-/xcam/status/
-├── index.html       ← Página principal (status em tempo real)
-└── README.md        ← Este documento com informações técnicas
-```
+Esta ferramenta foi desenvolvida para:
+- ✅ Monitorar os principais serviços do XCam de forma contínua e assíncrona.
+- ✅ Exibir o status em tempo real, atualizando automaticamente a cada 30 segundos.
+- ✅ Apresentar tudo com uma interface alinhada ao design do **XCam Beta App**, responsiva e acessível.
 
 ---
 
-## 🔧 Serviços Monitorados
+## 📊 Serviços Monitorados
 
-| Serviço              | URL                     | Status |
-|----------------------|--------------------------|--------|
-| XCam Web App         | https://xcam.gay         | 🟢 / 🔴 |
-| XCam API (Worker)    | https://api.xcam.gay     | 🟢 / 🔴 |
-
-- Verificação automática a cada 30 segundos
-- Indicadores visuais:
-  - 🟢 Online
-  - 🔴 Offline
+| Serviço              | URL                          | Função Principal                                      |
+|----------------------|-------------------------------|-------------------------------------------------------|
+| Web App              | https://xcam.gay              | Domínio principal e interface pública do XCam         |
+| Beta App             | https://beta.xcam.gay         | Interface experimental com recursos em testes         |
+| API (Worker)         | https://api.xcam.gay          | Backend de dados da plataforma                        |
+| Player               | https://player.xcam.gay       | Sistema de exibição e controle das transmissões       |
+| Drive                | https://drive.xcam.gay        | Armazenamento distribuído de imagens e arquivos       |
+| Status               | https://status.xcam.gay       | Esta própria página de status                         |
 
 ---
 
 ## 🧠 Como Funciona
 
-- A verificação usa `fetch()` com `mode: 'no-cors'` para evitar erros CORS
-- O resultado é atualizado no DOM com base no `response.ok`
-- Atualização manual via botão “🔄 Atualizar”
-- Estilo adaptado do [XCam Web App](https://github.com/SamuelPassamani/XCam) com tema escuro e responsividade
+- A cada 30 segundos, o script executa `fetch(..., { mode: 'no-cors' })` para testar a disponibilidade de cada endpoint.
+- Cada bloco do painel responde dinamicamente com um badge:
+  - 🟢 Online
+  - 🔴 Offline
+- Se ocorrer erro no `fetch()`, o serviço é marcado como indisponível.
+- Utiliza `setInterval`, `async/await` e manipulação direta do DOM.
+- Os elementos são animados com `fade-in`, `slide-up` e tooltips.
 
 ---
 
-## 🧩 Recursos Técnicos
+## 💡 Funcionalidades Visuais
 
-- ✔️ Página estática (sem backend)
-- ✔️ Atualização assíncrona com `async/await`
-- ✔️ Layout com `flexbox`, responsivo para desktop e mobile
-- ✔️ Compatível com navegadores modernos
-- ✔️ HTML + CSS + JS organizados em único arquivo
-
----
-
-## 🛠 Instalação e Deploy (Netlify)
-
-1. Clone o repositório [SamuelPassamani/XCam](https://github.com/SamuelPassamani/XCam)
-2. Acesse [https://app.netlify.com](https://app.netlify.com) e crie novo projeto
-3. Configure:
-   - **Base directory**: (deixe vazio)
-   - **Publish directory**: `status`
-   - **Build command**: (vazio)
-4. Aponte o DNS do subdomínio `status.xcam.gay` no GoDaddy para o domínio Netlify (`*.netlify.app`) via CNAME
+- Layout modular baseado na estética do [XCam Beta App](https://beta.xcam.gay)
+- Totalmente responsivo com `flexbox` e grade fluida
+- Indicadores visuais de estado (bolinha colorida + status textual)
+- Tooltips explicativos ao passar o mouse
+- Compatível com dark mode
 
 ---
 
-## 📘 Documentação Técnica da Página
+## 🚀 Como Publicar (Netlify)
 
-- Verifica status do Web App e da API XCam
-- Atualização a cada 30 segundos com fallback manual
-- Exibe status com ícones coloridos (🟢/🔴)
-- Layout moderno, minimalista e de alta legibilidade
-- Código limpo com separação clara entre estrutura, estilo e lógica
-- Projetado para manutenção fácil e futura expansão
-- Totalmente estático, ideal para hospedagem gratuita
-- Compatível com qualquer CDN ou host (Netlify, GitHub Pages, etc.)
-- Reutilizável: pode ser adaptada para monitorar outros serviços
+### Método 1: Upload Manual
+1. Acesse [https://app.netlify.com/drop](https://app.netlify.com/drop)
+2. Solte `index.html` e `README.md`
+3. O site estará online automaticamente
 
----
-
-## 📌 Licença
-
-Distribuído sob licença MIT – veja `LICENSE`.
+### Método 2: GitHub + CI/CD (Recomendado)
+1. Crie um repositório (ex: `xcam-status`)
+2. Faça `git push` com os arquivos
+3. Conecte no Netlify com `New Site from Git`
+4. Configure:
+   - **Build Command**: *(vazio, é estático)*
+   - **Publish Directory**: `.`
 
 ---
 
-📊 Desenvolvido com foco em monitoramento público, simplicidade e clareza.
+## 📁 Estrutura do Projeto
+
+```
+xcam/status/
+├── index.html     ← Página principal de status
+└── README.md      ← Documentação e instruções
+```
+
+---
+
+## 📦 Tecnologias Utilizadas
+
+- HTML5 + CSS3 + JavaScript (sem frameworks)
+- Fetch API (modo silencioso para bypass de CORS)
+- Layout adaptável (responsivo mobile-first)
+- Animações com `@keyframes` e utilitários visuais
+- Deploy automático com Netlify (CI opcional)
+
+---
+
+## 🛡 Segurança e Integridade
+
+- O status é lido diretamente via HEAD requests sem autenticação
+- Nenhum dado do usuário é coletado
+- 100% frontend — sem backend, cookies ou rastreadores
+
+---
+
+## 🧾 Licença
+
+Este projeto está sob a Licença MIT. Livre para uso, modificação e distribuição.
+
+---
+
+Feito com 🖤 por XCam — 2025
