@@ -17,16 +17,7 @@ if (!videoId && !username) {
 }
 
 
-/**
- * Busca os dados da câmera pelo nome de usuário e configura o player.
- * @param {string} username
- */
-function fetchCameraDataByUsername(username) {
-  fetch(`https://api.xcam.gay/user/${username}/liveInfo`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Erro ao acessar liveInfo do usuário: ${response.status}`);
-      }
+// [REMOVIDO] Função 'fetchCameraDataByUsername' substituída por lógica unificada.
       return response.json();
     })
     .then((data) => {
@@ -89,11 +80,10 @@ function fetchCameraDataById(videoId) {
 function setupPlayer(camera, username) {
   // Verifica se `camera.preview.src` é válido
   if (!camera.preview?.src) {
-    console.warn("Nenhum valor válido para 'camera.preview.src'. Iniciando fallback...");
-
-    console.warn("Nenhum stream válido encontrado. Aplicando fallback local.");
+    console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
     reloadWithFallback();
-  } else {
+    return;
+} else {
     // Configura o player normalmente com `camera.preview.src`
     initializeJWPlayer(camera, camera.preview.src);
   }
@@ -303,7 +293,10 @@ if (params.has("user") || params.has("id")) {
 
       // Se preview.src estiver ausente, fazer fallback inteligente via liveInfo
       if (!camera.preview?.src) {
-        fetch(`https://api.xcam.gay/user/${camera.username}/liveInfo`)
+    console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
+    reloadWithFallback();
+    return;
+}/liveInfo`)
           .then((res) => res.json())
           .then((liveData) => {
             const streamURL = liveData.edgeURL || liveData.cdnURL;
