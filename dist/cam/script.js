@@ -1,10 +1,22 @@
 "use strict";
 
 // Obtendo os parâmetros 'user' e 'id' da URL
-// [REMOVIDO] Lógica de roteamento obsoleta substituída pela lógica unificada abaixo
+const urlParams = new URLSearchParams(window.location.search);
+const username = urlParams.get("user");
+const videoId = urlParams.get("id");
+
+// Verifica se os parâmetros estão presentes e inicia a busca de dados
+if (!videoId && !username) {
+  console.error(
+    "Nenhum ID ou nome de usuário foi fornecido na URL. Adicione ?id=valor ou ?user=valor na URL."
+  );
+} else if (username) {
+  fetchCameraDataByUsername(username);
+} else {
+  fetchCameraDataById(videoId);
+}
 
 
-// [REMOVIDO] Função obsoleta 'fetchCameraDataByUsername' substituída por lógica unificada
 /**
  * Busca os dados da câmera pelo nome de usuário e configura o player.
  * @param {string} username
@@ -42,22 +54,48 @@ function fetchCameraDataByUsername(username) {
     });
 }
 
+
+/**
+ * Busca os dados da câmera pelo ID e configura o player.
+ * @param {string} videoId
+ */
+function fetchCameraDataById(videoId) {
+  fetch("https://api.xcam.gay/?limit=1500&format=json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const camera = data?.broadcasts?.items?.find((item) => item.id === videoId);
+      if (!camera) {
+        console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
+        return;
+      }
+      setupPlayer(camera, camera.username); // Passa o username para fallback
+    })
+    .catch((error) =>
+      console.error("Erro ao carregar o arquivo JSON:", error)
+    );
+}
+
 /**
  * Configura o JW Player com o vídeo fornecido.
- * Se `videoSrc` for fornecido, ele será usado diretamente.
- * Se não, usa `camera.preview.src` e aplica fallback se necessário.
+ * Se `camera.preview.src` for inválido, realiza um fallback para buscar `edgeURL` ou `cdnURL`.
  * @param {Object} camera
  * @param {string} username
- * @param {string} [videoSrc]
  */
-function setupPlayer(camera, username, videoSrc) {
-  const source = videoSrc || camera.preview?.src;
+function setupPlayer(camera, username) {
+  // Verifica se `camera.preview.src` é válido
+  if (!camera.preview?.src) {
+    console.warn("Nenhum valor válido para 'camera.preview.src'. Iniciando fallback...");
 
-  if (!source) {
     console.warn("Nenhum stream válido encontrado. Aplicando fallback local.");
     reloadWithFallback();
   } else {
-    initializeJWPlayer(camera, source);
+    // Configura o player normalmente com `camera.preview.src`
+    initializeJWPlayer(camera, camera.preview.src);
   }
 }
 
@@ -144,7 +182,7 @@ function handlePlayerError(event) {
 
   const reloadWithFallback = () => {
     jwplayer("player").setup({
-      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
+      file: "https://i.imgur.com/wb6N5W4.mp4",
       autostart: true,
       repeat: true,
       controls: false,
@@ -244,7 +282,7 @@ const params = new URLSearchParams(window.location.search);
 if (params.has("user") || params.has("id")) {
   const isUser = params.has("user");
   const searchKey = isUser ? "username" : "id";
-  const searchValue = params.get(isUser ? "user" : "id");
+  const searchValue = params.get(searchKey);
 
   fetch("https://api.xcam.gay/?limit=1500&format=json")
     .then((response) => {
