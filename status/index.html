@@ -3,117 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Status do Sistema - XCam</title>
-  <link rel="icon" href="https://drive.xcam.gay/0:/logo2.png" type="image/png">
+  <title>Status da Plataforma XCam</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #fff;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      font-family: system-ui, sans-serif;
+      margin: 2rem;
+      line-height: 1.6;
     }
-    h1 {
+    h1, h2 {
       text-align: center;
-      font-size: 2rem;
-      color: #fff;
     }
-    .logo {
-      display: block;
-      margin: 0 auto 1.5rem;
-      max-width: 150px;
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 500px;
+      margin: 2rem auto;
     }
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-    .card {
-      background-color: #1b1b1b;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 1rem 2rem;
-      min-width: 280px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    }
-    .card a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .status {
-      margin-top: 0.5rem;
+    li {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 1.1rem;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
     }
     .dot {
       width: 12px;
       height: 12px;
       border-radius: 50%;
+      margin-right: 0.75rem;
+      background-color: gray;
     }
-    .online { background-color: #0f0; }
-    .offline { background-color: #f00; }
-    button {
-      background-color: #e6007e;
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      margin: 2rem auto 0;
-      display: block;
+    .online {
+      background-color: #4CAF50;
+    }
+    .offline {
+      background-color: #F44336;
+    }
+    .status-text {
+      display: flex;
+      align-items: center;
+    }
+    .badges {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      max-width: 600px;
+      margin: 2rem auto;
     }
     footer {
       text-align: center;
-      font-size: 0.9rem;
-      color: #ccc;
-      margin-top: auto;
-      padding-top: 2rem;
-    }
-    footer a {
-      color: #e6007e;
-      text-decoration: none;
+      margin-top: 3rem;
+      color: #777;
     }
   </style>
 </head>
 <body>
-  <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam Logo" class="logo">
-  <h1>Status do Sistema</h1>
-  <div class="container">
-    <div class="card">
-      <a href="https://xcam.gay" target="_blank">XCam Web App</a>
-      <div class="status" id="web-status">
-        <div class="dot offline"></div>
-        <span>⏳ Verificando...</span>
-      </div>
-    </div>
-    <div class="card">
-      <a href="https://api.xcam.gay" target="_blank">XCam API</a>
-      <div class="status" id="api-status">
-        <div class="dot offline"></div>
-        <span>⏳ Verificando...</span>
-      </div>
-    </div>
-    <div class="card">
-      <a href="https://drive.xcam.gay" target="_blank">XCam Drive</a>
-      <div class="status" id="drive-status">
-        <div class="dot offline"></div>
-        <span>⏳ Verificando...</span>
-      </div>
-    </div>
-  </div>
+  <h1>Status da Plataforma XCam</h1>
 
-  <button onclick="checkStatus()">🔄 ATUALIZAR</button>
+  <ul>
+    <li id="web-status"><span class="status-text"><div class="dot"></div>🌐 Web App</span></li>
+    <li id="api-status"><span class="status-text"><div class="dot"></div>🧠 API</span></li>
+    <li id="drive-status"><span class="status-text"><div class="dot"></div>📁 Drive</span></li>
+    <li id="player-status"><span class="status-text"><div class="dot"></div>🎬 Player</span></li>
+    <li id="status-status"><span class="status-text"><div class="dot"></div>📊 Status</span></li>
+    <li id="beta-status"><span class="status-text"><div class="dot"></div>🧪 Beta App</span></li>
+  </ul>
+
+  <section class="badges">
+    <h2>Status dos Deploys</h2>
+    <div>
+      <strong>XCam Status</strong><br />
+      <a href="https://app.netlify.com/projects/xcam-status/deploys">
+        <img src="https://api.netlify.com/api/v1/badges/1672f90b-0206-4302-988e-de804cc49dc0/deploy-status" alt="Netlify Status - XCam Status"/>
+      </a>
+    </div>
+    <div>
+      <strong>XCam Player</strong><br />
+      <a href="https://app.netlify.com/projects/xcam-player/deploys">
+        <img src="https://api.netlify.com/api/v1/badges/79ab9858-1962-4eb5-813b-1667de77b4e3/deploy-status" alt="Netlify Status - XCam Player"/>
+      </a>
+    </div>
+    <div>
+      <strong>XCam Web App</strong><br />
+      <a href="https://app.netlify.com/projects/xcamgay/deploys">
+        <img src="https://api.netlify.com/api/v1/badges/ded26182-8393-4141-ab43-7ba4c85cc568/deploy-status" alt="Netlify Status - XCam Web App"/>
+      </a>
+    </div>
+    <div>
+      <strong>XCam API</strong><br />
+      <a href="https://app.netlify.com/projects/xcam-api/deploys">
+        <img src="https://api.netlify.com/api/v1/badges/b3bf1a04-7e16-40b3-8972-676895751821/deploy-status" alt="Netlify Status - XCam API"/>
+      </a>
+    </div>
+    <div>
+      <strong>XCam Beta App</strong><br />
+      <a href="https://app.netlify.com/projects/xcam-beta/deploys">
+        <img src="https://api.netlify.com/api/v1/badges/a275d640-eef5-44cd-bebd-dd4301f59428/deploy-status" alt="Netlify Status - XCam Beta App"/>
+      </a>
+    </div>
+    <div>
+      <strong>XCam Drive</strong><br />
+      <a href="https://app.netlify.com/projects/xcam-drive/deploys">
+        <img src="https://api.netlify.com/api/v1/badges/03b67a1e-db8a-493b-bfc7-d6f494ce2396/deploy-status" alt="Netlify Status - XCam Drive"/>
+      </a>
+    </div>
+  </section>
 
   <footer>
-    &copy; <span id="year"></span> XCam • <a href="mailto:contato@xcam.gay">contato@xcam.gay</a>
+    <p>&copy; <span id="year"></span> XCam Platform</p>
   </footer>
 
   <script>
@@ -140,9 +140,12 @@
     function checkStatus() {
       console.clear();
       console.log("[INFO] Iniciando verificação de status...");
-      checkService("https://xcam.gay/status.html", "web-status", "Web App");
+      checkService("https://status.xcam.gay/", "status-status", "Status");
+      checkService("https://player.xcam.gay/", "player-status", "Player");
+      checkService("https://xcam.gay/", "web-status", "Web App");
       checkService("https://api.xcam.gay/", "api-status", "API");
       checkService("https://drive.xcam.gay/", "drive-status", "Drive");
+      checkService("https://beta.xcam.gay/", "beta-status", "Beta App");
     }
 
     updateYear();
