@@ -12,7 +12,7 @@ function reloadWithFallback() {
       file: "https://drive.xcam.gay/0:/src/file/error.mp4",
       autostart: true,
       repeat: true,
-      controls: false,
+      controls: false
     });
   }
 }
@@ -29,7 +29,10 @@ document.head.appendChild(preloadVideo);
 
 // Exibe a imagem de loading até o player ser carregado
 const playerContainer = document.getElementById("player");
-playerContainer.innerHTML = '<img src="' + preloadImage.src + '" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />';
+playerContainer.innerHTML =
+  '<img src="' +
+  preloadImage.src +
+  '" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />';
 
 /**
  * Configura o JW Player com os dados da câmera e a URL do vídeo.
@@ -45,7 +48,7 @@ function setupPlayer(camera, username, videoSrc) {
   jwplayer("player").setup({
     controls: true,
     sharing: true,
-    autostart: true,
+    autostart: false,
     displaytitle: true,
     displaydescription: true,
     abouttext: "Buy me a coffee ☕",
@@ -53,34 +56,34 @@ function setupPlayer(camera, username, videoSrc) {
     skin: { name: "netflix" },
     logo: {
       file: "https://drive.xcam.gay/0:/logo2.png",
-      link: "https://xcam.gay",
+      link: "https://xcam.gay"
     },
     captions: {
       color: "#efcc00",
       fontSize: 16,
       backgroundOpacity: 0,
-      edgeStyle: "raised",
+      edgeStyle: "raised"
     },
     playlist: [
       {
         title: `@${camera.username || username}`,
         description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
-        image: camera.preview?.poster || "https://drive.xcam.gay/0:/logo2.png",
+        image: camera.preview?.poster || "https://drive.xcam.gay/0:/src/img/loading.gif",
         sources: [
           {
             file: videoSrc,
             type: "video/m3u8",
-            label: "Source",
-          },
-        ],
-      },
+            label: "Source"
+          }
+        ]
+      }
     ],
     events: {
       error: () => {
         console.warn("Erro ao reproduzir vídeo. Exibindo fallback local.");
         reloadWithFallback();
-      },
-    },
+      }
+    }
   });
 }
 
@@ -104,13 +107,18 @@ if (params.has("user") || params.has("id")) {
       const camera = items.find((item) => item[searchKey] === searchValue);
 
       if (!camera) {
-        console.warn(`Nenhuma câmera encontrada com o ${searchKey}:`, searchValue);
+        console.warn(
+          `Nenhuma câmera encontrada com o ${searchKey}:`,
+          searchValue
+        );
         reloadWithFallback();
         return;
       }
 
       if (!camera.preview?.src) {
-        console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
+        console.warn(
+          "Nenhum stream válido encontrado em preview.src. Aplicando fallback local."
+        );
         reloadWithFallback();
         return;
       }
@@ -136,6 +144,40 @@ function handlePlayerError(event) {
   const playerContainer = document.getElementById("player");
   let countdown = 5;
 
+  // Tabela de mensagens de erro por código
+  const errorMessages = {
+    100000: "<strong>Erro desconhecido.</strong> O player falhou ao carregar.",
+    100001: "<strong>Tempo limite.</strong> A configuração do player demorou muito.",
+    100011: "<strong>Licença ausente.</strong> Chave de licença não fornecida.",
+    100012: "<strong>Licença inválida.</strong> Chave de licença inválida.",
+    100013: "<strong>Licença expirada.</strong> A chave de licença expirou.",
+    101100: "<strong>Componente ausente.</strong> Falha ao carregar um componente necessário do player.",
+    224002: "<strong>Formato não suportado.</strong> O formato do vídeo não é suportado.",
+    224003: "<strong>Vídeo corrompido.</strong> O vídeo está em formato inválido ou danificado.",
+    230000: "<strong>Erro de decodificação.</strong> O player não conseguiu decodificar o vídeo.",
+    232001: "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo.",
+    232002: "<strong>Erro de rede.</strong> Falha na solicitação de mídia.",
+    232003: "<strong>Erro de mídia.</strong> O arquivo de vídeo pode estar corrompido.",
+    232004: "<strong>Erro de DRM.</strong> Conteúdo protegido não pôde ser reproduzido.",
+    232005: "<strong>Erro de CORS.</strong> O recurso solicitado não está acessível.",
+    232006: "<strong>Erro de autenticação.</strong> Acesso não autorizado ao conteúdo.",
+    232007: "<strong>Erro de licença.</strong> Falha ao validar a licença do conteúdo.",
+    232008: "<strong>Token inválido.</strong> Token de acesso expirado ou corrompido.",
+    232009: "<strong>Erro de assinatura.</strong> Verificação de integridade do conteúdo falhou.",
+    232010: "<strong>Restrição geográfica.</strong> O conteúdo não está disponível na sua região.",
+    232011: "<strong>Erro de conexão.</strong> Problemas de rede ou configurações do navegador.",
+    232012: "<strong>Erro de tempo limite.</strong> O conteúdo demorou muito para carregar.",
+    232013: "<strong>Formato incompatível.</strong> O formato do vídeo não é compatível.",
+    232014: "<strong>Erro de codec.</strong> Codec necessário não está disponível.",
+    232015: "<strong>Erro de resolução.</strong> Resolução de vídeo não suportada.",
+    232016: "<strong>Erro de bitrate.</strong> A taxa de bits é muito alta para o dispositivo.",
+    232017: "<strong>Erro de buffer.</strong> O vídeo não pode ser carregado corretamente.",
+    232018: "<strong>Erro de sincronização.</strong> Falha ao sincronizar áudio e vídeo.",
+    232019: "<strong>Erro de renderização.</strong> O vídeo não pôde ser renderizado.",
+    232020: "<strong>Erro desconhecido na reprodução.</strong> Um erro não identificado ocorreu.",
+    232600: "<strong>Erro no stream.</strong> O arquivo está indisponível ou corrompido."
+  };
+
   const displayErrorMessage = (message) => {
     playerContainer.innerHTML = `
       <div style="color: #FFF; background: #333; text-align: center; padding: 20px;">
@@ -155,17 +197,12 @@ function handlePlayerError(event) {
     }, 1000);
   };
 
-  if (event.code === 232600) {
+  const message = errorMessages[event.code];
+  if (message) {
+    displayErrorMessage(message);
+  } else {
     displayErrorMessage(
-      "<strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido."
-    );
-  } else if (event.code === 232011) {
-    displayErrorMessage(
-      "<strong>Erro de conexão.</strong> Não foi possível carregar o vídeo devido a problemas de rede ou configurações do navegador."
-    );
-  } else if (event.code === 232001) {
-    displayErrorMessage(
-      "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo."
+      "<strong>Erro desconhecido.</strong> Algo deu errado na reprodução."
     );
   }
 }
