@@ -5,6 +5,16 @@
 
 
 // [REMOVIDO] Função obsoleta 'fetchCameraDataByUsername' substituída por lógica unificada
+/**
+ * Busca os dados da câmera pelo nome de usuário e configura o player.
+ * @param {string} username
+ */
+function fetchCameraDataByUsername(username) {
+  fetch(`https://api.xcam.gay/user/${username}/liveInfo`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Erro ao acessar liveInfo do usuário: ${response.status}`);
+      }
       return response.json();
     })
     .then((data) => {
@@ -32,8 +42,6 @@
     });
 }
 
-
-
 /**
  * Configura o JW Player com o vídeo fornecido.
  * Se `videoSrc` for fornecido, ele será usado diretamente.
@@ -51,9 +59,6 @@ function setupPlayer(camera, username, videoSrc) {
   } else {
     initializeJWPlayer(camera, source);
   }
-}
-
-
 }
 
 /**
