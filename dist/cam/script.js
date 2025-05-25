@@ -132,7 +132,7 @@ function handlePlayerError(event) {
 
   const reloadWithFallback = () => {
     jwplayer("player").setup({
-      file: "https://i.imgur.com/wb6N5W4.mp4",
+      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
       autostart: true,
       repeat: true,
       controls: false,
@@ -256,7 +256,7 @@ if (params.has("user") || params.has("id")) {
     console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
     reloadWithFallback();
     return;
-// [REMOVIDO] Trecho quebrado referente a /liveInfo substituído por fallback local.);
+
       } else {
         // Caso padrão: usar preview.src
         setupPlayer(camera, camera.username, camera.preview.src);
