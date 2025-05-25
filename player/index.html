@@ -5,40 +5,64 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XCam.Gay / Live Player</title>
-  <!-- Estilos externos (não alterados) -->
   <link rel="stylesheet" href="./style.css" />
   <link rel="stylesheet" href="https://xcam.gay/style.css" />
-  <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="https://drive.xcam.gay/0:/logo2.svg" />
   <link rel="icon" type="image/png" href="https://drive.xcam.gay/0:/logo2.png" />
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+    }
+
+    #loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #player {
+      display: none;
+      z-index: 1;
+    }
+  </style>
 </head>
 
-<body style="background-color: #000; margin: 0;">
-  <!-- Tela de carregamento (inicialmente visível) -->
+<body>
+  <!-- Tela de carregamento -->
   <div id="loading-container">
-    <img src="https://drive.xcam.gay/0:/src/img/loading.gif" alt="Carregando..." style="width:100vw; height:100vh; object-fit:contain; background:#000;" />
+    <img src="https://drive.xcam.gay/0:/src/img/loading.gif" alt="Carregando..." style="max-width: 100%; max-height: 100%;" />
   </div>
 
-  <!-- Container do player (inicialmente oculto via style.css) -->
+  <!-- Container do player -->
   <div id="player"></div>
 
-  <!-- Modal de anúncios com contagem regressiva -->
+  <!-- Modal de anúncios -->
   <div class="ad-modal" id="ad-modal">
     <div class="ad-modal-container">
       <iframe id="ad-iframe" title="Advertisement"></iframe>
-      <!-- Botão inicia desabilitado e mostra countdown -->
-      <button id="close-ad-btn" disabled>Aguarde... <span id="ad-countdown">10</span>s</button>
+      <button id="close-ad-btn">Aguarde... <span id="ad-countdown">10</span>s</button>
     </div>
   </div>
 
   <!-- Scripts -->
   <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
   <script src="./script.js"></script>
+
   <script>
-    // Atualiza o iframe de anúncios de acordo com a largura da tela
+    // Responsividade dinâmica do iframe de anúncios
     function updateAdIframe() {
       const adIframe = document.getElementById("ad-iframe");
       const screenWidth = window.innerWidth;
+
       if (screenWidth < 768) {
         adIframe.src = "https://xcam.gay/ads/320x50.html";
         adIframe.width = "320";
@@ -49,6 +73,7 @@
         adIframe.height = "250";
       }
     }
+
     updateAdIframe();
     window.addEventListener("resize", updateAdIframe);
   </script>

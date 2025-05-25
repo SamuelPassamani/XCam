@@ -1,17 +1,17 @@
 "use strict";
 
 /**
- * Exibe um vídeo de fallback local caso o stream não esteja disponível ou ocorra erro.
+ * Exibe um vídeo local de fallback caso o stream não esteja disponível.
  */
 function reloadWithFallback() {
-  const loader = document.getElementById("loading-container");
   const player = document.getElementById("player");
-  if (loader) loader.style.display = "none"; // Remove tela de carregamento
+  const loader = document.getElementById("loading-container");
+
+  if (loader) loader.style.display = "none";
   if (player) {
     player.style.display = "block";
-    player.innerHTML = ""; // Limpa conteúdo anterior
+    player.innerHTML = "";
     jwplayer("player").setup({
-      // Configura o player com vídeo de erro
       file: "https://drive.xcam.gay/0:/src/file/error.mp4",
       autostart: true,
       repeat: true,
@@ -20,32 +20,42 @@ function reloadWithFallback() {
   }
 }
 
-// Pré-carregamento de recursos críticos (não bloqueiam a exibição inicial do loader).
+// === Pré-carregamento de recursos críticos ===
 const preloadImage = new Image();
 preloadImage.src = "https://drive.xcam.gay/0:/src/img/loading.gif";
+
 const preloadVideo = document.createElement("link");
 preloadVideo.rel = "preload";
 preloadVideo.as = "video";
 preloadVideo.href = "https://drive.xcam.gay/0:/src/file/error.mp4";
 document.head.appendChild(preloadVideo);
 
+// Exibe imagem de carregamento antes do player
+const loadingContainer = document.getElementById("loading-container");
+if (loadingContainer) {
+  loadingContainer.innerHTML = `
+    <img src="${preloadImage.src}" alt="Carregando..."
+      style="width:100vw;height:100vh;object-fit:contain;background:#000;" />
+  `;
+}
+
 /**
- * Inicializa o JW Player com os dados da câmera e do stream.
- * @param {Object} camera - Dados da transmissão (do JSON da API).
- * @param {string} username - Nome de usuário da câmera.
- * @param {string} videoSrc - URL do stream M3U8.
+ * Inicializa o JW Player com as informações da câmera e do stream.
+ * @param {Object} camera - Objeto da câmera contendo dados da transmissão.
+ * @param {string} username - Nome de usuário.
+ * @param {string} videoSrc - URL do vídeo m3u8.
  */
 function setupPlayer(camera, username, videoSrc) {
   const loader = document.getElementById("loading-container");
   const playerContainer = document.getElementById("player");
-  if (loader) loader.style.display = "none"; // Esconde loader
+
+  if (loader) loader.style.display = "none";
   if (playerContainer) {
-    playerContainer.style.display = "block"; // Mostra o player
-    playerContainer.innerHTML = ""; // Limpa conteúdo do player
+    playerContainer.style.display = "block";
+    playerContainer.innerHTML = "";
   }
 
-  const playerInstance = jwplayer("player");
-  playerInstance.setup({
+  const playerInstance = jwplayer("player").setup({
     controls: true,
     autostart: false,
     sharing: true,
@@ -69,21 +79,29 @@ function setupPlayer(camera, username, videoSrc) {
         title: `@${camera.username || username}`,
         description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
         image: camera.preview?.poster || preloadImage.src,
-        sources: [{ file: videoSrc, type: "video/m3u8", label: "Source" }]
+        sources: [
+          {
+            file: videoSrc,
+            type: "video/m3u8",
+            label: "Source"
+          }
+        ]
       }
-    ]
+    ],
+    events: {
+      error: handlePlayerError
+    }
   });
-  // Associa o tratamento de erro usando on('error') para exibir mensagem e contagem
-  playerInstance.on("error", handlePlayerError);
 
   addDownloadButton(playerInstance);
   alignTimeSlider(playerInstance);
 }
 
 /**
- * Lê parâmetros da URL e carrega dados via API. Se inválido, aplica fallback.
+ * Extração e tratamento dos parâmetros da URL (?user= ou ?id=)
  */
 const params = new URLSearchParams(window.location.search);
+
 if (params.has("user") || params.has("id")) {
   const isUser = params.has("user");
   const key = isUser ? "username" : "id";
@@ -92,8 +110,9 @@ if (params.has("user") || params.has("id")) {
   fetch("https://api.xcam.gay/?limit=1500&format=json")
     .then((res) => res.json())
     .then((data) => {
-      const items = data?.broadcasts?.items || [];
-      const camera = items.find((item) => item[key] === value);
+      const camera = data?.broadcasts?.items?.find(
+        (item) => item[key] === value
+      );
       if (!camera || !camera.preview?.src) {
         console.warn("Câmera não encontrada ou stream ausente.");
         reloadWithFallback();
@@ -111,57 +130,61 @@ if (params.has("user") || params.has("id")) {
 }
 
 /**
- * Trata erros do JW Player exibindo mensagem contextual e contador regressivo.
- * @param {Object} event - Evento de erro do JW Player.
+ * Lida com erros do JW Player com mensagens e fallback após contagem.
+ * @param {Object} event
  */
 function handlePlayerError(event) {
   console.error("Erro no JW Player:", event.message);
+
   const playerContainer = document.getElementById("player");
   let countdown = 5;
 
-  // Mensagens de erro contextualizadas por código
+  // Tabela de mensagens de erro por código
   const errorMessages = {
     100000: "<strong>Erro desconhecido.</strong> O player falhou ao carregar.",
-    100001: "<strong>Tempo limite.</strong> A configuração demorou muito.",
+    100001: "<strong>Tempo limite.</strong> A configuração do player demorou muito.",
     100011: "<strong>Licença ausente.</strong> Chave de licença não fornecida.",
     100012: "<strong>Licença inválida.</strong> Chave de licença inválida.",
     100013: "<strong>Licença expirada.</strong> A chave de licença expirou.",
-    101100: "<strong>Componente ausente.</strong> Falha ao carregar componente necessário.",
-    224002: "<strong>Formato não suportado.</strong> O vídeo não é suportado.",
-    224003: "<strong>Vídeo corrompido.</strong> O vídeo está danificado.",
-    230000: "<strong>Erro de decodificação.</strong> Não foi possível decodificar o vídeo.",
-    232001: "<strong>Erro de conexão.</strong> Não foi possível conectar ao servidor de vídeo.",
-    232002: "<strong>Erro de rede.</strong> Falha na requisição de mídia.",
+    101100: "<strong>Componente ausente.</strong> Falha ao carregar um componente necessário do player.",
+    224002: "<strong>Formato não suportado.</strong> O formato do vídeo não é suportado.",
+    224003: "<strong>Vídeo corrompido.</strong> O vídeo está em formato inválido ou danificado.",
+    230000: "<strong>Erro de decodificação.</strong> O player não conseguiu decodificar o vídeo.",
+    232001: "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo.",
+    232002: "<strong>Erro de rede.</strong> Falha na solicitação de mídia.",
     232003: "<strong>Erro de mídia.</strong> O arquivo de vídeo pode estar corrompido.",
     232004: "<strong>Erro de DRM.</strong> Conteúdo protegido não pôde ser reproduzido.",
     232005: "<strong>Erro de CORS.</strong> O recurso solicitado não está acessível.",
     232006: "<strong>Erro de autenticação.</strong> Acesso não autorizado ao conteúdo.",
     232007: "<strong>Erro de licença.</strong> Falha ao validar a licença do conteúdo.",
-    232008: "<strong>Token inválido.</strong> Token expirado ou corrompido.",
-    232009: "<strong>Erro de assinatura.</strong> Verificação de integridade falhou.",
-    232010: "<strong>Restrição geográfica.</strong> Conteúdo indisponível nesta região.",
-    232011: "<strong>Erro de conexão.</strong> Problemas de rede ou navegador.",
+    232008: "<strong>Token inválido.</strong> Token de acesso expirado ou corrompido.",
+    232009: "<strong>Erro de assinatura.</strong> Verificação de integridade do conteúdo falhou.",
+    232010: "<strong>Restrição geográfica.</strong> O conteúdo não está disponível na sua região.",
+    232011: "<strong>Erro de conexão.</strong> Problemas de rede ou configurações do navegador.",
     232012: "<strong>Erro de tempo limite.</strong> O conteúdo demorou muito para carregar.",
     232013: "<strong>Formato incompatível.</strong> O formato do vídeo não é compatível.",
-    232014: "<strong>Erro de codec.</strong> Codec necessário não disponível.",
-    232015: "<strong>Erro de resolução.</strong> Resolução não suportada.",
-    232016: "<strong>Erro de bitrate.</strong> Taxa de bits muito alta para o dispositivo.",
-    232017: "<strong>Erro de buffer.</strong> O vídeo não pôde ser carregado.",
-    232018: "<strong>Erro de sincronização.</strong> Áudio e vídeo fora de sincronia.",
+    232014: "<strong>Erro de codec.</strong> Codec necessário não está disponível.",
+    232015: "<strong>Erro de resolução.</strong> Resolução de vídeo não suportada.",
+    232016: "<strong>Erro de bitrate.</strong> A taxa de bits é muito alta para o dispositivo.",
+    232017: "<strong>Erro de buffer.</strong> O vídeo não pode ser carregado corretamente.",
+    232018: "<strong>Erro de sincronização.</strong> Falha ao sincronizar áudio e vídeo.",
     232019: "<strong>Erro de renderização.</strong> O vídeo não pôde ser renderizado.",
-    232020: "<strong>Erro desconhecido.</strong> Um erro não identificado ocorreu.",
-    232600: "<strong>Erro no stream.</strong> Arquivo indisponível ou corrompido."
+    232020: "<strong>Erro desconhecido na reprodução.</strong> Um erro não identificado ocorreu.",
+    232600: "<strong>Erro no stream.</strong> O arquivo está indisponível ou corrompido."
   };
 
   const message =
     errorMessages[event.code] ||
     "Erro desconhecido. Algo deu errado na reprodução.";
-  if (playerContainer) {
-    playerContainer.innerHTML = `
-      <div style="color:#fff; background:#000; text-align:center; padding:20px;">
+
+  if (player) {
+    player.innerHTML = `
+      <div style="color:#fff;background:#000;text-align:center;padding:20px;">
         <p><strong>${message}</strong></p>
         <p>Recarregando em <span id="countdown">${countdown}</span>s...</p>
-      </div>`;
+      </div>
+    `;
+
     const interval = setInterval(() => {
       countdown -= 1;
       document.getElementById("countdown").textContent = countdown;
@@ -174,13 +197,13 @@ function handlePlayerError(event) {
 }
 
 /**
- * Adiciona um botão de download ao player JW Player.
- * @param {Object} playerInstance - Instância do JW Player.
+ * Adiciona botão de download ao player.
  */
 function addDownloadButton(playerInstance) {
   const buttonId = "download-video-button";
-  const iconPath = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL..."; // Ícone SVG base64
+  const iconPath = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL..."; // Substituir por ícone real
   const tooltipText = "Download Video";
+
   playerInstance.addButton(
     iconPath,
     tooltipText,
@@ -199,8 +222,7 @@ function addDownloadButton(playerInstance) {
 }
 
 /**
- * Reposiciona o controle de tempo no player para ficar ao lado dos botões.
- * @param {Object} playerInstance - Instância do JW Player.
+ * Realinha o controle do tempo com os botões do player.
  */
 function alignTimeSlider(playerInstance) {
   const container = playerInstance.getContainer();
@@ -213,14 +235,16 @@ function alignTimeSlider(playerInstance) {
 }
 
 /**
- * Exibe o modal de anúncios com contagem regressiva ao carregar a página.
+ * Exibe o modal de anúncio com contagem regressiva.
  */
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("ad-modal");
   const closeBtn = document.getElementById("close-ad-btn");
   const countdownText = document.getElementById("ad-countdown");
   const player = document.getElementById("player");
+
   let time = 10;
+
   const interval = setInterval(() => {
     time--;
     countdownText.textContent = time;
