@@ -23,7 +23,7 @@ preloadImage.src = "https://drive.xcam.gay/0:/src/img/loading.gif";
 
 const preloadVideo = document.createElement("link");
 preloadVideo.rel = "preload";
-preloadVideo.as = "video";
+preloadVideo.as = "fetch";
 preloadVideo.href = "https://drive.xcam.gay/0:/src/file/error.mp4";
 document.head.appendChild(preloadVideo);
 
