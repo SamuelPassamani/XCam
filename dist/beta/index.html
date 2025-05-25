@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XCam - Transmissões ao Vivo</title>
 
   <!-- Ícones -->
@@ -48,21 +49,20 @@
     }
   </script>
 </head>
+
 <body>
+  <!-- ===== HEADER ===== -->
   <header class="header">
     <img src="https://drive.xcam.gay/0:/logo2.png" href="//xcam.gay" alt="XCam" class="logo">
-
     <nav class="nav-menu">
       <a href="//xcam.gay" class="nav-link">Início</a>
       <a href="#" class="nav-link">Explorar</a>
       <a href="#" class="nav-link">Categorias</a>
     </nav>
-
     <div class="search-bar">
       <i class="fas fa-search"></i>
       <input type="text" placeholder="Buscar transmissões..." id="search-input">
     </div>
-
     <button class="mobile-menu-toggle" id="mobile-toggle">
       <i class="fas fa-bars"></i>
     </button>
@@ -78,23 +78,21 @@
     </div>
   </div>
 
-  <div class="carousel" id="main-carousel">
+  <!-- ===== CAROUSEL DINÂMICO (API) ===== -->
+  <div class="carousel-container">
     <div class="carousel-controls">
-      <div class="carousel-control left" id="carousel-prev">
+      <div class="carousel-control" id="carousel-prev">
         <i class="fas fa-chevron-left"></i>
       </div>
-      <div class="carousel-control right" id="carousel-next">
+      <div class="carousel-control" id="carousel-next">
         <i class="fas fa-chevron-right"></i>
       </div>
     </div>
-    <div class="carousel-indicators">
-      <div class="carousel-indicator active"></div>
-      <div class="carousel-indicator"></div>
-    </div>
-    <div class="carousel-slide active"></div>
-    <div class="carousel-slide"></div>
+    <div class="carousel-wrapper"></div>
+    <div class="carousel-indicators"></div>
   </div>
 
+  <!-- ===== FILTROS ===== -->
   <section class="filters-section">
     <div class="filters-container">
       <div class="filter-group">
@@ -130,6 +128,7 @@
     </div>
   </section>
 
+  <!-- ===== GRADE DE TRANSMISSÕES ===== -->
   <section class="broadcasts-section">
     <div class="header-row">
       <h2 class="section-title">
@@ -146,12 +145,15 @@
     <div class="pagination" id="pagination"></div>
   </section>
 
+  <!-- ===== MODAL ===== -->
   <div class="modal" id="broadcast-modal">
     <div class="modal-content" id="modal-content"></div>
   </div>
 
+  <!-- ===== NOTIFICAÇÕES ===== -->
   <div class="toast-container" id="toast-container"></div>
 
+  <!-- ===== FOOTER ===== -->
   <footer class="footer">
     <div class="footer-content">
       <div>
@@ -174,8 +176,9 @@
     </div>
   </footer>
 
-  <!-- Script principal com módulos -->
+  <!-- ===== SCRIPTS ===== -->
   <script type="module" src="./main.js"></script>
   <script src="https://pl26608496.profitableratecpm.com/74/31/14/7431142f309cabb259fa3dd356d8094b.js"></script>
 </body>
+
 </html>
