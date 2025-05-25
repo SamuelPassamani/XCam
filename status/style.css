@@ -1,0 +1,61 @@
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-tooltip {
+  position: relative;
+  cursor: pointer;
+}
+
+.status-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.status-tooltip:hover::after {
+  opacity: 1;
+}
+
+.header-logo {
+  max-width: 140px;
+  display: block;
+  margin: 2rem auto 1rem;
+}

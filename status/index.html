@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>XCam Status V2.1</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
 <html lang="pt-BR">
 
 <head>
@@ -6,69 +16,6 @@
   <title>Status da Plataforma XCam</title>
   <link rel="icon" href="https://drive.xcam.gay/0:/logo2.png" type="image/png">
   <link rel="stylesheet" href="https://xcam.gay/style.css">
-  <style>
-    .fade-in {
-      animation: fadeIn 0.6s ease-in-out;
-    }
-
-    .slide-up {
-      animation: slideUp 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .status-tooltip {
-      position: relative;
-      cursor: pointer;
-    }
-
-    .status-tooltip::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      background: #333;
-      color: #fff;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      white-space: nowrap;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-
-    .status-tooltip:hover::after {
-      opacity: 1;
-    }
-
-    .header-logo {
-      max-width: 140px;
-      display: block;
-      margin: 2rem auto 1rem;
-    }
-  </style>
 </head>
 
 <body class="page-status fade-in">
@@ -168,49 +115,11 @@
       <div class="footer-copyright">&copy; <span id="year"></span> XCam. Todos os direitos reservados.</div>
     </div>
   </footer>
-
-  <script>
-    function updateYear() {
-      document.getElementById("year").textContent = new Date().getFullYear();
-    }
-    async function checkService(url, dotId, name) {
-      const dot = document.querySelector(`#${dotId} .dot`);
-      const span = document.querySelector(`#${dotId} .card-viewers span`);
-      if (span) span.textContent = "⏳ Verificando...";
-      try {
-        await fetch(url, {
-          mode: "no-cors"
-        });
-        dot.className = "dot online";
-        if (span) span.textContent = "🟢 Online";
-        console.log(`[STATUS] ✅ ${name}: Online`);
-      } catch (e) {
-        dot.className = "dot offline";
-        if (span) span.textContent = "🔴 Offline";
-        console.warn(`[STATUS] ⚠️ ${name}: Offline`, e);
-      }
-    }
-
-    function checkStatus() {
-      console.clear();
-      console.log("[INFO] Iniciando verificação de status...");
-      checkService("https://xcam.gay/", "web-status", "Web App");
-      checkService("https://beta.xcam.gay/", "beta-status", "Beta App");
-      checkService("https://api.xcam.gay/", "api-status", "API");
-      checkService("https://player.xcam.gay/", "player-status", "Player");
-      checkService("https://drive.xcam.gay/", "drive-status", "Drive");
-      checkService("https://status.xcam.gay/", "status-status", "Status");
-    }
-    updateYear();
-    checkStatus();
-    setInterval(checkStatus, 30000);
-    document.addEventListener("DOMContentLoaded", () => {
-      const fadeElements = document.querySelectorAll(".fade-in");
-      fadeElements.forEach((el) => el.classList.add("fade-in"));
-      const slideElements = document.querySelectorAll(".slide-up");
-      slideElements.forEach((el) => el.classList.add("slide-up"));
-    });
-  </script>
 </body>
 
+</html>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
 </html>
