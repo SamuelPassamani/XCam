@@ -1,32 +1,51 @@
 "use strict";
 
 /**
- * Configura o JW Player com o vídeo fornecido.
- * @param {Object} camera
- * @param {string} username
+ * Fallback local em caso de erro no player.
+ * Exibe um vídeo de erro simples caso não seja possível carregar o stream.
  */
-function setupPlayer(camera, username) {
-  // Verifica se `camera.preview.src` é válido
-  if (!camera.preview?.src) {
-    console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
-    reloadWithFallback();
-    return;
-} else {
-    // Configura o player normalmente com `camera.preview.src`
-    initializeJWPlayer(camera, camera.preview.src);
+function reloadWithFallback() {
+  const player = document.getElementById("player");
+  if (player) {
+    player.innerHTML = ""; // Limpa qualquer conteúdo anterior
+    jwplayer("player").setup({
+      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
+      autostart: true,
+      repeat: true,
+      controls: false,
+    });
   }
 }
 
+// === Pré-carregamento de assets e exibição de imagem de carregamento ===
+const preloadImage = new Image();
+preloadImage.src = "https://drive.xcam.gay/0:/src/img/loading.gif";
+
+const preloadVideo = document.createElement("link");
+preloadVideo.rel = "preload";
+preloadVideo.as = "video";
+preloadVideo.href = "https://drive.xcam.gay/0:/src/file/error.mp4";
+document.head.appendChild(preloadVideo);
+
+// Exibe a imagem de loading até o player ser carregado
+const playerContainer = document.getElementById("player");
+playerContainer.innerHTML = '<img src="' + preloadImage.src + '" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />';
+
 /**
- * Inicializa o JW Player com o arquivo de vídeo fornecido.
- * @param {Object} camera
- * @param {string} videoSrc
+ * Configura o JW Player com os dados da câmera e a URL do vídeo.
+ * @param {Object} camera - Objeto contendo os dados da transmissão.
+ * @param {string} username - Nome de usuário da câmera.
+ * @param {string} videoSrc - URL do vídeo m3u8.
  */
-function initializeJWPlayer(camera, videoSrc) {
-  const playerInstance = jwplayer("player").setup({
+function setupPlayer(camera, username, videoSrc) {
+  // Remove tela de carregamento, se existir
+  const playerContainer = document.getElementById("player");
+  playerContainer.innerHTML = ""; // Limpa o conteúdo
+
+  jwplayer("player").setup({
     controls: true,
     sharing: true,
-    autostart: false,
+    autostart: true,
     displaytitle: true,
     displaydescription: true,
     abouttext: "Buy me a coffee ☕",
@@ -44,9 +63,9 @@ function initializeJWPlayer(camera, videoSrc) {
     },
     playlist: [
       {
-        title: `@${camera.username}`,
+        title: `@${camera.username || username}`,
         description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
-        image: camera.preview.poster,
+        image: camera.preview?.poster || "https://drive.xcam.gay/0:/logo2.png",
         sources: [
           {
             file: videoSrc,
@@ -56,17 +75,55 @@ function initializeJWPlayer(camera, videoSrc) {
         ],
       },
     ],
+    events: {
+      error: () => {
+        console.warn("Erro ao reproduzir vídeo. Exibindo fallback local.");
+        reloadWithFallback();
+      },
+    },
   });
+}
 
-  // Tratamento de erros do JW Player
-  playerInstance.on("error", handlePlayerError);
+// === Lógica principal: leitura da URL e carregamento dos dados ===
+const params = new URLSearchParams(window.location.search);
 
-  // Configurações adicionais quando o player estiver pronto
-  playerInstance.on("ready", () => {
-    addDownloadButton(playerInstance);
-    alignTimeSlider(playerInstance);
-    // addForwardButton(playerInstance); // Botão desativado
-  });
+if (params.has("user") || params.has("id")) {
+  const isUser = params.has("user");
+  const searchKey = isUser ? "username" : "id";
+  const searchValue = params.get(isUser ? "user" : "id");
+
+  fetch("https://api.xcam.gay/?limit=1500&format=json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erro ao carregar lista de transmissões");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const items = data?.broadcasts?.items || [];
+      const camera = items.find((item) => item[searchKey] === searchValue);
+
+      if (!camera) {
+        console.warn(`Nenhuma câmera encontrada com o ${searchKey}:`, searchValue);
+        reloadWithFallback();
+        return;
+      }
+
+      if (!camera.preview?.src) {
+        console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
+        reloadWithFallback();
+        return;
+      }
+
+      setupPlayer(camera, camera.username, camera.preview.src);
+    })
+    .catch((err) => {
+      console.error("Erro ao carregar a lista geral:", err);
+      reloadWithFallback();
+    });
+} else {
+  console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
+  reloadWithFallback();
 }
 
 /**
@@ -98,15 +155,6 @@ function handlePlayerError(event) {
     }, 1000);
   };
 
-  const reloadWithFallback = () => {
-    jwplayer("player").setup({
-      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
-      autostart: true,
-      repeat: true,
-      controls: false,
-    });
-  };
-
   if (event.code === 232600) {
     displayErrorMessage(
       "<strong>Erro ao reproduzir o vídeo.</strong> O arquivo está indisponível ou corrompido."
@@ -128,8 +176,7 @@ function handlePlayerError(event) {
  */
 function addDownloadButton(playerInstance) {
   const buttonId = "download-video-button";
-  const iconPath =
-    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL[...]";
+  const iconPath = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL[...]";
   const tooltipText = "Download Video";
 
   playerInstance.addButton(
@@ -158,7 +205,9 @@ function alignTimeSlider(playerInstance) {
   const buttonContainer = playerContainer.querySelector(".jw-button-container");
   const spacer = buttonContainer.querySelector(".jw-spacer");
   const timeSlider = playerContainer.querySelector(".jw-slider-time");
-  buttonContainer.replaceChild(timeSlider, spacer);
+  if (spacer && timeSlider) {
+    buttonContainer.replaceChild(timeSlider, spacer);
+  }
 }
 
 /**
@@ -192,46 +241,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-
-// === Gerencia carregamento de dados baseado nos parâmetros da URL ===
-const params = new URLSearchParams(window.location.search);
-
-if (params.has("user") || params.has("id")) {
-  const isUser = params.has("user");
-  const searchKey = isUser ? "username" : "id";
-  const searchValue = params.get(isUser ? "user" : "id");
-
-  fetch("https://api.xcam.gay/?limit=1500&format=json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erro ao carregar lista de transmissões");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const items = data?.broadcasts?.items || [];
-      const camera = items.find((item) => item[searchKey] === searchValue);
-
-      if (!camera) {
-        console.warn(`Nenhuma câmera encontrada com o ${searchKey}:`, searchValue);
-        reloadWithFallback();
-        return;
-      }
-
-      // Se preview.src estiver ausente, fazer fallback inteligente via liveInfo
-      if (!camera.preview?.src) {
-    console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
-    reloadWithFallback();
-    return;
-
-      } else {
-        // Caso padrão: usar preview.src
-        setupPlayer(camera, camera.username, camera.preview.src);
-      }
-    })
-    .catch((err) => {
-      console.error("Erro ao carregar a lista geral:", err);
-      reloadWithFallback();
-    });
-}
