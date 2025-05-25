@@ -47,7 +47,7 @@ loadMoreBtn.style.display = "none";
 function buildApiUrl(filters) {
   const params = new URLSearchParams({
     page: "1",
-    limit: itemsPerPage.toString(),
+    limit: "1500",
     format: "json"
   });
 
