@@ -222,8 +222,3 @@ export function applyBroadcastFilters(newFilters) {
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });
-  grid.appendChild(loader);
-  loadMoreBtn.addEventListener("click", () => {
-    renderNextBatch();
-  });
-});
