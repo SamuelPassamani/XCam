@@ -33,48 +33,27 @@
 }
 
 
-/**
- * Busca os dados da câmera pelo ID e configura o player.
- * @param {string} videoId
- */
-function fetchCameraDataById(videoId) {
-  fetch("https://api.xcam.gay/?limit=1500&format=json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const camera = data?.broadcasts?.items?.find((item) => item.id === videoId);
-      if (!camera) {
-        console.error(`Nenhuma câmera encontrada com o ID: ${videoId}`);
-        return;
-      }
-      setupPlayer(camera, camera.username); // Passa o username para fallback
-    })
-    .catch((error) =>
-      console.error("Erro ao carregar o arquivo JSON:", error)
-    );
-}
 
 /**
  * Configura o JW Player com o vídeo fornecido.
- * Se `camera.preview.src` for inválido, realiza um fallback para buscar `edgeURL` ou `cdnURL`.
+ * Se `videoSrc` for fornecido, ele será usado diretamente.
+ * Se não, usa `camera.preview.src` e aplica fallback se necessário.
  * @param {Object} camera
  * @param {string} username
+ * @param {string} [videoSrc]
  */
-function setupPlayer(camera, username) {
-  // Verifica se `camera.preview.src` é válido
-  if (!camera.preview?.src) {
-    console.warn("Nenhum valor válido para 'camera.preview.src'. Iniciando fallback...");
+function setupPlayer(camera, username, videoSrc) {
+  const source = videoSrc || camera.preview?.src;
 
+  if (!source) {
     console.warn("Nenhum stream válido encontrado. Aplicando fallback local.");
     reloadWithFallback();
   } else {
-    // Configura o player normalmente com `camera.preview.src`
-    initializeJWPlayer(camera, camera.preview.src);
+    initializeJWPlayer(camera, source);
   }
+}
+
+
 }
 
 /**
