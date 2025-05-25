@@ -1,13 +1,10 @@
 import { t } from "./i18n.js";
 
-/**
- * Cria de maneira segura um elemento e define propriedades/atributos.
- */
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
   Object.entries(props).forEach(([key, value]) => {
     if (key === "text") el.textContent = value;
-    else if (key === "html") el.innerHTML = value; // Só use se confiar no valor!
+    else if (key === "html") el.innerHTML = value;
     else if (key.startsWith("on") && typeof value === "function") el[key] = value;
     else el.setAttribute(key, value);
   });
@@ -41,9 +38,6 @@ const loadMoreBtn = createEl("button", {
 }, [createEl("span", { text: t("loadMore") })]);
 loadMoreBtn.style.display = "none";
 
-/**
- * Monta a URL da API com base nos filtros definidos.
- */
 function buildApiUrl(filters) {
   const params = new URLSearchParams({ page: "1", limit: itemsPerPage.toString(), format: "json" });
 
@@ -58,9 +52,6 @@ function buildApiUrl(filters) {
   return `https://api.xcam.gay/?${params.toString()}`;
 }
 
-/**
- * Busca os dados da API conforme formato oficial (data.broadcasts.items).
- */
 async function fetchBroadcasts() {
   const url = buildApiUrl(filters);
   try {
@@ -86,11 +77,7 @@ async function fetchBroadcasts() {
   }
 }
 
-/**
- * Renderização segura do card de transmissão.
- */
 function renderBroadcastCard(data) {
-  // Segurança: nunca utilize innerHTML com dados externos/dinâmicos.
   const poster = data.preview?.poster;
   const username = data.username;
   const viewers = data.viewers;
@@ -101,17 +88,25 @@ function renderBroadcastCard(data) {
 
   const flagImg = createEl("img", {
     src: `https://flagcdn.com/24x18/${country}.png`,
-    alt: `País: ${country}`
+    alt: `País: ${country}`,
+    title: country.toUpperCase()
   });
 
-  // Tags seguras
   const tagsDiv = createEl("div", { class: "card-tags" });
   tags.forEach(tag => {
-    const tagSpan = createEl("span", { class: "tag", text: tag.name || tag });
+    const tagName = typeof tag === "string" ? tag : tag.name;
+    const tagSpan = createEl("span", {
+      class: "tag",
+      text: `#${tagName}`
+    });
     tagsDiv.appendChild(tagSpan);
   });
 
-  const card = createEl("div", { class: "broadcast-card", role: "region", "aria-label": `Transmissão de ${username}` }, [
+  const card = createEl("div", {
+    class: "broadcast-card",
+    role: "region",
+    "aria-label": `Transmissão de ${username}`
+  }, [
     createEl("div", { class: "card-thumbnail" }, [
       createEl("img", {
         src: poster,
@@ -121,18 +116,23 @@ function renderBroadcastCard(data) {
       createEl("div", { class: "card-overlay" }, [
         createEl("button", {
           class: "play-button",
-          "aria-label": t("play") + " " + username,
+          "aria-label": t("play") + " @" + username,
           tabindex: "0"
         }, [
-          createEl("i", { class: "fas fa-play", "aria-hidden": "true" }),
-          createEl("span", { text: " " + t("play") })
+          createEl("i", { class: "fas fa-play", "aria-hidden": "true" })
         ])
       ]),
-      createEl("div", { class: "live-badge", "aria-label": t("live") }, [createEl("span", { text: t("live") })])
+      createEl("div", { class: "live-badge", "aria-label": t("live") }, [
+        createEl("span", { text: t("live") })
+      ])
     ]),
     createEl("div", { class: "card-info" }, [
       createEl("div", { class: "card-header" }, [
-        createEl("h4", { class: "card-username", tabindex: "0", text: username }),
+        createEl("h4", {
+          class: "card-username",
+          tabindex: "0",
+          text: `@${username}`
+        }),
         createEl("div", { class: "card-country" }, [flagImg])
       ]),
       createEl("div", { class: "card-viewers" }, [
@@ -142,6 +142,7 @@ function renderBroadcastCard(data) {
       tagsDiv
     ])
   ]);
+
   grid.appendChild(card);
 }
 
@@ -218,8 +219,11 @@ export function applyBroadcastFilters(newFilters) {
   loadFilteredBroadcasts();
 }
 
-
-
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
+});
+  grid.appendChild(loader);
+  loadMoreBtn.addEventListener("click", () => {
+    renderNextBatch();
+  });
 });
