@@ -1,15 +1,16 @@
 import { t } from "./i18n.js";
-import { translations } from "./translations.js"; // ✅ Mapeamento sigla → país
+import { countryNames } from "./translations.js"; // Mapa de códigos para nomes por extenso
 
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
   Object.entries(props).forEach(([key, value]) => {
     if (key === "text") el.textContent = value;
     else if (key === "html") el.innerHTML = value;
-    else if (key.startsWith("on") && typeof value === "function") el[key] = value;
+    else if (key.startsWith("on") && typeof value === "function")
+      el[key] = value;
     else el.setAttribute(key, value);
   });
-  children.forEach(child => {
+  children.forEach((child) => {
     if (child) el.appendChild(child);
   });
   return el;
@@ -32,15 +33,23 @@ const loader = createEl("div", { class: "loading-state" }, [
   createEl("p", { text: t("loading") })
 ]);
 
-const loadMoreBtn = createEl("button", {
-  id: "load-more",
-  class: "load-more-button",
-  "aria-label": t("loadMore")
-}, [createEl("span", { text: t("loadMore") })]);
+const loadMoreBtn = createEl(
+  "button",
+  {
+    id: "load-more",
+    class: "load-more-button",
+    "aria-label": t("loadMore")
+  },
+  [createEl("span", { text: t("loadMore") })]
+);
 loadMoreBtn.style.display = "none";
 
 function buildApiUrl(filters) {
-  const params = new URLSearchParams({ page: "1", limit: itemsPerPage.toString(), format: "json" });
+  const params = new URLSearchParams({
+    page: "1",
+    limit: itemsPerPage.toString(),
+    format: "json"
+  });
 
   if (filters.gender) params.set("gender", filters.gender);
   if (filters.country) params.set("country", filters.country);
@@ -60,7 +69,12 @@ async function fetchBroadcasts() {
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
 
-    if (data?.broadcasts?.items) {
+    if (
+      data &&
+      typeof data === "object" &&
+      data.broadcasts &&
+      Array.isArray(data.broadcasts.items)
+    ) {
       return data.broadcasts.items;
     }
 
@@ -82,18 +96,16 @@ function renderBroadcastCard(data) {
 
   if (!poster || !username || viewers == null) return;
 
-  // ✅ Aplica nome do país com fallback
-  const countryFullName = translations[country.toUpperCase()] || country.toUpperCase();
+  const countryNameFull = countryNames[country.toUpperCase()] || "Desconhecido";
 
   const flagImg = createEl("img", {
-    src: `https://flagcdn.com/24x18/${country.toLowerCase()}.png`,
-    alt: countryFullName,
-    title: countryFullName,
-    class: "flag"
+    src: `https://flagcdn.com/24x18/${country}.png`,
+    alt: `País: ${countryNameFull}`,
+    title: countryNameFull
   });
 
   const tagsDiv = createEl("div", { class: "card-tags" });
-  tags.forEach(tag => {
+  tags.forEach((tag) => {
     const tagName = typeof tag === "string" ? tag : tag.name;
     const tagSpan = createEl("span", {
       class: "tag",
@@ -102,46 +114,52 @@ function renderBroadcastCard(data) {
     tagsDiv.appendChild(tagSpan);
   });
 
-  const card = createEl("div", {
-    class: "broadcast-card",
-    role: "region",
-    "aria-label": `Transmissão de ${username}`
-  }, [
-    createEl("div", { class: "card-thumbnail" }, [
-      createEl("img", {
-        src: poster,
-        alt: `Prévia da transmissão de ${username}`,
-        loading: "lazy"
-      }),
-      createEl("div", { class: "card-overlay" }, [
-        createEl("button", {
-          class: "play-button",
-          "aria-label": t("play") + " @" + username,
-          tabindex: "0"
-        }, [
-          createEl("i", { class: "fas fa-play", "aria-hidden": "true" })
+  const card = createEl(
+    "div",
+    {
+      class: "broadcast-card",
+      role: "region",
+      "aria-label": `Transmissão de ${username}`
+    },
+    [
+      createEl("div", { class: "card-thumbnail" }, [
+        createEl("img", {
+          src: poster,
+          alt: `Prévia da transmissão de ${username}`,
+          loading: "lazy"
+        }),
+        createEl("div", { class: "card-overlay" }, [
+          createEl(
+            "button",
+            {
+              class: "play-button",
+              "aria-label": t("play") + " @" + username,
+              tabindex: "0"
+            },
+            [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
+          )
+        ]),
+        createEl("div", { class: "live-badge", "aria-label": t("live") }, [
+          createEl("span", { text: t("live") })
         ])
       ]),
-      createEl("div", { class: "live-badge", "aria-label": t("live") }, [
-        createEl("span", { text: t("live") })
+      createEl("div", { class: "card-info" }, [
+        createEl("div", { class: "card-header" }, [
+          createEl("h4", {
+            class: "card-username",
+            tabindex: "0",
+            text: `@${username}`
+          }),
+          createEl("div", { class: "card-country" }, [flagImg])
+        ]),
+        createEl("div", { class: "card-viewers" }, [
+          createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
+          createEl("span", { text: ` ${viewers} ${t("viewers")}` })
+        ]),
+        tagsDiv
       ])
-    ]),
-    createEl("div", { class: "card-info" }, [
-      createEl("div", { class: "card-header" }, [
-        createEl("h4", {
-          class: "card-username",
-          tabindex: "0",
-          text: `@${username}`
-        }),
-        createEl("div", { class: "card-country" }, [flagImg])
-      ]),
-      createEl("div", { class: "card-viewers" }, [
-        createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
-        createEl("span", { text: ` ${viewers} ${t("viewers")}` })
-      ]),
-      tagsDiv
-    ])
-  ]);
+    ]
+  );
 
   grid.appendChild(card);
 }
@@ -153,24 +171,39 @@ function renderNextBatch() {
   batch.forEach(renderBroadcastCard);
   currentPage++;
 
-  loadMoreBtn.style.display = (currentPage * itemsPerPage >= allItems.length) ? "none" : "block";
+  loadMoreBtn.style.display =
+    currentPage * itemsPerPage >= allItems.length ? "none" : "block";
 }
 
 function showEmptyMessage() {
-  const empty = createEl("div", { class: "empty-state", "aria-live": "polite" }, [
-    createEl("i", { class: "fas fa-info-circle empty-icon", "aria-hidden": "true" }),
-    createEl("h3", { text: t("noBroadcasts.title") }),
-    createEl("p", { text: t("noBroadcasts.description") })
-  ]);
+  const empty = createEl(
+    "div",
+    { class: "empty-state", "aria-live": "polite" },
+    [
+      createEl("i", {
+        class: "fas fa-info-circle empty-icon",
+        "aria-hidden": "true"
+      }),
+      createEl("h3", { text: t("noBroadcasts.title") }),
+      createEl("p", { text: t("noBroadcasts.description") })
+    ]
+  );
   grid.appendChild(empty);
 }
 
 function showErrorMessage() {
-  const errorDiv = createEl("div", { class: "error-state", "aria-live": "assertive" }, [
-    createEl("i", { class: "fas fa-exclamation-triangle", "aria-hidden": "true" }),
-    createEl("h3", { text: t("error.title") }),
-    createEl("p", { text: t("error.description") })
-  ]);
+  const errorDiv = createEl(
+    "div",
+    { class: "error-state", "aria-live": "assertive" },
+    [
+      createEl("i", {
+        class: "fas fa-exclamation-triangle",
+        "aria-hidden": "true"
+      }),
+      createEl("h3", { text: t("error.title") }),
+      createEl("p", { text: t("error.description") })
+    ]
+  );
   grid.innerHTML = "";
   grid.appendChild(errorDiv);
 }
