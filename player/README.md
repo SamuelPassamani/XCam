@@ -43,7 +43,6 @@ O **XCam Player** é um componente autônomo e leve desenvolvido para reproduzir
 ## 📁 Estrutura da pasta `xcam/dist/cam`
 
 ```
-
 cam/
 ├── index.html              # HTML principal com estrutura do player + modal de publicidade
 ├── script.js               # Script principal com lógica de player, fallback e pré-carregamento
@@ -54,23 +53,23 @@ cam/
 ├── assets/
 │   ├── loading.gif         # Imagem exibida durante o carregamento
 │   └── error.mp4           # Fallback local em caso de erro no vídeo
-
-````
+```
 
 ---
 
 ## 🚀 Como usar
 
 1. **Via `id`**
-   ```url
-   https://xcam.gay/cam/?id=54013666
-````
+
+```
+https://xcam.gay/cam/?id=54013666
+```
 
 2. **Via `user`**
 
-   ```url
-   https://xcam.gay/cam/?user=SuckubDevil
-   ```
+```
+https://xcam.gay/cam/?user=SuckubDevil
+```
 
 > Ambos acionam uma busca interna na API `https://api.xcam.gay` para obter os dados da câmera.
 
@@ -137,10 +136,8 @@ Adicionamos um botão de download customizado no player para que o usuário poss
 
 ## 👤 Desenvolvedor
 
-**Samuel (idealizador do projeto XCam)**
-📧 [contato@xcam.gay](mailto:contato@xcam.gay)
+**Samuel (idealizador do projeto XCam)**  
+📧 [contato@xcam.gay](mailto:contato@xcam.gay)  
 🌐 [https://xcam.gay](https://xcam.gay)
 
 Sou um profissional multidisciplinar com paixão por simplicidade, eficiência e clareza. Desenvolvo soluções escaláveis com atenção à arquitetura limpa, modularidade e performance. No XCam, aplico meus conhecimentos em programação, ciência de dados, arquitetura de software e experiência do usuário para construir uma plataforma robusta, elegante e funcional.
-
----
