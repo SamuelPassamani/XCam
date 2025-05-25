@@ -1,4 +1,5 @@
 import { t } from "./i18n.js";
+import { translations } from "./translations.js"; // ✅ Mapeamento sigla → país
 
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
@@ -59,12 +60,7 @@ async function fetchBroadcasts() {
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
 
-    if (
-      data &&
-      typeof data === "object" &&
-      data.broadcasts &&
-      Array.isArray(data.broadcasts.items)
-    ) {
+    if (data?.broadcasts?.items) {
       return data.broadcasts.items;
     }
 
@@ -86,10 +82,14 @@ function renderBroadcastCard(data) {
 
   if (!poster || !username || viewers == null) return;
 
+  // ✅ Aplica nome do país com fallback
+  const countryFullName = translations[country.toUpperCase()] || country.toUpperCase();
+
   const flagImg = createEl("img", {
-    src: `https://flagcdn.com/24x18/${country}.png`,
-    alt: `País: ${country}`,
-    title: country.toUpperCase()
+    src: `https://flagcdn.com/24x18/${country.toLowerCase()}.png`,
+    alt: countryFullName,
+    title: countryFullName,
+    class: "flag"
   });
 
   const tagsDiv = createEl("div", { class: "card-tags" });
