@@ -232,7 +232,7 @@ const params = new URLSearchParams(window.location.search);
 if (params.has("user") || params.has("id")) {
   const isUser = params.has("user");
   const searchKey = isUser ? "username" : "id";
-  const searchValue = params.get(searchKey);
+  const searchValue = params.get(isUser ? "user" : "id");
 
   fetch("https://api.xcam.gay/?limit=1500&format=json")
     .then((response) => {
