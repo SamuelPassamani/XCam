@@ -15,7 +15,7 @@ function reloadWithFallback() {
       file: "https://drive.xcam.gay/0:/src/file/error.mp4",
       autostart: true,
       repeat: true,
-      controls: false,
+      controls: false
     });
   }
 }
@@ -66,27 +66,31 @@ function setupPlayer(camera, username, videoSrc) {
     skin: { name: "netflix" },
     logo: {
       file: "https://drive.xcam.gay/0:/logo2.png",
-      link: "https://xcam.gay",
+      link: "https://xcam.gay"
     },
     captions: {
       color: "#efcc00",
       fontSize: 16,
       backgroundOpacity: 0,
-      edgeStyle: "raised",
+      edgeStyle: "raised"
     },
-    playlist: [{
-      title: `@${camera.username || username}`,
-      description: camera.tags?.map(tag => `#${tag.name}`).join(" ") || "",
-      image: camera.preview?.poster || preloadImage.src,
-      sources: [{
-        file: videoSrc,
-        type: "video/m3u8",
-        label: "Source"
-      }]
-    }],
+    playlist: [
+      {
+        title: `@${camera.username || username}`,
+        description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
+        image: camera.preview?.poster || preloadImage.src,
+        sources: [
+          {
+            file: videoSrc,
+            type: "video/m3u8",
+            label: "Source"
+          }
+        ]
+      }
+    ],
     events: {
-      error: handlePlayerError,
-    },
+      error: handlePlayerError
+    }
   });
 
   addDownloadButton(playerInstance);
@@ -104,9 +108,11 @@ if (params.has("user") || params.has("id")) {
   const value = params.get(isUser ? "user" : "id");
 
   fetch("https://api.xcam.gay/?limit=1500&format=json")
-    .then(res => res.json())
-    .then(data => {
-      const camera = data?.broadcasts?.items?.find(item => item[key] === value);
+    .then((res) => res.json())
+    .then((data) => {
+      const camera = data?.broadcasts?.items?.find(
+        (item) => item[key] === value
+      );
       if (!camera || !camera.preview?.src) {
         console.warn("Câmera não encontrada ou stream ausente.");
         reloadWithFallback();
@@ -114,11 +120,10 @@ if (params.has("user") || params.has("id")) {
       }
       setupPlayer(camera, camera.username, camera.preview.src);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error("Erro ao carregar dados da API:", err);
       reloadWithFallback();
     });
-
 } else {
   console.warn("Parâmetro 'user' ou 'id' não fornecido na URL.");
   reloadWithFallback();
@@ -168,7 +173,9 @@ function handlePlayerError(event) {
     232600: "<strong>Erro no stream.</strong> O arquivo está indisponível ou corrompido."
   };
 
-  const message = errorMessages[event.code] || "Erro desconhecido. Algo deu errado na reprodução.";
+  const message =
+    errorMessages[event.code] ||
+    "Erro desconhecido. Algo deu errado na reprodução.";
 
   if (player) {
     player.innerHTML = `
