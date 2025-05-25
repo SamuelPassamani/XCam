@@ -1,9 +1,9 @@
 "use strict";
 
-// Obtendo os parâmetros 'id' e 'user' da URL
+// Obtendo os parâmetros 'user' e 'id' da URL
 const urlParams = new URLSearchParams(window.location.search);
-const videoId = urlParams.get("id");
 const username = urlParams.get("user");
+const videoId = urlParams.get("id");
 
 // Verifica se os parâmetros estão presentes e inicia a busca de dados
 if (!videoId && !username) {
@@ -15,6 +15,45 @@ if (!videoId && !username) {
 } else {
   fetchCameraDataById(videoId);
 }
+
+
+/**
+ * Busca os dados da câmera pelo nome de usuário e configura o player.
+ * @param {string} username
+ */
+function fetchCameraDataByUsername(username) {
+  fetch(`https://api.xcam.gay/user/${username}/liveInfo`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Erro ao acessar liveInfo do usuário: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const videoSrc = data.edgeURL || data.cdnURL;
+      if (!videoSrc) {
+        console.warn("Nenhum stream válido encontrado. Aplicando fallback local.");
+        reloadWithFallback();
+        return;
+      }
+
+      // Constrói objeto 'camera' parcial para manter compatibilidade com setupPlayer
+      const camera = {
+        username: username,
+        preview: {
+          poster: "https://drive.xcam.gay/0:/logo2.png"
+        },
+        tags: []
+      };
+
+      setupPlayer(camera, username, videoSrc); // videoSrc passado explicitamente
+    })
+    .catch((error) => {
+      console.error("Erro ao carregar informações do usuário:", error);
+      reloadWithFallback();
+    });
+}
+
 
 /**
  * Busca os dados da câmera pelo ID e configura o player.
@@ -42,31 +81,6 @@ function fetchCameraDataById(videoId) {
 }
 
 /**
- * Busca os dados da câmera pelo nome de usuário e configura o player.
- * @param {string} username
- */
-function fetchCameraDataByUsername(username) {
-  fetch("https://api.xcam.gay/?limit=1500&format=json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Erro ao acessar o arquivo JSON: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const camera = data?.broadcasts?.items?.find((item) => item.username === username);
-      if (!camera) {
-        console.error(`Nenhuma câmera encontrada com o nome de usuário: ${username}`);
-        return;
-      }
-      setupPlayer(camera, username); // Passa o username para fallback
-    })
-    .catch((error) =>
-      console.error("Erro ao carregar o arquivo JSON:", error)
-    );
-}
-
-/**
  * Configura o JW Player com o vídeo fornecido.
  * Se `camera.preview.src` for inválido, realiza um fallback para buscar `edgeURL` ou `cdnURL`.
  * @param {Object} camera
@@ -77,44 +91,8 @@ function setupPlayer(camera, username) {
   if (!camera.preview?.src) {
     console.warn("Nenhum valor válido para 'camera.preview.src'. Iniciando fallback...");
 
-    // Fallback: Consulta o endpoint da Cam4
-    fetch(`https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`, {
-      headers: {
-        accept: "application/json, text/plain, */*",
-        "accept-language": "pt-BR,pt;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-        priority: "u=1, i",
-        "sec-ch-ua": "\"Chromium\";v=\"136\", \"Microsoft Edge\";v=\"136\", \"Not.A/Brand\";v=\"99\"",
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": "\"Windows\"",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "sec-gpc": "1",
-      },
-      referrer: `https://pt.cam4.com/${username}`,
-      referrerPolicy: "strict-origin-when-cross-origin",
-      method: "GET",
-      mode: "cors",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Erro ao acessar o endpoint Cam4: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((streamData) => {
-        const fallbackSrc = streamData.edgeURL || streamData.cdnURL;
-        if (!fallbackSrc) {
-          throw new Error("Nenhum valor válido encontrado para 'edgeURL' ou 'cdnURL' no fallback.");
-        }
-
-        // Configura o player com o fallbackSrc
-        initializeJWPlayer(camera, fallbackSrc);
-      })
-      .catch((error) => {
-        console.error("Erro durante o fallback:", error);
-      });
+    console.warn("Nenhum stream válido encontrado. Aplicando fallback local.");
+    reloadWithFallback();
   } else {
     // Configura o player normalmente com `camera.preview.src`
     initializeJWPlayer(camera, camera.preview.src);
@@ -204,7 +182,7 @@ function handlePlayerError(event) {
 
   const reloadWithFallback = () => {
     jwplayer("player").setup({
-      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
+      file: "https://i.imgur.com/wb6N5W4.mp4",
       autostart: true,
       repeat: true,
       controls: false,
