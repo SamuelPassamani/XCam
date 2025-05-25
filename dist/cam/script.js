@@ -1,32 +1,10 @@
 "use strict";
 
 // Obtendo os parâmetros 'user' e 'id' da URL
-const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get("user");
-const videoId = urlParams.get("id");
-
-// Verifica se os parâmetros estão presentes e inicia a busca de dados
-if (!videoId && !username) {
-  console.error(
-    "Nenhum ID ou nome de usuário foi fornecido na URL. Adicione ?id=valor ou ?user=valor na URL."
-  );
-} else if (username) {
-  fetchCameraDataByUsername(username);
-} else {
-  fetchCameraDataById(videoId);
-}
+// [REMOVIDO] Lógica de roteamento obsoleta substituída pela lógica unificada abaixo
 
 
-/**
- * Busca os dados da câmera pelo nome de usuário e configura o player.
- * @param {string} username
- */
-function fetchCameraDataByUsername(username) {
-  fetch(`https://api.xcam.gay/user/${username}/liveInfo`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Erro ao acessar liveInfo do usuário: ${response.status}`);
-      }
+// [REMOVIDO] Função obsoleta 'fetchCameraDataByUsername' substituída por lógica unificada
       return response.json();
     })
     .then((data) => {
@@ -182,7 +160,7 @@ function handlePlayerError(event) {
 
   const reloadWithFallback = () => {
     jwplayer("player").setup({
-      file: "https://i.imgur.com/wb6N5W4.mp4",
+      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
       autostart: true,
       repeat: true,
       controls: false,
@@ -274,3 +252,57 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+
+// === Gerencia carregamento de dados baseado nos parâmetros da URL ===
+const params = new URLSearchParams(window.location.search);
+
+if (params.has("user") || params.has("id")) {
+  const isUser = params.has("user");
+  const searchKey = isUser ? "username" : "id";
+  const searchValue = params.get(searchKey);
+
+  fetch("https://api.xcam.gay/?limit=1500&format=json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erro ao carregar lista de transmissões");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const items = data?.broadcasts?.items || [];
+      const camera = items.find((item) => item[searchKey] === searchValue);
+
+      if (!camera) {
+        console.warn(`Nenhuma câmera encontrada com o ${searchKey}:`, searchValue);
+        reloadWithFallback();
+        return;
+      }
+
+      // Se preview.src estiver ausente, fazer fallback inteligente via liveInfo
+      if (!camera.preview?.src) {
+        fetch(`https://api.xcam.gay/user/${camera.username}/liveInfo`)
+          .then((res) => res.json())
+          .then((liveData) => {
+            const streamURL = liveData.edgeURL || liveData.cdnURL;
+            if (!streamURL) {
+              console.warn("Nenhum stream válido encontrado via liveInfo.");
+              reloadWithFallback();
+              return;
+            }
+            setupPlayer(camera, camera.username, streamURL);
+          })
+          .catch((err) => {
+            console.error("Erro ao buscar stream em liveInfo:", err);
+            reloadWithFallback();
+          });
+      } else {
+        // Caso padrão: usar preview.src
+        setupPlayer(camera, camera.username, camera.preview.src);
+      }
+    })
+    .catch((err) => {
+      console.error("Erro ao carregar a lista geral:", err);
+      reloadWithFallback();
+    });
+}
