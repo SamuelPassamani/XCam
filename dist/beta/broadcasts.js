@@ -96,7 +96,8 @@ function renderBroadcastCard(data) {
 
   if (!poster || !username || viewers == null) return;
 
-  const countryNameFull = countryNames[country.toUpperCase()] || "Desconhecido";
+  // Corrigido: agora usa .toLowerCase() em vez de .toUpperCase()
+  const countryNameFull = countryNames[country.toLowerCase()] || "Desconhecido";
 
   const flagImg = createEl("img", {
     src: `https://flagcdn.com/24x18/${country}.png`,
