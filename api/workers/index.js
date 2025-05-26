@@ -29,7 +29,10 @@ const ALLOWED_ORIGINS = [
   "https://openai.com",
   "https://ab.chatgpt.com",
   "https://chatgpt.com",
-  "https://cdn.oaistatic.com"
+  "https://cdn.oaistatic.com",
+  "https://codepen.io/",
+  "https://cdpn.io",
+  "https://cpwebassets.codepen.io"
 ];
 
 // === Headers CORS dinâmicos (versão corrigida) ===
