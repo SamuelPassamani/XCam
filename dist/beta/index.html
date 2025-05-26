@@ -1,19 +1,25 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XCam - Transmissões ao Vivo</title>
 
-  <!-- Ícones -->
+  <!-- Icons -->
   <link rel="icon" type="image/svg+xml" href="https://drive.xcam.gay/0:/logo2.svg">
   <link rel="icon" type="image/png" href="https://drive.xcam.gay/0:/logo2.png">
 
-  <!-- Fontes e Estilos -->
+  <!-- Style CSS -->
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="./style.css" />
+
+  <!-- Script JS -->
+  <script src="./script.js"></script>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -51,23 +57,27 @@
 </head>
 
 <body>
-  <!-- ===== HEADER ===== -->
+  <!-- Header -->
   <header class="header">
     <img src="https://drive.xcam.gay/0:/logo2.png" href="//xcam.gay" alt="XCam" class="logo">
+
     <nav class="nav-menu">
       <a href="//xcam.gay" class="nav-link">Início</a>
       <a href="#" class="nav-link">Explorar</a>
       <a href="#" class="nav-link">Categorias</a>
     </nav>
+
     <div class="search-bar">
       <i class="fas fa-search"></i>
       <input type="text" placeholder="Buscar transmissões..." id="search-input">
     </div>
-    <button class="mobile-menu-toggle" id="mobile-toggle">
+
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
       <i class="fas fa-bars"></i>
     </button>
   </header>
 
+  <!-- Menu Mobile -->
   <div class="mobile-menu" id="mobile-menu">
     <a href="#" class="nav-link">Início</a>
     <a href="#" class="nav-link">Explorar</a>
@@ -78,29 +88,30 @@
     </div>
   </div>
 
-  <!-- ===== CAROUSEL DINÂMICO (API) ===== -->
-  <div class="carousel-container">
+  <!-- Carrossel -->
+  <div class="carousel" id="main-carousel">
+    <!-- Será preenchido dinamicamente -->
     <div class="carousel-controls">
-      <div class="carousel-control" id="carousel-prev">
+      <div class="carousel-control" onclick="prevSlide()">
         <i class="fas fa-chevron-left"></i>
       </div>
-      <div class="carousel-control" id="carousel-next">
+      <div class="carousel-control" onclick="nextSlide()">
         <i class="fas fa-chevron-right"></i>
       </div>
     </div>
-    <div class="carousel-wrapper"></div>
-    <div class="carousel-indicators"></div>
   </div>
 
-  <!-- ===== FILTROS ===== -->
+  <!-- Filtros -->
   <section class="filters-section">
     <div class="filters-container">
       <div class="filter-group">
         <label class="filter-label" for="country-filter">País</label>
         <select class="filter-select" id="country-filter">
           <option value="all">Todos os países</option>
+          <!-- Será preenchido dinamicamente -->
         </select>
       </div>
+
       <div class="filter-group">
         <label class="filter-label" for="gender-filter">Gênero</label>
         <select class="filter-select" id="gender-filter">
@@ -110,6 +121,7 @@
           <option value="trans">Trans</option>
         </select>
       </div>
+
       <div class="filter-group">
         <label class="filter-label" for="orientation-filter">Orientação</label>
         <select class="filter-select" id="orientation-filter">
@@ -122,38 +134,47 @@
           <option value="unknown">Não Definido</option>
         </select>
       </div>
-      <button class="filter-button" id="apply-filters">
+
+      <button class="filter-button" onclick="applyFilters()">
         <i class="fas fa-filter"></i> Filtrar
       </button>
     </div>
   </section>
 
-  <!-- ===== GRADE DE TRANSMISSÕES ===== -->
+  <!-- Grid de Transmissões -->
   <section class="broadcasts-section">
     <div class="header-row">
       <h2 class="section-title">
         <i class="fas fa-broadcast-tower"></i> Transmissões ao Vivo
       </h2>
-      <button id="update-button" class="update-button">Atualizar</button>
+      <button id="update-button" class="update-button" onclick="initApp()">Atualizar</button>
     </div>
+
     <div class="broadcasts-grid" id="broadcasts-grid">
+      <!-- Estado de carregamento inicial -->
       <div class="loading-state">
         <div class="loader"></div>
         <p>Carregando transmissões...</p>
       </div>
     </div>
-    <div class="pagination" id="pagination"></div>
+
+    <!-- Paginação -->
+    <div class="pagination" id="pagination">
+      <!-- Será preenchido dinamicamente -->
+    </div>
   </section>
 
-  <!-- ===== MODAL ===== -->
+  <!-- Modal de Transmissão -->
   <div class="modal" id="broadcast-modal">
-    <div class="modal-content" id="modal-content"></div>
+    <div class="modal-content" id="modal-content">
+      <!-- Será preenchido dinamicamente -->
+    </div>
   </div>
 
-  <!-- ===== NOTIFICAÇÕES ===== -->
+  <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- ===== FOOTER ===== -->
+  <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
       <div>
@@ -162,6 +183,7 @@
           XCam é uma plataforma de transmissões ao vivo onde você pode assistir e interagir com streamers de todo o mundo.
         </p>
       </div>
+
       <div class="footer-links">
         <a href="//xcam.gay" class="footer-link">Início</a>
         <a href="#" class="footer-link">Explorar</a>
@@ -170,15 +192,13 @@
         <a href="#" class="footer-link">Termos</a>
         <a href="#" class="footer-link">Privacidade</a>
       </div>
+
       <div class="footer-copyright">
         &copy; 2025 XCam. Todos os direitos reservados.
       </div>
     </div>
   </footer>
-
-  <!-- ===== SCRIPTS ===== -->
-  <script type="module" src="./main.js"></script>
-  <script src="https://pl26608496.profitableratecpm.com/74/31/14/7431142f309cabb259fa3dd356d8094b.js"></script>
+  <script type="text/javascript" src="https://pl26608496.profitableratecpm.com/74/31/14/7431142f309cabb259fa3dd356d8094b.js"></script>
 </body>
 
 </html>
