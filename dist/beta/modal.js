@@ -25,7 +25,7 @@ export function setupModal() {
       const broadcastId = card.dataset.broadcastId;
 
       // Busca os dados da transmissão individual na API
-      fetch(`https://api.xcam.gay/?id=${broadcastId}`)
+      fetch(`https://api.xcam.gay/user/${broadcast.username}`)
         .then((res) => res.json())
         .then((data) => {
           if (data?.broadcast) {
