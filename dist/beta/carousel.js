@@ -1,6 +1,6 @@
 import { t } from "./i18n.js";
 
-export function setupCarousel({ intervalMs = 5000 } = {}) {
+export function setupCarousel({ intervalMs = 6000 } = {}) {
   const carouselContainer = document.querySelector(".carousel-container");
   const slideWrapper = document.querySelector(".carousel-wrapper");
   const indicatorsWrapper = document.querySelector(".carousel-indicators");
@@ -12,9 +12,6 @@ export function setupCarousel({ intervalMs = 5000 } = {}) {
   let currentIndex = 0;
   let intervalId = null;
 
-  /**
-   * Busca as 10 transmissões com mais viewers e constrói o carrossel
-   */
   async function fetchTopBroadcasts() {
     try {
       const response = await fetch("https://api.xcam.gay/?limit=10");
@@ -34,9 +31,7 @@ export function setupCarousel({ intervalMs = 5000 } = {}) {
         if (index === 0) card.classList.add("active");
 
         card.innerHTML = `
-          <a href="/cam/?user=${
-            item.username
-          }" class="card-thumbnail" tabindex="0">
+          <a href="/cam/?user=${item.username}" class="card-thumbnail">
             <img src="${item.preview?.poster}" alt="Prévia de ${
           item.username
         }" loading="lazy" />
@@ -53,15 +48,15 @@ export function setupCarousel({ intervalMs = 5000 } = {}) {
           </a>
           <div class="card-info">
             <div class="card-header">
-              <h4 class="card-username" tabindex="0">@${item.username}</h4>
+              <h4 class="card-username">@${item.username}</h4>
               <div class="card-country">
                 <img src="https://flagcdn.com/24x18/${
                   item.country || "xx"
-                }.png" alt="${item.country}" title="${item.country}" />
+                }.png" title="${item.country}" />
               </div>
             </div>
             <div class="card-viewers">
-              <i class="fas fa-eye" aria-hidden="true"></i>
+              <i class="fas fa-eye"></i>
               <span>${item.viewers} ${t("viewers")}</span>
             </div>
             <div class="card-tags">
@@ -84,16 +79,16 @@ export function setupCarousel({ intervalMs = 5000 } = {}) {
         slideWrapper.appendChild(card);
         slides.push(card);
 
-        const indicator = document.createElement("span");
-        indicator.className = "carousel-indicator";
-        if (index === 0) indicator.classList.add("active");
-        indicator.addEventListener("click", () => {
+        const dot = document.createElement("span");
+        dot.className = "carousel-indicator";
+        if (index === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => {
           currentIndex = index;
           updateDisplay();
           resetInterval();
         });
-        indicatorsWrapper.appendChild(indicator);
-        indicators.push(indicator);
+        indicatorsWrapper.appendChild(dot);
+        indicators.push(dot);
       });
 
       updateDisplay();
