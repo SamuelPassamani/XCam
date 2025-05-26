@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "https://xcam.aserio.workers.dev/:splat"
+  to = "https://xcam-gay.aserio.workers.dev/:splat"
   status = 200
   force = true
     [redirects.headers]
