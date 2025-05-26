@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -5,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XCam - Transmissões ao Vivo</title>
 
-  <!-- Ícones -->
+  <!-- Ícones e Favicon -->
   <link rel="icon" type="image/svg+xml" href="https://drive.xcam.gay/0:/logo2.svg">
   <link rel="icon" type="image/png" href="https://drive.xcam.gay/0:/logo2.png">
 
-  <!-- Fontes e Estilos -->
+  <!-- Fontes e Estilo Global -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="./style.css" />
@@ -77,16 +78,12 @@
     </div>
   </div>
 
-  <!-- ===== CAROUSEL DINÂMICO (API) ===== -->
+  <!-- ===== CARROSSEL ===== -->
   <section class="carousel-section">
     <div class="carousel-container carousel">
       <div class="carousel-controls">
-        <button class="carousel-control" id="carousel-prev">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="carousel-control" id="carousel-next">
-          <i class="fas fa-chevron-right"></i>
-        </button>
+        <button class="carousel-control" id="carousel-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-control" id="carousel-next"><i class="fas fa-chevron-right"></i></button>
       </div>
       <div class="carousel-wrapper"></div>
       <div class="carousel-indicators"></div>
@@ -132,9 +129,7 @@
   <!-- ===== GRADE DE TRANSMISSÕES ===== -->
   <section class="broadcasts-section">
     <div class="header-row">
-      <h2 class="section-title">
-        <i class="fas fa-broadcast-tower"></i> Transmissões ao Vivo
-      </h2>
+      <h2 class="section-title"><i class="fas fa-broadcast-tower"></i> Transmissões ao Vivo</h2>
       <button id="update-button" class="update-button">Atualizar</button>
     </div>
     <div class="broadcasts-grid" id="broadcasts-grid">
@@ -146,7 +141,7 @@
     <div class="pagination" id="pagination"></div>
   </section>
 
-  <!-- ===== MODAL ===== -->
+  <!-- ===== MODAL DINÂMICO DE TRANSMISSÃO ===== -->
   <div class="modal" id="broadcast-modal">
     <div class="modal-content" id="modal-content"></div>
   </div>
@@ -154,7 +149,7 @@
   <!-- ===== NOTIFICAÇÕES ===== -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- ===== FOOTER ===== -->
+  <!-- ===== RODAPÉ ===== -->
   <footer class="footer">
     <div class="footer-content">
       <div>
