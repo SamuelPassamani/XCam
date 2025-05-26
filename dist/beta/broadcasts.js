@@ -1,6 +1,9 @@
 import { t } from "./i18n.js";
-import { countryNames } from "./translations.js"; // Mapa de códigos para nomes por extenso
+import { countryNames } from "./translations.js"; // Mapa código → nome por extenso
 
+/**
+ * Criação utilitária de elementos DOM com atributos e filhos.
+ */
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
   Object.entries(props).forEach(([key, value]) => {
@@ -19,6 +22,7 @@ function createEl(type, props = {}, children = []) {
 let currentPage = 1;
 const itemsPerPage = 15;
 let allItems = [];
+
 let filters = {
   gender: "male",
   country: "",
@@ -28,11 +32,14 @@ let filters = {
 };
 
 let grid;
+
+// Loader de carregamento
 const loader = createEl("div", { class: "loading-state" }, [
   createEl("div", { class: "loader" }),
   createEl("p", { text: t("loading") })
 ]);
 
+// Botão de "Carregar mais"
 const loadMoreBtn = createEl(
   "button",
   {
@@ -44,6 +51,9 @@ const loadMoreBtn = createEl(
 );
 loadMoreBtn.style.display = "none";
 
+/**
+ * Monta a URL da API com os filtros ativos.
+ */
 function buildApiUrl(filters) {
   const params = new URLSearchParams({
     page: "1",
@@ -62,6 +72,9 @@ function buildApiUrl(filters) {
   return `https://api.xcam.gay/?${params.toString()}`;
 }
 
+/**
+ * Busca dados da API com base nos filtros ativos.
+ */
 async function fetchBroadcasts() {
   const url = buildApiUrl(filters);
   try {
@@ -87,6 +100,9 @@ async function fetchBroadcasts() {
   }
 }
 
+/**
+ * Renderiza um card individual de transmissão.
+ */
 function renderBroadcastCard(data) {
   const poster = data.preview?.poster;
   const username = data.username;
@@ -96,7 +112,6 @@ function renderBroadcastCard(data) {
 
   if (!poster || !username || viewers == null) return;
 
-  // Corrigido: agora usa .toLowerCase() em vez de .toUpperCase()
   const countryNameFull = countryNames[country.toLowerCase()] || "Desconhecido";
 
   const flagImg = createEl("img", {
@@ -120,7 +135,8 @@ function renderBroadcastCard(data) {
     {
       class: "broadcast-card",
       role: "region",
-      "aria-label": `Transmissão de ${username}`
+      "aria-label": `Transmissão de ${username}`,
+      "data-broadcast-id": data.id // ✅ necessário para o modal.js funcionar
     },
     [
       createEl("div", { class: "card-thumbnail" }, [
@@ -165,6 +181,9 @@ function renderBroadcastCard(data) {
   grid.appendChild(card);
 }
 
+/**
+ * Renderiza o próximo lote de transmissões.
+ */
 function renderNextBatch() {
   const start = (currentPage - 1) * itemsPerPage;
   const end = currentPage * itemsPerPage;
@@ -176,6 +195,9 @@ function renderNextBatch() {
     currentPage * itemsPerPage >= allItems.length ? "none" : "block";
 }
 
+/**
+ * Exibe uma mensagem amigável quando não há resultados.
+ */
 function showEmptyMessage() {
   const empty = createEl(
     "div",
@@ -192,6 +214,9 @@ function showEmptyMessage() {
   grid.appendChild(empty);
 }
 
+/**
+ * Exibe uma mensagem de erro ao usuário.
+ */
 function showErrorMessage() {
   const errorDiv = createEl(
     "div",
@@ -209,6 +234,9 @@ function showErrorMessage() {
   grid.appendChild(errorDiv);
 }
 
+/**
+ * Executa o carregamento das transmissões com base nos filtros ativos.
+ */
 async function loadFilteredBroadcasts() {
   currentPage = 1;
   allItems = [];
@@ -237,10 +265,10 @@ async function loadFilteredBroadcasts() {
   }
 }
 
+// === Exportações públicas ===
+
 export function setupBroadcasts() {
-  loadMoreBtn.addEventListener("click", () => {
-    renderNextBatch();
-  });
+  loadMoreBtn.addEventListener("click", renderNextBatch);
   loadFilteredBroadcasts();
 }
 
@@ -253,6 +281,7 @@ export function applyBroadcastFilters(newFilters) {
   loadFilteredBroadcasts();
 }
 
+// Inicializa a referência do grid
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });
