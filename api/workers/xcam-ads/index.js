@@ -2,6 +2,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // Apenas aceita GET e rota /domains
     if (request.method !== 'GET' || url.pathname !== '/domains') {
       return new Response(JSON.stringify({
         code: 405,
@@ -14,7 +15,7 @@ export default {
     }
 
     const apiUrl = 'https://api3.adsterratools.com/publisher/domains.json';
-    const apiKey = env.ADSTERRA_API_KEY; // <- agora usando o segredo
+    const apiKey = '282bee4eae15398c996054eeaa3e4da6';
 
     try {
       const apiResponse = await fetch(apiUrl, {
@@ -25,11 +26,12 @@ export default {
         }
       });
 
+      // Lida com códigos de erro
       if (!apiResponse.ok) {
         const fallback = await apiResponse.json();
         return new Response(JSON.stringify({
           code: apiResponse.status,
-          message: fallback.message || 'Erro na API da Adsterra',
+          message: fallback.message || 'Erro ao acessar a API da Adsterra',
           data: null
         }), {
           status: apiResponse.status,
@@ -39,6 +41,7 @@ export default {
 
       const data = await apiResponse.json();
 
+      // Retorna os dados conforme o schema esperado
       return new Response(JSON.stringify({
         items: data.items || [],
         itemCount: data.itemCount || 0
@@ -50,7 +53,7 @@ export default {
     } catch (error) {
       return new Response(JSON.stringify({
         code: 500,
-        message: 'Erro interno ao buscar dados',
+        message: 'Erro interno ao buscar os dados',
         data: null
       }), {
         status: 500,
