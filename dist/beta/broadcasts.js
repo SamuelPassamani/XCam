@@ -121,7 +121,7 @@ function renderBroadcastCard(data) {
       role: "region",
       "aria-label": `Transmissão de ${username}`,
       "data-broadcast-id": data.id,
-      "data-username": username // Adicionado para uso no modal.js
+      "data-username": username // necessário para busca posterior no modal.js
     },
     [
       createEl("div", { class: "card-thumbnail" }, [

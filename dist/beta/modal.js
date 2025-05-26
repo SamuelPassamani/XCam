@@ -3,60 +3,61 @@ import { t } from "./i18n.js";
 
 let allBroadcasts = [];
 
-// Permite que a lista de transmissões seja atualizada de fora
+// Permite atualizar a lista de transmissões de fora do módulo
 export function setModalBroadcasts(data) {
   allBroadcasts = data;
 }
 
-// Configura os eventos do modal
+// Configura listeners para abrir e fechar o modal
 export function setupModal() {
   const modal = document.getElementById("broadcast-modal");
   const modalContent = document.getElementById("modal-content");
 
-  // Detecta clique em um card de transmissão
+  // Ao clicar em um card de transmissão
   document.addEventListener("click", (e) => {
     const card = e.target.closest(".broadcast-card");
-    if (card && card.dataset.broadcastId && card.dataset.username) {
+    if (card && card.dataset.username) {
       const username = card.dataset.username;
+
       fetch(`https://api.xcam.gay/user/${username}`)
         .then((res) => res.json())
-        .then((data) => {
-          const broadcast = data?.broadcasts?.items?.[0];
-          if (broadcast) {
+        .then((broadcast) => {
+          if (broadcast?.username) {
             openModal(broadcast);
           } else {
             console.warn("Transmissão não encontrada para username:", username);
           }
         })
         .catch((err) => {
-          console.error("Erro ao carregar dados da transmissão:", err);
+          console.error("Erro ao buscar dados da transmissão:", err);
         });
     }
   });
 
-  // Fecha o modal ao clicar fora do conteúdo
+  // Fechar modal ao clicar fora do conteúdo
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeModal();
   });
 
-  // Fecha o modal ao clicar no botão de fechar
+  // Fechar modal via botão (classe .modal-close)
   document.querySelectorAll(".modal-close").forEach((btn) => {
     btn.addEventListener("click", closeModal);
   });
 }
 
+// Renderiza o modal com os dados da transmissão
 function openModal(broadcast) {
   const modal = document.getElementById("broadcast-modal");
   const modalContent = document.getElementById("modal-content");
 
   const poster = broadcast.preview?.poster || "";
-  const profileImage = broadcast.profileImageURL || "";
-  const countryCode = broadcast.country || "xx";
+  const profileImage = broadcast.profileImageUrl || "";
+  const countryCode = broadcast.countryId || "xx";
   const countryName = getCountryName(countryCode);
   const tags = Array.isArray(broadcast.tags) ? broadcast.tags : [];
 
   const gender = broadcast.gender || "";
-  const orientation = broadcast.sexualOrientation || "";
+  const orientation = broadcast.sexPreference || "";
   const viewers = broadcast.viewers || 0;
 
   const tagHTML = tags
@@ -72,7 +73,7 @@ function openModal(broadcast) {
       <div class="modal-player">
         <div class="player-container" id="player-container">
           <iframe src="https://player.xcam.gay/?id=${
-            broadcast.id
+            broadcast.userId
           }" frameborder="0" allowfullscreen class="player-iframe"></iframe>
         </div>
         <div class="modal-info">
@@ -110,18 +111,18 @@ function openModal(broadcast) {
   loadRelatedBroadcasts(broadcast);
 }
 
+// Fecha e limpa o conteúdo do modal
 function closeModal() {
   const modal = document.getElementById("broadcast-modal");
   const modalContent = document.getElementById("modal-content");
-
   modal.classList.remove("active");
   document.body.classList.remove("modal-open");
-
   setTimeout(() => {
     modalContent.innerHTML = "";
   }, 300);
 }
 
+// Busca e exibe transmissões relacionadas
 function loadRelatedBroadcasts(current) {
   const grid = document.getElementById("related-grid");
   fetch("https://api.xcam.gay/?limit=100")
@@ -132,7 +133,7 @@ function loadRelatedBroadcasts(current) {
         .filter(
           (b) =>
             b.id !== current.id &&
-            (b.country === current.country || b.gender === current.gender)
+            (b.gender === current.gender || b.country === current.country)
         )
         .slice(0, 4);
 
@@ -149,9 +150,7 @@ function loadRelatedBroadcasts(current) {
           <div class="related-thumbnail">
             <img src="${b.preview?.poster}" alt="${b.username}" loading="lazy">
             <div class="related-overlay">
-              <div class="related-play">
-                <i class="fas fa-play"></i>
-              </div>
+              <div class="related-play"><i class="fas fa-play"></i></div>
             </div>
             <div class="related-badge">AO VIVO</div>
           </div>
