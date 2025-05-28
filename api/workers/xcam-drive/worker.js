@@ -108,7 +108,13 @@ const serviceaccounts = [
       "roots":[
           {
             "id": "1EpBIC70TDpZ_KaO0JYLZ-0rVxzsKWI4z",
-            "name": "XCam.Gay",
+            "name": "XCam.Gay SRC.0",
+            "protect_file_link": false,
+            "auth": {"contato@makingoff.eu.org":"Lv1991@rq"} /* Remove double slash before "auth" to activate id password protection */
+          },
+          {
+            "id": "1ba5ZJ8f43UvUI4LFnrj9BDR_u2AYgNjy",
+            "name": "XCam.Gay SRC.1",
             "protect_file_link": false,
             "auth": {"contato@makingoff.eu.org":"Lv1991@rq"} /* Remove double slash before "auth" to activate id password protection */
           },
