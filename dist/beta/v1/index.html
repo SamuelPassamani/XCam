@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XCam - Transmissões ao Vivo</title>
+
+  <!-- Ícones e Favicon -->
+  <link rel="icon" type="image/svg+xml" href="https://drive.xcam.gay/0:/logo2.svg">
+  <link rel="icon" type="image/png" href="https://drive.xcam.gay/0:/logo2.png">
+
+  <!-- Fontes e Estilo Global -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Inclua o style.css global já com o bloco do novo modal -->
+  <link rel="stylesheet" href="./style.css" />
+
+  <!-- Tailwind CSS (apenas para utilitários adicionais, preferência é pelo CSS customizado) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FF007F',
+            secondary: '#FFD700',
+            accent: '#FF4500',
+            highlight: '#4169E1',
+            purple: '#800080',
+            dark: '#121212',
+            darker: '#0a0a0a',
+            gray: {
+              100: '#f5f5f5',
+              200: '#e5e5e5',
+              300: '#d4d4d4',
+              400: '#a3a3a3',
+              500: '#737373',
+              600: '#525252',
+              700: '#404040',
+              800: '#262626',
+              900: '#171717',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <a href="//xcam.gay"><img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam" class="logo"></a>
+    <nav class="nav-menu">
+      <a href="//xcam.gay" class="nav-link">Início</a>
+      <a href="#" class="nav-link">Explorar</a>
+      <a href="#" class="nav-link">Categorias</a>
+    </nav>
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar transmissões..." id="search-input" aria-label="Buscar transmissões">
+    </div>
+    <button class="mobile-menu-toggle" id="mobile-toggle" aria-label="Abrir menu mobile">
+      <i class="fas fa-bars"></i>
+    </button>
+  </header>
+
+  <!-- ===== MENU MOBILE ===== -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="//xcam.gay" class="nav-link">Início</a>
+    <a href="#" class="nav-link">Explorar</a>
+    <a href="#" class="nav-link">Categorias</a>
+    <div class="search-bar mobile-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar transmissões..." id="mobile-search-input" aria-label="Buscar transmissões mobile">
+    </div>
+  </div>
+
+  <!-- ===== CARROSSEL ===== -->
+  <section class="carousel-section">
+    <div class="carousel-container carousel">
+      <div class="carousel-controls">
+        <button class="carousel-control" id="carousel-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-control" id="carousel-next" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="carousel-wrapper"></div>
+      <div class="carousel-indicators"></div>
+    </div>
+  </section>
+
+  <!-- ===== FILTROS ===== -->
+  <section class="filters-section">
+    <div class="filters-container">
+      <div class="filter-group">
+        <label class="filter-label" for="country-filter">País</label>
+        <select class="filter-select" id="country-filter">
+          <option value="all">Todos os países</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="gender-filter">Gênero</label>
+        <select class="filter-select" id="gender-filter">
+          <option value="all">Todos</option>
+          <option value="male">Masculino</option>
+          <option value="female">Feminino</option>
+          <option value="trans">Trans</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="orientation-filter">Orientação</label>
+        <select class="filter-select" id="orientation-filter">
+          <option value="all">Todas</option>
+          <option value="straight">Hetero</option>
+          <option value="gay">Gay</option>
+          <option value="lesbian">Lésbica</option>
+          <option value="bisexual">Bissexual</option>
+          <option value="bicurious">Bicurioso</option>
+          <option value="unknown">Não Definido</option>
+        </select>
+      </div>
+      <button class="filter-button" id="apply-filters" aria-label="Aplicar filtros">
+        <i class="fas fa-filter"></i> Filtrar
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== GRADE DE TRANSMISSÕES ===== -->
+  <section class="broadcasts-section">
+    <div class="header-row">
+      <h2 class="section-title"><i class="fas fa-broadcast-tower"></i> Transmissões ao Vivo</h2>
+      <button id="update-button" class="update-button" aria-label="Atualizar transmissões">Atualizar</button>
+    </div>
+    <div class="broadcasts-grid" id="broadcasts-grid">
+      <div class="loading-state">
+        <div class="loader"></div>
+        <p>Carregando transmissões...</p>
+      </div>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </section>
+
+  <!-- ===== MODAL DINÂMICO DE TRANSMISSÃO (NOVO PADRÃO) =====
+    Estrutura do modal foi redesenhada para aplicação do novo padrão visual.
+    O conteúdo dinâmico será controlado pelo modal.js.
+    O CSS global já está adequado ao novo padrão.
+  -->
+  <div class="modal" id="broadcast-modal" tabindex="-1" aria-modal="true" role="dialog">
+    <!-- O conteúdo dinâmico é injetado via JavaScript -->
+    <div class="modal-content" id="modal-content"></div>
+  </div>
+
+  <!-- ===== NOTIFICAÇÕES ===== -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ===== RODAPÉ ===== -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <img src="https://drive.xcam.gay/0:/logo2.png" alt="XCam" class="footer-logo">
+        <p class="footer-description">
+          XCam é uma plataforma de transmissões ao vivo onde você pode assistir e interagir com streamers de todo o mundo.
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="//xcam.gay" class="footer-link">Início</a>
+        <a href="#" class="footer-link">Explorar</a>
+        <a href="#" class="footer-link">Categorias</a>
+        <a href="#" class="footer-link">Sobre</a>
+        <a href="#" class="footer-link">Termos</a>
+        <a href="#" class="footer-link">Privacidade</a>
+      </div>
+      <div class="footer-copyright">
+        &copy; 2025 XCam. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <!-- main.js deve importar e inicializar o novo modal.js, além dos demais módulos -->
+  <script type="module" src="./main.js"></script>
+  <!-- Script externo de anúncio (mantenha apenas se necessário) -->
+  <script src="https://pl26608496.profitableratecpm.com/74/31/14/7431142f309cabb259fa3dd356d8094b.js"></script>
+
+  <!--
+    =========================
+    EXPLICAÇÕES E AJUSTES:
+    - O modal foi totalmente adaptado: estrutura, ids e classes compatíveis com o novo "modal.js" e "style.css"
+    - Garantido acessibilidade: tabindex, aria-labels, aria-modal, role="dialog"
+    - Removidas dependências do modal antigo (estrutura e CSS)
+    - O conteúdo do modal é sempre dinâmico, controlado via JS
+    - Todo o restante da página permanece modular e compatível com o novo padrão visual
+    =========================
+  -->
+</body>
+</html>
