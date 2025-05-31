@@ -1,0 +1,12 @@
+[build]
+  command = "echo No build by default"
+  publish = "."
+
+[context.player]
+  command = "npm run build"
+  publish = "player"
+  functions = "netlify/functions"
+  ignore = "bash ./scripts/ignore-player.sh"
+  [context.player.environment]
+    NODE_ENV = "production"
+    SITE_NAME = "player.xcam.gay"
