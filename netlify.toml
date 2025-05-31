@@ -2,11 +2,56 @@
   command = "echo No build by default"
   publish = "."
 
-[context.player]
+# Contexto para xcam.gay (principal)
+[context.production]
   command = "npm run build"
+  publish = "dist"
+  ignore = "bash ./scripts/ignore-xcam.sh"
+  [context.production.environment]
+    NODE_ENV = "production"
+    SITE_NAME = "xcam.gay"
+
+# Contexto para beta.xcam.gay
+[context.beta]
+  command = "npm run build:beta"
+  publish = "dist/beta"
+  ignore = "bash ./scripts/ignore-beta.sh"
+  [context.beta.environment]
+    NODE_ENV = "production"
+    SITE_NAME = "beta.xcam.gay"
+
+# Contexto para api.xcam.gay
+[context.api]
+  command = "echo No build for API"
+  publish = "api/netlify/xcam-gay"
+  ignore = "bash ./scripts/ignore-api.sh"
+  [context.api.environment]
+    NODE_ENV = "production"
+    SITE_NAME = "api.xcam.gay"
+
+# Contexto para player.xcam.gay
+[context.player]
+  command = "npm run build:player"
   publish = "player"
-  functions = "netlify/functions"
   ignore = "bash ./scripts/ignore-player.sh"
   [context.player.environment]
     NODE_ENV = "production"
     SITE_NAME = "player.xcam.gay"
+
+# Contexto para status.xcam.gay
+[context.status]
+  command = "npm run build:status"
+  publish = "status"
+  ignore = "bash ./scripts/ignore-status.sh"
+  [context.status.environment]
+    NODE_ENV = "production"
+    SITE_NAME = "status.xcam.gay"
+
+# Contexto para drive.xcam.gay
+[context.drive]
+  command = "echo No build for drive"
+  publish = "api/netlify/xcam-drive"
+  ignore = "bash ./scripts/ignore-drive.sh"
+  [context.drive.environment]
+    NODE_ENV = "production"
+    SITE_NAME = "drive.xcam.gay"
