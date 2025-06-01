@@ -1,11 +1,12 @@
 [[redirects]]
-  from = "/*"
-  to = "https://xcam-app.aserio.workers.dev/player/:splat"
-  status = 200
-  force = true
-    [redirects.headers]
-    Access-Control-Allow-Origin = ""
-    Access-Control-Allow-Headers = ""
-    Access-Control-Allow-Methods = ""
-    Access-Control-Allow-Credentials = ""
-    Vary = ""
+from = "/*"
+to = "https://xcam-app.aserio.workers.dev/player/:splat"
+status = 200
+force = true
+
+  [redirects.headers]
+  Access-Control-Allow-Origin = "*"
+  Access-Control-Allow-Headers = "Content-Type, Authorization"
+  Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+  Access-Control-Allow-Credentials = "true"
+  Vary = "Origin"
