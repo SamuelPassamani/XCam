@@ -19,7 +19,6 @@ function jsonToCsv(items) {
 const ALLOWED_ORIGINS = [
   "https://xcam.gay",
   "https://beta.xcam.gay",
-  "https://player.xcam.gay",
   "https://live.xcam.gay",
   "https://xcam-app.aserio.workers.dev",
   "https://xcam-api.aserio.workers.dev",
