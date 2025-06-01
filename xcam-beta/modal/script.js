@@ -57,7 +57,7 @@ function openUserModal(userData) {
   // This function would be used to dynamically populate the modal with user data
   // For example:
   // document.querySelector('.modal-title').textContent = '@' + userData.username;
-  // document.querySelector('.player-iframe').src = `https://player.xcam.gay/?user=${userData.username}`;
+  // document.querySelector('.player-iframe').src = `https://live.xcam.gay/?user=${userData.username}`;
   // etc.
   // Then open the modal
   document.getElementById("modalOverlay").classList.add("active");
