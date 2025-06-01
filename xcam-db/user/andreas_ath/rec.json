@@ -1,6 +1,6 @@
 {
   "username": "andreas_ath",
-  "records": 1,
+  "records": 2,
   "videos": [
     {
       "video": "dSDm2AZlV",
@@ -12,6 +12,17 @@
       "data": "01-06-2025",
       "horario": "05-28",
       "tempo": "33m"
+    },
+    {
+      "video": "RCDPU_FIn",
+      "title": "andreas_ath_01-06-2025_10-48_39m24s",
+      "file": "andreas_ath_01-06-2025_10-48_39m24s.mp4",
+      "url": "https://short.icu/RCDPU_FIn",
+      "poster": "https://db.xcam.gay/user/andreas_ath/RCDPU_FIn.jpg",
+      "urlIframe": "https://short.icu/RCDPU_FIn?thumbnail=https://db.xcam.gay/user/andreas_ath/RCDPU_FIn.jpg",
+      "data": "01-06-2025",
+      "horario": "10-48",
+      "tempo": "39m24s"
     }
   ]
 }
