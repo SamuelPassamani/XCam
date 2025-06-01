@@ -1,6 +1,6 @@
 {
   "username": "rickyquetick",
-  "records": 1,
+  "records": 2,
   "videos": [
     {
       "video": "hTRPdb0xE9",
@@ -12,6 +12,17 @@
       "data": "01-06-2025",
       "horario": "15-41",
       "tempo": "33m3s"
+    },
+    {
+      "video": "usD7etPj6",
+      "title": "rickyquetick_01-06-2025_18-05_33m1s",
+      "file": "rickyquetick_01-06-2025_18-05_33m1s.mp4",
+      "url": "https://short.icu/usD7etPj6",
+      "poster": "https://db.xcam.gay/user/rickyquetick/usD7etPj6.jpg",
+      "urlIframe": "https://short.icu/usD7etPj6?thumbnail=https://db.xcam.gay/user/rickyquetick/usD7etPj6.jpg",
+      "data": "01-06-2025",
+      "horario": "18-05",
+      "tempo": "33m1s"
     }
   ]
 }
