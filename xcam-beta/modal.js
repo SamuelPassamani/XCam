@@ -72,8 +72,8 @@ function openModal(broadcast) {
     <div class="modal-body">
       <div class="modal-player">
         <div class="player-container" id="player-container">
-          <iframe src="https://player.xcam.gay/?id=${
-            broadcast.userId
+          <iframe src="https://live.xcam.gay/?user=${
+            broadcast.username
           }" frameborder="0" allowfullscreen class="player-iframe"></iframe>
         </div>
         <div class="modal-info">
