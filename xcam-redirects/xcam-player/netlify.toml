@@ -1,5 +1,5 @@
 [[redirects]]
 from = "/*"
-to = "https://xcam-app.aserio.workers.dev/player/:splat"
+to = "https://samuelpassamani.github.io/XCam/xcam-app/dist/player/:splat"
 status = 200
 force = true
