@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "https://samuelpassamani.github.io/XCam/xcam-db/"
+  to = "https://samuelpassamani.github.io/XCam/xcam-db/:splat"
   status = 200
   force = true
     [redirects.headers]
