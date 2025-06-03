@@ -3,3 +3,9 @@ from = "/*"
 to = "https://samuelpassamani.github.io/XCam/xcam-app/dist/player/:splat"
 status = 200
 force = true
+    [redirects.headers]
+    Access-Control-Allow-Origin = ""
+    Access-Control-Allow-Headers = ""
+    Access-Control-Allow-Methods = ""
+    Access-Control-Allow-Credentials = ""
+    Vary = ""
