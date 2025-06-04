@@ -1,8 +1,8 @@
 [[redirects]]
-from = "/*"
-to = "https://samuelpassamani.github.io/XCam/player/:splat"
-status = 200
-force = true
+  from = "/*"
+  to = "https://samuelpassamani.github.io/XCam/xcam-player/:splat"
+  status = 200
+  force = true
     [redirects.headers]
     Access-Control-Allow-Origin = ""
     Access-Control-Allow-Headers = ""
