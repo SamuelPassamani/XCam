@@ -36,9 +36,17 @@ const ALLOWED_ORIGINS = [
   "https://ab.chatgpt.com",
   "https://chatgpt.com",
   "https://cdn.oaistatic.com",
-  "https://codepen.io/",
+  "https://codepen.io",
   "https://cdpn.io",
-  "https://cpwebassets.codepen.io"
+  "https://cpwebassets.codepen.io",
+  "https://netlify.app",
+  "https://xcamgay.netlify.app",
+  "https://xcam-modal.netlify.app",
+  "https://xcam-db.netlify.app",
+  "https://xcam-drive.netlify.app",
+  "https://xcam-status.netlify.app",
+  "https://xcam-player.netlify.app",
+  "https://xcam-beta.netlify.app"
 ];
 
 // === Headers CORS dinâmicos (versão corrigida) ===
