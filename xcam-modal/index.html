@@ -1,0 +1,96 @@
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XCam - Modal de Transmissão</title>
+  <!-- Folha de estilos principal do modal -->
+  <link rel="stylesheet" href="./style.css">
+  <!-- Fonte do projeto -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Overlay principal do modal (cobre toda a tela) -->
+  <div id="modalOverlay" class="modal-overlay active">
+    <div class="modal">
+      <!-- Cabeçalho do modal (exibe o nome/título do usuário) -->
+      <div class="modal-header">
+        <h2 class="modal-title"></h2>
+      </div>
+
+      <!-- Corpo do modal (divide player e informações do usuário) -->
+      <div class="modal-body">
+        <!-- Coluna do player de vídeo -->
+        <div class="player-container">
+          <div class="player-aspect-ratio">
+            <!-- Player de transmissão ao vivo (iframe) -->
+            <iframe class="player-iframe" src="" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <!-- Coluna com informações detalhadas do usuário -->
+        <div class="user-info">
+          <div class="user-header">
+            <!-- Avatar do usuário -->
+            <div class="user-avatar"></div>
+            <div class="user-details">
+              <!-- Nome do usuário -->
+              <div class="user-name"></div>
+              <!-- País do usuário (bandeira + nome) -->
+              <div class="user-country">
+                <img class="country-flag" src="" alt="Bandeira do país" loading="lazy" style="display:none;">
+                <span class="country-name"></span>
+              </div>
+              <!-- Contagem de espectadores ao vivo -->
+              <div class="user-viewers">
+                <!-- Ícone de olho para espectadores -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span></span>
+              </div>
+              <!-- Estatísticas do usuário (sexo, orientação sexual, tipo transmissão) -->
+              <div class="user-stats">
+                <div class="stat-item">
+                  <!-- Ícone de sexo (inserido dinamicamente via JS) -->
+                  <span></span>
+                </div>
+                <div class="stat-item">
+                  <!-- Ícone de orientação sexual (inserido dinamicamente via JS) -->
+                  <span></span>
+                </div>
+                <div class="stat-item">
+                  <!-- Ícone do tipo de transmissão (inserido dinamicamente via JS) -->
+                  <span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tags do usuário/transmissão (hashtags dinâmicas) -->
+          <div class="user-tags"></div>
+
+          <!-- Seção Sobre (bio do usuário) -->
+          <div class="info-section">
+            <h3 class="info-section-title">Sobre</h3>
+            <p class="info-section-content"></p>
+          </div>
+
+          <!-- Seção de redes sociais -->
+          <div class="info-section">
+            <h3 class="info-section-title">Redes Sociais</h3>
+            <div class="social-links">
+              <!-- Links das redes sociais (ícones SVG inseridos dinamicamente via JS) -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Script principal do modal (responsável por preencher todos os dados dinamicamente) -->
+  <script src="./script.js"></script>
+</body>
+
+</html>
