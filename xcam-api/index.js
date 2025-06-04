@@ -16,43 +16,30 @@ function jsonToCsv(items) {
 }
 
 // === Lista de domínios permitidos para CORS ===
-const ALLOWED_ORIGINS = {
-  "XCam": [
-    "https://xcam.gay",
-    "https://beta.xcam.gay",
-    "https://player.xcam.gay",
-    "https://db.xcam.gay",
-    "https://modal.xcam.gay",
-    "https://live.xcam.gay",
-    "https://status.xcam.gay",
-    "https://drive.xcam.gay"
-  ],
-  "GitHub": [
-    "https://samuelpassamani.github.io"
-  ],
-  "Asério Workers": [
-    "https://xcam-app.aserio.workers.dev",
-    "https://xcam-api.aserio.workers.dev"
-  ],
-  "Google Scripts": [
-    "https://script.google.com",
-    "https://script.googleusercontent.com"
-  ],
-  "OpenAI": [
-    "https://web-sandbox.oaiusercontent.com",
-    "https://persistent.oaistatic.com",
-    "https://openai.com",
-    "https://ab.chatgpt.com",
-    "https://chatgpt.com",
-    "https://cdn.oaistatic.com"
-  ],
-  "CodePen": [
-    "https://codepen.io/",
-    "https://cdpn.io",
-    "https://cpwebassets.codepen.io"
-  ]
-};
-
+const ALLOWED_ORIGINS = [
+  "https://xcam.gay",
+  "https://beta.xcam.gay",
+  "https://player.xcam.gay",
+  "https://db.xcam.gay",
+  "https://modal.xcam.gay",
+  "https://live.xcam.gay",
+  "https://status.xcam.gay",
+  "https://drive.xcam.gay",
+  "https://samuelpassamani.github.io",
+  "https://xcam-app.aserio.workers.dev",
+  "https://xcam-api.aserio.workers.dev",
+  "https://script.google.com",
+  "https://script.googleusercontent.com",
+  "https://web-sandbox.oaiusercontent.com",
+  "https://persistent.oaistatic.com",
+  "https://openai.com",
+  "https://ab.chatgpt.com",
+  "https://chatgpt.com",
+  "https://cdn.oaistatic.com",
+  "https://codepen.io/",
+  "https://cdpn.io",
+  "https://cpwebassets.codepen.io"
+];
 
 // === Headers CORS dinâmicos (versão corrigida) ===
 function getCorsHeaders(origin) {

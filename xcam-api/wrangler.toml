@@ -18,3 +18,7 @@ account_id = "962d0bd07aad1f73db41e18f45cb7470"
     Access-Control-Allow-Methods = ""
     Access-Control-Allow-Credentials = ""
     Vary = ""
+
+# wrangler.toml (wrangler v3.88.0^)
+[observability.logs]
+enabled = true
