@@ -8,6 +8,7 @@
   --transition-speed: 0.3s;
 }
 
+/* Reset de margin, padding e tipografia base */
 * {
   margin: 0;
   padding: 0;
@@ -15,23 +16,30 @@
   font-family: "Inter", sans-serif;
 }
 
+/* Corpo da página/modal centralizado e ocupando toda a viewport */
 body {
   background-color: #121212;
   color: var(--text-primary);
   min-height: 100vh;
+  min-width: 100vw;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 0;
 }
 
-/* Modal Container */
+/* Overlay do modal (fundo escurecido, cobre toda tela) */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background-color: var(--modal-overlay);
   display: flex;
   align-items: center;
@@ -43,86 +51,73 @@ body {
     visibility var(--transition-speed) ease;
 }
 
+/* Overlay ativo (visível) */
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
 }
 
+/* Container principal do modal em fullscreen */
 .modal {
-  width: 90vw;
-  max-width: 1200px;
-  max-height: 90vh;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
   background-color: var(--modal-bg);
-  border-radius: var(--border-radius);
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  transform: scale(0.95);
-  transition: transform var(--transition-speed) ease;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-}
-
-.modal-overlay.active .modal {
+  overflow-x: hidden;
   transform: scale(1);
+  transition: none;
+  box-shadow: none;
 }
 
-/* Modal Header */
+/* Cabeçalho do modal com título */
 .modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 16px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Título do modal */
 .modal-title {
   font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.modal-close {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 20px;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all var(--transition-speed) ease;
-}
-
-.modal-close:hover {
-  color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Modal Body */
+/* Corpo do modal em grid: player + informações do usuário */
 .modal-body {
   padding: 24px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 24px;
+  flex: 1;
+  height: 1px;
+  overflow-y: auto;
 }
 
-/* Player Container */
+/* Container do player de vídeo */
 .player-container {
   position: relative;
   border-radius: var(--border-radius);
   overflow: hidden;
   background-color: #000;
+  height: 100%;
+  min-height: 320px;
 }
 
+/* Mantém proporção 16:9 para o player usando padding hack */
 .player-aspect-ratio {
   padding-top: 56.25%;
-  /* 16:9 Aspect Ratio */
   position: relative;
 }
 
+/* Iframe do player ocupa todo o container */
 .player-iframe {
   position: absolute;
   top: 0;
@@ -132,6 +127,7 @@ body {
   border: none;
 }
 
+/* Logo do player, caso usado, no canto superior direito */
 .player-logo {
   position: absolute;
   top: 8px;
@@ -142,24 +138,25 @@ body {
   opacity: 0.8;
   transition: opacity var(--transition-speed) ease;
 }
-
 .player-logo:hover {
   opacity: 1;
 }
 
-/* User Info Container */
+/* Informações do usuário em coluna */
 .user-info {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+/* Cabeçalho do usuário: avatar + dados */
 .user-header {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
+/* Avatar do usuário: círculo colorido ou imagem */
 .user-avatar {
   width: 64px;
   height: 64px;
@@ -174,16 +171,19 @@ body {
   color: var(--text-primary);
 }
 
+/* Imagem do avatar ocupa todo espaço do avatar */
 .user-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+/* Bloco com nome, país, viewers, stats */
 .user-details {
   flex: 1;
 }
 
+/* Nome do usuário em destaque */
 .user-name {
   font-weight: bold;
   font-size: 16px;
@@ -191,6 +191,7 @@ body {
   margin-bottom: 4px;
 }
 
+/* País: bandeira e nome */
 .user-country {
   display: flex;
   align-items: center;
@@ -198,16 +199,19 @@ body {
   margin-bottom: 8px;
 }
 
+/* Bandeira do país */
 .country-flag {
   height: 18px;
   width: auto;
 }
 
+/* Nome do país */
 .country-name {
   font-size: 14px;
   color: var(--text-secondary);
 }
 
+/* Contagem de espectadores ao vivo */
 .user-viewers {
   display: flex;
   align-items: center;
@@ -216,6 +220,7 @@ body {
   color: var(--text-secondary);
 }
 
+/* Estatísticas do usuário (gênero, orientação, tipo transmissão) */
 .user-stats {
   display: flex;
   flex-wrap: wrap;
@@ -223,6 +228,7 @@ body {
   margin-top: 8px;
 }
 
+/* Cada item de estatística (pílula visual) */
 .stat-item {
   display: flex;
   align-items: center;
@@ -234,6 +240,27 @@ body {
   border-radius: 16px;
 }
 
+/* Ícones SVG padrão dentro das estatísticas */
+.stat-item svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Ícone de gênero (gender) um pouco maior e melhor alinhado */
+.gender-icon {
+  width: 23px;
+  height: 23px;
+  min-width: 23px;
+  min-height: 23px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 5px;
+}
+
+/* Tags do usuário/transmissão (hashtags) */
 .user-tags {
   display: flex;
   flex-wrap: wrap;
@@ -241,6 +268,7 @@ body {
   margin-top: 8px;
 }
 
+/* Visual das tags (pílula colorida) */
 .tag {
   background: linear-gradient(90deg, var(--accent-color) 0%, #7b2cbf 100%);
   color: var(--text-primary);
@@ -249,12 +277,14 @@ body {
   border-radius: 16px;
 }
 
+/* Bloco de seção de informações (bio, redes sociais) */
 .info-section {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: var(--border-radius);
   padding: 16px;
 }
 
+/* Título da seção de informações */
 .info-section-title {
   font-size: 14px;
   color: var(--text-secondary);
@@ -262,18 +292,21 @@ body {
   font-weight: 500;
 }
 
+/* Conteúdo da bio */
 .info-section-content {
   font-size: 14px;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
+/* Links de redes sociais (ícones em círculos) */
 .social-links {
   display: flex;
   gap: 12px;
   margin-top: 8px;
 }
 
+/* Botão de rede social (círculo de fundo) */
 .social-link {
   width: 32px;
   height: 32px;
@@ -286,55 +319,38 @@ body {
   transition: all var(--transition-speed) ease;
 }
 
+/* Efeito hover no botão de rede social */
 .social-link:hover {
   background-color: var(--accent-color);
   transform: translateY(-2px);
 }
 
+/* Ícone SVG da rede social (tamanho padrão) */
 .social-link svg {
   width: 16px;
   height: 16px;
 }
 
-/* Demo Button */
-.demo-button {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--accent-color);
-  color: var(--text-primary);
-  border: none;
-  padding: 12px 24px;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-speed) ease;
-}
-
-.demo-button:hover {
-  background-color: #ff4785;
-  transform: translateX(-50%) translateY(-2px);
-}
-
-/* Responsive Styles */
+/* RESPONSIVIDADE PARA TELAS PEQUENAS */
 @media (max-width: 768px) {
   .modal-body {
     grid-template-columns: 1fr;
+    padding: 8px;
+    gap: 8px;
   }
-
   .user-header {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .user-avatar {
     width: 56px;
     height: 56px;
     font-size: 20px;
   }
-
   .player-logo {
     width: 60px;
+  }
+  .modal-header {
+    padding: 10px 12px;
   }
 }
