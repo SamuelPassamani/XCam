@@ -85,25 +85,15 @@ function formatSocialLinks(socialNetworks) {
 }
 
 /**
- * Retorna o SVG apropriado para o gênero informado.
- * Masculino: símbolo masculino (SVG com classe especial e tamanho maior),
- * Feminino: símbolo feminino (SVG com classe especial e tamanho maior),
- * Outros: símbolo transgênero (SVG com classe especial e tamanho maior).
- *
- * @param {string} genderString - Gênero em inglês ou português
- * @returns {string} SVG do ícone de gênero com classe e tamanho ajustados
+ * Retorna o SVG universal para gênero informado.
+ * Este ícone será utilizado para todos os valores de gender.
+ * @returns {string} SVG universal de gender
  */
-function getGenderIcon(genderString) {
-  const genderIcons = {
-    male: `<svg class="gender-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 320 512"><path d="M304 32h-79c-13.3 0-24 10.7-24 24s10.7 24 24 24h33.4l-73.2 73.2c-21.9-13.7-47.6-21.7-75.2-21.7C48.5 131.5 0 180 0 240.5S48.5 349.5 108.9 349.5 217.8 301 217.8 240.5c0-27.6-8-53.3-21.7-75.2l73.2-73.2V112c0 13.3 10.7 24 24 24s24-10.7 24-24V32zm-195.1 304c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80z"/></svg>`,
-    female: `<svg class="gender-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 320 512"><path d="M288 176c0-79.5-64.5-144-144-144S0 96.5 0 176c0 70.7 51.3 129 119.1 142.2V368H88a16 16 0 0 0 0 32h31.1v48a16 16 0 0 0 32 0v-48H184a16 16 0 0 0 0-32h-31.1v-49.8C236.7 305 288 246.7 288 176zm-144 112c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"/></svg>`,
-    other: `<svg class="gender-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 384 512"><path d="M120 80a56 56 0 1 1 112 0 56 56 0 1 1 -112 0zM192 160c-44.2 0-80 35.8-80 80 0 39.7 29.2 72.7 67.3 79.1C172.5 334.9 160 355.6 160 380v4c0 13.3 10.7 24 24 24s24-10.7 24-24v-4c0-24.4-12.5-45.1-19.3-60.9C242.8 312.7 272 279.7 272 240c0-44.2-35.8-80-80-80z"/></svg>`
-  };
-  if (!genderString) return genderIcons.other;
-  const g = genderString.trim().toLowerCase();
-  if (g === "male" || g === "masculino") return genderIcons.male;
-  if (g === "female" || g === "feminino") return genderIcons.female;
-  return genderIcons.other;
+function getGenderIcon() {
+  // SVG universal padronizado para todos os valores de gênero
+  return `<svg fill="currentColor" width="19" height="19" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+    <path d="M219.9978,23.95557q-.00219-.56984-.05749-1.13819c-.018-.18408-.05237-.36279-.07849-.54443-.02979-.20557-.05371-.41211-.09424-.61621-.04029-.20362-.09607-.40088-.14649-.60059-.04541-.18017-.08484-.36084-.13867-.53906-.05884-.19434-.13159-.38135-.19971-.57129-.06445-.17969-.12353-.36084-.19677-.5376-.07349-.17724-.15967-.34668-.24109-.51953-.08582-.18213-.16687-.36621-.26257-.54492-.088-.16455-.18824-.32031-.2837-.48047-.10534-.17627-.2052-.355-.32031-.52685-.11572-.17334-.24475-.33545-.369-.502-.11-.14746-.21252-.29834-.3302-.4414-.23462-.28614-.4834-.55957-.74316-.82227-.01782-.01807-.03247-.03809-.05054-.05615-.01831-.01856-.03857-.0332-.05688-.05127q-.39441-.38966-.82227-.74317c-.13965-.11474-.28686-.21435-.43042-.32177-.16992-.127-.33606-.25879-.51269-.377-.16883-.11328-.34424-.21093-.51734-.31445-.16333-.09765-.32324-.20019-.49145-.29-.1731-.09277-.3512-.1709-.52759-.25439-.17871-.08448-.35462-.17383-.538-.24951-.16932-.07032-.34229-.12647-.514-.18848-.19751-.07129-.39307-.14649-.59534-.208-.16882-.05078-.34045-.08789-.51086-.13135-.20874-.05322-.41529-.11132-.62818-.15332-.19055-.03759-.383-.05957-.57507-.08789-.19544-.02881-.38831-.06494-.58679-.08447-.33252-.03271-.666-.04541-.99988-.05078C208.11853,12.0083,208.0603,12,208,12H172a12,12,0,0,0,0,24h7.0293l-15.051,15.05127A71.97526,71.97526,0,1,0,108,178.981V192H88a12,12,0,0,0,0,24h20v16a12,12,0,0,0,24,0V216h20a12,12,0,0,0,0-24H132V178.981A71.928,71.928,0,0,0,180.27783,68.69287L196,52.9707V60a12,12,0,0,0,24,0V24C220,23.98486,219.9978,23.97021,219.9978,23.95557ZM120,156a48,48,0,1,1,48-48A48.05468,48.05468,0,0,1,120,156Z"/>
+  </svg>`;
 }
 
 /**
@@ -232,7 +222,7 @@ function updateModal({ user, broadcast }) {
     </g>
   </svg>`;
 
-  // Gênero (gender) - busca preferencialmente no broadcast, depois no user
+  // Gênero (gender) - usa SVG universal e a tradução do valor
   let genderValue =
     broadcast && broadcast.gender
       ? broadcast.gender
@@ -240,7 +230,7 @@ function updateModal({ user, broadcast }) {
       ? user.gender
       : null;
   if (genderValue) {
-    statItems[0].innerHTML = `${getGenderIcon(genderValue)} <span>${escapeHTML(
+    statItems[0].innerHTML = `${getGenderIcon()} <span>${escapeHTML(
       translate("gender", genderValue)
     )}</span>`;
   } else {
