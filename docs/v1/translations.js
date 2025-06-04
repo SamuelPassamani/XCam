@@ -1,0 +1,324 @@
+/**
+ * XCam - translations.js
+ * Módulo central de traduções, nomes de países e utilitários para exibição na UI.
+ * -----------------------------------------------------------------------------
+ * - Estrutura modular, pronta para Clean Architecture
+ * - Compatível com novo padrão visual/modal.html
+ * - Foco em clareza, acessibilidade, fácil manutenção e expansão
+ * - Comentários detalhados para onboarding técnico
+ */
+
+// Mapa de traduções para campos principais de perfil e filtros
+export const translations = {
+  gender: {
+    male: "Masculino",
+    female: "Feminino",
+    trans: "Transgênero",
+    unknown: "Não informado"
+  },
+  sexPreference: {
+    bisexual: "Bissexual",
+    straight: "Heterossexual",
+    gay: "Gay",
+    lesbian: "Lésbica",
+    unknown: "Não informado"
+  },
+  ethnicity: {
+    black: "Negro",
+    white: "Branco",
+    asian: "Asiático",
+    latino: "Latino",
+    mixed: "Mestiço",
+    other: "Outro",
+    unknown: "Não informado"
+  },
+  maritalStatus: {
+    single: "Solteiro",
+    married: "Casado",
+    separated: "Separado",
+    divorced: "Divorciado",
+    widowed: "Viúvo",
+    unknown: "Não informado"
+  },
+  maleBodyType: {
+    AVERAGE: "Médio",
+    SLIM: "Magro",
+    ATHLETIC: "Atlético",
+    MUSCULAR: "Musculoso",
+    CHUBBY: "Gordinho",
+    unknown: "Não informado"
+  },
+  penisSize: {
+    SMALL: "Pequeno",
+    MEDIUM: "Médio",
+    BIG: "Grande",
+    unknown: "Não informado"
+  },
+  penisType: {
+    UNCUT: "Não Circuncidado",
+    CUT: "Circuncidado",
+    unknown: "Não informado"
+  },
+  maleType: {
+    TWINK: "Magro",
+    BEAR: "Ursão",
+    DADDY: "Maduro",
+    JOCK: "Esportista",
+    OTTER: "Peludo",
+    unknown: "Não informado"
+  },
+  maleRole: {
+    TOP: "Ativo",
+    BOTTOM: "Passivo",
+    VERSATILE: "Versátil",
+    unknown: "Não informado"
+  },
+  bodyHair: {
+    none: "Sem pelos",
+    average: "Poucos pelos",
+    hairy: "Peludo",
+    unknown: "Não informado"
+  },
+  heightUnit: {
+    metric: "cm",
+    imperial: "polegadas"
+  },
+  mainLanguage: {
+    es: "Espanhol",
+    en: "Inglês",
+    pt: "Português",
+    fr: "Francês",
+    de: "Alemão",
+    it: "Italiano",
+    unknown: "Não informado"
+  },
+  smoke: {
+    yes: "Sim",
+    no: "Não",
+    occasionally: "Ocasionalmente",
+    unknown: "Não informado"
+  },
+  drink: {
+    yes: "Sim",
+    no: "Não",
+    occasionally: "Ocasionalmente",
+    unknown: "Não informado"
+  }
+};
+
+// Mapa de nomes de países, código ISO2 → nome em português
+export const countryNames = {
+  ae: "Emirados Árabes Unidos",
+  af: "Afeganistão",
+  al: "Albânia",
+  am: "Armênia",
+  ao: "Angola",
+  ar: "Argentina",
+  as: "Samoa Americana",
+  at: "Áustria",
+  au: "Austrália",
+  az: "Azerbaijão",
+  ba: "Bósnia e Herzegovina",
+  bb: "Barbados",
+  bd: "Bangladesh",
+  be: "Bélgica",
+  bf: "Burquina Faso",
+  bg: "Bulgária",
+  bh: "Bahrein",
+  bi: "Burundi",
+  bj: "Benin",
+  bm: "Bermudas",
+  bn: "Brunei",
+  bo: "Bolívia",
+  br: "Brasil",
+  bs: "Bahamas",
+  bt: "Butão",
+  bw: "Botsuana",
+  by: "Belarus",
+  bz: "Belize",
+  ca: "Canadá",
+  cd: "República Democrática do Congo",
+  cf: "República Centro-Africana",
+  cg: "Congo",
+  ch: "Suíça",
+  cl: "Chile",
+  cm: "Camarões",
+  cn: "China",
+  co: "Colômbia",
+  cr: "Costa Rica",
+  cu: "Cuba",
+  cv: "Cabo Verde",
+  cw: "Curaçao",
+  cy: "Chipre",
+  cz: "República Tcheca",
+  de: "Alemanha",
+  dj: "Djibuti",
+  dk: "Dinamarca",
+  dm: "Dominica",
+  do: "República Dominicana",
+  dz: "Argélia",
+  ec: "Equador",
+  ee: "Estônia",
+  eg: "Egito",
+  en: "Inglaterra",
+  es: "Espanha",
+  et: "Etiópia",
+  fi: "Finlândia",
+  fj: "Fiji",
+  fm: "Micronésia",
+  fr: "França",
+  ga: "Gabão",
+  gb: "Reino Unido",
+  gd: "Granada",
+  ge: "Geórgia",
+  gh: "Gana",
+  gm: "Gâmbia",
+  gn: "Guiné",
+  gq: "Guiné Equatorial",
+  gr: "Grécia",
+  gt: "Guatemala",
+  gw: "Guiné-Bissau",
+  gy: "Guiana",
+  hk: "Hong Kong",
+  hn: "Honduras",
+  hr: "Croácia",
+  ht: "Haiti",
+  hu: "Hungria",
+  id: "Indonésia",
+  ie: "Irlanda",
+  il: "Israel",
+  in: "Índia",
+  iq: "Iraque",
+  ir: "Irã",
+  is: "Islândia",
+  it: "Itália",
+  jm: "Jamaica",
+  jo: "Jordânia",
+  jp: "Japão",
+  ke: "Quênia",
+  kg: "Quirguistão",
+  kh: "Camboja",
+  ki: "Kiribati",
+  km: "Comores",
+  kp: "Coreia do Norte",
+  kr: "Coreia do Sul",
+  kw: "Kuwait",
+  kz: "Cazaquistão",
+  la: "Laos",
+  lb: "Líbano",
+  lk: "Sri Lanka",
+  lr: "Libéria",
+  ls: "Lesoto",
+  lt: "Lituânia",
+  lu: "Luxemburgo",
+  lv: "Letônia",
+  ly: "Líbia",
+  ma: "Marrocos",
+  mc: "Mônaco",
+  md: "Moldávia",
+  me: "Montenegro",
+  mg: "Madagascar",
+  mh: "Ilhas Marshall",
+  mk: "Macedônia do Norte",
+  ml: "Mali",
+  mm: "Mianmar",
+  mn: "Mongólia",
+  mo: "Macau",
+  mr: "Mauritânia",
+  mt: "Malta",
+  mu: "Maurício",
+  mv: "Maldivas",
+  mw: "Malawi",
+  mx: "México",
+  my: "Malásia",
+  mz: "Moçambique",
+  na: "Namíbia",
+  nc: "Nova Caledônia",
+  ne: "Níger",
+  nf: "Ilhas Norfolk",
+  ng: "Nigéria",
+  ni: "Nicarágua",
+  nl: "Holanda",
+  no: "Noruega",
+  np: "Nepal",
+  nr: "Nauru",
+  nz: "Nova Zelândia",
+  om: "Omã",
+  pa: "Panamá",
+  pe: "Peru",
+  ph: "Filipinas",
+  pk: "Paquistão",
+  pl: "Polônia",
+  pt: "Portugal",
+  pw: "Palau",
+  py: "Paraguai",
+  qa: "Catar",
+  ro: "Romênia",
+  rs: "Sérvia",
+  ru: "Rússia",
+  rw: "Ruanda",
+  sa: "Arábia Saudita",
+  sb: "Ilhas Salomão",
+  sc: "Escócia",
+  sd: "Sudão",
+  se: "Suécia",
+  sg: "Singapura",
+  si: "Eslovênia",
+  sk: "Eslováquia",
+  sl: "Serra Leoa",
+  sm: "San Marino",
+  sn: "Senegal",
+  so: "Somália",
+  sr: "Suriname",
+  sv: "El Salvador",
+  sy: "Síria",
+  sz: "Essuatíni",
+  td: "Chade",
+  tg: "Togo",
+  th: "Tailândia",
+  tj: "Tajiquistão",
+  tn: "Tunísia",
+  to: "Tonga",
+  tr: "Turquia",
+  tt: "Trinidad e Tobago",
+  tv: "Tuvalu",
+  tz: "Tanzânia",
+  ua: "Ucrânia",
+  ug: "Uganda",
+  us: "Estados Unidos",
+  uy: "Uruguai",
+  uz: "Uzbequistão",
+  va: "Vaticano",
+  vc: "São Vicente e Granadinas",
+  ve: "Venezuela",
+  vn: "Vietnã",
+  vu: "Vanuatu",
+  wf: "Wallis e Futuna",
+  ws: "Samoa",
+  ye: "Iêmen",
+  za: "África do Sul",
+  zm: "Zâmbia",
+  zw: "Zimbábue"
+};
+
+/**
+ * Traduz um valor para exibição na UI a partir do campo e valor original.
+ * Exemplo: translate('gender', 'male') → 'Masculino'
+ */
+export const translate = (field, value) =>
+  translations[field]?.[value] || "Não informado";
+
+/**
+ * Retorna o nome do país a partir do código. Se não encontrado, retorna o código em letras maiúsculas.
+ */
+export const getCountryName = (countryCode) =>
+  countryNames[countryCode?.toLowerCase?.()] || (countryCode ? countryCode.toUpperCase() : "N/A");
+
+
+/**
+ * EXPLICAÇÕES DOS AJUSTES:
+ * - Modular, pronto para Clean Architecture e integração com sistemas multilíngues
+ * - Funções utilitárias garantem fallback seguro e exibição consistente na UI
+ * - countryNames e translations podem ser facilmente expandidos para novos idiomas ou campos
+ * - Compatível com novo modal: use translate/getCountryName para padronizar legendas e informações
+ */
