@@ -94,6 +94,12 @@ export const translations = {
     no: "Não",
     occasionally: "Ocasionalmente",
     unknown: "Não informado"
+  },
+  broadcastType: {
+    male: "Individual",
+    male_group: "Grupo",
+    male_female_group: "Grupo Misto",
+    unknown: "Não informado"
   }
 };
 

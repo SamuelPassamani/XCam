@@ -1,14 +1,14 @@
 :root {
-  --modal-bg: #1a1a1a;
-  --modal-overlay: rgba(0, 0, 0, 0.9);
-  --text-primary: #ffffff;
-  --text-secondary: #cccccc;
-  --accent-color: #ff2a6d;
-  --border-radius: 8px;
-  --transition-speed: 0.3s;
+  --modal-bg: #1a1a1a; /* Fundo principal do modal */
+  --modal-overlay: rgba(0, 0, 0, 0.9); /* Overlay escurecido */
+  --text-primary: #ffffff; /* Cor de texto principal (branca) */
+  --text-secondary: #cccccc; /* Cor de texto secundária (acinzentada) */
+  --accent-color: #ff2a6d; /* Cor de destaque (rosa) */
+  --border-radius: 8px; /* Raio de borda padrão */
+  --transition-speed: 0.3s; /* Velocidade padrão de transições */
 }
 
-/* Reset de margin, padding e tipografia base */
+/* Reset geral de margens, paddings e tipografia base */
 * {
   margin: 0;
   padding: 0;
@@ -16,7 +16,7 @@
   font-family: "Inter", sans-serif;
 }
 
-/* Corpo da página/modal centralizado e ocupando toda a viewport */
+/* Corpo centralizado ocupando toda a viewport */
 body {
   background-color: #121212;
   color: var(--text-primary);
@@ -31,7 +31,7 @@ body {
   padding: 0;
 }
 
-/* Overlay do modal (fundo escurecido, cobre toda tela) */
+/* Overlay do modal cobrindo toda tela */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -51,13 +51,13 @@ body {
     visibility var(--transition-speed) ease;
 }
 
-/* Overlay ativo (visível) */
+/* Exibe o overlay do modal */
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
 }
 
-/* Container principal do modal em fullscreen */
+/* Container principal do modal ocupando toda tela */
 .modal {
   width: 100vw;
   height: 100vh;
@@ -74,7 +74,7 @@ body {
   box-shadow: none;
 }
 
-/* Cabeçalho do modal com título */
+/* Cabeçalho do modal com título do usuário */
 .modal-header {
   display: flex;
   justify-content: flex-start;
@@ -90,7 +90,7 @@ body {
   color: var(--text-primary);
 }
 
-/* Corpo do modal em grid: player + informações do usuário */
+/* Corpo do modal em grid (player + informações do usuário) */
 .modal-body {
   padding: 24px;
   display: grid;
@@ -111,7 +111,7 @@ body {
   min-height: 320px;
 }
 
-/* Mantém proporção 16:9 para o player usando padding hack */
+/* Proporção 16:9 para player */
 .player-aspect-ratio {
   padding-top: 56.25%;
   position: relative;
@@ -127,7 +127,7 @@ body {
   border: none;
 }
 
-/* Logo do player, caso usado, no canto superior direito */
+/* Logo do player no canto superior direito */
 .player-logo {
   position: absolute;
   top: 8px;
@@ -171,19 +171,19 @@ body {
   color: var(--text-primary);
 }
 
-/* Imagem do avatar ocupa todo espaço do avatar */
+/* Imagem de avatar ocupa todo o espaço do avatar */
 .user-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Bloco com nome, país, viewers, stats */
+/* Bloco de nome, país, viewers e stats */
 .user-details {
   flex: 1;
 }
 
-/* Nome do usuário em destaque */
+/* Nome do usuário */
 .user-name {
   font-weight: bold;
   font-size: 16px;
@@ -240,16 +240,35 @@ body {
   border-radius: 16px;
 }
 
-/* Ícones SVG padrão dentro das estatísticas */
+/* SVGs dentro das estatísticas: sempre brancos e alinhados */
 .stat-item svg {
   flex-shrink: 0;
   width: 16px;
   height: 16px;
   display: inline-block;
   vertical-align: middle;
+  fill: #fff !important;
+  stroke: #fff !important;
+  color: #fff !important;
 }
 
-/* Ícone de gênero (gender) um pouco maior e melhor alinhado */
+/* SVG inline do tipo transmissão (broadcastType), para garantir cor branca */
+.stat-item svg[alt="broadcastType"] {
+  fill: #fff !important;
+  stroke: #fff !important;
+  color: #fff !important;
+}
+
+/* IMG (caso use) no tipo transmissão: força branco em PNG/JPG/SVG externo */
+.stat-item img {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  filter: brightness(0) invert(1); /* Torna branco no fundo escuro */
+}
+
+/* Ícone de gênero maior e alinhado */
 .gender-icon {
   width: 23px;
   height: 23px;
@@ -268,7 +287,7 @@ body {
   margin-top: 8px;
 }
 
-/* Visual das tags (pílula colorida) */
+/* Visual das tags (pílula colorida, gradiente) */
 .tag {
   background: linear-gradient(90deg, var(--accent-color) 0%, #7b2cbf 100%);
   color: var(--text-primary);
@@ -319,19 +338,19 @@ body {
   transition: all var(--transition-speed) ease;
 }
 
-/* Efeito hover no botão de rede social */
+/* Efeito hover nos botões de rede social */
 .social-link:hover {
   background-color: var(--accent-color);
   transform: translateY(-2px);
 }
 
-/* Ícone SVG da rede social (tamanho padrão) */
+/* Ícone SVG da rede social */
 .social-link svg {
   width: 16px;
   height: 16px;
 }
 
-/* RESPONSIVIDADE PARA TELAS PEQUENAS */
+/* RESPONSIVIDADE: Telas menores */
 @media (max-width: 768px) {
   .modal-body {
     grid-template-columns: 1fr;

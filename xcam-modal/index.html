@@ -11,33 +11,53 @@
 </head>
 
 <body>
-  <!-- Overlay principal do modal (cobre toda a tela) -->
+  <!--
+    Overlay principal do modal (cobre toda a tela).
+    A classe 'active' deixa o modal visível ao carregar.
+    O ID 'modalOverlay' é usado para controle futuro por JS.
+  -->
   <div id="modalOverlay" class="modal-overlay active">
     <div class="modal">
-      <!-- Cabeçalho do modal (exibe o nome/título do usuário) -->
+      <!--
+        Cabeçalho do modal.
+        Exibe o nome de usuário (preenchido dinamicamente).
+      -->
       <div class="modal-header">
         <h2 class="modal-title"></h2>
       </div>
 
-      <!-- Corpo do modal (divide player e informações do usuário) -->
+      <!--
+        Corpo do modal dividido em grid: player à esquerda, dados do usuário à direita
+      -->
       <div class="modal-body">
-        <!-- Coluna do player de vídeo -->
+        <!--
+          Coluna do player de vídeo.
+          'player-aspect-ratio' garante proporção 16:9 responsiva.
+        -->
         <div class="player-container">
           <div class="player-aspect-ratio">
-            <!-- Player de transmissão ao vivo (iframe) -->
+            <!--
+              Player de transmissão ao vivo.
+              Preenchido via JS com a URL da transmissão.
+            -->
             <iframe class="player-iframe" src="" allowfullscreen loading="lazy"></iframe>
           </div>
         </div>
 
-        <!-- Coluna com informações detalhadas do usuário -->
+        <!--
+          Coluna com informações detalhadas do usuário e transmissão.
+        -->
         <div class="user-info">
           <div class="user-header">
-            <!-- Avatar do usuário -->
+            <!--
+              Avatar do usuário (imagem ou inicial).
+              Preenchido via JS.
+            -->
             <div class="user-avatar"></div>
             <div class="user-details">
-              <!-- Nome do usuário -->
+              <!-- Nome do usuário (ex: @SamuelPassamani) -->
               <div class="user-name"></div>
-              <!-- País do usuário (bandeira + nome) -->
+              <!-- País do usuário: bandeira + nome -->
               <div class="user-country">
                 <img class="country-flag" src="" alt="Bandeira do país" loading="lazy" style="display:none;">
                 <span class="country-name"></span>
@@ -51,7 +71,12 @@
                 </svg>
                 <span></span>
               </div>
-              <!-- Estatísticas do usuário (sexo, orientação sexual, tipo transmissão) -->
+              <!--
+                Estatísticas principais do usuário:
+                1. Sexo (gênero) - ícone inserido dinamicamente
+                2. Orientação sexual - ícone inserido dinamicamente
+                3. Tipo de transmissão - ícone SVG inline branco inserido dinamicamente (garantido por CSS)
+              -->
               <div class="user-stats">
                 <div class="stat-item">
                   <!-- Ícone de sexo (inserido dinamicamente via JS) -->
@@ -62,23 +87,32 @@
                   <span></span>
                 </div>
                 <div class="stat-item">
-                  <!-- Ícone do tipo de transmissão (inserido dinamicamente via JS) -->
+                  <!-- Ícone do tipo de transmissão (SVG inline branco, inserido via JS) -->
                   <span></span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Tags do usuário/transmissão (hashtags dinâmicas) -->
+          <!--
+            Tags do usuário/transmissão (hashtags dinâmicas)
+            Inseridas via JS.
+          -->
           <div class="user-tags"></div>
 
-          <!-- Seção Sobre (bio do usuário) -->
+          <!--
+            Seção "Sobre" (bio do usuário).
+            Conteúdo pode ser HTML ou texto puro, preenchido via JS.
+          -->
           <div class="info-section">
             <h3 class="info-section-title">Sobre</h3>
             <p class="info-section-content"></p>
           </div>
 
-          <!-- Seção de redes sociais -->
+          <!--
+            Seção de redes sociais.
+            Os ícones SVG são inseridos dinamicamente via JS.
+          -->
           <div class="info-section">
             <h3 class="info-section-title">Redes Sociais</h3>
             <div class="social-links">
@@ -89,7 +123,10 @@
       </div>
     </div>
   </div>
-  <!-- Script principal do modal (responsável por preencher todos os dados dinamicamente) -->
+  <!--
+    Script principal do modal.
+    Responsável por preencher todos os dados dinamicamente, conforme API e traduções.
+  -->
   <script src="./script.js"></script>
 </body>
 
