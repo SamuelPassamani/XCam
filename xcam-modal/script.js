@@ -1,7 +1,8 @@
-// xcam-beta/modal/script.js
+// xcam-modal/script.js
 // Este script preenche dinamicamente o modal fullscreen do XCam com informações de um usuário/transmissão,
 // utilizando traduções carregadas externamente de https://beta.xcam.gay/translations.js
 // e tradução reversa de https://beta.xcam.gay/translations-reverse.js
+// O script remove imagens e links externos da bio, seja em HTML ou BBCode.
 
 // ======================= IMPORTAÇÃO DINÂMICA DE TRADUÇÕES ========================
 let translate, getCountryName, reverseTranslate, getCountryCode;
@@ -40,6 +41,27 @@ function escapeHTML(str) {
   const div = document.createElement("div");
   div.textContent = str || "";
   return div.innerHTML;
+}
+
+/**
+ * Remove imagens e links externos (HTML e BBCode) de um HTML/texto.
+ * @param {string} bio - Conteúdo da bio (pode ter HTML/BBCode).
+ * @returns {string} Bio limpa, sem imagens nem links externos.
+ */
+function sanitizeBio(bio) {
+  if (!bio) return "";
+  // Remove [img]...[/img] e [url]...[/url] (BBCode)
+  let sanitized = bio
+    .replace(/\[img\][^\[]*\[\/img\]/gi, "")
+    .replace(/\[url=[^\]]*\][^\[]*\[\/url\]/gi, "")
+    .replace(/\[url\][^\[]*\[\/url\]/gi, "");
+  // Remove <img ...> (HTML)
+  sanitized = sanitized.replace(/<img[^>]*>/gi, "");
+  // Remove <a ...>...</a> mas preserva o texto interno
+  sanitized = sanitized.replace(/<a [^>]*>(.*?)<\/a>/gi, "$1");
+  // Remove eventuais iframes, objects, embeds
+  sanitized = sanitized.replace(/<(iframe|object|embed)[^>]*>.*?<\/\1>/gi, "");
+  return sanitized;
 }
 
 /**
@@ -142,6 +164,7 @@ async function fetchUserData(username) {
 /**
  * Atualiza o modal com os dados do usuário e transmissão.
  * Preenche todos os campos do modal dinâmico com base nos dados recebidos.
+ * Remove imagens e links externos da bio.
  * @param {object} param0 - { user, broadcast }
  */
 function updateModal({ user, broadcast }) {
@@ -271,12 +294,12 @@ function updateModal({ user, broadcast }) {
     tagsDiv.innerHTML = "";
   }
 
-  // Bio do usuário (HTML ou texto puro)
+  // Bio do usuário (HTML ou texto puro) - LIMPA imagens e links externos
   const bioDiv = document.querySelector(".info-section-content");
   if (user && user.htmlBio) {
-    bioDiv.innerHTML = user.htmlBio;
+    bioDiv.innerHTML = sanitizeBio(user.htmlBio);
   } else if (user && user.bio) {
-    bioDiv.textContent = user.bio;
+    bioDiv.textContent = sanitizeBio(user.bio);
   } else {
     bioDiv.textContent = "";
   }
@@ -323,8 +346,9 @@ function clearModal() {
   document.querySelector(".player-iframe").src = "";
 }
 
+// ===================== FLUXO DE INICIALIZAÇÃO =====================
+
 /**
- * Inicialização do modal:
  * Aguarda o carregamento das traduções antes de inicializar o modal.
  * Busca os dados do usuário informado na URL (?user=nome) e preenche o modal.
  */
@@ -343,6 +367,8 @@ document.addEventListener("translationsReady", async function () {
     clearModal();
   }
 });
+
+// ===================== FUNÇÕES OPCIONAIS E TRACKING =====================
 
 /**
  * Ativa o modal manualmente (reserva para uso futuro).
