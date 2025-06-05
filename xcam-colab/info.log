@@ -1,0 +1,1786 @@
+Deseja gravar alguma transmissão específica? (sim/não): não
+[2025-06-05 13:05:23] [MAIN] Iniciando busca e gravação de streams (supervisor dinâmico)...
+[2025-06-05 13:05:23] [INFO] Supervisor dinâmico iniciado | Lote alvo: 25 | Modo: automático
+[2025-06-05 13:05:23] [STARTUP] Preenchendo lote inicial com até 25 transmissões...
+[2025-06-05 13:05:23] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para andreas_ath no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/andreas_ath_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: andreas_ath (página 1)
+[2025-06-05 13:05:29] [BUSCA] Nova transmissão encontrada: andreas_ath (página 1)
+[2025-06-05 13:05:29] [STARTUP] Lançando processo para: andreas_ath | 1/25
+[2025-06-05 13:05:29] [WORKER] Iniciando gravação: andreas_ath | URL: https://cam4-hls.xcdnpro.com/281/cam4-origin-live/andreas_ath-281-ec8d837e-583e-4636-bd3c-3898303a787d_aac/playlist.m3u8 | Poster: /content/andreas_ath_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: andreas_ath (URL: https://cam4-hls.xcdnpro.com/281/cam4-origin-live/andreas_ath-281-ec8d837e-583e-4636-bd3c-3898303a787d_aac/playlist.m3u8) em /content/temp_recordings/andreas_ath_20250605_130529_temp.mp4
+[2025-06-05 13:05:29] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [andreas_ath] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para ragazzoxxl no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/ragazzoxxl_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:05:31] [BUSCA] Nova transmissão encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:05:31] [STARTUP] Lançando processo para: ragazzoxxl | 2/25
+[2025-06-05 13:05:31] [WORKER] Iniciando gravação: ragazzoxxl | URL: https://stackvaults-hls.xcdnpro.com/64313e8b-1ef1-4597-971f-c50a4556e472/hls/as+b4f4a951-26ed-491a-b9a2-4a2be4959bea/index.m3u8 | Poster: /content/ragazzoxxl_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: ragazzoxxl (URL: https://stackvaults-hls.xcdnpro.com/64313e8b-1ef1-4597-971f-c50a4556e472/hls/as+b4f4a951-26ed-491a-b9a2-4a2be4959bea/index.m3u8) em /content/temp_recordings/ragazzoxxl_20250605_130531_temp.mp4
+[2025-06-05 13:05:31] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [ragazzoxxl] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para recoblue22cm no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/recoblue22cm_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: recoblue22cm (página 1)
+[2025-06-05 13:05:33] [BUSCA] Nova transmissão encontrada: recoblue22cm (página 1)
+[2025-06-05 13:05:33] [STARTUP] Lançando processo para: recoblue22cm | 3/25
+[2025-06-05 13:05:33] [WORKER] Iniciando gravação: recoblue22cm | URL: https://stackvaults-hls.xcdnpro.com/bc59cfad-f19c-4cff-97a5-d7d2276fc779/hls/as+afef1de7-19e5-4a2f-9f92-ccef9d65d2f4/index.m3u8 | Poster: /content/recoblue22cm_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: recoblue22cm (URL: https://stackvaults-hls.xcdnpro.com/bc59cfad-f19c-4cff-97a5-d7d2276fc779/hls/as+afef1de7-19e5-4a2f-9f92-ccef9d65d2f4/index.m3u8) em /content/temp_recordings/recoblue22cm_20250605_130533_temp.mp4
+[2025-06-05 13:05:33] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [recoblue22cm] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para jhony_the_king no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/jhony_the_king_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: jhony_the_king (página 1)
+[2025-06-05 13:05:37] [BUSCA] Nova transmissão encontrada: jhony_the_king (página 1)
+[2025-06-05 13:05:37] [STARTUP] Lançando processo para: jhony_the_king | 4/25
+[2025-06-05 13:05:37] [WORKER] Iniciando gravação: jhony_the_king | URL: https://cam4-hls.xcdnpro.com/319/cam4-origin-live/jhony_the_king-319-1843fea0-f8b8-472f-b7bf-badb5f4708d7_aac/playlist.m3u8 | Poster: /content/jhony_the_king_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: jhony_the_king (URL: https://cam4-hls.xcdnpro.com/319/cam4-origin-live/jhony_the_king-319-1843fea0-f8b8-472f-b7bf-badb5f4708d7_aac/playlist.m3u8) em /content/temp_recordings/jhony_the_king_20250605_130537_temp.mp4
+[2025-06-05 13:05:37] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [jhony_the_king] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para Kingbull1900 no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/Kingbull1900_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: Kingbull1900 (página 1)
+[2025-06-05 13:05:40] [BUSCA] Nova transmissão encontrada: Kingbull1900 (página 1)
+[2025-06-05 13:05:40] [STARTUP] Lançando processo para: Kingbull1900 | 5/25
+[2025-06-05 13:05:40] [WORKER] Iniciando gravação: Kingbull1900 | URL: https://cam4-hls.xcdnpro.com/299/cam4-origin-live/Kingbull1900-299-af846d43-bc92-43ad-b163-87ccfbad7b9a_aac/playlist.m3u8 | Poster: /content/Kingbull1900_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: Kingbull1900 (URL: https://cam4-hls.xcdnpro.com/299/cam4-origin-live/Kingbull1900-299-af846d43-bc92-43ad-b163-87ccfbad7b9a_aac/playlist.m3u8) em /content/temp_recordings/Kingbull1900_20250605_130540_temp.mp4
+[2025-06-05 13:05:40] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Kingbull1900] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para gayhot06 no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/gayhot06_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: gayhot06 (página 1)
+[2025-06-05 13:05:43] [BUSCA] Nova transmissão encontrada: gayhot06 (página 1)
+[2025-06-05 13:05:43] [STARTUP] Lançando processo para: gayhot06 | 6/25
+[2025-06-05 13:05:43] [WORKER] Iniciando gravação: gayhot06 | URL: https://stackvaults-hls.xcdnpro.com/a6a56041-8508-412e-818d-a72a553bbca1/hls/as+c72311c8-d3f7-4949-a08d-126b67ff3a0b/index.m3u8 | Poster: /content/gayhot06_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: gayhot06 (URL: https://stackvaults-hls.xcdnpro.com/a6a56041-8508-412e-818d-a72a553bbca1/hls/as+c72311c8-d3f7-4949-a08d-126b67ff3a0b/index.m3u8) em /content/temp_recordings/gayhot06_20250605_130543_temp.mp4
+[2025-06-05 13:05:43] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [gayhot06] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para valdo2 no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/valdo2_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: valdo2 (página 1)
+[2025-06-05 13:05:48] [BUSCA] Nova transmissão encontrada: valdo2 (página 1)
+[2025-06-05 13:05:48] [STARTUP] Lançando processo para: valdo2 | 7/25
+[2025-06-05 13:05:48] [WORKER] Iniciando gravação: valdo2 | URL: https://stackvaults-hls.xcdnpro.com/17ac1aa7-8b59-4319-868b-00efc5183106/hls/as+4c931e7f-7e68-4e88-98c0-ff4165ae0bac/index.m3u8 | Poster: /content/valdo2_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: valdo2 (URL: https://stackvaults-hls.xcdnpro.com/17ac1aa7-8b59-4319-868b-00efc5183106/hls/as+4c931e7f-7e68-4e88-98c0-ff4165ae0bac/index.m3u8) em /content/temp_recordings/valdo2_20250605_130548_temp.mp4
+[2025-06-05 13:05:48] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [valdo2] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para Billyytomy no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/Billyytomy_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: Billyytomy (página 1)
+[2025-06-05 13:05:52] [BUSCA] Nova transmissão encontrada: Billyytomy (página 1)
+[2025-06-05 13:05:52] [STARTUP] Lançando processo para: Billyytomy | 8/25
+[2025-06-05 13:05:52] [WORKER] Iniciando gravação: Billyytomy | URL: https://cam4-hls.xcdnpro.com/316/cam4-origin-live/Billyytomy-316-14f4eadb-9bb4-4cc4-85c3-b26f11be368a_aac/playlist.m3u8 | Poster: /content/Billyytomy_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: Billyytomy (URL: https://cam4-hls.xcdnpro.com/316/cam4-origin-live/Billyytomy-316-14f4eadb-9bb4-4cc4-85c3-b26f11be368a_aac/playlist.m3u8) em /content/temp_recordings/Billyytomy_20250605_130552_temp.mp4
+[2025-06-05 13:05:52] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Billyytomy] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+⏱️ [jhony_the_king] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m2s — 📊 14.8% concluído
+🎬 Gerando poster com ffmpeg para tentationdivine no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/tentationdivine_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: tentationdivine (página 1)
+[2025-06-05 13:05:55] [BUSCA] Nova transmissão encontrada: tentationdivine (página 1)
+[2025-06-05 13:05:55] [STARTUP] Lançando processo para: tentationdivine | 9/25
+[2025-06-05 13:05:55] [WORKER] Iniciando gravação: tentationdivine | URL: https://cam4-hls.xcdnpro.com/296/cam4-origin-live/tentationdivine-296-1d3f2e68-1f9b-4631-83f6-abecfd87c73e_aac/playlist.m3u8 | Poster: /content/tentationdivine_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: tentationdivine (URL: https://cam4-hls.xcdnpro.com/296/cam4-origin-live/tentationdivine-296-1d3f2e68-1f9b-4631-83f6-abecfd87c73e_aac/playlist.m3u8) em /content/temp_recordings/tentationdivine_20250605_130555_temp.mp4
+[2025-06-05 13:05:55] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [tentationdivine] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para xxdaix no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/xxdaix_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: xxdaix (página 1)
+[2025-06-05 13:06:00] [BUSCA] Nova transmissão encontrada: xxdaix (página 1)
+[2025-06-05 13:06:00] [STARTUP] Lançando processo para: xxdaix | 10/25
+[2025-06-05 13:06:00] [WORKER] Iniciando gravação: xxdaix | URL: https://stackvaults-hls.xcdnpro.com/acaef29b-c769-4411-8658-3750d7d8d823/hls/as+7f56b6cd-4b29-4179-8364-93aca7060fe0/index.m3u8 | Poster: /content/xxdaix_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: xxdaix (URL: https://stackvaults-hls.xcdnpro.com/acaef29b-c769-4411-8658-3750d7d8d823/hls/as+7f56b6cd-4b29-4179-8364-93aca7060fe0/index.m3u8) em /content/temp_recordings/xxdaix_20250605_130600_temp.mp4
+[2025-06-05 13:06:00] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [xxdaix] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para ECSTASYX2_23 no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/ECSTASYX2_23_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ECSTASYX2_23 (página 1)
+[2025-06-05 13:06:05] [BUSCA] Nova transmissão encontrada: ECSTASYX2_23 (página 1)
+[2025-06-05 13:06:05] [STARTUP] Lançando processo para: ECSTASYX2_23 | 11/25
+[2025-06-05 13:06:05] [WORKER] Iniciando gravação: ECSTASYX2_23 | URL: https://cam4-hls.xcdnpro.com/318/cam4-origin-live/ECSTASYX2_23-318-9246c86d-0a42-4ddf-9164-cf7415558e72_aac/playlist.m3u8 | Poster: /content/ECSTASYX2_23_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: ECSTASYX2_23 (URL: https://cam4-hls.xcdnpro.com/318/cam4-origin-live/ECSTASYX2_23-318-9246c86d-0a42-4ddf-9164-cf7415558e72_aac/playlist.m3u8) em /content/temp_recordings/ECSTASYX2_23_20250605_130605_temp.mp4
+[2025-06-05 13:06:05] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [ECSTASYX2_23] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:06:09] [BUSCA] Nova transmissão encontrada: blueyexxx (página 1)
+[2025-06-05 13:06:09] [STARTUP] Lançando processo para: blueyexxx | 12/25
+[2025-06-05 13:06:09] [WORKER] Iniciando gravação: blueyexxx | URL: https://stackvaults-hls.xcdnpro.com/cb8feeec-dc95-493e-a510-1e891a39cecd/hls/as+a311a149-f958-471f-926f-2db3d7882d57/index.m3u8 | Poster: /content/blueyexxx_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: blueyexxx (URL: https://stackvaults-hls.xcdnpro.com/cb8feeec-dc95-493e-a510-1e891a39cecd/hls/as+a311a149-f958-471f-926f-2db3d7882d57/index.m3u8) em /content/temp_recordings/blueyexxx_20250605_130609_temp.mp4
+[2025-06-05 13:06:09] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [blueyexxx] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para MkDonatello no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/MkDonatello_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: MkDonatello (página 1)
+[2025-06-05 13:06:12] [BUSCA] Nova transmissão encontrada: MkDonatello (página 1)
+[2025-06-05 13:06:12] [STARTUP] Lançando processo para: MkDonatello | 13/25
+[2025-06-05 13:06:12] [WORKER] Iniciando gravação: MkDonatello | URL: https://stackvaults-hls.xcdnpro.com/741308bd-260f-4ed8-8263-d735dcf863d9/hls/as+fc4005d0-6e9a-4df4-a73d-0d5dba035673/index.m3u8 | Poster: /content/MkDonatello_poster_ffmpeg.jpg
+🎬 Iniciando gravação de: MkDonatello (URL: https://stackvaults-hls.xcdnpro.com/741308bd-260f-4ed8-8263-d735dcf863d9/hls/as+fc4005d0-6e9a-4df4-a73d-0d5dba035673/index.m3u8) em /content/temp_recordings/MkDonatello_20250605_130612_temp.mp4
+
+[2025-06-05 13:06:12] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [MkDonatello] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para Perfect_Team no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/Perfect_Team_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: Perfect_Team (página 1)
+[2025-06-05 13:06:16] [BUSCA] Nova transmissão encontrada: Perfect_Team (página 1)
+[2025-06-05 13:06:16] [STARTUP] Lançando processo para: Perfect_Team | 14/25
+[2025-06-05 13:06:16] [WORKER] Iniciando gravação: Perfect_Team | URL: https://stackvaults-hls.xcdnpro.com/f0f2312e-0d88-4f38-aa4a-c97ae1c5badf/hls/as+e9fe2605-7d74-4ecc-85bd-19c8dbbd2576/index.m3u8 | Poster: /content/Perfect_Team_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: Perfect_Team (URL: https://stackvaults-hls.xcdnpro.com/f0f2312e-0d88-4f38-aa4a-c97ae1c5badf/hls/as+e9fe2605-7d74-4ecc-85bd-19c8dbbd2576/index.m3u8) em /content/temp_recordings/Perfect_Team_20250605_130616_temp.mp4
+[2025-06-05 13:06:16] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Perfect_Team] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para Lkgostos0 no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/Lkgostos0_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: Lkgostos0 (página 1)
+[2025-06-05 13:06:23] [BUSCA] Nova transmissão encontrada: Lkgostos0 (página 1)
+[2025-06-05 13:06:23] [STARTUP] Lançando processo para: Lkgostos0 | 15/25
+[2025-06-05 13:06:23] [WORKER] Iniciando gravação: Lkgostos0 | URL: https://cam4-hls.xcdnpro.com/319/cam4-origin-live/Lkgostos0-319-f72a86a5-ca32-41c2-b3d5-9c3d524a6a28_aac/playlist.m3u8 | Poster: /content/Lkgostos0_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: Lkgostos0 (URL: https://cam4-hls.xcdnpro.com/319/cam4-origin-live/Lkgostos0-319-f72a86a5-ca32-41c2-b3d5-9c3d524a6a28_aac/playlist.m3u8) em /content/temp_recordings/Lkgostos0_20250605_130623_temp.mp4
+[2025-06-05 13:06:23] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Lkgostos0] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🖼️ Poster baixado em: /content/outdoorbeast_poster_temp.jpg
+🎯 Transmissão livre encontrada: outdoorbeast (página 1)
+[2025-06-05 13:06:24] [BUSCA] Nova transmissão encontrada: outdoorbeast (página 1)
+[2025-06-05 13:06:24] [STARTUP] Lançando processo para: outdoorbeast | 16/25
+[2025-06-05 13:06:24] [WORKER] Iniciando gravação: outdoorbeast | URL: https://cam4-hls.xcdnpro.com/315/cam4-origin-live/outdoorbeast-315-def525b9-bc85-4216-b83b-4d3d02842633_aac/playlist.m3u8 | Poster: /content/outdoorbeast_poster_temp.jpg
+🎬 Iniciando gravação de: outdoorbeast (URL: https://cam4-hls.xcdnpro.com/315/cam4-origin-live/outdoorbeast-315-def525b9-bc85-4216-b83b-4d3d02842633_aac/playlist.m3u8) em /content/temp_recordings/outdoorbeast_20250605_130624_temp.mp4
+
+[2025-06-05 13:06:24] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [outdoorbeast] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🖼️ Poster baixado em: /content/marihuana3_poster_temp.jpg
+🎯 Transmissão livre encontrada: marihuana3 (página 1)
+[2025-06-05 13:06:25] [BUSCA] Nova transmissão encontrada: marihuana3 (página 1)
+[2025-06-05 13:06:25] [STARTUP] Lançando processo para: marihuana3 | 17/25
+[2025-06-05 13:06:25] [WORKER] Iniciando gravação: marihuana3 | URL: https://cam4-hls.xcdnpro.com/297/cam4-origin-live/marihuana3-297-a82dff3b-23d3-40a8-8413-c171d10a0412_aac/playlist.m3u8 | Poster: /content/marihuana3_poster_temp.jpg
+
+🎬 Iniciando gravação de: marihuana3 (URL: https://cam4-hls.xcdnpro.com/297/cam4-origin-live/marihuana3-297-a82dff3b-23d3-40a8-8413-c171d10a0412_aac/playlist.m3u8) em /content/temp_recordings/marihuana3_20250605_130625_temp.mp4
+[2025-06-05 13:06:25] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [marihuana3] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🖼️ Poster baixado em: /content/Plaisirboys_poster_temp.jpg
+🎯 Transmissão livre encontrada: Plaisirboys (página 1)
+[2025-06-05 13:06:26] [BUSCA] Nova transmissão encontrada: Plaisirboys (página 1)
+[2025-06-05 13:06:26] [STARTUP] Lançando processo para: Plaisirboys | 18/25
+[2025-06-05 13:06:26] [WORKER] Iniciando gravação: Plaisirboys | URL: https://stackvaults-hls.xcdnpro.com/7a354c09-4204-493a-b326-43715b30b395/hls/as+4069af9a-a956-4892-b6b8-a47d080c94a3/index.m3u8 | Poster: /content/Plaisirboys_poster_temp.jpg
+
+🎬 Iniciando gravação de: Plaisirboys (URL: https://stackvaults-hls.xcdnpro.com/7a354c09-4204-493a-b326-43715b30b395/hls/as+4069af9a-a956-4892-b6b8-a47d080c94a3/index.m3u8) em /content/temp_recordings/Plaisirboys_20250605_130627_temp.mp4
+[2025-06-05 13:06:26] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [andreas_ath] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+⏱️ [Plaisirboys] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🎬 Gerando poster com ffmpeg para Popperstuga no segundo 7...
+⏱️ [recoblue22cm] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+🖼️ Poster gerado via ffmpeg: /content/Popperstuga_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: Popperstuga (página 1)
+[2025-06-05 13:06:30] [BUSCA] Nova transmissão encontrada: Popperstuga (página 1)
+[2025-06-05 13:06:30] [STARTUP] Lançando processo para: Popperstuga | 19/25
+[2025-06-05 13:06:30] [WORKER] Iniciando gravação: Popperstuga | URL: https://stackvaults-hls.xcdnpro.com/8fb93b0c-2ac0-4463-b3d7-48dffd322ac1/hls/as+2351a924-356e-465a-aa2c-25976c1d8195/index.m3u8 | Poster: /content/Popperstuga_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: Popperstuga (URL: https://stackvaults-hls.xcdnpro.com/8fb93b0c-2ac0-4463-b3d7-48dffd322ac1/hls/as+2351a924-356e-465a-aa2c-25976c1d8195/index.m3u8) em /content/temp_recordings/Popperstuga_20250605_130630_temp.mp4
+[2025-06-05 13:06:30] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Popperstuga] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído⏱️ [ragazzoxxl] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m3s — 📊 15.0% concluído
+
+🖼️ Poster baixado em: /content/littlebear0_poster_temp.jpg
+🎯 Transmissão livre encontrada: littlebear0 (página 1)
+[2025-06-05 13:06:31] [BUSCA] Nova transmissão encontrada: littlebear0 (página 1)
+[2025-06-05 13:06:31] [STARTUP] Lançando processo para: littlebear0 | 20/25
+[2025-06-05 13:06:31] [WORKER] Iniciando gravação: littlebear0 | URL: https://stackvaults-hls.xcdnpro.com/f1b41881-c419-40eb-b916-442dac153c3f/hls/as+1bf3be56-45b1-4606-926d-0853d76787e0/index.m3u8 | Poster: /content/littlebear0_poster_temp.jpg
+
+🎬 Iniciando gravação de: littlebear0 (URL: https://stackvaults-hls.xcdnpro.com/f1b41881-c419-40eb-b916-442dac153c3f/hls/as+1bf3be56-45b1-4606-926d-0853d76787e0/index.m3u8) em /content/temp_recordings/littlebear0_20250605_130631_temp.mp4
+[2025-06-05 13:06:31] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [littlebear0] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🖼️ Poster baixado em: /content/Totobig22_poster_temp.jpg
+🎯 Transmissão livre encontrada: Totobig22 (página 1)
+[2025-06-05 13:06:32] [BUSCA] Nova transmissão encontrada: Totobig22 (página 1)
+[2025-06-05 13:06:32] [STARTUP] Lançando processo para: Totobig22 | 21/25
+[2025-06-05 13:06:32] [WORKER] Iniciando gravação: Totobig22 | URL: https://stackvaults-hls.xcdnpro.com/ce866911-b821-47ea-a232-e67b00deb13b/hls/as+4f600677-e5bc-461d-a5e0-50961ebe4c0f/index.m3u8 | Poster: /content/Totobig22_poster_temp.jpg
+
+🎬 Iniciando gravação de: Totobig22 (URL: https://stackvaults-hls.xcdnpro.com/ce866911-b821-47ea-a232-e67b00deb13b/hls/as+4f600677-e5bc-461d-a5e0-50961ebe4c0f/index.m3u8) em /content/temp_recordings/Totobig22_20250605_130632_temp.mp4
+[2025-06-05 13:06:32] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🖼️ Poster baixado em: /content/gg8405_poster_temp.jpg
+🎯 Transmissão livre encontrada: gg8405 (página 1)
+[2025-06-05 13:06:34] [BUSCA] Nova transmissão encontrada: gg8405 (página 1)
+[2025-06-05 13:06:34] [STARTUP] Lançando processo para: gg8405 | 22/25
+[2025-06-05 13:06:34] [WORKER] Iniciando gravação: gg8405 | URL: https://cam4-hls.xcdnpro.com/315/cam4-origin-live/gg8405-315-56b51766-884c-4ffc-a66a-d8d40d6f6019_aac/playlist.m3u8 | Poster: /content/gg8405_poster_temp.jpg
+
+🎬 Iniciando gravação de: gg8405 (URL: https://cam4-hls.xcdnpro.com/315/cam4-origin-live/gg8405-315-56b51766-884c-4ffc-a66a-d8d40d6f6019_aac/playlist.m3u8) em /content/temp_recordings/gg8405_20250605_130634_temp.mp4
+[2025-06-05 13:06:34] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [gg8405] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🖼️ Poster baixado em: /content/novinho1956_poster_temp.jpg
+🎯 Transmissão livre encontrada: novinho1956 (página 1)
+[2025-06-05 13:06:34] [BUSCA] Nova transmissão encontrada: novinho1956 (página 1)
+[2025-06-05 13:06:34] [STARTUP] Lançando processo para: novinho1956 | 23/25
+[2025-06-05 13:06:34] [WORKER] Iniciando gravação: novinho1956 | URL: https://stackvaults-hls.xcdnpro.com/abd30727-ff45-4dd6-88f0-a714ac540fb4/hls/as+78a9229b-6c86-46df-87ec-9e83900f8817/index.m3u8 | Poster: /content/novinho1956_poster_temp.jpg
+
+🎬 Iniciando gravação de: novinho1956 (URL: https://stackvaults-hls.xcdnpro.com/abd30727-ff45-4dd6-88f0-a714ac540fb4/hls/as+78a9229b-6c86-46df-87ec-9e83900f8817/index.m3u8) em /content/temp_recordings/novinho1956_20250605_130635_temp.mp4
+⏱️ [Totobig22] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+[2025-06-05 13:06:34] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [novinho1956] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🖼️ Poster baixado em: /content/MarteIlDio_poster_temp.jpg
+🎯 Transmissão livre encontrada: MarteIlDio (página 1)
+[2025-06-05 13:06:36] [BUSCA] Nova transmissão encontrada: MarteIlDio (página 1)
+[2025-06-05 13:06:36] [STARTUP] Lançando processo para: MarteIlDio | 24/25
+[2025-06-05 13:06:36] [WORKER] Iniciando gravação: MarteIlDio | URL: https://cam4-hls.xcdnpro.com/297/cam4-origin-live/MarteIlDio-297-7948a003-9cd6-4129-803b-2323eb76fd06_aac/playlist.m3u8 | Poster: /content/MarteIlDio_poster_temp.jpg
+
+🎬 Iniciando gravação de: MarteIlDio (URL: https://cam4-hls.xcdnpro.com/297/cam4-origin-live/MarteIlDio-297-7948a003-9cd6-4129-803b-2323eb76fd06_aac/playlist.m3u8) em /content/temp_recordings/MarteIlDio_20250605_130636_temp.mp4
+[2025-06-05 13:06:36] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [MarteIlDio] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+🖼️ Poster baixado em: /content/magu51_poster_temp.jpg
+🎯 Transmissão livre encontrada: magu51 (página 1)
+[2025-06-05 13:06:36] [BUSCA] Nova transmissão encontrada: magu51 (página 1)
+[2025-06-05 13:06:36] [STARTUP] Lançando processo para: magu51 | 25/25
+[2025-06-05 13:06:36] [WORKER] Iniciando gravação: magu51 | URL: https://cam4-hls.xcdnpro.com/297/cam4-origin-live/magu51-297-652ee998-43b2-44a8-9bde-62df15dad0ac_aac/playlist.m3u8 | Poster: /content/magu51_poster_temp.jpg
+
+🎬 Iniciando gravação de: magu51 (URL: https://cam4-hls.xcdnpro.com/297/cam4-origin-live/magu51-297-652ee998-43b2-44a8-9bde-62df15dad0ac_aac/playlist.m3u8) em /content/temp_recordings/magu51_20250605_130636_temp.mp4
+[2025-06-05 13:06:36] [STARTUP] Lote inicial lançado com 25 transmissões.
+[2025-06-05 13:06:36] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [magu51] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+[2025-06-05 13:06:38] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [gayhot06] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:06:40] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [Kingbull1900] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m1s — 📊 14.5% concluído
+[2025-06-05 13:06:42] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+[2025-06-05 13:06:44] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+[2025-06-05 13:06:46] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [valdo2] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:06:48] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [jhony_the_king] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+[2025-06-05 13:06:50] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [Billyytomy] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:06:52] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [tentationdivine] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:06:54] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+[2025-06-05 13:06:56] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [xxdaix] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:06:58] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+[2025-06-05 13:07:00] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+[2025-06-05 13:07:02] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+[2025-06-05 13:07:04] [STATUS] Transmissões ativas: 25 | Total processadas: 25 | Buffer de resultados: 0
+⏱️ [ECSTASYX2_23] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m1s — 📊 14.5% concluído
+⏱️ [littlebear0] Gravados: 0 min | Restantes: 7 min | Tempo total: 0m35s — 📊 8.3% concluído
+✅ Duração real do arquivo gravado: 18s (ffprobe)⏩ Duração gravada (18s) menor que o mínimo (300s). Arquivo descartado.
+
+[2025-06-05 13:07:06] [WORKER] Finalizou gravação: littlebear0 | Sucesso: False | Arquivo: littlebear0_20250605_130631_temp.mp4 | Abyss: Gravação muito curta (descartada)
+[2025-06-05 13:07:06] [LOOP] 1 gravações finalizaram. Vagas livres: 1
+[2025-06-05 13:07:06] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [blueyexxx] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+🎬 Gerando poster com ffmpeg para ALPHA_HUNK no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/ALPHA_HUNK_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ALPHA_HUNK (página 1)
+[2025-06-05 13:07:11] [BUSCA] Nova transmissão encontrada: ALPHA_HUNK (página 1)
+[2025-06-05 13:07:11] [LOOP] Lançando nova gravação: ALPHA_HUNK | Vaga preenchida 25/25
+[2025-06-05 13:07:11] [WORKER] Iniciando gravação: ALPHA_HUNK | URL: https://cam4-hls.xcdnpro.com/299/cam4-origin-live/ALPHA_HUNK-299-bbf12720-074d-45bf-860d-25dd5d28bc01_aac/playlist.m3u8 | Poster: /content/ALPHA_HUNK_poster_ffmpeg.jpg
+
+🎬 Iniciando gravação de: ALPHA_HUNK (URL: https://cam4-hls.xcdnpro.com/299/cam4-origin-live/ALPHA_HUNK-299-bbf12720-074d-45bf-860d-25dd5d28bc01_aac/playlist.m3u8) em /content/temp_recordings/ALPHA_HUNK_20250605_130711_temp.mp4
+[2025-06-05 13:07:11] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [ALPHA_HUNK] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+⏱️ [MkDonatello] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:07:13] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [Perfect_Team] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:07:15] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+[2025-06-05 13:07:17] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+[2025-06-05 13:07:19] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+[2025-06-05 13:07:21] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [Lkgostos0] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m1s — 📊 14.5% concluído
+[2025-06-05 13:07:23] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [outdoorbeast] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+⏱️ [marihuana3] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:07:25] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+[2025-06-05 13:07:27] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [andreas_ath] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+[2025-06-05 13:07:29] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [ragazzoxxl] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m3s — 📊 29.3% concluído
+⏱️ [Popperstuga] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m2s — 📊 14.8% concluído
+⏱️ [recoblue22cm] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m2s — 📊 29.0% concluído
+⏱️ [Totobig22] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:07:31] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [gg8405] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:07:33] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [novinho1956] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:07:35] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [MarteIlDio] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+[2025-06-05 13:07:37] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [magu51] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m1s — 📊 14.5% concluído
+[2025-06-05 13:07:39] [STATUS] Transmissões ativas: 25 | Total processadas: 26 | Buffer de resultados: 1
+⏱️ [blueyexxx] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m31s — 📊 21.7% concluído
+✅ Duração real do arquivo gravado: 70s (ffprobe)
+⏩ Duração gravada (70s) menor que o mínimo (300s). Arquivo descartado.
+[2025-06-05 13:07:40] [WORKER] Finalizou gravação: blueyexxx | Sucesso: False | Arquivo: blueyexxx_20250605_130609_temp.mp4 | Abyss: Gravação muito curta (descartada)
+⏱️ [Kingbull1900] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m1s — 📊 28.8% concluído
+⏱️ [gayhot06] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+[2025-06-05 13:07:41] [LOOP] 1 gravações finalizaram. Vagas livres: 1
+[2025-06-05 13:07:41] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+⏱️ [Plaisirboys] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m14s — 📊 17.6% concluído
+❌ ffmpeg não conseguiu gerar poster para blueyexxx. Saída: ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+https://stackvaults-hls.xcdnpro.com/cb8feeec-dc95-493e-a510-1e891a39cecd/hls/as+a311a149-f958-471f-926f-2db3d7882d57/index.m3u8: Invalid data found when processing input
+
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:07:42] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:44] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:45] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:46] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+⏱️ [valdo2] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:47] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:48] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:49] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:50] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [Billyytomy] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:51] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:52] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:07:52] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:07:52] [STATUS] Transmissões ativas: 24 | Total processadas: 26 | Buffer de resultados: 2
+[2025-06-05 13:07:54] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [tentationdivine] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+❌ ffmpeg não conseguiu gerar poster para blueyexxx. Saída: ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+https://stackvaults-hls.xcdnpro.com/cb8feeec-dc95-493e-a510-1e891a39cecd/hls/as+a311a149-f958-471f-926f-2db3d7882d57/index.m3u8: Invalid data found when processing input
+
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:07:56] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [xxdaix] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:58] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:07:59] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:00] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:02] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:03] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:04] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [ECSTASYX2_23] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:05] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [ALPHA_HUNK] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:06] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:07] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:08:07] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:08:07] [STATUS] Transmissões ativas: 24 | Total processadas: 26 | Buffer de resultados: 2
+[2025-06-05 13:08:09] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+⏱️ [MkDonatello] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:08:14] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [Perfect_Team] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m2s — 📊 29.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:17] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [Plaisirboys] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m2s — 📊 29.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:19] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:20] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:22] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:23] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [Lkgostos0] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m1s — 📊 28.8% concluído
+⏱️ [outdoorbeast] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:24] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [marihuana3] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:26] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [jhony_the_king] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m11s — 📊 45.5% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:27] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+⏱️ [andreas_ath] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:28] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:08:28] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:08:28] [STATUS] Transmissões ativas: 24 | Total processadas: 26 | Buffer de resultados: 2
+[2025-06-05 13:08:30] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Popperstuga] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+⏱️ [gg8405] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m1s — 📊 28.8% concluído
+🖼️ Poster baixado em: /content/littlebear0_poster_temp.jpg
+🎯 Transmissão livre encontrada: littlebear0 (página 1)
+[2025-06-05 13:08:31] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [recoblue22cm] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m2s — 📊 43.3% concluído
+⏱️ [Totobig22] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m2s — 📊 29.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:33] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [ragazzoxxl] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m5s — 📊 44.0% concluído
+⏱️ [novinho1956] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:35] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+⏱️ [MarteIlDio] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:36] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+⏱️ [gayhot06] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m2s — 📊 43.3% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:38] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:40] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:41] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [Kingbull1900] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m3s — 📊 43.6% concluído
+⏱️ [magu51] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m3s — 📊 29.3% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:43] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:44] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:08:45] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:08:45] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:08:45] [STATUS] Transmissões ativas: 24 | Total processadas: 26 | Buffer de resultados: 2
+⏱️ [valdo2] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+[2025-06-05 13:08:47] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para MONSTER777DADDY no segundo 7...
+⏱️ [jhony_the_king] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🖼️ Poster gerado via ffmpeg: /content/MONSTER777DADDY_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: MONSTER777DADDY (página 1)
+[2025-06-05 13:08:51] [BUSCA] Nova transmissão encontrada: MONSTER777DADDY (página 1)
+[2025-06-05 13:08:51] [LOOP] Lançando nova gravação: MONSTER777DADDY | Vaga preenchida 25/25
+[2025-06-05 13:08:51] [WORKER] Iniciando gravação: MONSTER777DADDY | URL: https://cam4-hls.xcdnpro.com/317/cam4-origin-live/MONSTER777DADDY-317-6ef07263-45a3-42a0-91f2-3bb4ef64a7a2_aac/playlist.m3u8 | Poster: /content/MONSTER777DADDY_poster_ffmpeg.jpg
+🎬 Iniciando gravação de: MONSTER777DADDY (URL: https://cam4-hls.xcdnpro.com/317/cam4-origin-live/MONSTER777DADDY-317-6ef07263-45a3-42a0-91f2-3bb4ef64a7a2_aac/playlist.m3u8) em /content/temp_recordings/MONSTER777DADDY_20250605_130851_temp.mp4
+
+[2025-06-05 13:08:51] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+⏱️ [MONSTER777DADDY] Gravados: 0 min | Restantes: 7 min | Tempo total: 0s — 📊 0.0% concluído
+⏱️ [Billyytomy] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m2s — 📊 43.3% concluído
+[2025-06-05 13:08:53] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+⏱️ [tentationdivine] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+[2025-06-05 13:08:55] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+[2025-06-05 13:08:57] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+⏱️ [xxdaix] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+[2025-06-05 13:08:59] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+[2025-06-05 13:09:01] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+[2025-06-05 13:09:03] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+[2025-06-05 13:09:05] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+⏱️ [ECSTASYX2_23] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m1s — 📊 43.1% concluído
+[2025-06-05 13:09:07] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+⏱️ [ALPHA_HUNK] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m1s — 📊 28.8% concluído
+[2025-06-05 13:09:09] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+[2025-06-05 13:09:11] [STATUS] Transmissões ativas: 25 | Total processadas: 27 | Buffer de resultados: 2
+⏱️ [recoblue22cm] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m39s — 📊 52.1% concluído
+✅ Duração real do arquivo gravado: 219s (ffprobe)
+⏩ Duração gravada (219s) menor que o mínimo (300s). Arquivo descartado.
+[2025-06-05 13:09:12] [WORKER] Finalizou gravação: recoblue22cm | Sucesso: False | Arquivo: recoblue22cm_20250605_130533_temp.mp4 | Abyss: Gravação muito curta (descartada)
+⏱️ [MkDonatello] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+[2025-06-05 13:09:13] [LOOP] 1 gravações finalizaram. Vagas livres: 1
+[2025-06-05 13:09:13] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Perfect_Team] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:09:17] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:18] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:19] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:20] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:21] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:22] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [Lkgostos0] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m1s — 📊 43.1% concluído
+⏱️ [outdoorbeast] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:23] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:24] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [marihuana3] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:26] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:27] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:09:27] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:09:27] [STATUS] Transmissões ativas: 24 | Total processadas: 27 | Buffer de resultados: 3
+[2025-06-05 13:09:29] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [ragazzoxxl] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m1s — 📊 57.4% concluído
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+⏱️ [Totobig22] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+⏱️ [andreas_ath] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m4s — 📊 58.1% concluído
+⏱️ [Popperstuga] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m2s — 📊 43.3% concluído
+⏱️ [Plaisirboys] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m18s — 📊 47.1% concluído
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:09:34] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [novinho1956] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:35] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [gayhot06] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:36] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+⏱️ [MarteIlDio] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:37] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:38] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+⏱️ [magu51] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m2s — 📊 43.3% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:39] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:41] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [Kingbull1900] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m1s — 📊 57.4% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:42] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:43] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:44] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:09:44] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:09:44] [STATUS] Transmissões ativas: 24 | Total processadas: 27 | Buffer de resultados: 3
+⏱️ [gg8405] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m12s — 📊 45.7% concluído
+✅ Duração real do arquivo gravado: 155s (ffprobe)
+
+⏩ Duração gravada (155s) menor que o mínimo (300s). Arquivo descartado.[2025-06-05 13:09:46] [WORKER] Finalizou gravação: gg8405 | Sucesso: False | Arquivo: gg8405_20250605_130634_temp.mp4 | Abyss: Gravação muito curta (descartada)
+[2025-06-05 13:09:46] [LOOP] 1 gravações finalizaram. Vagas livres: 2
+[2025-06-05 13:09:46] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+⏱️ [valdo2] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:09:50] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [MONSTER777DADDY] Gravados: 1 min | Restantes: 6 min | Tempo total: 1m — 📊 14.3% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:51] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [Billyytomy] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+⏱️ [jhony_the_king] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m2s — 📊 71.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:52] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:53] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:54] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+⏱️ [tentationdivine] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:55] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:56] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:58] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [xxdaix] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:09:59] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:00] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:10:00] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:10:00] [STATUS] Transmissões ativas: 23 | Total processadas: 27 | Buffer de resultados: 4
+[2025-06-05 13:10:02] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+⏱️ [ECSTASYX2_23] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:10:06] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [ALPHA_HUNK] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:07] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:09] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:10] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:11] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+⏱️ [MkDonatello] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:13] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [Plaisirboys] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m2s — 📊 57.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:14] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:15] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [Perfect_Team] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:16] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:17] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:10:17] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:10:17] [STATUS] Transmissões ativas: 23 | Total processadas: 27 | Buffer de resultados: 4
+[2025-06-05 13:10:19] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+⏱️ [outdoorbeast] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:10:23] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [Lkgostos0] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m1s — 📊 57.4% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:24] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:25] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+⏱️ [marihuana3] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m1s — 📊 57.4% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:27] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:28] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+⏱️ [ragazzoxxl] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m1s — 📊 71.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:29] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [Totobig22] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:30] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [Popperstuga] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:31] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:33] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:34] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:10:34] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:10:34] [STATUS] Transmissões ativas: 23 | Total processadas: 27 | Buffer de resultados: 4
+⏱️ [novinho1956] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+⏱️ [MarteIlDio] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+[2025-06-05 13:10:36] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para blueyexxx no segundo 7...
+⏱️ [gayhot06] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+⏱️ [magu51] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m1s — 📊 57.4% concluído
+🖼️ Poster gerado via ffmpeg: /content/blueyexxx_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: blueyexxx (página 1)
+[2025-06-05 13:10:39] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:40] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:41] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+⏱️ [Kingbull1900] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m1s — 📊 71.7% concluído
+⏱️ [andreas_ath] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m13s — 📊 74.5% concluído
+✅ Duração real do arquivo gravado: 277s (ffprobe)
+⏩ Duração gravada (277s) menor que o mínimo (300s). Arquivo descartado.
+[2025-06-05 13:10:42] [WORKER] Finalizou gravação: andreas_ath | Sucesso: False | Arquivo: andreas_ath_20250605_130529_temp.mp4 | Abyss: Gravação muito curta (descartada)
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:42] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:43] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:45] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:46] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:47] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [valdo2] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:48] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:49] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:10:49] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:10:49] [STATUS] Transmissões ativas: 23 | Total processadas: 27 | Buffer de resultados: 5
+⏱️ [MONSTER777DADDY] Gravados: 2 min | Restantes: 5 min | Tempo total: 2m — 📊 28.6% concluído
+[2025-06-05 13:10:51] [LOOP] 1 gravações finalizaram. Vagas livres: 3
+[2025-06-05 13:10:51] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Billyytomy] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+🎬 Gerando poster com ffmpeg para andreas_ath no segundo 7...
+⏱️ [tentationdivine] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+🖼️ Poster gerado via ffmpeg: /content/andreas_ath_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: andreas_ath (página 1)
+[2025-06-05 13:10:57] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:58] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:10:59] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:00] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+⏱️ [xxdaix] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m2s — 📊 71.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:03] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+⏱️ [ECSTASYX2_23] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:04] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:05] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [ALPHA_HUNK] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:07] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:08] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:10] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:11:10] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:11:10] [STATUS] Transmissões ativas: 22 | Total processadas: 27 | Buffer de resultados: 5
+[2025-06-05 13:11:12] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para andreas_ath no segundo 7...
+⏱️ [MkDonatello] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+⏱️ [Plaisirboys] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m6s — 📊 72.9% concluído
+⏱️ [Perfect_Team] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+🖼️ Poster gerado via ffmpeg: /content/andreas_ath_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: andreas_ath (página 1)
+[2025-06-05 13:11:17] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:19] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [jhony_the_king] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m1s — 📊 86.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:20] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:22] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+⏱️ [outdoorbeast] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m1s — 📊 71.7% concluído
+⏱️ [Lkgostos0] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m1s — 📊 71.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:23] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+⏱️ [marihuana3] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m2s — 📊 71.9% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:25] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:26] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [ragazzoxxl] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m1s — 📊 86.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:27] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:28] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:31] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:11:31] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:11:31] [STATUS] Transmissões ativas: 22 | Total processadas: 27 | Buffer de resultados: 5
+⏱️ [Totobig22] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+⏱️ [Popperstuga] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+[2025-06-05 13:11:33] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🖼️ Poster baixado em: /content/andreas_ath_poster_temp.jpg
+🎯 Transmissão livre encontrada: andreas_ath (página 1)
+[2025-06-05 13:11:34] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [novinho1956] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:35] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [gayhot06] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+⏱️ [MarteIlDio] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m1s — 📊 71.7% concluído🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:37] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+
+⏱️ [magu51] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m1s — 📊 71.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:39] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:40] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:41] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [Kingbull1900] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m1s — 📊 86.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:43] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:45] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:47] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+⏱️ [jhony_the_king] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m11s — 📊 88.3% concluído
+⏱️ [valdo2] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+
+✅ Arquivo renomeado para: jhony_the_king_05-06-2025_13-05_7m.mp4⬆️ Upload de: jhony_the_king_05-06-2025_13-05_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:49] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:11:49] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:11:49] [STATUS] Transmissões ativas: 22 | Total processadas: 27 | Buffer de resultados: 5
+⏱️ [MONSTER777DADDY] Gravados: 3 min | Restantes: 4 min | Tempo total: 3m — 📊 42.9% concluído
+[2025-06-05 13:11:51] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Billyytomy] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🎬 Gerando poster com ffmpeg para andreas_ath no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/andreas_ath_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: andreas_ath (página 1)
+[2025-06-05 13:11:55] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [tentationdivine] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+📤 Upload bem-sucedido. URL: https://short.icu/IhYBP1NTF | SLUG: IhYBP1NTF🖼️ Poster movido para /content/XCam/xcam-db/user/jhony_the_king/IhYBP1NTF.jpg
+
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/jhony_the_king/IhYBP1NTF.jpg
+✅ rec.json para jhony_the_king atualizado em /content/XCam/xcam-db/user/jhony_the_king/rec.json
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:56] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/jhony_the_king/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/jhony_the_king_05-06-2025_13-05_7m.mp4
+[2025-06-05 13:11:56] [WORKER] Finalizou gravação: jhony_the_king | Sucesso: True | Arquivo: jhony_the_king_05-06-2025_13-05_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'IhYBP1NTF', 'urlIframe': 'https://short.icu/IhYBP1NTF'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:57] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:11:59] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+⏱️ [xxdaix] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:00] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:01] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:02] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [ECSTASYX2_23] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:04] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:05] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:06] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:12:06] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:12:06] [STATUS] Transmissões ativas: 22 | Total processadas: 27 | Buffer de resultados: 6
+⏱️ [Plaisirboys] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m2s — 📊 86.2% concluído
+[2025-06-05 13:12:08] [LOOP] 1 gravações finalizaram. Vagas livres: 4
+[2025-06-05 13:12:08] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [ALPHA_HUNK] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m1s — 📊 71.7% concluído
+🎬 Gerando poster com ffmpeg para andreas_ath no segundo 7...
+⏱️ [MkDonatello] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🖼️ Poster gerado via ffmpeg: /content/andreas_ath_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: andreas_ath (página 1)
+[2025-06-05 13:12:14] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:15] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [Perfect_Team] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:16] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:17] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:18] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:20] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [ragazzoxxl] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m50s — 📊 97.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:22] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: ragazzoxxl_05-06-2025_13-05_7m.mp4
+⬆️ Upload de: ragazzoxxl_05-06-2025_13-05_7m.mp4 para Abyss.to...
+⏱️ [Lkgostos0] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m1s — 📊 86.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:23] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+⏱️ [marihuana3] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:24] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+⏱️ [outdoorbeast] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:26] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:12:26] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:12:26] [STATUS] Transmissões ativas: 21 | Total processadas: 27 | Buffer de resultados: 6
+[2025-06-05 13:12:28] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para andreas_ath no segundo 7...
+⏱️ [Popperstuga] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+⏱️ [Totobig22] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+⏱️ [gayhot06] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m50s — 📊 97.6% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: gayhot06_05-06-2025_13-05_7m.mp4
+⬆️ Upload de: gayhot06_05-06-2025_13-05_7m.mp4 para Abyss.to...
+🖼️ Poster gerado via ffmpeg: /content/andreas_ath_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: andreas_ath (página 1)
+[2025-06-05 13:12:35] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [novinho1956] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+⏱️ [Kingbull1900] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m57s — 📊 99.3% concluído
+⏱️ [magu51] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m1s — 📊 86.0% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: Kingbull1900_05-06-2025_13-05_7m.mp4
+⬆️ Upload de: Kingbull1900_05-06-2025_13-05_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:37] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+⏱️ [MarteIlDio] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m1s — 📊 86.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:39] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:40] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:41] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:42] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:43] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:44] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+📤 Upload bem-sucedido. URL: https://short.icu/Ek_l0oExS | SLUG: Ek_l0oExS
+🖼️ Poster movido para /content/XCam/xcam-db/user/Kingbull1900/Ek_l0oExS.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Kingbull1900/Ek_l0oExS.jpg
+✅ rec.json para Kingbull1900 atualizado em /content/XCam/xcam-db/user/Kingbull1900/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Kingbull1900/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/Kingbull1900_05-06-2025_13-05_7m.mp4
+[2025-06-05 13:12:44] [WORKER] Finalizou gravação: Kingbull1900 | Sucesso: True | Arquivo: Kingbull1900_05-06-2025_13-05_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'Ek_l0oExS', 'urlIframe': 'https://short.icu/Ek_l0oExS'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:45] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+⏱️ [valdo2] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m57s — 📊 99.3% concluído
+📤 Upload bem-sucedido. URL: https://short.icu/IwMhapLyM | SLUG: IwMhapLyM
+🖼️ Poster movido para /content/XCam/xcam-db/user/gayhot06/IwMhapLyM.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/gayhot06/IwMhapLyM.jpg
+✅ Duração real do arquivo gravado: 420s (ffprobe)✅ rec.json para gayhot06 atualizado em /content/XCam/xcam-db/user/gayhot06/rec.json
+
+✅ Arquivo renomeado para: valdo2_05-06-2025_13-05_7m.mp4
+⬆️ Upload de: valdo2_05-06-2025_13-05_7m.mp4 para Abyss.to...🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/gayhot06/rec.json
+
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/gayhot06_05-06-2025_13-05_7m.mp4
+[2025-06-05 13:12:46] [WORKER] Finalizou gravação: gayhot06 | Sucesso: True | Arquivo: gayhot06_05-06-2025_13-05_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'IwMhapLyM', 'urlIframe': 'https://short.icu/IwMhapLyM'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:46] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:12:46] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:12:46] [STATUS] Transmissões ativas: 21 | Total processadas: 27 | Buffer de resultados: 8
+📤 Upload bem-sucedido. URL: https://short.icu/q9eneSS3G | SLUG: q9eneSS3G
+🖼️ Poster movido para /content/XCam/xcam-db/user/ragazzoxxl/q9eneSS3G.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/ragazzoxxl/q9eneSS3G.jpg
+✅ rec.json para ragazzoxxl atualizado em /content/XCam/xcam-db/user/ragazzoxxl/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/ragazzoxxl/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/ragazzoxxl_05-06-2025_13-05_7m.mp4
+[2025-06-05 13:12:47] [WORKER] Finalizou gravação: ragazzoxxl | Sucesso: True | Arquivo: ragazzoxxl_05-06-2025_13-05_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'q9eneSS3G', 'urlIframe': 'https://short.icu/q9eneSS3G'}
+[2025-06-05 13:12:48] [LOOP] 3 gravações finalizaram. Vagas livres: 7
+[2025-06-05 13:12:48] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [Billyytomy] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m57s — 📊 99.3% concluído
+🎬 Gerando poster com ffmpeg para ragazzoxxl no segundo 7...
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: Billyytomy_05-06-2025_13-05_7m.mp4
+⬆️ Upload de: Billyytomy_05-06-2025_13-05_7m.mp4 para Abyss.to...
+🖼️ Poster gerado via ffmpeg: /content/ragazzoxxl_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:12:51] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [MONSTER777DADDY] Gravados: 4 min | Restantes: 3 min | Tempo total: 4m — 📊 57.1% concluído
+⏱️ [tentationdivine] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m56s — 📊 99.0% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:52] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+✅ Arquivo renomeado para: tentationdivine_05-06-2025_13-05_7m.mp4
+⬆️ Upload de: tentationdivine_05-06-2025_13-05_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:53] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+⏱️ [xxdaix] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m53s — 📊 98.3% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: xxdaix_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: xxdaix_05-06-2025_13-06_7m.mp4 para Abyss.to...
+⏱️ [Plaisirboys] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m27s — 📊 92.1% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: Plaisirboys_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: Plaisirboys_05-06-2025_13-06_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:54] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+📤 Upload bem-sucedido. URL: https://short.icu/O7s_vq2od | SLUG: O7s_vq2od
+🖼️ Poster movido para /content/XCam/xcam-db/user/Plaisirboys/O7s_vq2od.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Plaisirboys/O7s_vq2od.jpg
+✅ rec.json para Plaisirboys atualizado em /content/XCam/xcam-db/user/Plaisirboys/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Plaisirboys/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/Plaisirboys_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:12:57] [WORKER] Finalizou gravação: Plaisirboys | Sucesso: True | Arquivo: Plaisirboys_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'O7s_vq2od', 'urlIframe': 'https://short.icu/O7s_vq2od'}
+📤 Upload bem-sucedido. URL: https://short.icu/WNrt26mQP | SLUG: WNrt26mQP
+🖼️ Poster movido para /content/XCam/xcam-db/user/valdo2/WNrt26mQP.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/valdo2/WNrt26mQP.jpg
+✅ rec.json para valdo2 atualizado em /content/XCam/xcam-db/user/valdo2/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/valdo2/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/valdo2_05-06-2025_13-05_7m.mp4
+[2025-06-05 13:12:58] [WORKER] Finalizou gravação: valdo2 | Sucesso: True | Arquivo: valdo2_05-06-2025_13-05_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'WNrt26mQP', 'urlIframe': 'https://short.icu/WNrt26mQP'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:58] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:12:59] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [ECSTASYX2_23] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m55s — 📊 98.8% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: ECSTASYX2_23_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: ECSTASYX2_23_05-06-2025_13-06_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:01] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+📤 Upload bem-sucedido. URL: https://short.icu/dKMA9x042 | SLUG: dKMA9x042
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:02] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🖼️ Poster movido para /content/XCam/xcam-db/user/tentationdivine/dKMA9x042.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/tentationdivine/dKMA9x042.jpg
+✅ rec.json para tentationdivine atualizado em /content/XCam/xcam-db/user/tentationdivine/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/tentationdivine/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/tentationdivine_05-06-2025_13-05_7m.mp4
+[2025-06-05 13:13:02] [WORKER] Finalizou gravação: tentationdivine | Sucesso: True | Arquivo: tentationdivine_05-06-2025_13-05_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'dKMA9x042', 'urlIframe': 'https://short.icu/dKMA9x042'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:03] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:04] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:13:04] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:13:04] [STATUS] Transmissões ativas: 18 | Total processadas: 27 | Buffer de resultados: 12
+[2025-06-05 13:13:06] [LOOP] 3 gravações finalizaram. Vagas livres: 10
+[2025-06-05 13:13:06] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para ragazzoxxl no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/ragazzoxxl_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:13:08] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+⏱️ [MkDonatello] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m56s — 📊 99.0% concluído⏱️ [ALPHA_HUNK] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m1s — 📊 86.0% concluído
+
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: MkDonatello_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: MkDonatello_05-06-2025_13-06_7m.mp4 para Abyss.to...
+📤 Upload bem-sucedido. URL: https://short.icu/Jy1n9N3Yi | SLUG: Jy1n9N3Yi
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:09] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+
+🖼️ Poster movido para /content/XCam/xcam-db/user/xxdaix/Jy1n9N3Yi.jpg🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/xxdaix/Jy1n9N3Yi.jpg
+✅ rec.json para xxdaix atualizado em /content/XCam/xcam-db/user/xxdaix/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/xxdaix/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/xxdaix_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:09] [WORKER] Finalizou gravação: xxdaix | Sucesso: True | Arquivo: xxdaix_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'Jy1n9N3Yi', 'urlIframe': 'https://short.icu/Jy1n9N3Yi'}
+⏱️ [Perfect_Team] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m54s — 📊 98.6% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: Perfect_Team_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: Perfect_Team_05-06-2025_13-06_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:10] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:11] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:12] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+📤 Upload bem-sucedido. URL: https://short.icu/ZHoFQIN9j | SLUG: ZHoFQIN9j
+🖼️ Poster movido para /content/XCam/xcam-db/user/ECSTASYX2_23/ZHoFQIN9j.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/ECSTASYX2_23/ZHoFQIN9j.jpg
+✅ rec.json para ECSTASYX2_23 atualizado em /content/XCam/xcam-db/user/ECSTASYX2_23/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/ECSTASYX2_23/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/ECSTASYX2_23_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:13] [WORKER] Finalizou gravação: ECSTASYX2_23 | Sucesso: True | Arquivo: ECSTASYX2_23_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'ZHoFQIN9j', 'urlIframe': 'https://short.icu/ZHoFQIN9j'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:13] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:15] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:16] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:17] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+📤 Upload bem-sucedido. URL: https://short.icu/dqzmjj-t1 | SLUG: dqzmjj-t1
+🖼️ Poster movido para /content/XCam/xcam-db/user/Billyytomy/dqzmjj-t1.jpg🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:18] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:13:18] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:13:18] [STATUS] Transmissões ativas: 15 | Total processadas: 27 | Buffer de resultados: 14
+
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Billyytomy/dqzmjj-t1.jpg
+✅ rec.json para Billyytomy atualizado em /content/XCam/xcam-db/user/Billyytomy/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Billyytomy/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/Billyytomy_05-06-2025_13-05_7m.mp4
+[2025-06-05 13:13:18] [WORKER] Finalizou gravação: Billyytomy | Sucesso: True | Arquivo: Billyytomy_05-06-2025_13-05_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'dqzmjj-t1', 'urlIframe': 'https://short.icu/dqzmjj-t1'}
+⏱️ [Lkgostos0] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m56s — 📊 99.0% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: Lkgostos0_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: Lkgostos0_05-06-2025_13-06_7m.mp4 para Abyss.to...
+[2025-06-05 13:13:20] [LOOP] 3 gravações finalizaram. Vagas livres: 13
+[2025-06-05 13:13:20] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+⏱️ [outdoorbeast] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m57s — 📊 99.3% concluído
+⏱️ [marihuana3] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m55s — 📊 98.8% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: outdoorbeast_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: outdoorbeast_05-06-2025_13-06_7m.mp4 para Abyss.to...
+📤 Upload bem-sucedido. URL: https://short.icu/7MGrU9Xe6 | SLUG: 7MGrU9Xe6🎬 Gerando poster com ffmpeg para ragazzoxxl no segundo 7...
+
+🖼️ Poster movido para /content/XCam/xcam-db/user/MkDonatello/7MGrU9Xe6.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/MkDonatello/7MGrU9Xe6.jpg
+✅ rec.json para MkDonatello atualizado em /content/XCam/xcam-db/user/MkDonatello/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/MkDonatello/rec.json
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/MkDonatello_05-06-2025_13-06_7m.mp4✅ Arquivo renomeado para: marihuana3_05-06-2025_13-06_7m.mp4
+
+[2025-06-05 13:13:21] [WORKER] Finalizou gravação: MkDonatello | Sucesso: True | Arquivo: MkDonatello_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': '7MGrU9Xe6', 'urlIframe': 'https://short.icu/7MGrU9Xe6'}⬆️ Upload de: marihuana3_05-06-2025_13-06_7m.mp4 para Abyss.to...
+
+🖼️ Poster gerado via ffmpeg: /content/ragazzoxxl_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:13:22] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:26] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:27] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+⏱️ [Popperstuga] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m57s — 📊 99.3% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: Popperstuga_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: Popperstuga_05-06-2025_13-06_7m.mp4 para Abyss.to...
+⏱️ [Totobig22] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m56s — 📊 99.0% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:29] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: Totobig22_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: Totobig22_05-06-2025_13-06_7m.mp4 para Abyss.to...
+⏱️ [novinho1956] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m55s — 📊 98.8% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: novinho1956_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: novinho1956_05-06-2025_13-06_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:30] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:31] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+⏱️ [MarteIlDio] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m56s — 📊 99.0% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: MarteIlDio_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: MarteIlDio_05-06-2025_13-06_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:32] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [magu51] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m56s — 📊 99.0% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: magu51_05-06-2025_13-06_7m.mp4
+⬆️ Upload de: magu51_05-06-2025_13-06_7m.mp4 para Abyss.to...
+📤 Upload bem-sucedido. URL: https://short.icu/6aoOOgEPE | SLUG: 6aoOOgEPE
+🖼️ Poster movido para /content/XCam/xcam-db/user/outdoorbeast/6aoOOgEPE.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/outdoorbeast/6aoOOgEPE.jpg
+✅ rec.json para outdoorbeast atualizado em /content/XCam/xcam-db/user/outdoorbeast/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/outdoorbeast/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/outdoorbeast_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:34] [WORKER] Finalizou gravação: outdoorbeast | Sucesso: True | Arquivo: outdoorbeast_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': '6aoOOgEPE', 'urlIframe': 'https://short.icu/6aoOOgEPE'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:34] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:36] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:37] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:13:37] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:13:37] [STATUS] Transmissões ativas: 12 | Total processadas: 27 | Buffer de resultados: 17
+[2025-06-05 13:13:39] [LOOP] 2 gravações finalizaram. Vagas livres: 15
+[2025-06-05 13:13:39] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+📤 Upload bem-sucedido. URL: https://short.icu/dBOsPjSmb | SLUG: dBOsPjSmb
+🖼️ Poster movido para /content/XCam/xcam-db/user/magu51/dBOsPjSmb.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/magu51/dBOsPjSmb.jpg
+✅ rec.json para magu51 atualizado em /content/XCam/xcam-db/user/magu51/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/magu51/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/magu51_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:40] [WORKER] Finalizou gravação: magu51 | Sucesso: True | Arquivo: magu51_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'dBOsPjSmb', 'urlIframe': 'https://short.icu/dBOsPjSmb'}
+🖼️ Poster baixado em: /content/outdoorbeast_poster_temp.jpg
+🎯 Transmissão livre encontrada: outdoorbeast (página 1)
+[2025-06-05 13:13:40] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:42] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+📤 Upload bem-sucedido. URL: https://short.icu/YOkJ6ND7D | SLUG: YOkJ6ND7D
+🖼️ Poster movido para /content/XCam/xcam-db/user/Totobig22/YOkJ6ND7D.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Totobig22/YOkJ6ND7D.jpg
+✅ rec.json para Totobig22 atualizado em /content/XCam/xcam-db/user/Totobig22/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Totobig22/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/Totobig22_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:43] [WORKER] Finalizou gravação: Totobig22 | Sucesso: True | Arquivo: Totobig22_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'YOkJ6ND7D', 'urlIframe': 'https://short.icu/YOkJ6ND7D'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:43] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:45] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:46] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+📤 Upload bem-sucedido. URL: https://short.icu/OFAOQYlpV | SLUG: OFAOQYlpV
+🖼️ Poster movido para /content/XCam/xcam-db/user/MarteIlDio/OFAOQYlpV.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/MarteIlDio/OFAOQYlpV.jpg
+✅ rec.json para MarteIlDio atualizado em /content/XCam/xcam-db/user/MarteIlDio/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/MarteIlDio/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/MarteIlDio_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:48] [WORKER] Finalizou gravação: MarteIlDio | Sucesso: True | Arquivo: MarteIlDio_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'OFAOQYlpV', 'urlIframe': 'https://short.icu/OFAOQYlpV'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:48] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:49] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+📤 Upload bem-sucedido. URL: https://short.icu/BCQg1Ko2b | SLUG: BCQg1Ko2b
+🖼️ Poster movido para /content/XCam/xcam-db/user/marihuana3/BCQg1Ko2b.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/marihuana3/BCQg1Ko2b.jpg
+✅ rec.json para marihuana3 atualizado em /content/XCam/xcam-db/user/marihuana3/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/marihuana3/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/marihuana3_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:50] [WORKER] Finalizou gravação: marihuana3 | Sucesso: True | Arquivo: marihuana3_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'BCQg1Ko2b', 'urlIframe': 'https://short.icu/BCQg1Ko2b'}
+⏱️ [MONSTER777DADDY] Gravados: 5 min | Restantes: 2 min | Tempo total: 5m — 📊 71.4% concluído
+📤 Upload bem-sucedido. URL: https://short.icu/jBHc5inoo | SLUG: jBHc5inoo
+🖼️ Poster movido para /content/XCam/xcam-db/user/Lkgostos0/jBHc5inoo.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Lkgostos0/jBHc5inoo.jpg
+✅ rec.json para Lkgostos0 atualizado em /content/XCam/xcam-db/user/Lkgostos0/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Lkgostos0/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/Lkgostos0_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:51] [WORKER] Finalizou gravação: Lkgostos0 | Sucesso: True | Arquivo: Lkgostos0_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'jBHc5inoo', 'urlIframe': 'https://short.icu/jBHc5inoo'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:51] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:52] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:54] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:13:54] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:13:54] [STATUS] Transmissões ativas: 10 | Total processadas: 27 | Buffer de resultados: 22
+[2025-06-05 13:13:56] [LOOP] 5 gravações finalizaram. Vagas livres: 20
+[2025-06-05 13:13:56] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+📤 Upload bem-sucedido. URL: https://short.icu/PPhFRLUGg | SLUG: PPhFRLUGg
+🖼️ Poster movido para /content/XCam/xcam-db/user/Perfect_Team/PPhFRLUGg.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Perfect_Team/PPhFRLUGg.jpg
+✅ rec.json para Perfect_Team atualizado em /content/XCam/xcam-db/user/Perfect_Team/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Perfect_Team/rec.json
+📤 Upload bem-sucedido. URL: https://short.icu/6-nD7fk__ | SLUG: 6-nD7fk__
+🖼️ Poster movido para /content/XCam/xcam-db/user/Popperstuga/6-nD7fk__.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Popperstuga/6-nD7fk__.jpg
+✅ rec.json para Popperstuga atualizado em /content/XCam/xcam-db/user/Popperstuga/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/Perfect_Team_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:57] [WORKER] Finalizou gravação: Perfect_Team | Sucesso: True | Arquivo: Perfect_Team_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'PPhFRLUGg', 'urlIframe': 'https://short.icu/PPhFRLUGg'}
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/Popperstuga/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/Popperstuga_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:13:57] [WORKER] Finalizou gravação: Popperstuga | Sucesso: True | Arquivo: Popperstuga_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': '6-nD7fk__', 'urlIframe': 'https://short.icu/6-nD7fk__'}
+🖼️ Poster baixado em: /content/outdoorbeast_poster_temp.jpg
+🎯 Transmissão livre encontrada: outdoorbeast (página 1)
+[2025-06-05 13:13:57] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:13:58] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:00] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+📤 Upload bem-sucedido. URL: https://short.icu/tP6H3HP4E | SLUG: tP6H3HP4E
+🖼️ Poster movido para /content/XCam/xcam-db/user/novinho1956/tP6H3HP4E.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/novinho1956/tP6H3HP4E.jpg
+✅ rec.json para novinho1956 atualizado em /content/XCam/xcam-db/user/novinho1956/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/novinho1956/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/novinho1956_05-06-2025_13-06_7m.mp4
+[2025-06-05 13:14:01] [WORKER] Finalizou gravação: novinho1956 | Sucesso: True | Arquivo: novinho1956_05-06-2025_13-06_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'tP6H3HP4E', 'urlIframe': 'https://short.icu/tP6H3HP4E'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:01] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:02] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:03] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:05] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+⏱️ [ALPHA_HUNK] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m54s — 📊 98.6% concluído
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: ALPHA_HUNK_05-06-2025_13-07_7m.mp4
+⬆️ Upload de: ALPHA_HUNK_05-06-2025_13-07_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:06] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:07] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:09] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:14:09] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:14:09] [STATUS] Transmissões ativas: 5 | Total processadas: 27 | Buffer de resultados: 25
+[2025-06-05 13:14:11] [LOOP] 3 gravações finalizaram. Vagas livres: 23
+[2025-06-05 13:14:11] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🖼️ Poster baixado em: /content/outdoorbeast_poster_temp.jpg
+🎯 Transmissão livre encontrada: outdoorbeast (página 1)
+[2025-06-05 13:14:12] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:13] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:14] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:15] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:17] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+📤 Upload bem-sucedido. URL: https://short.icu/rhL5LiIej | SLUG: rhL5LiIej
+🖼️ Poster movido para /content/XCam/xcam-db/user/ALPHA_HUNK/rhL5LiIej.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/ALPHA_HUNK/rhL5LiIej.jpg
+✅ rec.json para ALPHA_HUNK atualizado em /content/XCam/xcam-db/user/ALPHA_HUNK/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/ALPHA_HUNK/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/ALPHA_HUNK_05-06-2025_13-07_7m.mp4
+[2025-06-05 13:14:19] [WORKER] Finalizou gravação: ALPHA_HUNK | Sucesso: True | Arquivo: ALPHA_HUNK_05-06-2025_13-07_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': 'rhL5LiIej', 'urlIframe': 'https://short.icu/rhL5LiIej'}
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:19] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:20] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:21] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:23] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:24] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:14:24] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:14:24] [STATUS] Transmissões ativas: 2 | Total processadas: 27 | Buffer de resultados: 26
+[2025-06-05 13:14:26] [LOOP] 1 gravações finalizaram. Vagas livres: 24
+[2025-06-05 13:14:26] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para ragazzoxxl no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/ragazzoxxl_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:14:28] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:30] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:31] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:32] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:34] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:35] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:36] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:38] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:39] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:41] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:14:41] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:14:41] [STATUS] Transmissões ativas: 1 | Total processadas: 27 | Buffer de resultados: 26
+[2025-06-05 13:14:43] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🖼️ Poster baixado em: /content/outdoorbeast_poster_temp.jpg
+🎯 Transmissão livre encontrada: outdoorbeast (página 1)
+[2025-06-05 13:14:43] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:45] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:46] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:47] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:49] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+⏱️ [MONSTER777DADDY] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m — 📊 85.7% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:51] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:53] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:56] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:58] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:14:59] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:14:59] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:14:59] [STATUS] Transmissões ativas: 1 | Total processadas: 27 | Buffer de resultados: 26
+[2025-06-05 13:15:01] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🖼️ Poster baixado em: /content/outdoorbeast_poster_temp.jpg
+🎯 Transmissão livre encontrada: outdoorbeast (página 1)
+[2025-06-05 13:15:02] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:03] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:06] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:07] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:08] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:10] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:11] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:13] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:14] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:15] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:15:15] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:15:15] [STATUS] Transmissões ativas: 1 | Total processadas: 27 | Buffer de resultados: 26
+[2025-06-05 13:15:17] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🖼️ Poster baixado em: /content/ragazzoxxl_poster_temp.jpg
+🎯 Transmissão livre encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:15:18] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:19] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:20] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:22] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:24] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:28] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:31] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:32] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:34] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:35] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:15:35] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:15:35] [STATUS] Transmissões ativas: 1 | Total processadas: 27 | Buffer de resultados: 26
+[2025-06-05 13:15:37] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para ragazzoxxl no segundo 7...
+🖼️ Poster gerado via ffmpeg: /content/ragazzoxxl_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:15:40] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:41] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:42] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:44] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+⏱️ [MONSTER777DADDY] Gravados: 6 min | Restantes: 1 min | Tempo total: 6m54s — 📊 98.6% concluído
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:45] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+✅ Duração real do arquivo gravado: 420s (ffprobe)
+✅ Arquivo renomeado para: MONSTER777DADDY_05-06-2025_13-08_7m.mp4
+⬆️ Upload de: MONSTER777DADDY_05-06-2025_13-08_7m.mp4 para Abyss.to...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:47] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:48] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:49] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:50] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:52] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:15:52] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:15:52] [STATUS] Transmissões ativas: 1 | Total processadas: 27 | Buffer de resultados: 26
+[2025-06-05 13:15:54] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🎬 Gerando poster com ffmpeg para ragazzoxxl no segundo 7...
+📤 Upload bem-sucedido. URL: https://short.icu/-wJOlg8vP | SLUG: -wJOlg8vP
+🖼️ Poster movido para /content/XCam/xcam-db/user/MONSTER777DADDY/-wJOlg8vP.jpg
+🗂️ Poster também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/MONSTER777DADDY/-wJOlg8vP.jpg
+✅ rec.json para MONSTER777DADDY atualizado em /content/XCam/xcam-db/user/MONSTER777DADDY/rec.json
+🗂️ rec.json também salvo no Drive: /content/drive/MyDrive/XCam.Drive/XCam/xcam-db/user/MONSTER777DADDY/rec.json
+🗑️ Arquivo de vídeo removido do Colab: /content/temp_recordings/MONSTER777DADDY_05-06-2025_13-08_7m.mp4
+[2025-06-05 13:15:57] [WORKER] Finalizou gravação: MONSTER777DADDY | Sucesso: True | Arquivo: MONSTER777DADDY_05-06-2025_13-08_7m.mp4 | Abyss: {'status': True, 'msg': 'Complete', 'slug': '-wJOlg8vP', 'urlIframe': 'https://short.icu/-wJOlg8vP'}
+🖼️ Poster gerado via ffmpeg: /content/ragazzoxxl_poster_ffmpeg.jpg
+🎯 Transmissão livre (pelo liveInfo) encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:15:57] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:15:58] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:02] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:05] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:06] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:08] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:09] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:10] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:11] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:13] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:16:13] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:16:13] [STATUS] Transmissões ativas: 1 | Total processadas: 27 | Buffer de resultados: 27
+[2025-06-05 13:16:15] [LOOP] 1 gravações finalizaram. Vagas livres: 25
+[2025-06-05 13:16:15] [BUSCA] Buscando próxima transmissão livre: tentativa 1
+🔎 Buscando próxima transmissão livre na página 1...
+🖼️ Poster baixado em: /content/ragazzoxxl_poster_temp.jpg
+🎯 Transmissão livre encontrada: ragazzoxxl (página 1)
+[2025-06-05 13:16:16] [BUSCA] Buscando próxima transmissão livre: tentativa 2
+🔎 Buscando próxima transmissão livre na página 2...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:18] [BUSCA] Buscando próxima transmissão livre: tentativa 3
+🔎 Buscando próxima transmissão livre na página 3...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:20] [BUSCA] Buscando próxima transmissão livre: tentativa 4
+🔎 Buscando próxima transmissão livre na página 4...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:22] [BUSCA] Buscando próxima transmissão livre: tentativa 5
+🔎 Buscando próxima transmissão livre na página 5...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:26] [BUSCA] Buscando próxima transmissão livre: tentativa 6
+🔎 Buscando próxima transmissão livre na página 6...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:27] [BUSCA] Buscando próxima transmissão livre: tentativa 7
+🔎 Buscando próxima transmissão livre na página 7...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:29] [BUSCA] Buscando próxima transmissão livre: tentativa 8
+🔎 Buscando próxima transmissão livre na página 8...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:30] [BUSCA] Buscando próxima transmissão livre: tentativa 9
+🔎 Buscando próxima transmissão livre na página 9...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:32] [BUSCA] Buscando próxima transmissão livre: tentativa 10
+🔎 Buscando próxima transmissão livre na página 10...
+🚫 Nenhuma transmissão livre encontrada após varrer as páginas.
+[2025-06-05 13:16:33] [BUSCA] Nenhuma transmissão livre encontrada após tentativas.
+[2025-06-05 13:16:33] [LOOP] Não há mais transmissões para preencher as vagas livres.
+[2025-06-05 13:16:33] [END] Todas as transmissões possíveis já foram processadas!
+[2025-06-05 13:16:33] [RESUMO] Processamento dinâmico concluído! Total de transmissões gravadas/processadas: 27
+[2025-06-05 13:16:33] [FINALIZACAO] Realizando commit/push final dos arquivos pendentes...
+[2025-06-05 13:16:33] [FINALIZACAO] Commit/push final executado com sucesso.
+[2025-06-05 13:16:33] [END] Supervisor dinâmico finalizado.
