@@ -1,169 +1,200 @@
-# XCam_Gravador.ipynb
+# XCam_REC_V3.4
 
-## Documentação Técnica
-
-Este notebook tem como objetivo automatizar o processo de captura e arquivamento de transmissões ao vivo (streams) da plataforma XCam. Ele realiza a busca por transmissões disponíveis, grava os vídeos, faz upload para um serviço de hospedagem (Abyss/ Hydrax), e mantém um registro detalhado das gravações de cada usuário em arquivos JSON organizados por pasta.
+Automação robusta para captura, gravação e versionamento de transmissões ao vivo da XCam em ambientes Google Colab, com integração ao GitHub e Google Drive.
 
 ---
 
-## Fluxo Geral
+## Sumário
 
-1. **Montagem do Google Drive**
-2. **Instalação do FFmpeg**
-3. **Definição de Diretórios e Constantes**
-4. **Funções utilitárias**
-5. **Busca de Broadcasts (streams) disponíveis**
-6. **Gravação de streams com FFmpeg**
-7. **Upload dos arquivos gravados para Abyss/Hydrax**
-8. **Gerenciamento do arquivo `rec.json` por usuário**
-9. **Execução paralela e processamento paginado**
-10. **Execução automática no ambiente Colab**
-
----
-
-## Detalhamento das Etapas
-
-### 1. Montagem do Google Drive
-
-- O notebook monta o Google Drive na máquina virtual do Colab, permitindo acesso de leitura e escrita à pasta `/content/drive/MyDrive/XCam.Drive`.
-- Os arquivos gravados e os registros JSON são armazenados nesta pasta para persistência além da execução do notebook.
-
-```python
-from google.colab import drive
-drive.mount('/content/drive')
-```
+- [Objetivo](#objetivo)
+- [Funcionalidades](#funcionalidades)
+- [Fluxo de Execução](#fluxo-de-execução)
+- [Parâmetros Globais](#parâmetros-globais)
+- [Requisitos](#requisitos)
+- [Como Utilizar](#como-utilizar)
+- [Arquitetura e Design](#arquitetura-e-design)
+- [Estrutura de Pastas](#estrutura-de-pastas)
+- [Considerações de Segurança](#considerações-de-segurança)
+- [Contribuição](#contribuição)
+- [Licença](#licença)
 
 ---
 
-### 2. Instalação do FFmpeg
+## Objetivo
 
-- FFmpeg é uma ferramenta de linha de comando essencial para captura e manipulação de streams de vídeo.
-- O notebook instala ou atualiza o FFmpeg para garantir funcionalidade total na VM do Colab.
+Este notebook tem como missão automatizar todo o processo de:
+- Descoberta de transmissões online na XCam (API oficial)
+- Gravação eficiente de streams (com ffmpeg)
+- Geração e validação automática de posters (imagens estáticas)
+- Upload para storage externo (Abyss)
+- Versionamento e sincronização de metadados (JSON) e imagens no GitHub
+- Persistência de arquivos no Google Drive, garantindo redundância e portabilidade
 
-```python
-!apt-get update -y
-!apt-get install -y ffmpeg
-```
-
----
-
-### 3. Definição de Diretórios e Constantes
-
-- **TEMP_OUTPUT_FOLDER:** Diretório temporário local para gravação dos vídeos, usado para evitar perda de dados caso ocorra erro antes do upload.
-- **BASE_DRIVE_FOLDER:** Diretório base no Google Drive onde ficam as pastas de usuários e arquivos JSON.
-- **ABYSS_UPLOAD_URL:** URL do serviço de upload (Hydrax/Abyss).
-- **RECORD_SECONDS:** Duração padrão da gravação de cada stream (ex: 1980 segundos = 33 minutos).
+Ideal para uso intensivo, processamento em lote e integração com pipelines CI/CD em ambientes baseados em nuvem.
 
 ---
 
-### 4. Funções Utilitárias
+## Funcionalidades
 
-- **format_seconds:** Formata um valor em segundos para string no formato `XhYmZs`.
-- **log_progress:** Exibe o progresso da gravação, mostrando minutos gravados, restantes e percentual completado.
+- **Configuração centralizada de parâmetros:**  
+  Todos os limites, thresholds e caminhos críticos são definidos em uma célula única, facilitando ajustes e manutenção.
 
----
+- **Instalação automatizada de dependências:**  
+  Instala e verifica o ffmpeg automaticamente no ambiente Colab.
 
-### 5. Busca de Broadcasts
+- **Gerenciamento de repositório e storage:**  
+  Clona o repositório GitHub e replica no Google Drive para persistência.
 
-- **get_broadcasts:** Busca transmissões disponíveis via API da XCam:
-   - Primeira tentativa utiliza a API principal para obter lista de transmissões.
-   - Se não encontrar a URL do stream (preview), utiliza fallback na API liveInfo para tentar obter a URL direta (.m3u8).
-   - Retorna uma lista de transmissões válidas com campos `username` e `src` (URL do stream).
+- **Busca inteligente e flexível de transmissões:**  
+  Suporte a busca em lote, busca unitária e busca personalizada de usuários.
 
----
+- **Geração robusta de posters:**  
+  Baixa da API ou gera via ffmpeg caso o poster esteja ausente ou inválido.
 
-### 6. Gravação de Streams
+- **Gravação controlada de streams:**  
+  Define tempo máximo/mínimo, grava múltiplas transmissões em paralelo, valida duração real e descarta gravações curtas.
 
-- **gravar_stream:** 
-   - Usa FFmpeg para gravar a transmissão do usuário por um tempo definido.
-   - O arquivo é salvo em pasta temporária, com nome padronizado: `{username}_{data}_{horario}_{tempo}.mp4`.
-   - Exibe feedback de progresso (minutos gravados/restantes).
-   - Após a gravação, renomeia o arquivo para o padrão correto e o encaminha para upload.
+- **Controle de concorrência:**  
+  Log temporário impede duplicidade em execuções simultâneas.
 
----
+- **Commit e push automáticos:**  
+  Versiona apenas arquivos relevantes, com batch commit configurável.
 
-### 7. Upload para Abyss/Hydrax
+- **Upload automatizado para Abyss:**  
+  Faz upload dos vídeos gravados e recebe slug para indexação.
 
-- **upload_to_abyss_and_update_json:** 
-   - Envia o arquivo gravado para o serviço Abyss/Hydrax via POST multipart/form-data.
-   - Se o upload for bem-sucedido, recebe URL e ID do vídeo hospedado.
-   - Exibe informações detalhadas do upload e status.
+- **Atualização e versionamento de metadados:**  
+  Mantém arquivos JSON atualizados com status detalhado de cada transmissão.
 
----
-
-### 8. Gerenciamento do rec.json por Usuário
-
-- Para cada usuário, existe um arquivo `user/{username}/rec.json` que registra todas as gravações daquele usuário.
-- **Ao criar um novo rec.json:**
-   - É feita uma cópia do arquivo modelo base (`user/rec.json`), que possui apenas os campos `username`, `records`, e `videos`.
-   - Os campos são zerados e inicializados corretamente.
-- **Ao atualizar um rec.json existente:**
-   - O notebook valida se a estrutura do arquivo está conforme o modelo base.
-   - Se houver divergência ou corrupção, o arquivo é zerado e refeito.
-   - Cada gravação realizada é adicionada ao campo `videos` como um novo objeto, e o contador `records` é incrementado.
-   - Os campos de cada vídeo incluem: `video`, `title`, `file`, `url`, `data`, `horario`, `tempo`.
+- **Limpeza de arquivos temporários:**  
+  Garante ambiente limpo, removendo arquivos desnecessários após o processamento.
 
 ---
 
-### 9. Execução Paralela e Processamento Paginado
+## Fluxo de Execução
 
-- **process_page:** Busca e grava múltiplas transmissões em paralelo, utilizando a biblioteca `multiprocessing`.
-- Permite processar várias páginas de transmissões em sequência, respeitando limites e pausas configuráveis.
+1. **Configuração inicial:**  
+   - Montagem do Google Drive  
+   - Definição dos parâmetros globais
+
+2. **Instalação de dependências:**  
+   - Checagem e instalação do ffmpeg
+
+3. **Clonagem de repositório:**  
+   - Ambiente local e Drive sincronizados
+
+4. **Busca de transmissões:**  
+   - Via API XCam: busca em lote ou por usuário específico (modo interativo ou automático)
+   - Fallback para liveInfo se necessário
+
+5. **Geração e validação de posters:**  
+   - Download do poster da API ou geração via ffmpeg
+
+6. **Gravação das transmissões:**  
+   - Controle de tempo, logs de progresso, validação de duração
+
+7. **Upload e versionamento:**  
+   - Upload para Abyss, atualização de JSON, commit e push para o GitHub
+
+8. **Limpeza e finalização:**  
+   - Remoção de arquivos temporários e atualização do log
 
 ---
 
-### 10. Execução Automática no Colab
+## Parâmetros Globais
 
-- O notebook detecta se está rodando no ambiente Colab e executa o processo principal automaticamente.
-- Caso contrário, orienta a execução manual da função `main()`.
+| Parâmetro                | Descrição                                                       | Valor Padrão |
+|--------------------------|-----------------------------------------------------------------|--------------|
+| LIMIT_DEFAULT            | Máximo de transmissões processadas em paralelo                  | 25           |
+| PAGE_DEFAULT             | Página inicial para busca na API                                | 1            |
+| RECORD_SECONDS           | Tempo máximo de gravação por vídeo (segundos)                   | 12780        |
+| RECORD_SECONDS_MIN       | Tempo mínimo para considerar a gravação válida (segundos)       | 660          |
+| API_SEARCH_LIMIT         | Limite de transmissões retornadas ao buscar usuários específicos| 1500         |
+| COMMIT_PUSH_THRESHOLD    | Quantidade de transmissões para batch commit/push               | 25           |
+
+Todos os parâmetros podem ser ajustados facilmente na primeira célula do notebook.
 
 ---
 
-## Observações e Boas Práticas
+## Requisitos
 
-- O notebook foi desenhado para ser robusto contra falhas na API, arquivos corrompidos e respostas inesperadas.
-- Registros detalhados são exibidos a cada etapa para diagnóstico e auditoria.
-- O modelo do arquivo `rec.json` é estritamente validado para evitar inconsistências nos dados.
-- O uso de nomes de arquivos padronizados facilita a organização, busca e manutenção dos registros.
+- Google Colab (recomendado)
+- Conta Google Drive (opcional, para persistência)
+- Conta GitHub com token de acesso (PAT) configurado
+- Dependências Python: `requests`, `multiprocessing`, `ffmpeg`, `subprocess`, entre outros (instalados automaticamente)
+
+---
+
+## Como Utilizar
+
+1. **Abra o notebook no Google Colab:**  
+   [Abrir no Colab](https://colab.research.google.com/github/SamuelPassamani/XCam/blob/main/xcam-colab/XCam_REC_V3.4.ipynb)
+
+2. **Execute célula por célula:**  
+   Siga a ordem das células para garantir correta configuração e execução.
+
+3. **Ajuste parâmetros se necessário:**  
+   Modifique limites e thresholds na célula de configurações para adequar ao seu uso.
+
+4. **Responda à interação (opcional):**  
+   Informe usuários específicos se desejar gravar transmissões direcionadas.
+
+5. **Acompanhe os logs:**  
+   O notebook imprime logs detalhados de progresso, erros e status de uploads/commits.
+
+---
+
+## Arquitetura e Design
+
+- **Modularidade:**  
+  Cada célula/função resolve uma única responsabilidade, seguindo Clean Architecture.
+
+- **Escalabilidade:**  
+  Suporte a múltiplas gravações paralelas, processamento em lote e integração com pipelines CI/CD.
+
+- **Resiliência e Logs:**  
+  Tratamento robusto de exceções, logs de progresso e controle de concorrência com lock/log temporário.
+
+- **Interoperabilidade:**  
+  Funciona em ambientes Colab, integrando-se a Google Drive e GitHub sem dependências exclusivas.
 
 ---
 
 ## Estrutura de Pastas
 
 ```
-/content/drive/MyDrive/XCam.Drive/
-  ├── user/
-  │    ├── re.json          # Modelo base para rec.json
-  │    ├── {username}/
-  │    │      └── rec.json  # Arquivo de registros por usuário
-  └── temp_recordings/      # Arquivos MP4 temporários (local)
+xcam-colab/
+│
+├── XCam_REC_V3.4.ipynb   # Notebook principal de automação
+├── <arquivos gerados temporários>
+├── <pastas de saída de gravações>
+│
+└── ...
 ```
+- Arquivos temporários e gravações ficam em `/content/temp_recordings` por padrão no Colab.
+- Repositório é clonado em `/content/XCam` e no Google Drive, se disponível.
 
 ---
 
-## Dependências
+## Considerações de Segurança
 
-- Python 3.x
-- Google Colab
-- ffmpeg
-- Bibliotecas: `requests`, `multiprocessing`, `subprocess`, `json`, `os`, `shutil`, `datetime`, `re`, `math`, `time`
+- **NUNCA compartilhe seu GitHub Token em ambientes públicos.**  
+  Garanta que o token tenha permissões mínimas necessárias e, se possível, armazene via variáveis de ambiente.
 
----
-
-## Personalização
-
-- É possível ajustar a duração da gravação (`RECORD_SECONDS`) e o número de transmissões processadas por página (`limit`).
-- O modelo do arquivo `rec.json` pode ser alterado conforme necessidade, desde que mantida a validação de integridade.
+- **Uploads para Abyss são públicos:**  
+  Garanta que os vídeos gravados não exponham informações sensíveis.
 
 ---
 
-## Segurança e Limpeza
+## Contribuição
 
-- Os arquivos temporários locais são removidos após gravação e upload com sucesso, evitando uso excessivo de espaço em disco.
-- O notebook não armazena credenciais sensíveis e não expõe URLs privadas.
+Contribuições, sugestões e melhorias são bem-vindas!  
+Abra uma Issue ou Pull Request seguindo as boas práticas do GitHub.
 
 ---
 
-## Conclusão
+## Licença
 
-Este notebook oferece uma solução completa para automação de captura, upload e registro de transmissões da XCam, com robustez, log detalhado e facilidade de manutenção e expansão para futuras necessidades.
+[MIT](./LICENSE)
+
+---
