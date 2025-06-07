@@ -5,16 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XCam - Transmissões ao Vivo</title>
 
-  <!-- Ícones e Favicon -->
+  <!-- ===== FAVICONS ===== -->
+  <!-- Ícone SVG para navegadores modernos -->
   <link rel="icon" type="image/svg+xml" href="https://xcam.gay/src/logo.svg">
+  <!-- Ícone PNG como fallback -->
   <link rel="icon" type="image/png" href="https://xcam.gay/src/logo.png">
 
-  <!-- Fontes e Estilo Global -->
+  <!-- ===== FONTES E ESTILOS ===== -->
+  <!-- Fonte Inter do Google Fonts para tipografia moderna e legível -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome para ícones diversos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Estilos customizados do projeto -->
   <link rel="stylesheet" href="./style.css" />
 
-  <!-- Tailwind CSS -->
+  <!-- ===== TAILWIND CSS (CDN) E CONFIGURAÇÃO DE TEMA ===== -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -50,67 +55,81 @@
 </head>
 
 <body>
-  <!-- ===== HEADER ===== -->
+  <!-- ===== HEADER/NAVBAR ===== -->
   <header class="header">
-    <img src="https://xcam.gay/src/logo.png" href="//xcam.gay" alt="XCam" class="logo">
-    <nav class="nav-menu">
+    <!-- Logomarca principal (link para a home) -->
+    <a href="//xcam.gay" aria-label="Página inicial XCam">
+      <img src="https://xcam.gay/src/logo.png" alt="XCam" class="logo">
+    </a>
+    <!-- Menu de navegação principal (desktop) -->
+    <nav class="nav-menu" aria-label="Menu principal">
       <a href="//xcam.gay" class="nav-link">Início</a>
       <a href="#" class="nav-link">Explorar</a>
       <a href="#" class="nav-link">Categorias</a>
     </nav>
+    <!-- Barra de busca (desktop) -->
     <div class="search-bar">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="Buscar transmissões..." id="search-input">
+      <input type="text" placeholder="Buscar transmissões..." id="search-input" aria-label="Buscar transmissões">
     </div>
-    <button class="mobile-menu-toggle" id="mobile-toggle">
+    <!-- Botão para abrir menu mobile -->
+    <button class="mobile-menu-toggle" id="mobile-toggle" aria-label="Abrir menu mobile">
       <i class="fas fa-bars"></i>
     </button>
   </header>
 
-  <!-- ===== MOBILE MENU ===== -->
-  <div class="mobile-menu" id="mobile-menu">
-    <a href="#" class="nav-link">Início</a>
+  <!-- ===== MENU MOBILE ===== -->
+  <nav class="mobile-menu" id="mobile-menu" aria-label="Menu Mobile">
+    <a href="//xcam.gay" class="nav-link">Início</a>
     <a href="#" class="nav-link">Explorar</a>
     <a href="#" class="nav-link">Categorias</a>
     <div class="search-bar mobile-search">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="Buscar transmissões..." id="mobile-search-input">
+      <input type="text" placeholder="Buscar transmissões..." id="mobile-search-input" aria-label="Buscar transmissões (mobile)">
     </div>
-  </div>
+  </nav>
 
-  <!-- ===== CARROSSEL ===== -->
-  <section class="carousel-section">
+  <!-- ===== CARROSSEL DE DESTAQUES ===== -->
+  <section class="carousel-section" aria-label="Destaques">
     <div class="carousel-container carousel">
+      <!-- Controles para navegar entre banners -->
       <div class="carousel-controls">
-        <button class="carousel-control" id="carousel-prev"><i class="fas fa-chevron-left"></i></button>
-        <button class="carousel-control" id="carousel-next"><i class="fas fa-chevron-right"></i></button>
+        <button class="carousel-control" id="carousel-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-control" id="carousel-next" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
       </div>
+      <!-- Slides serão inseridos dinamicamente via JS -->
       <div class="carousel-wrapper"></div>
+      <!-- Indicadores de qual slide está ativo -->
       <div class="carousel-indicators"></div>
     </div>
   </section>
 
-  <!-- ===== FILTROS ===== -->
-  <section class="filters-section">
-    <div class="filters-container">
+  <!-- ===== FILTROS DE BUSCA ===== -->
+  <section class="filters-section" aria-label="Filtros">
+    <!-- Formulário de filtros para facilitar acessibilidade e submit por enter -->
+    <form class="filters-container" id="filters-form" autocomplete="off">
+      <!-- Filtro por país -->
       <div class="filter-group">
         <label class="filter-label" for="country-filter">País</label>
-        <select class="filter-select" id="country-filter">
+        <select class="filter-select" id="country-filter" name="country">
           <option value="all">Todos os países</option>
+          <!-- opções dinâmicas via JS -->
         </select>
       </div>
+      <!-- Filtro por gênero -->
       <div class="filter-group">
         <label class="filter-label" for="gender-filter">Gênero</label>
-        <select class="filter-select" id="gender-filter">
+        <select class="filter-select" id="gender-filter" name="gender">
           <option value="all">Todos</option>
           <option value="male">Masculino</option>
           <option value="female">Feminino</option>
           <option value="trans">Trans</option>
         </select>
       </div>
+      <!-- Filtro por orientação -->
       <div class="filter-group">
         <label class="filter-label" for="orientation-filter">Orientação</label>
-        <select class="filter-select" id="orientation-filter">
+        <select class="filter-select" id="orientation-filter" name="orientation">
           <option value="all">Todas</option>
           <option value="straight">Hetero</option>
           <option value="gay">Gay</option>
@@ -120,46 +139,61 @@
           <option value="unknown">Não Definido</option>
         </select>
       </div>
-      <button class="filter-button" id="apply-filters">
+      <!-- Botão para aplicar filtros -->
+      <button class="filter-button" id="apply-filters" type="submit">
         <i class="fas fa-filter"></i> Filtrar
       </button>
-    </div>
+    </form>
   </section>
 
   <!-- ===== GRADE DE TRANSMISSÕES ===== -->
-  <section class="broadcasts-section">
+  <section class="broadcasts-section" aria-label="Transmissões ao Vivo">
     <div class="header-row">
       <h2 class="section-title"><i class="fas fa-broadcast-tower"></i> Transmissões ao Vivo</h2>
-      <button id="update-button" class="update-button">Atualizar</button>
+      <!-- Botão para atualizar manualmente a grade -->
+      <button id="update-button" class="update-button" type="button" aria-label="Atualizar transmissões">Atualizar</button>
     </div>
+    <!-- Local onde os cards das transmissões serão inseridos dinamicamente -->
     <div class="broadcasts-grid" id="broadcasts-grid">
+      <!-- Estado de carregamento inicial -->
       <div class="loading-state">
         <div class="loader"></div>
         <p>Carregando transmissões...</p>
       </div>
     </div>
-    <div class="pagination" id="pagination"></div>
+    <!-- ===== BOTÃO "CARREGAR MAIS" ===== -->
+    <!-- Usado para carregar mais transmissões, removendo paginação tradicional -->
+    <div class="load-more-container">
+      <button id="load-more" class="load-more-btn" type="button" aria-label="Carregar mais transmissões">
+        <i class="fas fa-plus"></i> Carregar mais
+      </button>
+    </div>
+    <!-- Observação: O botão é controlado via JS para mostrar/esconder conforme necessidade -->
   </section>
 
-  <!-- ===== MODAL UNIVERSAL DE TRANSMISSÃO ===== -->
-  <!-- O modal overlay precisa usar a nova classe -->
-  <div class="modal-overlay" id="broadcast-modal">
-    <div class="modal-content" id="modal-content"></div>
+  <!-- ===== MODAL DE TRANSMISSÃO ===== -->
+  <!-- Overlay do modal, aberto/fechado dinamicamente via JS -->
+  <div class="modal-overlay" id="broadcast-modal" aria-modal="true" role="dialog" style="display:none;">
+    <div class="modal-content" id="modal-content">
+      <!-- Conteúdo do modal é inserido dinamicamente via JavaScript -->
+    </div>
   </div>
-  <!-- Não adicione nada dentro de modal-content, o JS insere dinamicamente -->
 
-  <!-- ===== NOTIFICAÇÕES ===== -->
-  <div class="toast-container" id="toast-container"></div>
+  <!-- ===== CONTAINER DE NOTIFICAÇÕES (TOASTS) ===== -->
+  <!-- Toasts são mensagens temporárias de feedback (sucesso/erro) -->
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- ===== RODAPÉ ===== -->
   <footer class="footer">
     <div class="footer-content">
+      <!-- Logo e descrição -->
       <div>
         <img src="https://xcam.gay/src/logo.png" alt="XCam" class="footer-logo">
         <p class="footer-description">
           XCam é uma plataforma de transmissões ao vivo onde você pode assistir e interagir com streamers de todo o mundo.
         </p>
       </div>
+      <!-- Links úteis do rodapé -->
       <div class="footer-links">
         <a href="//xcam.gay" class="footer-link">Início</a>
         <a href="#" class="footer-link">Explorar</a>
@@ -168,6 +202,7 @@
         <a href="#" class="footer-link">Termos</a>
         <a href="#" class="footer-link">Privacidade</a>
       </div>
+      <!-- Direitos autorais -->
       <div class="footer-copyright">
         &copy; 2025 XCam. Todos os direitos reservados.
       </div>
@@ -175,7 +210,9 @@
   </footer>
 
   <!-- ===== SCRIPTS ===== -->
+  <!-- Script principal da aplicação: inicialização de UI, eventos, carregamento de dados etc. -->
   <script type="module" src="./main.js"></script>
+  <!-- Publicidade: descomente para ativar, se necessário -->
   <!-- <script src="https://pl26608496.profitableratecpm.com/74/31/14/7431142f309cabb259fa3dd356d8094b.js"></script> -->
 </body>
 
