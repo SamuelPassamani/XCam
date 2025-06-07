@@ -23,11 +23,11 @@
 
   # Exemplo de headers customizados (descomentando abaixo, caso precise permitir CORS, etc)
   # [redirects.headers]
-  #   Access-Control-Allow-Origin = "*"
-  #   Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept"
-  #   Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
-  #   Access-Control-Allow-Credentials = "true"
-  #   Vary = "Origin"
+  #   Access-Control-Allow-Origin = ""
+  #   Access-Control-Allow-Headers = ""
+  #   Access-Control-Allow-Methods = ""
+  #   Access-Control-Allow-Credentials = ""
+  #   Vary = ""
 
 # Observações:
 # - Use status = 301 para redirecionamento permanente, ou 302 se for temporário.
