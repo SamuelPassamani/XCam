@@ -100,8 +100,17 @@ async function fetchBroadcasts() {
   }
 }
 
+// Garantia defensiva de que o grid está inicializado
+function ensureGridElement() {
+  if (!grid) {
+    grid = document.getElementById("broadcasts-grid");
+  }
+}
+
 // === Função: Renderiza um único card de transmissão ===
 function renderBroadcastCard(data) {
+  ensureGridElement(); // 🔒 Garantir que 'grid' esteja definido antes de usar
+
   const poster = data.preview?.poster;
   const username = data.username;
   const viewers = data.viewers;
@@ -181,6 +190,8 @@ function renderBroadcastCard(data) {
 
 // === Função: Renderiza o próximo lote de transmissões (paginado) ===
 function renderNextBatch() {
+  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
+
   const start = (currentPage - 1) * itemsPerPage;
   const end = currentPage * itemsPerPage;
   const batch = allItems.slice(start, end);
@@ -194,6 +205,8 @@ function renderNextBatch() {
 
 // === Exibe mensagem caso não haja transmissões ===
 function showEmptyMessage() {
+  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
+
   const empty = createEl(
     "div",
     { class: "empty-state", "aria-live": "polite" },
@@ -206,11 +219,14 @@ function showEmptyMessage() {
       createEl("p", { text: t("noBroadcasts.description") })
     ]
   );
+
   grid.appendChild(empty);
 }
 
 // === Exibe mensagem de erro de rede/API ===
 function showErrorMessage() {
+  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
+
   const errorDiv = createEl(
     "div",
     { class: "error-state", "aria-live": "assertive" },
@@ -231,6 +247,8 @@ function showErrorMessage() {
 async function loadFilteredBroadcasts() {
   currentPage = 1;
   allItems = [];
+
+  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
   grid.innerHTML = "";
   loader.remove();
   loadMoreBtn.remove();

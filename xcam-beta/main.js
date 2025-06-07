@@ -45,6 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
     3. Inicializa grid de transmissões (setupBroadcasts)
     O carrossel, menu e modal podem ser inicializados antes, pois não afetam os filtros.
   */
+
+  // Inicializa grade de transmissões (carrega cards e configura paginação)
+  setupBroadcasts();
+
   setupCarousel(); // Inicializa o carrossel superior de destaques
   setupMenu();     // Menu de navegação responsivo
   setupModal();    // Modal de exibição detalhada de transmissões
@@ -54,9 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Configura os listeners/lógica dos filtros (agora só aceita valores da API)
   setupFilters();
-
-  // Inicializa grade de transmissões (carrega cards e configura paginação)
-  setupBroadcasts();
 
   // Observação: NÃO é necessário chamar refreshBroadcasts aqui, pois setupBroadcasts já realiza o primeiro fetch.
 });
