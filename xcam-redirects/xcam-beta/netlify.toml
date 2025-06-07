@@ -1,11 +1,35 @@
+# netlify.toml
+# Arquivo de configuração do Netlify para redirecionamento de todas as rotas deste deploy
+# para o GitHub Pages correspondente em https://samuelpassamani.github.io/XCam/xcam-beta/
+# 
+# Este arquivo foi revisado para:
+#   - Remover headers de CORS vazios, que podem causar problemas.
+#   - Usar status 301 para redirecionamento permanente (mais adequado se você deseja realmente redirecionar).
+#   - Documentar cada configuração detalhadamente.
+#
+# Se você deseja servir como proxy (conteúdo no domínio Netlify, vindo do GitHub), troque o status para 200,
+# mas, para simples redirecionamento, status 301/302 é o mais apropriado.
+#
+# Para redirecionar todas as rotas do site Netlify para o GitHub Pages correspondente:
 [[redirects]]
+  # Todas as rotas e sub-rotas deste deploy Netlify
   from = "/*"
+  # Serão redirecionadas para o mesmo caminho no GitHub Pages
   to = "https://samuelpassamani.github.io/XCam/xcam-beta/:splat"
-  status = 200
+  # Código de status HTTP 301: redirecionamento permanente
+  status = 301
+  # Garante que este redirecionamento sempre será aplicado (mesmo se houver arquivos locais)
   force = true
-    [redirects.headers]
-    Access-Control-Allow-Origin = ""
-    Access-Control-Allow-Headers = ""
-    Access-Control-Allow-Methods = ""
-    Access-Control-Allow-Credentials = ""
-    Vary = ""
+
+  # Exemplo de headers customizados (descomentando abaixo, caso precise permitir CORS, etc)
+  # [redirects.headers]
+  #   Access-Control-Allow-Origin = "*"
+  #   Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept"
+  #   Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+  #   Access-Control-Allow-Credentials = "true"
+  #   Vary = "Origin"
+
+# Observações:
+# - Use status = 301 para redirecionamento permanente, ou 302 se for temporário.
+# - Use status = 200 apenas se você quiser fazer um proxy (Netlify reescreve a URL, mas mantém o domínio original).
+# - Se quiser adicionar headers, remova o comentário (hashtag #) e configure conforme a necessidade.
