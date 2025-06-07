@@ -1,4 +1,10 @@
-/* Estilos base */
+/* ============================================================
+   BASE ESTRUTURAL E RESET
+   ============================================================
+   - Define estilos base e variáveis de fonte/cor.
+   - Remove margens e paddings default.
+   - Garante fundo, cor principal e altura mínima.
+=============================================================== */
 body {
   font-family: "Inter", sans-serif;
   background-color: #121212;
@@ -12,59 +18,41 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Animações e efeitos */
+/* ============================================================
+   ANIMAÇÕES E EFEITOS GLOBAIS
+   ============================================================
+   - Pulse: destaque para elementos "vivos" (badges, etc).
+   - fadeIn: transições suaves de entrada.
+   - slideDown/slideUp: transições em modais/menus.
+=============================================================== */
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-/* Header e navegação */
+/* ============================================================
+   HEADER E NAVEGAÇÃO
+   ============================================================
+   - Header fixo, com blur, responsivo.
+   - Menu desktop e mobile.
+   - Busca estilizada.
+=============================================================== */
 .header {
   position: fixed;
   top: 0;
@@ -149,6 +137,12 @@ body.modal-open {
   cursor: pointer;
 }
 
+/* ============================================================
+   MENU MOBILE
+   ============================================================
+   - Oculto por padrão, ativa classe .active via JS.
+   - Animação slide-down.
+=============================================================== */
 .mobile-menu {
   display: none;
   position: fixed;
@@ -176,19 +170,13 @@ body.modal-open {
 }
 
 /* ============================================================
-   CARROSSEL DE DESTAQUES - ESTILO ESTRUTURADO E COMENTADO
+   CARROSSEL DE DESTAQUES (SLIDES E CONTROLES)
    ============================================================
-   Este bloco controla a aparência do carrossel de banners/destaques
-   no topo do site, incluindo slides, controles, botões e sobreposições.
-   Comentários detalhados e melhorias para responsividade, manutenção
-   e acessibilidade.
+   - Container principal, slides individuais, overlays, botões, badges.
+   - Responsividade para mobile e tablets.
 =============================================================== */
 
-/* Container principal do carrossel
-   - Mantém o carrossel centralizado e com largura máxima
-   - Garante altura fixa para desktop, ajustável em mobile via media queries
-   - overflow:hidden previne que slides saiam do container
-   - z-index:1 permite sobreposição de elementos (como controles) */
+/* Container principal do carrossel */
 .carousel {
   position: relative;
   max-width: 1400px;
@@ -200,9 +188,7 @@ body.modal-open {
   z-index: 1;
 }
 
-/* Slide individual do carrossel
-   - Absoluto para empilhamento, só o .active fica visível (opacity:1)
-   - Transição suave entre slides */
+/* Slide individual absoluto, apenas .active fica visível */
 .carousel-slide {
   position: absolute;
   top: 0;
@@ -211,16 +197,15 @@ body.modal-open {
   height: 100%;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
-  z-index: 0; /* Garante que apenas o ativo fique sobre os outros */
+  z-index: 0;
 }
 
 .carousel-slide.active {
   opacity: 1;
-  z-index: 1; /* Slide ativo sempre acima dos demais */
+  z-index: 1;
 }
 
-/* Imagem de fundo do slide
-   - Cobre todo o slide, mantendo o foco central */
+/* Imagem de fundo do slide */
 .carousel-image {
   width: 100%;
   height: 100%;
@@ -229,7 +214,7 @@ body.modal-open {
   position: relative;
 }
 
-/* Sobreposição escura em degradê para melhorar contraste da leitura */
+/* Sobreposição escura para contraste de texto */
 .carousel-overlay {
   position: absolute;
   top: 0;
@@ -242,24 +227,22 @@ body.modal-open {
     rgba(0, 0, 0, 0.4) 50%,
     rgba(0, 0, 0, 0.2) 100%
   );
-  pointer-events: none; /* Permite clique nos elementos acima */
+  pointer-events: none;
 }
 
-/* Conteúdo textual/CTA do slide (ex: título, botão)
-   - Centralizado horizontalmente, com animação de entrada */
+/* Conteúdo centralizado e animado */
 .carousel-content {
   text-align: center;
-  z-index: 2;          /* Sobrepõe imagem e overlay */
+  z-index: 2;
   max-width: 600px;
   margin: 0 auto;
   animation: fadeIn 0.5s;
   position: relative;
-  top: 40%;            /* Aproxima verticalmente do centro */
+  top: 40%;
   transform: translateY(-40%);
 }
 
-/* Badge "AO VIVO"
-   - Destaca transmissões em andamento */
+/* Badge "AO VIVO" */
 .carousel-badge {
   position: absolute;
   top: 16px;
@@ -276,11 +259,10 @@ body.modal-open {
   z-index: 3;
 }
 
-/* Nome do usuário/streamer
-   - Centralizado sobre o slide, com sombra para melhor leitura */
+/* Nome do streamer */
 .carousel-username {
   position: absolute;
-  top: 310px; /* Ajuste conforme necessário para visual ideal */
+  top: 310px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 28px;
@@ -289,11 +271,10 @@ body.modal-open {
   margin: 16px 0 8px;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
   z-index: 3;
-  pointer-events: none; /* Não interfere nos cliques do botão */
+  pointer-events: none;
 }
 
-/* Informações rápidas do streamer (país, espectadores)
-   - Agrupadas no topo à esquerda */
+/* Informações rápidas (país, espectadores) */
 .carousel-info {
   position: absolute;
   top: 16px;
@@ -319,8 +300,7 @@ body.modal-open {
   font-size: 20px;
 }
 
-/* Botão de ação principal do carrossel ("Assistir", "Entrar", etc.)
-   - Centralizado absoluto na base do slide, com gradiente destacado */
+/* Botão principal do carrossel ("Assistir", "Entrar", ...) */
 .carousel-button {
   display: block;
   position: absolute;
@@ -348,8 +328,7 @@ body.modal-open {
   outline: none;
 }
 
-/* Controles laterais para navegar os slides (anterior/próximo)
-   - Sempre visíveis sobre o slide */
+/* Controles laterais (anterior/próximo) */
 .carousel-controls {
   position: absolute;
   top: 50%;
@@ -358,8 +337,8 @@ body.modal-open {
   justify-content: space-between;
   padding: 0 24px;
   transform: translateY(-50%);
-  z-index: 4; /* Acima do conteúdo e botões */
-  pointer-events: none; /* Só os filhos recebem eventos */
+  z-index: 4;
+  pointer-events: none;
 }
 
 .carousel-control {
@@ -375,7 +354,7 @@ body.modal-open {
   opacity: 0.7;
   transition: opacity 0.3s, background 0.3s;
   font-size: 20px;
-  pointer-events: all; /* Permite clique mesmo com .carousel-controls pointer-events: none */
+  pointer-events: all;
   border: none;
   outline: none;
 }
@@ -386,7 +365,7 @@ body.modal-open {
   background-color: rgba(255,0,127,0.75);
 }
 
-/* Indicadores/bullets de slides (fundos, geralmente círculos) */
+/* Indicadores/bullets de slides */
 .carousel-indicators {
   position: absolute;
   bottom: 24px;
@@ -415,58 +394,30 @@ body.modal-open {
   transform: scale(1.2);
 }
 
-/* ============================
-   Responsividade do Carrossel
-   ============================
-   Ajusta altura e proporção do carrossel para telas menores.
-*/
+/* =========== RESPONSIVIDADE DO CARROSSEL =========== */
 @media (max-width: 900px) {
-  .carousel {
-    height: 320px;
-  }
-  .carousel-username {
-    top: 180px;
-    font-size: 22px;
-  }
-  .carousel-content {
-    max-width: 90vw;
-    font-size: 14px;
-  }
+  .carousel { height: 320px; }
+  .carousel-username { top: 180px; font-size: 22px; }
+  .carousel-content { max-width: 90vw; font-size: 14px; }
 }
-
 @media (max-width: 600px) {
-  .carousel {
-    height: 180px;
-    margin-top: 50px;
-  }
-  .carousel-username {
-    top: 85px;
-    font-size: 16px;
-  }
-  .carousel-badge {
-    font-size: 12px;
-    padding: 5px 12px;
-  }
-  .carousel-content {
-    top: 35%;
-    max-width: 98vw;
-    font-size: 11px;
-  }
-  .carousel-controls {
-    padding: 0 6px;
-  }
-  .carousel-indicator {
-    width: 8px;
-    height: 8px;
-  }
-  .carousel-button {
-    bottom: 16px;
-    font-size: 12px;
-    padding: 8px 12px;
-  }
+  .carousel { height: 180px; margin-top: 50px; }
+  .carousel-username { top: 85px; font-size: 16px; }
+  .carousel-badge { font-size: 12px; padding: 5px 12px; }
+  .carousel-content { top: 35%; max-width: 98vw; font-size: 11px; }
+  .carousel-controls { padding: 0 6px; }
+  .carousel-indicator { width: 8px; height: 8px; }
+  .carousel-button { bottom: 16px; font-size: 12px; padding: 8px 12px; }
 }
 
-/* Filtros */
+/* ============================================================
+   FILTROS DE BUSCA (FILTERS)
+   ============================================================
+   - Seção de filtros: país, gênero, orientação.
+   - Visual destacado, responsivo, botões com feedback.
+   - Correção: garante contraste e acessibilidade.
+=============================================================== */
+
 .filters-section {
   position: relative;
   padding: 24px;
@@ -506,10 +457,15 @@ body.modal-open {
   border-radius: 4px;
   outline: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.34 4 3.204 4h9.592c.864 0 1.319 1.013.753 1.658l-4.796 5.482a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
+}
+
+.filter-select:focus {
+  border-color: #ff007f;
+  box-shadow: 0 0 0 2px rgba(255,0,127,0.25);
 }
 
 .filter-button {
@@ -524,12 +480,21 @@ body.modal-open {
   align-self: flex-end;
 }
 
-.filter-button:hover {
+.filter-button:hover,
+.filter-button:focus {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
+  outline: none;
 }
 
-/* Grid de transmissões */
+/* ============================================================
+   GRADE DE TRANSMISSÕES (BROADCASTS GRID) E CARDS
+   ============================================================
+   - Grid responsiva, robusta, nunca some por bug de framework.
+   - Cards com efeito hover, thumbnail, badges e tags.
+   - Correções: display:grid !important, z-index consistente.
+=============================================================== */
+
 .broadcasts-section {
   padding: 24px;
   max-width: 1400px;
@@ -549,38 +514,20 @@ body.modal-open {
   color: #ff007f;
 }
 
-/* 
-  GRADE DE TRANSMISSÕES (Responsiva e robusta)
-  - Garante que a grid sempre será exibida como grid, nunca como block ou flex por override externo.
-  - Previne bugs de colapso do grid em navegadores antigos.
-  - Inclui fallback para navegadores que não suportam auto-fill (opcional).
-  - Utiliza !important para garantir prioridade se houver conflitos de CSS externo ou de frameworks.
-  - Comentários detalhados para facilitar manutenção.
-*/
 .broadcasts-grid {
-  display: grid !important; /* Garante que não será sobrescrito por nenhum outro display */
+  display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
-  width: 100%;         /* Garante que a grid ocupe toda a largura do container */
-  min-height: 100px;   /* Evita colapso visual em casos de grid vazio temporariamente */
-  opacity: 1 !important;         /* Previne ocultamento acidental */
-  visibility: visible !important;/* Previne ocultamento acidental */
-  z-index: 2;                   /* Fica acima de elementos com z-index:1, mas abaixo do header/modal */
-  box-sizing: border-box;       /* Previne bugs de largura */
-  background: transparent;      /* Garante que não fique com fundo inesperado */
+  width: 100%;
+  min-height: 100px;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 2;
+  box-sizing: border-box;
+  background: transparent;
 }
 
-/* Fallback opcional para navegadores antigos (pouco usado hoje) */
-/*
-@supports not (display: grid) {
-  .broadcasts-grid {
-    display: block !important;
-  }
-}
-*/
-
-/* Card de transmissão */
 .broadcast-card {
   background-color: #1a1a1a;
   border: 1px solid #333333;
@@ -590,16 +537,17 @@ body.modal-open {
   cursor: pointer;
 }
 
-.broadcast-card:hover {
+.broadcast-card:hover,
+.broadcast-card:focus-within {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  outline: none;
 }
 
 .card-thumbnail {
   position: relative;
   width: 100%;
-  padding-top: 56.25%;
-  /* 16:9 aspect ratio */
+  padding-top: 56.25%; /* 16:9 ratio */
   overflow: hidden;
 }
 
@@ -631,7 +579,8 @@ body.modal-open {
   transition: opacity 0.3s;
 }
 
-.broadcast-card:hover .card-overlay {
+.broadcast-card:hover .card-overlay,
+.broadcast-card:focus-within .card-overlay {
   opacity: 1;
 }
 
@@ -649,7 +598,8 @@ body.modal-open {
   transition: transform 0.3s;
 }
 
-.broadcast-card:hover .play-button {
+.broadcast-card:hover .play-button,
+.broadcast-card:focus-within .play-button {
   transform: scale(1);
 }
 
@@ -715,7 +665,7 @@ body.modal-open {
   font-size: 12px;
 }
 
-/* Estados do grid */
+/* Estados: carregando, vazio, erro */
 .loading-state,
 .error-state,
 .empty-state {
@@ -739,13 +689,8 @@ body.modal-open {
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
 }
 
 .error-icon,
@@ -776,14 +721,10 @@ body.modal-open {
   cursor: pointer;
 }
 
-/* Estilização para o botão "Atualizar" */
+/* Botão "Atualizar" */
 .update-button {
   display: inline-block;
-  background: linear-gradient(
-    135deg,
-    #ff007f,
-    #800080
-  ); /* Gradiente do botão */
+  background: linear-gradient(135deg, #ff007f, #800080);
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -791,13 +732,13 @@ body.modal-open {
   border-radius: 4px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out; /* Transição suave */
+  transition: transform 0.2s ease-in-out;
   border: none;
-  margin-left: auto; /* Alinha à direita dentro da linha */
+  margin-left: auto;
 }
 
 .update-button:hover {
-  transform: scale(1.1); /* Cresce 10% ao passar o mouse */
+  transform: scale(1.1);
 }
 
 .header-row {
@@ -807,7 +748,11 @@ body.modal-open {
   margin-bottom: 20px;
 }
 
-/* Paginação */
+/* ============================================================
+   PAGINAÇÃO E LOAD MORE
+   ============================================================
+   - Botões e números para navegação entre páginas/lotes.
+=============================================================== */
 .pagination {
   display: flex;
   justify-content: center;
@@ -844,14 +789,58 @@ body.modal-open {
   cursor: not-allowed;
 }
 
-/* Modal */
-.modal {
+/* Load more button container & button */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.load-more-btn,
+#load-more {
+  background: linear-gradient(135deg, #ff007f, #800080);
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 32px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(255,0,127,0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.load-more-btn:hover,
+#load-more:hover,
+.load-more-btn:focus,
+#load-more:focus {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(255,0,127,0.20);
+  outline: none;
+}
+
+.load-more-btn[disabled],
+#load-more[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   MODAL DE TRANSMISSÃO
+   ============================================================
+   - Estrutura do modal, overlay, conteúdo, animações.
+   - Acessibilidade, foco, botão de fechar.
+=============================================================== */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.90);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -861,7 +850,8 @@ body.modal-open {
   transition: opacity 0.3s, visibility 0.3s;
 }
 
-.modal.active {
+.modal-overlay[style*="display:block"],
+.modal-overlay.active {
   opacity: 1;
   visibility: visible;
 }
@@ -876,9 +866,10 @@ body.modal-open {
   transform: scale(0.9);
   transition: transform 0.3s;
   animation: fadeIn 0.3s forwards;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.45);
 }
 
-.modal.active .modal-content {
+.modal-overlay.active .modal-content {
   transform: scale(1);
 }
 
@@ -905,8 +896,10 @@ body.modal-open {
   transition: color 0.3s;
 }
 
-.modal-close:hover {
+.modal-close:hover,
+.modal-close:focus {
   color: #ffffff;
+  outline: none;
 }
 
 .modal-body {
@@ -923,8 +916,7 @@ body.modal-open {
 .player-container {
   width: 100%;
   position: relative;
-  padding-top: 56.25%;
-  /* 16:9 aspect ratio */
+  padding-top: 56.25%; /* 16:9 aspect ratio */
   background-color: #0a0a0a;
   border-radius: 8px;
   overflow: hidden;
@@ -966,9 +958,11 @@ body.modal-open {
   transition: transform 0.3s, background-color 0.3s;
 }
 
-.play-button-large:hover {
+.play-button-large:hover,
+.play-button-large:focus {
   transform: scale(1.1);
   background-color: rgba(255, 0, 127, 1);
+  outline: none;
 }
 
 .modal-info {
@@ -998,251 +992,121 @@ body.modal-open {
 
 .streamer-details {
   flex: 1;
-}
-
-.streamer-details h3 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.streamer-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  color: #cccccc;
-  font-size: 14px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
 }
 
-.country {
+.streamer-username {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff007f;
+  margin: 0;
+}
+
+.streamer-country {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 14px;
+  color: #cccccc;
 }
 
-.country img {
+.streamer-country img {
   height: 16px;
   border-radius: 2px;
 }
 
-.viewers {
+.streamer-viewers {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  font-size: 14px;
+  color: #cccccc;
 }
 
 .modal-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
-.additional-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #333333;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #cccccc;
-  font-size: 14px;
-}
-
-.related-broadcasts {
-  margin-top: 24px;
-}
-
-.related-broadcasts h3 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.related-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.related-card {
+.modal-tag {
   background-color: #2a2a2a;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s;
-}
-
-.related-card:hover {
-  transform: translateY(-5px);
-}
-
-.related-thumbnail {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-  /* 16:9 aspect ratio */
-}
-
-.related-thumbnail img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.related-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.related-card:hover .related-overlay {
-  opacity: 1;
-}
-
-.related-play {
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 0, 127, 0.8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 16px;
-}
-
-.related-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: linear-gradient(90deg, #ff007f, #ff4500);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 10px;
-  animation: pulse 1.5s infinite;
-}
-
-.related-info {
-  padding: 8px;
-}
-
-.related-info h4 {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.related-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
   color: #cccccc;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
 }
 
-.related-country img {
-  height: 14px;
-  border-radius: 2px;
+/* Responsividade do modal */
+@media (max-width: 900px) {
+  .modal-content {
+    max-width: 98vw;
+  }
+  .modal-player {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 0;
+    border-radius: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  .modal-header,
+  .modal-body {
+    padding: 12px;
+  }
 }
 
-/* Toast notifications */
+/* Toasts (notificações temporárias) */
 .toast-container {
   position: fixed;
   top: 80px;
   right: 24px;
-  z-index: 1500;
+  z-index: 2050;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
-
 .toast {
+  background: linear-gradient(135deg, #ff007f, #800080);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  box-shadow: 0 2px 12px rgba(255,0,127,0.08);
+  min-width: 180px;
+  max-width: 320px;
+  animation: fadeIn 0.2s;
+  font-size: 15px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  background-color: #2a2a2a;
-  border-left: 4px solid;
-  padding: 12px 16px;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transform: translateX(100%);
-  opacity: 0;
-  transition: transform 0.3s, opacity 0.3s;
-  max-width: 300px;
+  gap: 10px;
 }
-
-.toast.show {
-  transform: translateX(0);
-  opacity: 1;
-}
-
 .toast-success {
-  border-left-color: #4caf50;
+  background: linear-gradient(135deg, #00c851, #33b5e5);
 }
-
 .toast-error {
-  border-left-color: #f44336;
+  background: linear-gradient(135deg, #ff4444, #ff007f);
 }
 
-.toast-info {
-  border-left-color: #2196f3;
-}
-
-.toast-warning {
-  border-left-color: #ff9800;
-}
-
-.toast-icon {
-  font-size: 20px;
-}
-
-.toast-success .toast-icon {
-  color: #4caf50;
-}
-
-.toast-error .toast-icon {
-  color: #f44336;
-}
-
-.toast-info .toast-icon {
-  color: #2196f3;
-}
-
-.toast-warning .toast-icon {
-  color: #ff9800;
-}
-
-.toast-message {
-  flex: 1;
-  font-size: 14px;
-}
-
-/* Footer */
+/* ============================================================
+   RODAPÉ (FOOTER)
+   ============================================================
+   - Footer fixo ao final, responsivo, com links, descrições.
+=============================================================== */
 .footer {
-  background-color: #1a1a1a;
-  padding: 32px 24px;
-  margin-top: 48px;
+  background-color: #181818;
+  color: #cccccc;
+  padding: 40px 0 24px 0;
+  border-top: 1px solid #333333;
+  margin-top: 24px;
 }
 
 .footer-content {
@@ -1250,312 +1114,58 @@ body.modal-open {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
 }
 
 .footer-logo {
-  height: 40px;
-  margin-bottom: 16px;
+  height: 44px;
+  margin-bottom: 14px;
 }
 
 .footer-description {
-  max-width: 400px;
+  font-size: 15px;
   color: #cccccc;
-  font-size: 14px;
   margin-bottom: 16px;
+  max-width: 380px;
 }
 
 .footer-links {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .footer-link {
   color: #cccccc;
   text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s;
+  font-size: 15px;
+  transition: color 0.2s;
 }
 
-.footer-link:hover {
-  color: #ffffff;
+.footer-link:hover,
+.footer-link:focus {
+  color: #ff007f;
+  outline: none;
 }
 
 .footer-copyright {
+  margin-top: 24px;
+  font-size: 13px;
+  color: #555;
   width: 100%;
   text-align: center;
-  color: #888888;
-  font-size: 14px;
-  margin-top: 32px;
-  padding-top: 16px;
-  border-top: 1px solid #333333;
 }
 
-/* Responsividade */
-@media (max-width: 1200px) {
-  .carousel-content {
-    left: 32px;
-    bottom: 32px;
+/* Responsividade do footer */
+@media (max-width: 900px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
   }
-
-  .carousel-username {
-    font-size: 28px;
-  }
-}
-
-@media (max-width: 992px) {
-  .carousel {
-    height: 360px;
-  }
-
-  .carousel-content {
-    left: 24px;
-    bottom: 24px;
-  }
-
-  .carousel-username {
-    font-size: 24px;
-  }
-
-  .modal-player {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .header {
-    height: 50px;
-    padding: 0 16px;
-  }
-
-  .logo {
-    height: 30px;
-  }
-
-  .nav-menu {
-    display: none;
-  }
-
-  .search-bar {
-    display: none;
-  }
-
-  .mobile-menu-toggle {
-    display: block;
-  }
-
-  .mobile-menu {
-    display: flex;
-  }
-
-  .carousel {
-    height: 240px;
-    margin-top: 50px;
-  }
-
-  .carousel-content {
-    left: 16px;
-    bottom: 16px;
-    max-width: 80%;
-  }
-
-  .carousel-username {
-    font-size: 20px;
+  .footer-logo {
     margin-bottom: 8px;
   }
-
-  .carousel-info {
-    margin-bottom: 16px;
-  }
-
-  .carousel-button {
-    padding: 8px 16px;
-  }
-
-  .section-title {
-    font-size: 20px;
-  }
-
-  .broadcasts-section,
-  .filters-section {
-    padding: 16px;
-  }
-
-  .filter-group {
-    min-width: 100%;
-  }
-
-  .modal-content {
-    width: 95%;
-  }
-
-  .modal-header {
-    padding: 12px 16px;
-  }
-
-  .modal-body {
-    padding: 16px;
-  }
-
-  .related-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 576px) {
-  .carousel-badge {
-    font-size: 12px;
-    padding: 2px 8px;
-  }
-
-  .carousel-username {
-    font-size: 18px;
-  }
-
-  .carousel-info {
-    gap: 8px;
-    font-size: 14px;
-  }
-
-  .broadcasts-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .pagination {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .related-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .streamer-info {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .streamer-meta {
-    justify-content: center;
-  }
-
-  .additional-info {
-    justify-content: center;
-  }
-}
-
-
-#load-more.load-more-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 2rem auto;
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #8f45f8, #d315a1);
-  color: #fff;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  max-width: 240px;
-}
-#load-more.load-more-button:hover {
-  opacity: 0.9;
-}
-
-/* Grade de transmissões com 5 colunas fixas */
-/* Grade responsiva com cards que se ajustam proporcionalmente */
-#broadcasts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  padding: 2rem 0;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Card ocupa toda a célula */
-.broadcast-card {
-  width: 100%;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* --- NOVO MODAL UNIVERSAL XCAM (AJUSTADO PARA IFRAME FULLSCREEN NO MODAL) --- */
-.modal-overlay {
-  position: fixed;
-  z-index: 10010;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .3s;
-}
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-.modal-content {
-  position: relative;
-  background: #181818;
-  border-radius: 14px;
-  box-shadow: 0 4px 40px #000a;
-  max-width: 90vw;
-  max-height: 85vh;
-  width: 90vw;
-  height: 85vh;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  overflow: hidden;
-  animation: modal-fade-in .3s;
-}
-.modal-close {
-  position: absolute;
-  top: 12px; right: 12px;
-  background: none; border: none;
-  color: #fff;
-  font-size: 2rem;
-  z-index: 10;
-  cursor: pointer;
-  transition: color .2s;
-}
-.modal-close:hover { color: #f44; }
-.modal-iframe-container {
-  flex: 1 1 auto;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-}
-.modal-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 0;
-  background: #111;
-  display: block;
-}
-@media (max-width: 600px) {
-  .modal-content { max-width: 100vw; min-width: 0; width: 100vw; height: 100vh; max-height: 100vh;}
-  .modal-iframe { width: 100vw; height: 100vh; }
-  .modal-iframe-container { padding: 0; }
-}
-@keyframes modal-fade-in {
-  from { transform: scale(0.98); opacity: 0.7; }
-  to { transform: scale(1); opacity: 1; }
 }

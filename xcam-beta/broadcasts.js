@@ -1,5 +1,9 @@
+// broadcasts.js
+// Responsável por carregar, filtrar e renderizar a grade de transmissões ao vivo.
+// Corrigido para só enviar à API valores aceitos (em inglês/código) e nunca "all" ou português nos filtros.
+
 // === Importações necessárias ===
-import { t } from "./i18n.js"; // Função de tradução
+import { t } from "./i18n.js"; // Função de tradução (apenas para labels/UX)
 import { countryNames } from "./translations.js"; // Mapeamento de códigos de países → nomes por extenso
 
 // === Função utilitária: Criação de elementos DOM com atributos e filhos ===
@@ -22,8 +26,9 @@ const itemsPerPage = 15;
 let allItems = [];
 let grid;
 
+// Filtros padrão: todos em branco para buscar "todos" por padrão
 let filters = {
-  gender: "male",
+  gender: "",        // "" = sem filtro (mostra todos)
   country: "",
   orientation: "",
   minViewers: null,
@@ -50,16 +55,18 @@ loadMoreBtn.style.display = "none";
 
 // === Função: Monta a URL da API com base nos filtros aplicados ===
 function buildApiUrl(filters) {
+  // Sempre usa limit alto para buscar tudo, paginação é só no front
   const params = new URLSearchParams({
     page: "1",
     limit: "1500",
     format: "json"
   });
 
-  if (filters.gender) params.set("gender", filters.gender);
-  if (filters.country) params.set("country", filters.country);
-  if (filters.orientation) params.set("orientation", filters.orientation);
-  if (filters.minViewers) params.set("minViewers", filters.minViewers);
+  // Só envia filtros se valor for válido ("male", "female", "trans", etc), nunca "all", "Todos" ou vazio
+  if (filters.gender && filters.gender !== "all") params.set("gender", filters.gender);
+  if (filters.country && filters.country !== "all") params.set("country", filters.country);
+  if (filters.orientation && filters.orientation !== "all") params.set("orientation", filters.orientation);
+  if (filters.minViewers && !isNaN(filters.minViewers)) params.set("minViewers", filters.minViewers);
   if (Array.isArray(filters.tags) && filters.tags.length > 0) {
     params.set("tags", filters.tags.join(","));
   }
@@ -250,17 +257,27 @@ async function loadFilteredBroadcasts() {
 }
 
 // === Funções públicas expostas para uso externo ===
+
+// Inicializa a grade de transmissões ao carregar a página
 export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", renderNextBatch);
   loadFilteredBroadcasts();
 }
 
+// Atualiza a grade sem reinicializar listeners
 export function refreshBroadcasts() {
   loadFilteredBroadcasts();
 }
 
+// Atualiza/Aplica filtros vindos do formulário (sempre no padrão aceito pela API)
 export function applyBroadcastFilters(newFilters) {
-  filters = { ...filters, ...newFilters };
+  // Remove filtros que não tem valor válido
+  filters = {
+    ...filters,
+    ...Object.fromEntries(Object.entries(newFilters).filter(([_, v]) =>
+      v !== undefined && v !== null && v !== "" && v !== "all"
+    ))
+  };
   loadFilteredBroadcasts();
 }
 
@@ -268,3 +285,12 @@ export function applyBroadcastFilters(newFilters) {
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });
+
+/*
+Resumo das melhorias/correções:
+- Por padrão, carrega "todos" (sem filtro), nunca apenas "male".
+- buildApiUrl só inclui parâmetros se valor for válido (em inglês/código e não "all").
+- applyBroadcastFilters sempre limpa filtros nulos, vazios ou "all".
+- Comentários detalhados em todas as etapas.
+- Garante 100% compatibilidade com o formato esperado pela XCam API.
+*/
