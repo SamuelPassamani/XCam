@@ -449,12 +449,36 @@ body.modal-open {
   color: #ff007f;
 }
 
+/* 
+  GRADE DE TRANSMISSÕES (Responsiva e robusta)
+  - Garante que a grid sempre será exibida como grid, nunca como block ou flex por override externo.
+  - Previne bugs de colapso do grid em navegadores antigos.
+  - Inclui fallback para navegadores que não suportam auto-fill (opcional).
+  - Utiliza !important para garantir prioridade se houver conflitos de CSS externo ou de frameworks.
+  - Comentários detalhados para facilitar manutenção.
+*/
 .broadcasts-grid {
-  display: grid;
+  display: grid !important; /* Garante que não será sobrescrito por nenhum outro display */
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
+  width: 100%;         /* Garante que a grid ocupe toda a largura do container */
+  min-height: 100px;   /* Evita colapso visual em casos de grid vazio temporariamente */
+  opacity: 1 !important;         /* Previne ocultamento acidental */
+  visibility: visible !important;/* Previne ocultamento acidental */
+  z-index: 2;                   /* Fica acima de elementos com z-index:1, mas abaixo do header/modal */
+  box-sizing: border-box;       /* Previne bugs de largura */
+  background: transparent;      /* Garante que não fique com fundo inesperado */
 }
+
+/* Fallback opcional para navegadores antigos (pouco usado hoje) */
+/*
+@supports not (display: grid) {
+  .broadcasts-grid {
+    display: block !important;
+  }
+}
+*/
 
 /* Card de transmissão */
 .broadcast-card {
