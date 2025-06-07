@@ -1,6 +1,8 @@
-import { t } from "./i18n.js";
-import { countryNames } from "./translations.js"; // Mapa código → nome por extenso
+// === Importações necessárias ===
+import { t } from "./i18n.js"; // Função de tradução
+import { countryNames } from "./translations.js"; // Mapeamento de códigos de países → nomes por extenso
 
+// === Função utilitária: Criação de elementos DOM com atributos e filhos ===
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
   Object.entries(props).forEach(([key, value]) => {
@@ -10,15 +12,16 @@ function createEl(type, props = {}, children = []) {
       el[key] = value;
     else el.setAttribute(key, value);
   });
-  children.forEach((child) => {
-    if (child) el.appendChild(child);
-  });
+  children.forEach((child) => child && el.appendChild(child));
   return el;
 }
 
+// === Variáveis de controle de paginação e filtros ===
 let currentPage = 1;
 const itemsPerPage = 15;
 let allItems = [];
+let grid;
+
 let filters = {
   gender: "male",
   country: "",
@@ -27,7 +30,7 @@ let filters = {
   tags: []
 };
 
-let grid;
+// === Elementos de carregamento e botão "Carregar mais" ===
 const loader = createEl("div", { class: "loading-state" }, [
   createEl("div", { class: "loader" }),
   createEl("p", { text: t("loading") })
@@ -42,8 +45,10 @@ const loadMoreBtn = createEl(
   },
   [createEl("span", { text: t("loadMore") })]
 );
+
 loadMoreBtn.style.display = "none";
 
+// === Função: Monta a URL da API com base nos filtros aplicados ===
 function buildApiUrl(filters) {
   const params = new URLSearchParams({
     page: "1",
@@ -62,9 +67,10 @@ function buildApiUrl(filters) {
   return `https://api.xcam.gay/?${params.toString()}`;
 }
 
+// === Função: Consulta a API e retorna os dados de transmissões ===
 async function fetchBroadcasts() {
-  const url = buildApiUrl(filters);
   try {
+    const url = buildApiUrl(filters);
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
@@ -78,15 +84,16 @@ async function fetchBroadcasts() {
       return data.broadcasts.items;
     }
 
-    console.warn("Formato inesperado da resposta da API:", data);
+    console.warn("Formato inesperado da resposta:", data);
     return [];
   } catch (error) {
-    console.error("Erro ao carregar dados:", error);
+    console.error("Erro ao carregar transmissões:", error);
     showErrorMessage();
     return [];
   }
 }
 
+// === Função: Renderiza um único card de transmissão ===
 function renderBroadcastCard(data) {
   const poster = data.preview?.poster;
   const username = data.username;
@@ -96,23 +103,7 @@ function renderBroadcastCard(data) {
 
   if (!poster || !username || viewers == null) return;
 
-  const countryNameFull = countryNames[country.toLowerCase()] || "Desconhecido";
-
-  const flagImg = createEl("img", {
-    src: `https://flagcdn.com/24x18/${country}.png`,
-    alt: `País: ${countryNameFull}`,
-    title: countryNameFull
-  });
-
-  const tagsDiv = createEl("div", { class: "card-tags" });
-  tags.forEach((tag) => {
-    const tagName = typeof tag === "string" ? tag : tag.name;
-    const tagSpan = createEl("span", {
-      class: "tag",
-      text: `#${tagName}`
-    });
-    tagsDiv.appendChild(tagSpan);
-  });
+  const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
   const card = createEl(
     "div",
@@ -121,7 +112,7 @@ function renderBroadcastCard(data) {
       role: "region",
       "aria-label": `Transmissão de ${username}`,
       "data-broadcast-id": data.id,
-      "data-username": username // necessário para busca posterior no modal.js
+      "data-username": username // Importante para funcionar com modal.js
     },
     [
       createEl("div", { class: "card-thumbnail" }, [
@@ -135,7 +126,7 @@ function renderBroadcastCard(data) {
             "button",
             {
               class: "play-button",
-              "aria-label": t("play") + " @" + username,
+              "aria-label": `${t("play")} @${username}`,
               tabindex: "0"
             },
             [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
@@ -152,13 +143,28 @@ function renderBroadcastCard(data) {
             tabindex: "0",
             text: `@${username}`
           }),
-          createEl("div", { class: "card-country" }, [flagImg])
+          createEl("div", { class: "card-country" }, [
+            createEl("img", {
+              src: `https://flagcdn.com/24x18/${country}.png`,
+              alt: `País: ${countryName}`,
+              title: countryName
+            })
+          ])
         ]),
         createEl("div", { class: "card-viewers" }, [
           createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
           createEl("span", { text: ` ${viewers} ${t("viewers")}` })
         ]),
-        tagsDiv
+        createEl(
+          "div",
+          { class: "card-tags" },
+          tags.map((tag) =>
+            createEl("span", {
+              class: "tag",
+              text: `#${typeof tag === "string" ? tag : tag.name}`
+            })
+          )
+        )
       ])
     ]
   );
@@ -166,16 +172,20 @@ function renderBroadcastCard(data) {
   grid.appendChild(card);
 }
 
+// === Função: Renderiza o próximo lote de transmissões (paginado) ===
 function renderNextBatch() {
   const start = (currentPage - 1) * itemsPerPage;
   const end = currentPage * itemsPerPage;
   const batch = allItems.slice(start, end);
   batch.forEach(renderBroadcastCard);
   currentPage++;
+
+  // Esconde o botão se todas já foram renderizadas
   loadMoreBtn.style.display =
     currentPage * itemsPerPage >= allItems.length ? "none" : "block";
 }
 
+// === Exibe mensagem caso não haja transmissões ===
 function showEmptyMessage() {
   const empty = createEl(
     "div",
@@ -192,6 +202,7 @@ function showEmptyMessage() {
   grid.appendChild(empty);
 }
 
+// === Exibe mensagem de erro de rede/API ===
 function showErrorMessage() {
   const errorDiv = createEl(
     "div",
@@ -209,6 +220,7 @@ function showErrorMessage() {
   grid.appendChild(errorDiv);
 }
 
+// === Carrega as transmissões filtradas e inicializa a grid ===
 async function loadFilteredBroadcasts() {
   currentPage = 1;
   allItems = [];
@@ -237,6 +249,7 @@ async function loadFilteredBroadcasts() {
   }
 }
 
+// === Funções públicas expostas para uso externo ===
 export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", renderNextBatch);
   loadFilteredBroadcasts();
@@ -251,6 +264,7 @@ export function applyBroadcastFilters(newFilters) {
   loadFilteredBroadcasts();
 }
 
+// === Inicializa a referência do grid assim que o DOM estiver pronto ===
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });

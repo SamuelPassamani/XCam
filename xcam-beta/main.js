@@ -1,62 +1,87 @@
 // main.js
-// Arquivo principal de inicialização do frontend do XCam Beta.
-// Responsável por orquestrar a configuração de todos os módulos de interface e dados.
-// Cada função de setup inicializa um componente ou funcionalidade da página.
+// Arquivo principal de bootstrap do XCam Beta App V3.0.
+// Responsável por iniciar os módulos visuais, funcionais e de dados da aplicação.
 
-// Importação dos módulos responsáveis por partes da interface e lógica
-import { setupCarousel } from "./carousel.js";              // Carrossel de destaques
-import { setupMenu } from "./menu.js";                      // Menu responsivo e navegação
-import { setupModal } from "./modal.js";                    // Modal universal para transmissões
-import { setupFilters } from "./filters.js";                // Filtros de busca/seleção
-import { setupBroadcasts } from "./broadcasts.js";          // Grade de transmissões ao vivo
-import { populateFilterOptions } from "./filters-populate.js"; // Preenchimento dinâmico dos selects de filtro
+// =====================
+// IMPORTAÇÕES DE MÓDULOS
+// =====================
 
-/**
- * Função opcional para reinicializar o app.
- * Pode ser chamada de outros módulos se for necessário recarregar toda a interface (ex: após login/logout).
- */
+// Carrossel de destaques no topo da página
+import { setupCarousel } from "./carousel.js";
+
+// Menu de navegação responsivo (desktop + mobile)
+import { setupMenu } from "./menu.js";
+
+// Modal universal que exibe a transmissão e detalhes do usuário ao clicar em um card
+import { setupModal } from "./modal.js";
+
+// Lógica e eventos de filtro (gênero, país, orientação etc)
+import { setupFilters } from "./filters.js";
+
+// Inicialização da grade de transmissões (grid principal de cards)
+import { setupBroadcasts } from "./broadcasts.js";
+
+// Popula dinamicamente os selects dos filtros com dados da API (países, gêneros etc)
+import { populateFilterOptions } from "./filters-populate.js";
+
+// =====================
+// FUNÇÃO PÚBLICA PARA REINICIALIZAR O APP
+// =====================
 export function initApp() {
-  // Recarrega a grade de transmissões ao vivo
+  // Esta função pode ser reutilizada para reinicializar o estado da aplicação
+  // Exemplo de uso: após login, logout ou atualização de permissões
   setupBroadcasts();
 }
 
-// Aguarda o carregamento completo do DOM antes de inicializar os módulos.
-// Isso garante que todos os elementos necessários já existam na página.
+// =====================
+// INICIALIZAÇÃO DO APP AO CARREGAR O DOM
+// =====================
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Inicializa componentes visuais e estruturais
-  setupCarousel();           // Carrossel de destaques, deve ser inicializado cedo para UX fluida
-  setupMenu();               // Menu superior e menu mobile
-  setupModal();              // Modal de exibição de transmissão individual
+  // Etapa 1 — Componentes de estrutura base
+  setupCarousel(); // Inicializa o carrossel superior de destaques
+  setupMenu(); // Menu de navegação responsivo
+  setupModal(); // Modal de exibição detalhada de transmissões
 
-  // 2. Preenche dinamicamente os selects dos filtros (país, gênero, etc)
-  // Importante rodar ANTES dos filtros, pois os filtros dependem dos selects populados
+  // Etapa 2 — Preparação dos filtros
+  // populateFilterOptions() deve rodar antes para garantir que os selects estejam populados
   populateFilterOptions();
 
-  // 3. Inicializa a lógica dos filtros (event listeners, callbacks, etc)
+  // Etapa 3 — Configuração de lógica dos filtros
   setupFilters();
 
-  // 4. Inicializa a grade de transmissões ao vivo
-  // Esta função configura a grade, listeners e faz o primeiro carregamento automático dos dados
+  // Etapa 4 — Inicializa grade de transmissões
+  // Esta função cuida do carregamento inicial da API, renderiza os cards e configura paginação
   setupBroadcasts();
 
-  // Observação:
-  // Não é necessário chamar refreshBroadcasts() logo após setupBroadcasts(),
-  // pois setupBroadcasts já faz o carregamento inicial.
+  // Observação: NÃO é necessário chamar refreshBroadcasts aqui, pois setupBroadcasts já realiza o primeiro fetch.
 });
 
 /*
-  Detalhamento dos módulos importados:
+🔍 Descrição dos módulos integrados:
 
-  - carousel.js: Gerencia o carrossel de banners/destaques, controles e rotação automática.
-  - menu.js: Controla o menu de navegação superior e o menu mobile, incluindo toggle e responsividade.
-  - modal.js: Modal universal para exibir detalhes das transmissões quando um card é clicado.
-  - filters.js: Adiciona lógica de filtragem e aplica filtros selecionados na busca das transmissões.
-  - filters-populate.js: Busca e popula dinamicamente os selects de filtro (ex: países disponíveis).
-  - broadcasts.js: Gerencia toda a grade de transmissões ao vivo, filtragem, paginação e renderização dos cards.
+- carousel.js:
+  Controla o carrossel de slides de destaque com rotação automática e controles manuais.
 
-  Boas práticas adotadas:
-  - Ordem de inicialização respeita dependências entre módulos.
-  - Apenas uma chamada de carregamento de transmissões para evitar fetch duplo.
-  - Comentários explicativos para cada etapa do fluxo.
-  - initApp exportada para uso futuro em outros pontos da aplicação, caso necessário.
+- menu.js:
+  Gerencia o menu principal e a versão mobile (hambúrguer), incluindo toggle e responsividade.
+
+- modal.js:
+  Abre um modal detalhado ao clicar em um card, carregando dados do usuário e exibindo o XCam Player integrado.
+
+- filters.js:
+  Aplica filtros ao conjunto de transmissões com base nos selects (gênero, país, etc).
+
+- filters-populate.js:
+  Realiza fetch dinâmico dos valores dos filtros disponíveis via API e injeta nos selects.
+
+- broadcasts.js:
+  Responsável por carregar as transmissões da API, renderizar os cards, aplicar filtros e paginação.
+
+✅ Benefícios desta arquitetura:
+- Cada módulo tem responsabilidade única e bem definida.
+- Inicialização em ordem lógica e funcional.
+- Escalável: novos módulos podem ser adicionados sem reescrever a base.
+- Clareza e facilidade de manutenção com comentários descritivos.
+
+📦 Versão de referência: XCam Beta App V3.0
 */
