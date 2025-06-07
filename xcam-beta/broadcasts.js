@@ -23,10 +23,10 @@ let allItems = [];
 let grid;
 
 let filters = {
-  gender: "",
+  gender: "male",
   country: "",
   orientation: "",
-  minViewers: "",
+  minViewers: null,
   tags: []
 };
 
