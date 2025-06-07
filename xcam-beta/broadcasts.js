@@ -22,13 +22,13 @@ function createEl(type, props = {}, children = []) {
 
 // === Variáveis de controle de paginação e filtros ===
 let currentPage = 1;
-const itemsPerPage = 15;
+const itemsPerPage = 30;
 let allItems = [];
 let grid;
 
 // Filtros padrão: todos em branco para buscar "todos" por padrão
 let filters = {
-  gender: "",        // "" = sem filtro (mostra todos)
+  gender: "male",        // "" = sem filtro (mostra todos)
   country: "",
   orientation: "",
   minViewers: null,
@@ -58,7 +58,7 @@ function buildApiUrl(filters) {
   // Sempre usa limit alto para buscar tudo, paginação é só no front
   const params = new URLSearchParams({
     page: "1",
-    limit: "1500",
+    limit: "30",
     format: "json"
   });
 
