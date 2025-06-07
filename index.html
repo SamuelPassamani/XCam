@@ -1,0 +1,882 @@
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prof. Jorge Alex Passamani | Idiomas, Traduções e Música</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #4338CA 0%, #6D28D9 100%);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .audio-player {
+      width: 100%;
+      background: #f3f4f6;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .calendar-day {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .calendar-day:hover:not(.calendar-day-disabled) {
+      background-color: #e0e7ff;
+    }
+
+    .calendar-day-selected {
+      background-color: #4F46E5 !important;
+      color: white !important;
+    }
+
+    .calendar-day-disabled {
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .schedule-available {
+      background-color: #dcfce7;
+      color: #166534;
+      font-weight: 500;
+    }
+
+    .schedule-booked {
+      background-color: #fee2e2;
+      color: #991b1b;
+      font-weight: 500;
+    }
+
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: #4F46E5;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .active-nav::after {
+      width: 100%;
+    }
+
+    .service-icon {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover .service-icon {
+      transform: scale(1.1);
+    }
+
+    .testimonial-card {
+      position: relative;
+    }
+
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 20px;
+      font-size: 80px;
+      font-family: 'Playfair Display', serif;
+      color: rgba(79, 70, 229, 0.1);
+      line-height: 1;
+    }
+
+    .scroll-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .scroll-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <!-- Header/Navigation -->
+  <header x-data="{ mobileMenuOpen: false, activeSection: 'inicio' }" class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <span class="text-indigo-700 font-bold text-xl">Prof. Jorge Alex Passamani</span>
+          </div>
+        </div>
+        <nav class="hidden md:flex space-x-8 items-center">
+          <a href="#inicio" @click="activeSection = 'inicio'" :class="{'active-nav': activeSection === 'inicio'}" class="text-gray-700 hover:text-indigo-700 px-3 py-2 text-sm font-medium nav-link">Início</a>
+          <a href="#servicos" @click="activeSection = 'servicos'" :class="{'active-nav': activeSection === 'servicos'}" class="text-gray-700 hover:text-indigo-700 px-3 py-2 text-sm font-medium nav-link">Serviços</a>
+          <a href="#precos" @click="activeSection = 'precos'" :class="{'active-nav': activeSection === 'precos'}" class="text-gray-700 hover:text-indigo-700 px-3 py-2 text-sm font-medium nav-link">Preços</a>
+          <a href="#agenda" @click="activeSection = 'agenda'" :class="{'active-nav': activeSection === 'agenda'}" class="text-gray-700 hover:text-indigo-700 px-3 py-2 text-sm font-medium nav-link">Agendar</a>
+          <a href="#galeria" @click="activeSection = 'galeria'" :class="{'active-nav': activeSection === 'galeria'}" class="text-gray-700 hover:text-indigo-700 px-3 py-2 text-sm font-medium nav-link">Galeria</a>
+          <a href="#depoimentos" @click="activeSection = 'depoimentos'" :class="{'active-nav': activeSection === 'depoimentos'}" class="text-gray-700 hover:text-indigo-700 px-3 py-2 text-sm font-medium nav-link">Depoimentos</a>
+          <a href="#contato" @click="activeSection = 'contato'" class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">Contato</a>
+        </nav>
+        <div class="flex items-center md:hidden">
+          <button @click="mobileMenuOpen = !mobileMenuOpen" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-indigo-600 focus:outline-none">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div x-show="mobileMenuOpen" class="md:hidden bg-white shadow-lg" x-cloak>
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#inicio" @click="activeSection = 'inicio'; mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Início</a>
+        <a href="#servicos" @click="activeSection = 'servicos'; mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Serviços</a>
+        <a href="#precos" @click="activeSection = 'precos'; mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Preços</a>
+        <a href="#agenda" @click="activeSection = 'agenda'; mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Agendar</a>
+        <a href="#galeria" @click="activeSection = 'galeria'; mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Galeria</a>
+        <a href="#depoimentos" @click="activeSection = 'depoimentos'; mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Depoimentos</a>
+        <a href="#contato" @click="activeSection = 'contato'; mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700 mt-2">Contato</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="inicio" class="hero-gradient text-white">
+    <div class="container mx-auto px-4 py-20 md:py-32">
+      <div class="flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-10 md:mb-0">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">Jorge Alex Passamani</h1>
+          <p class="text-2xl mb-4 text-indigo-100">Professor de Idiomas, Tradutor e Músico</p>
+          <p class="text-xl mb-8 text-indigo-100 max-w-lg">Oferecendo aulas de idiomas, serviços de tradução e aulas de música personalizadas para todos os níveis.</p>
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <a href="#agenda" class="bg-white text-indigo-700 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium text-center transition-colors shadow-lg">Agendar Aula</a>
+            <a href="#servicos" class="border-2 border-white text-white hover:bg-white hover:text-indigo-700 px-6 py-3 rounded-lg font-medium text-center transition-colors">Conhecer Serviços</a>
+          </div>
+        </div>
+        <div class="md:w-1/2 flex justify-center">
+          <div class="relative w-72 h-72 md:w-96 md:h-96">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="absolute w-full h-full animate-pulse">
+              <path fill="#FFFFFF" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.6,90,-16.3,88.5,-1.5C87,13.3,81.4,26.6,73.6,38.6C65.8,50.6,55.9,61.3,43.7,70.7C31.4,80.1,15.7,88.2,0.4,87.5C-14.9,86.9,-29.8,77.5,-43.3,67.9C-56.7,58.2,-68.8,48.4,-77.1,35.4C-85.5,22.4,-90.1,6.2,-87.6,-8.7C-85.2,-23.5,-75.7,-37,-64.4,-47.4C-53.1,-57.8,-39.9,-65.1,-26.9,-72.5C-13.8,-79.9,-0.9,-87.4,13.4,-87.1C27.8,-86.8,55.5,-78.7,69.7,-66.3C83.8,-53.9,93.5,-37.2,103.1,-19.3C112.7,-1.4,122.2,17.8,121.3,36.5C120.4,55.2,109.1,73.5,93.2,85.5C77.3,97.4,56.8,103,37.7,105.5C18.7,108,0.3,107.5,-19.9,107.7C-40.1,107.9,-62,108.8,-76.3,98.9C-90.5,89,-97,68.3,-103.1,48.3C-109.1,28.3,-114.7,9,-112.9,-9.8C-111.2,-28.5,-102.1,-46.7,-88.9,-60.2C-75.7,-73.7,-58.4,-82.5,-41.2,-86.9C-24,-91.3,-7,-91.3,8.9,-88.1C24.8,-84.9,49.6,-78.5,64.2,-67.2C78.8,-55.9,83.2,-39.6,87.6,-23.4C92,-7.1,96.5,9.2,94.4,24.8C92.3,40.5,83.7,55.5,71.5,67.8C59.3,80.1,43.6,89.7,27.1,93.9C10.6,98.2,-6.7,97.1,-22.8,92.3C-38.9,87.5,-53.8,79,-66.5,67.5C-79.2,56,-89.6,41.5,-95.9,25.4C-102.1,9.3,-104.1,-8.4,-100.8,-25.2C-97.5,-42,-88.9,-57.8,-76.2,-69.7C-63.5,-81.6,-46.7,-89.6,-30,-92.1C-13.3,-94.6,3.3,-91.7,19.1,-86.9C34.8,-82.1,49.7,-75.5,64.5,-66.9Z" transform="translate(100 100)" />
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-48 h-48" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="7"></circle>
+                <path d="M12 15v7"></path>
+                <path d="M9 18h6"></path>
+                <path d="M8 2.2C6 3 4.5 4.5 3.7 6.4"></path>
+                <path d="M20.3 6.4C19.5 4.5 18 3 16 2.2"></path>
+                <path d="M2 12h4"></path>
+                <path d="M18 12h4"></path>
+                <path d="M12 1v2"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <path fill="#f9fafb" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="servicos" class="py-20 bg-gray-50 relative">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <span class="text-indigo-600 font-semibold text-sm uppercase tracking-wider">O que ofereço</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">Meus Serviços</h2>
+        <div class="w-16 h-1 bg-indigo-600 mx-auto mb-6"></div>
+        <p class="text-gray-600 max-w-2xl mx-auto">Ofereço uma variedade de serviços educacionais e criativos para atender às suas necessidades.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Service 1 -->
+        <div class="bg-white rounded-xl shadow-lg p-8 transition-all duration-300 card-hover border-t-4 border-indigo-600">
+          <div class="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mb-6 service-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Aulas de Idiomas</h3>
+          <p class="text-gray-600 mb-4">Aulas personalizadas de inglês, espanhol, francês e português para estrangeiros. Metodologia comunicativa e eficiente.</p>
+          <ul class="text-gray-600 mb-6 space-y-2">
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Todos os níveis
+            </li>
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Aulas online ou presenciais
+            </li>
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Material didático incluído
+            </li>
+          </ul>
+          <a href="#agenda" class="inline-block bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1">Agendar Aula</a>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="bg-white rounded-xl shadow-lg p-8 transition-all duration-300 card-hover border-t-4 border-indigo-600">
+          <div class="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mb-6 service-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Serviços de Tradução</h3>
+          <p class="text-gray-600 mb-4">Traduções precisas e profissionais para documentos, textos acadêmicos, sites e conteúdo criativo.</p>
+          <ul class="text-gray-600 mb-6 space-y-2">
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Tradução juramentada
+            </li>
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Revisão e edição
+            </li>
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Entrega rápida
+            </li>
+          </ul>
+          <a href="#contato" class="inline-block bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1">Solicitar Orçamento</a>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="bg-white rounded-xl shadow-lg p-8 transition-all duration-300 card-hover border-t-4 border-indigo-600">
+          <div class="bg-indigo-100 rounded-full w-16 h-16 flex items-center justify-center mb-6 service-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Aulas de Música</h3>
+          <p class="text-gray-600 mb-4">Aulas de instrumentos musicais, teoria musical e composição para todos os níveis e idades.</p>
+          <ul class="text-gray-600 mb-6 space-y-2">
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Piano, violão e canto
+            </li>
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Teoria musical
+            </li>
+            <li class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Composição e arranjo
+            </li>
+          </ul>
+          <a href="#agenda" class="inline-block bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1">Agendar Aula</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="precos" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <span class="text-indigo-600 font-semibold text-sm uppercase tracking-wider">Investimento</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">Tabela de Preços</h2>
+        <div class="w-16 h-1 bg-indigo-600 mx-auto mb-6"></div>
+        <p class="text-gray-600 max-w-2xl mx-auto">Preços acessíveis e pacotes personalizados para atender às suas necessidades.</p>
+      </div>
+
+      <div x-data="{ tab: 'idiomas' }" class="max-w-4xl mx-auto">
+        <!-- Tabs -->
+        <div class="flex flex-wrap justify-center mb-8">
+          <button @click="tab = 'idiomas'" :class="{ 'bg-indigo-600 text-white': tab === 'idiomas', 'bg-white text-gray-700 border-gray-200': tab !== 'idiomas' }" class="px-6 py-3 rounded-l-lg font-medium focus:outline-none transition-colors border">
+            Aulas de Idiomas
+          </button>
+          <button @click="tab = 'traducoes'" :class="{ 'bg-indigo-600 text-white': tab === 'traducoes', 'bg-white text-gray-700 border-gray-200': tab !== 'traducoes' }" class="px-6 py-3 font-medium focus:outline-none transition-colors border-t border-b">
+            Traduções
+          </button>
+          <button @click="tab = 'musica'" :class="{ 'bg-indigo-600 text-white': tab === 'musica', 'bg-white text-gray-700 border-gray-200': tab !== 'musica' }" class="px-6 py-3 rounded-r-lg font-medium focus:outline-none transition-colors border">
+            Aulas de Música
+          </button>
+        </div>
+
+        <!-- Idiomas Tab -->
+        <div x-show="tab === 'idiomas'" class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-indigo-50">
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Modalidade</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Duração</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Preço</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Horários</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 font-medium">Aula Individual</td>
+                <td class="px-6 py-4">1 hora</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 80,00</td>
+                <td class="px-6 py-4">Flexível</td>
+              </tr>
+              <tr class="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+                <td class="px-6 py-4 font-medium">Pacote 4 Aulas</td>
+                <td class="px-6 py-4">1 hora/aula</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 280,00</td>
+                <td class="px-6 py-4">Flexível</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 font-medium">Aula em Grupo (2-4)</td>
+                <td class="px-6 py-4">1.5 horas</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 60,00/pessoa</td>
+                <td class="px-6 py-4">Seg-Sex (18h-21h)</td>
+              </tr>
+              <tr class="bg-gray-50 hover:bg-gray-100 transition-colors">
+                <td class="px-6 py-4 font-medium">Intensivo</td>
+                <td class="px-6 py-4">10 horas/semana</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 650,00</td>
+                <td class="px-6 py-4">Manhã ou Tarde</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Traduções Tab -->
+        <div x-show="tab === 'traducoes'" class="bg-white rounded-xl shadow-lg overflow-hidden" x-cloak>
+          <table class="w-full">
+            <thead>
+              <tr class="bg-indigo-50">
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Tipo</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Unidade</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Preço</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Prazo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 font-medium">Documentos Simples</td>
+                <td class="px-6 py-4">Por página</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 50,00</td>
+                <td class="px-6 py-4">1-2 dias</td>
+              </tr>
+              <tr class="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+                <td class="px-6 py-4 font-medium">Textos Técnicos</td>
+                <td class="px-6 py-4">Por lauda</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 70,00</td>
+                <td class="px-6 py-4">2-3 dias</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 font-medium">Tradução Juramentada</td>
+                <td class="px-6 py-4">Por página</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 120,00</td>
+                <td class="px-6 py-4">3-5 dias</td>
+              </tr>
+              <tr class="bg-gray-50 hover:bg-gray-100 transition-colors">
+                <td class="px-6 py-4 font-medium">Revisão</td>
+                <td class="px-6 py-4">Por lauda</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 35,00</td>
+                <td class="px-6 py-4">1-2 dias</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Música Tab -->
+        <div x-show="tab === 'musica'" class="bg-white rounded-xl shadow-lg overflow-hidden" x-cloak>
+          <table class="w-full">
+            <thead>
+              <tr class="bg-indigo-50">
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Instrumento</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Duração</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Preço</th>
+                <th class="px-6 py-4 text-left text-indigo-800 font-semibold">Horários</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 font-medium">Violão</td>
+                <td class="px-6 py-4">1 hora</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 90,00</td>
+                <td class="px-6 py-4">Manhã/Tarde</td>
+              </tr>
+              <tr class="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+                <td class="px-6 py-4 font-medium">Piano</td>
+                <td class="px-6 py-4">1 hora</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 100,00</td>
+                <td class="px-6 py-4">Tarde/Noite</td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 font-medium">Canto</td>
+                <td class="px-6 py-4">1 hora</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 95,00</td>
+                <td class="px-6 py-4">Flexível</td>
+              </tr>
+              <tr class="bg-gray-50 hover:bg-gray-100 transition-colors">
+                <td class="px-6 py-4 font-medium">Teoria Musical</td>
+                <td class="px-6 py-4">1 hora</td>
+                <td class="px-6 py-4 font-semibold text-indigo-700">R$ 85,00</td>
+                <td class="px-6 py-4">Flexível</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="text-center mt-10">
+        <p class="text-gray-600 mb-6">Pacotes personalizados disponíveis para necessidades específicas.</p>
+        <a href="#contato" class="inline-block bg-indigo-600 text-white py-3 px-8 rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1">Solicitar Orçamento Personalizado</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scheduling Section -->
+  <section id="agenda" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <span class="text-indigo-600 font-semibold text-sm uppercase tracking-wider">Disponibilidade</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">Agende sua Aula</h2>
+        <div class="w-16 h-1 bg-indigo-600 mx-auto mb-6"></div>
+        <p class="text-gray-600 max-w-2xl mx-auto">Escolha o serviço, data e horário que melhor se adequam à sua agenda.</p>
+      </div>
+
+      <div class="max-w-5xl mx-auto mb-12">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Horários Disponíveis</h3>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-indigo-50">
+                  <th class="px-4 py-3 text-left text-indigo-800 font-semibold">Horário</th>
+                  <th class="px-4 py-3 text-center text-indigo-800 font-semibold">Segunda</th>
+                  <th class="px-4 py-3 text-center text-indigo-800 font-semibold">Terça</th>
+                  <th class="px-4 py-3 text-center text-indigo-800 font-semibold">Quarta</th>
+                  <th class="px-4 py-3 text-center text-indigo-800 font-semibold">Quinta</th>
+                  <th class="px-4 py-3 text-center text-indigo-800 font-semibold">Sexta</th>
+                  <th class="px-4 py-3 text-center text-indigo-800 font-semibold">Sábado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-gray-200">
+                  <td class="px-4 py-3 font-medium">08:00 - 09:00</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                </tr>
+                <tr class="border-b border-gray-200 bg-gray-50">
+                  <td class="px-4 py-3 font-medium">09:00 - 10:00</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                </tr>
+                <tr class="border-b border-gray-200">
+                  <td class="px-4 py-3 font-medium">10:00 - 11:00</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                </tr>
+                <tr class="border-b border-gray-200 bg-gray-50">
+                  <td class="px-4 py-3 font-medium">11:00 - 12:00</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                </tr>
+                <tr class="border-b border-gray-200">
+                  <td class="px-4 py-3 font-medium">14:00 - 15:00</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                </tr>
+                <tr class="border-b border-gray-200 bg-gray-50">
+                  <td class="px-4 py-3 font-medium">15:00 - 16:00</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                </tr>
+                <tr class="border-b border-gray-200">
+                  <td class="px-4 py-3 font-medium">16:00 - 17:00</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                </tr>
+                <tr class="bg-gray-50">
+                  <td class="px-4 py-3 font-medium">17:00 - 18:00</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-available">Disponível</td>
+                  <td class="px-4 py-3 text-center schedule-booked">Ocupado</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="p-4 bg-gray-50 border-t border-gray-200">
+            <div class="flex items-center space-x-6">
+              <div class="flex items-center">
+                <div class="w-4 h-4 rounded-full schedule-available mr-2"></div>
+                <span class="text-sm text-gray-700">Disponível</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-4 h-4 rounded-full schedule-booked mr-2"></div>
+                <span class="text-sm text-gray-700">Ocupado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div x-data="scheduling()" class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Left Column - Calendar -->
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-6">
+              <button @click="prevMonth()" class="text-gray-600 hover:text-indigo-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <h3 class="text-xl font-semibold text-gray-800" x-text="currentMonthName + ' ' + currentYear"></h3>
+              <button @click="nextMonth()" class="text-gray-600 hover:text-indigo-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-7 gap-1 mb-2">
+              <template x-for="day in ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']">
+                <div class="text-center text-gray-600 font-medium py-2" x-text="day"></div>
+              </template>
+            </div>
+
+            <div class="grid grid-cols-7 gap-1">
+              <template x-for="blankday in blankdays">
+                <div class="text-center py-2"></div>
+              </template>
+
+              <template x-for="(date, dateIndex) in days">
+                <div @click="selectDate(date)" :class="{'calendar-day-selected': isSelectedDate(date), 'calendar-day-disabled': !isAvailableDate(date)}" class="calendar-day text-center py-2 rounded-md" x-text="date">
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Right Column - Form -->
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-6">Detalhes do Agendamento</h3>
+
+            <form @submit.prevent="submitForm">
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="service">Serviço</label>
+                <select x-model="formData.service" id="service" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
+                  <option value="">Selecione um serviço</option>
+                  <option value="idiomas">Aulas de Idiomas</option>
+                  <option value="traducao">Serviço de Tradução</option>
+                  <option value="musica">Aulas de Música</option>
+                </select>
+              </div>
+
+              <div class="mb-4" x-show="formData.service === 'idiomas' || formData.service === 'musica'" x-transition>
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="type">Tipo</label>
+                <select x-model="formData.type" id="type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
+                  <template x-if="formData.service === 'idiomas'">
+                    <div>
+                      <option value="">Selecione um tipo</option>
+                      <option value="individual">Aula Individual</option>
+                      <option value="grupo">Aula em Grupo</option>
+                      <option value="intensivo">Curso Intensivo</option>
+                    </div>
+                  </template>
+                  <template x-if="formData.service === 'musica'">
+                    <div>
+                      <option value="">Selecione um instrumento</option>
+                      <option value="violao">Violão</option>
+                      <option value="piano">Piano</option>
+                      <option value="canto">Canto</option>
+                      <option value="teoria">Teoria Musical</option>
+                    </div>
+                  </template>
+                </select>
+              </div>
+
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Data Selecionada</label>
+                <div class="px-3 py-2 border border-gray-300 rounded-md bg-gray-50" x-text="selectedDateFormatted || 'Nenhuma data selecionada'"></div>
+              </div>
+
+              <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="time">Horário</label>
+                <select x-model="formData.time" id="time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
+                  <option value="">Selecione um horário</option>
+                  <option value="08:00">08:00</option>
+                  <option value="09:00">09:00</option>
+                  <option value="10:00">10:00</option>
+                  <option value="11:00">11:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="15:00">15:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                  <option value="18:00">18:00</option>
+                  <option value="19:00">19:00</option>
+                </select>
+              </div>
+
+              <div class="flex justify-end">
+                <button type="submit" class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1" :disabled="!isFormValid" :class="{'opacity-50 cursor-not-allowed': !isFormValid}">
+                  Agendar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div x-show="showConfirmation" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-cloak @click.away="closeConfirmation()">
+          <div class="bg-white rounded-xl p-8 max-w-md w-full shadow-2xl" @click.stop>
+            <div class="flex items-center justify-center mb-6 text-indigo-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Agendamento Confirmado!</h3>
+            <p class="text-gray-600 mb-6 text-center">Seu agendamento foi realizado com sucesso. Você receberá um e-mail de confirmação em breve.</p>
+            <div class="bg-gray-100 rounded-lg p-4 mb-6">
+              <div class="mb-2"><span class="font-medium">Serviço:</span> <span x-text="getServiceName(formData.service)"></span></div>
+              <div class="mb-2"><span class="font-medium">Data:</span> <span x-text="selectedDateFormatted"></span></div>
+              <div><span class="font-medium">Horário:</span> <span x-text="formData.time"></span></div>
+            </div>
+            <div class="flex justify-center">
+              <button @click="closeConfirmation()" class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1">
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="galeria" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <span class="text-indigo-600 font-semibold text-sm uppercase tracking-wider">Portfólio</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">Galeria</h2>
+        <div class="w-16 h-1 bg-indigo-600 mx-auto mb-6"></div>
+        <p class="text-gray-600 max-w-2xl mx-auto">Confira alguns vídeos e músicas do trabalho do Prof. Jorge Alex Passamani.</p>
+      </div>
+
+      <div x-data="{ tab: 'videos' }" class="max-w-5xl mx-auto">
+        <!-- Tabs -->
+        <div class="flex justify-center mb-8">
+          <button @click="tab = 'videos'" :class="{ 'bg-indigo-600 text-white': tab === 'videos', 'bg-white text-gray-700 border-gray-200': tab !== 'videos' }" class="px-6 py-3 rounded-l-lg font-medium focus:outline-none transition-colors border">
+            Vídeos
+          </button>
+          <button @click="tab = 'musicas'" :class="{ 'bg-indigo-600 text-white': tab === 'musicas', 'bg-white text-gray-700 border-gray-200': tab !== 'musicas' }" class="px-6 py-3 rounded-r-lg font-medium focus:outline-none transition-colors border">
+            Músicas
+          </button>
+        </div>
+
+        <!-- Videos Tab -->
+        <div x-show="tab === 'videos'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Video 1 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div class="video-container">
+              <div class="flex items-center justify-center h-full bg-indigo-50">
+                <div class="text-center p-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-gray-700">Aula de Inglês - Nível Intermediário</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <h4 class="font-semibold text-gray-800 mb-1">Expressões Idiomáticas em Inglês</h4>
+              <p class="text-gray-600 text-sm">Aprenda as expressões mais comuns usadas por nativos.</p>
+              <div class="mt-4">
+                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                  Assistir vídeo completo
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 2 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div class="video-container">
+              <div class="flex items-center justify-center h-full bg-indigo-50">
+                <div class="text-center p-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-gray-700">Tutorial de Violão - Iniciantes</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <h4 class="font-semibold text-gray-800 mb-1">Primeiros Acordes no Violão</h4>
+              <p class="text-gray-600 text-sm">Aprenda os acordes básicos para começar a tocar.</p>
+              <div class="mt-4">
+                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                  Assistir vídeo completo
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 3 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div class="video-container">
+              <div class="flex items-center justify-center h-full bg-indigo-50">
+                <div class="text-center p-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-gray-700">Espanhol para Viagens</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <h4 class="font-semibold text-gray-800 mb-1">Frases Essenciais em Espanhol</h4>
+              <p class="text-gray-600 text-sm">Aprenda frases úteis para sua próxima viagem.</p>
+              <div class="mt-4">
+                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                  Assistir vídeo completo
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video 4 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div class="video-container">
+              <div class="flex items-center justify-center h-full bg-indigo-50">
+                <div class="text-center p-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-gray-700">Teoria Musical Básica</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              <h4 class="font-semibold text-gray-800 mb-1">Entendendo Escalas Musicais</h4>
+              <p class="text-gray-600 text-sm">Uma introdução às escalas mais usadas na música ocidental.</p>
+              <div class="mt-4">
+                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                  Assistir vídeo completo
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Músicas Tab -->
+        <div x-show="tab === 'musicas'" class="grid grid-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=" window.__CF$cv$params={r:'94bd7c3243310320',t:'MTc0OTI3MTM3MC4wMDAwMDA='};var a=document.createElement(' script');a.nonce='' ;a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js' ;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute' ;a.style.top=0;a.style.left=0;a.style.border='none' ;a.style.visibility='hidden' ;document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
