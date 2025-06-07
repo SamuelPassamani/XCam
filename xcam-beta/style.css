@@ -175,7 +175,20 @@ body.modal-open {
   width: 100%;
 }
 
-/* Carrossel */
+/* ============================================================
+   CARROSSEL DE DESTAQUES - ESTILO ESTRUTURADO E COMENTADO
+   ============================================================
+   Este bloco controla a aparência do carrossel de banners/destaques
+   no topo do site, incluindo slides, controles, botões e sobreposições.
+   Comentários detalhados e melhorias para responsividade, manutenção
+   e acessibilidade.
+=============================================================== */
+
+/* Container principal do carrossel
+   - Mantém o carrossel centralizado e com largura máxima
+   - Garante altura fixa para desktop, ajustável em mobile via media queries
+   - overflow:hidden previne que slides saiam do container
+   - z-index:1 permite sobreposição de elementos (como controles) */
 .carousel {
   position: relative;
   max-width: 1400px;
@@ -187,6 +200,9 @@ body.modal-open {
   z-index: 1;
 }
 
+/* Slide individual do carrossel
+   - Absoluto para empilhamento, só o .active fica visível (opacity:1)
+   - Transição suave entre slides */
 .carousel-slide {
   position: absolute;
   top: 0;
@@ -195,13 +211,16 @@ body.modal-open {
   height: 100%;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
+  z-index: 0; /* Garante que apenas o ativo fique sobre os outros */
 }
 
 .carousel-slide.active {
   opacity: 1;
-  z-index: 1;
+  z-index: 1; /* Slide ativo sempre acima dos demais */
 }
 
+/* Imagem de fundo do slide
+   - Cobre todo o slide, mantendo o foco central */
 .carousel-image {
   width: 100%;
   height: 100%;
@@ -210,6 +229,7 @@ body.modal-open {
   position: relative;
 }
 
+/* Sobreposição escura em degradê para melhorar contraste da leitura */
 .carousel-overlay {
   position: absolute;
   top: 0;
@@ -222,17 +242,24 @@ body.modal-open {
     rgba(0, 0, 0, 0.4) 50%,
     rgba(0, 0, 0, 0.2) 100%
   );
+  pointer-events: none; /* Permite clique nos elementos acima */
 }
 
+/* Conteúdo textual/CTA do slide (ex: título, botão)
+   - Centralizado horizontalmente, com animação de entrada */
 .carousel-content {
-  /* Removeremos o `position` e ajustes relacionados */
   text-align: center;
-  z-index: 2;
+  z-index: 2;          /* Sobrepõe imagem e overlay */
   max-width: 600px;
+  margin: 0 auto;
   animation: fadeIn 0.5s;
+  position: relative;
+  top: 40%;            /* Aproxima verticalmente do centro */
+  transform: translateY(-40%);
 }
 
-/* Badge "AO VIVO" */
+/* Badge "AO VIVO"
+   - Destaca transmissões em andamento */
 .carousel-badge {
   position: absolute;
   top: 16px;
@@ -246,12 +273,14 @@ body.modal-open {
   font-size: 17px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: pulse 1.5s infinite;
+  z-index: 3;
 }
 
-/* Username */
+/* Nome do usuário/streamer
+   - Centralizado sobre o slide, com sombra para melhor leitura */
 .carousel-username {
   position: absolute;
-  top: 310px; /* Ajuste conforme necessário */
+  top: 310px; /* Ajuste conforme necessário para visual ideal */
   left: 50%;
   transform: translateX(-50%);
   font-size: 28px;
@@ -259,12 +288,15 @@ body.modal-open {
   color: #ffffff;
   margin: 16px 0 8px;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  z-index: 3;
+  pointer-events: none; /* Não interfere nos cliques do botão */
 }
 
-/* Informações do streamer (país e espectadores) */
+/* Informações rápidas do streamer (país, espectadores)
+   - Agrupadas no topo à esquerda */
 .carousel-info {
   position: absolute;
-  top: 16px; /* Ajuste conforme necessário */
+  top: 16px;
   left: 70px;
   transform: translateX(-50%);
   display: flex;
@@ -272,6 +304,7 @@ body.modal-open {
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
+  z-index: 3;
 }
 
 .carousel-country img {
@@ -286,32 +319,37 @@ body.modal-open {
   font-size: 20px;
 }
 
+/* Botão de ação principal do carrossel ("Assistir", "Entrar", etc.)
+   - Centralizado absoluto na base do slide, com gradiente destacado */
 .carousel-button {
   display: block;
   position: absolute;
-  background: linear-gradient(
-    135deg,
-    #ff007f,
-    #800080
-  ); /* Gradiente do botão */
+  background: linear-gradient(135deg, #ff007f, #800080);
   color: white;
   bottom: 50px;
-  left: 50%; /* Posiciona o botão no centro horizontal */
-  transform: translateX(-50%); /* Centraliza o botão no eixo X */
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 18px;
   font-weight: 600;
   padding: 12px 24px;
   border-radius: 4px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out; /* Transição suave */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+  z-index: 3;
+  box-shadow: 0 4px 16px rgba(255,0,127,0.15);
+  border: none;
 }
 
-.carousel-button:hover {
-  transform: translateX(-50%) scale(1.1); /* Cresce 10% ao passar o mouse */
+.carousel-button:hover,
+.carousel-button:focus {
+  transform: translateX(-50%) scale(1.08);
+  box-shadow: 0 8px 32px rgba(255,0,127,0.30);
+  outline: none;
 }
 
-/* Controles do Carrossel */
+/* Controles laterais para navegar os slides (anterior/próximo)
+   - Sempre visíveis sobre o slide */
 .carousel-controls {
   position: absolute;
   top: 50%;
@@ -320,7 +358,8 @@ body.modal-open {
   justify-content: space-between;
   padding: 0 24px;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 4; /* Acima do conteúdo e botões */
+  pointer-events: none; /* Só os filhos recebem eventos */
 }
 
 .carousel-control {
@@ -334,14 +373,20 @@ body.modal-open {
   justify-content: center;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, background 0.3s;
+  font-size: 20px;
+  pointer-events: all; /* Permite clique mesmo com .carousel-controls pointer-events: none */
+  border: none;
+  outline: none;
 }
 
-.carousel-control:hover {
+.carousel-control:hover,
+.carousel-control:focus {
   opacity: 1;
+  background-color: rgba(255,0,127,0.75);
 }
 
-/* Indicadores do Carrossel */
+/* Indicadores/bullets de slides (fundos, geralmente círculos) */
 .carousel-indicators {
   position: absolute;
   bottom: 24px;
@@ -350,7 +395,7 @@ body.modal-open {
   display: flex;
   justify-content: center;
   gap: 8px;
-  z-index: 2;
+  z-index: 4;
 }
 
 .carousel-indicator {
@@ -359,11 +404,66 @@ body.modal-open {
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
+  outline: none;
+  border: none;
 }
 
-.carousel-indicator.active {
+.carousel-indicator.active,
+.carousel-indicator:focus {
   background-color: #ff007f;
+  transform: scale(1.2);
+}
+
+/* ============================
+   Responsividade do Carrossel
+   ============================
+   Ajusta altura e proporção do carrossel para telas menores.
+*/
+@media (max-width: 900px) {
+  .carousel {
+    height: 320px;
+  }
+  .carousel-username {
+    top: 180px;
+    font-size: 22px;
+  }
+  .carousel-content {
+    max-width: 90vw;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .carousel {
+    height: 180px;
+    margin-top: 50px;
+  }
+  .carousel-username {
+    top: 85px;
+    font-size: 16px;
+  }
+  .carousel-badge {
+    font-size: 12px;
+    padding: 5px 12px;
+  }
+  .carousel-content {
+    top: 35%;
+    max-width: 98vw;
+    font-size: 11px;
+  }
+  .carousel-controls {
+    padding: 0 6px;
+  }
+  .carousel-indicator {
+    width: 8px;
+    height: 8px;
+  }
+  .carousel-button {
+    bottom: 16px;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
 }
 
 /* Filtros */
