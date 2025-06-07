@@ -28,7 +28,7 @@ let grid;
 
 // Filtros padrão: todos em branco para buscar "todos" por padrão
 let filters = {
-  gender: "male",        // "" = sem filtro (mostra todos)
+  gender: "",        // "" = sem filtro (mostra todos)
   country: "",
   orientation: "",
   minViewers: null,
@@ -58,7 +58,7 @@ function buildApiUrl(filters) {
   // Sempre usa limit alto para buscar tudo, paginação é só no front
   const params = new URLSearchParams({
     page: "1",
-    limit: "30",
+    limit: "1500",
     format: "json"
   });
 

@@ -138,10 +138,14 @@ body.modal-open {
 }
 
 /* ============================================================
-   MENU MOBILE
+   MENU MOBILE - RESTAURADO E AJUSTADO (PARA IGUALAR O ORIGINAL)
    ============================================================
-   - Oculto por padrão, ativa classe .active via JS.
-   - Animação slide-down.
+   - Exibe o menu mobile em telas pequenas.
+   - Oculta em telas médias/grandes.
+   - Slide in/out, sobreposição correta, responsividade.
+   - Garante clique fora para fechar (JS), focus-trap opcional.
+   - Hierarquia z-index para sobrepor header.
+   - Inclui busca no mobile.
 =============================================================== */
 .mobile-menu {
   display: none;
@@ -161,12 +165,89 @@ body.modal-open {
 }
 
 .mobile-menu.active {
+  display: flex;
   transform: translateY(0);
   opacity: 1;
 }
 
+/* Links do menu mobile */
+.mobile-menu .nav-link {
+  color: #cccccc;
+  padding: 14px 0 14px 8px;
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid #222;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 4px;
+}
+
+.mobile-menu .nav-link:last-child {
+  border-bottom: none;
+}
+
+.mobile-menu .nav-link:hover,
+.mobile-menu .nav-link:focus {
+  background: #232323;
+  color: #ff007f;
+  outline: none;
+}
+
+/* Barra de busca dentro do menu mobile */
 .mobile-search {
+  display: flex;
+  align-items: center;
+  background-color: #232323;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  border: 1px solid #333333;
+}
+
+.mobile-search input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  outline: none;
   width: 100%;
+  margin-left: 8px;
+  font-size: 16px;
+}
+
+.mobile-search i {
+  color: #888;
+  font-size: 18px;
+}
+
+/* Botão hambúrguer só aparece no mobile */
+.mobile-menu-toggle {
+  display: none;
+}
+
+/* ===================== MEDIA QUERIES ===================== */
+
+/* No mobile/tablet: mostra botão e menu mobile, esconde menu desktop e barra desktop */
+@media (max-width: 900px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+  .nav-menu,
+  .search-bar {
+    display: none !important;
+  }
+  .mobile-menu {
+    /* display: flex; NÃO defina aqui, pois .active controla isso */
+  }
+}
+
+/* No desktop: esconde menu mobile */
+@media (min-width: 901px) {
+  .mobile-menu {
+    display: none !important;
+  }
+  .mobile-menu-toggle {
+    display: none !important;
+  }
 }
 
 /* ============================================================
