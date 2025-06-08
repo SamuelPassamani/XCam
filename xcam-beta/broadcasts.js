@@ -66,9 +66,13 @@ function buildApiUrl(filters) {
   if (filters.gender && filters.gender !== "all") params.set("gender", filters.gender);
   if (filters.country && filters.country !== "all") params.set("country", filters.country);
   if (filters.orientation && filters.orientation !== "all") params.set("orientation", filters.orientation);
-  if (filters.minViewers && !isNaN(filters.minViewers)) params.set("minViewers", filters.minViewers);
-  if (Array.isArray(filters.tags) && filters.tags.length > 0) {
-    params.set("tags", filters.tags.join(","));
+
+  // Aceita minViewers = 0 como válido
+  if (filters.minViewers !== undefined && !isNaN(filters.minViewers)) params.set("minViewers", filters.minViewers);
+
+  // Garante que só tags válidas são enviadas
+  if (Array.isArray(filters.tags) && filters.tags.filter(Boolean).length > 0) {
+    params.set("tags", filters.tags.filter(Boolean).join(","));
   }
 
   return `https://api.xcam.gay/?${params.toString()}`;
