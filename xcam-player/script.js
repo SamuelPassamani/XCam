@@ -1,8 +1,18 @@
 "use strict";
 
 /**
- * Fallback local em caso de erro no player.
- * Exibe um vídeo de erro simples caso não seja possível carregar o stream.
+ * Exibe imediatamente a imagem de loading ao abrir a página,
+ * garantindo feedback visual ao usuário durante o carregamento.
+ */
+const playerContainer = document.getElementById("player");
+if (playerContainer) {
+  playerContainer.innerHTML =
+    `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />`;
+}
+
+/**
+ * Função utilitária para exibir o fallback local de erro,
+ * acionando um vídeo local caso o stream não seja carregado.
  */
 function reloadWithFallback() {
   const player = document.getElementById("player");
@@ -17,33 +27,16 @@ function reloadWithFallback() {
   }
 }
 
-// === Pré-carregamento de assets e exibição de imagem de carregamento ===
-const preloadImage = new Image();
-preloadImage.src = "https://xcam.gay/src/loading.gif";
-
-const preloadVideo = document.createElement("link");
-preloadVideo.rel = "preload";
-preloadVideo.as = "fetch";
-preloadVideo.href = "https://xcam.gay/src/error.mp4";
-document.head.appendChild(preloadVideo);
-
-// Exibe a imagem de loading até o player ser carregado
-const playerContainer = document.getElementById("player");
-playerContainer.innerHTML =
-  '<img src="' +
-  preloadImage.src +
-  '" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />';
-
 /**
- * Configura o JW Player com os dados da câmera e a URL do vídeo.
- * @param {Object} camera - Objeto contendo os dados da transmissão.
- * @param {string} username - Nome de usuário da câmera.
- * @param {string} videoSrc - URL do vídeo m3u8.
+ * Função responsável por configurar o JW Player com os dados recebidos.
+ * @param {Object} camera - Dados principais da câmera/transmissão.
+ * @param {string} username - Nome de usuário a exibir no título.
+ * @param {string} videoSrc - URL do stream de vídeo (m3u8).
+ * @param {string} poster - URL da imagem de poster (preview).
  */
-function setupPlayer(camera, username, videoSrc) {
-  // Remove tela de carregamento, se existir
+function setupPlayer(camera, username, videoSrc, poster) {
   const playerContainer = document.getElementById("player");
-  playerContainer.innerHTML = ""; // Limpa o conteúdo
+  if (playerContainer) playerContainer.innerHTML = ""; // Remove loading
 
   jwplayer("player").setup({
     controls: true,
@@ -66,13 +59,15 @@ function setupPlayer(camera, username, videoSrc) {
     },
     playlist: [
       {
-        title: `@${camera.username || username}`,
-        description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
-        image: camera.preview?.poster || "https://xcam.gay/src/loading.gif",
+        title: `@${camera?.username || username || "Unknown"}`,
+        description: Array.isArray(camera?.tags)
+          ? camera.tags.map((tag) => `#${tag.name}`).join(" ")
+          : "",
+        image: poster || "https://xcam.gay/src/loading.gif",
         sources: [
           {
             file: videoSrc,
-            type: "video/m3u8",
+            type: "application/vnd.apple.mpegurl",
             label: "Source"
           }
         ]
@@ -87,56 +82,98 @@ function setupPlayer(camera, username, videoSrc) {
   });
 }
 
-// === Lógica principal: leitura da URL e carregamento dos dados ===
-const params = new URLSearchParams(window.location.search);
+/**
+ * Função principal que controla o fluxo de inicialização do player.
+ * - Decide qual API chamar (lista geral ou usuário específico)
+ * - Processa a resposta e inicializa o player corretamente
+ */
+function initializePlayer() {
+  const params = new URLSearchParams(window.location.search);
 
-if (params.has("user") || params.has("id")) {
-  const isUser = params.has("user");
-  const searchKey = isUser ? "username" : "id";
-  const searchValue = params.get(isUser ? "user" : "id");
+  // Se houver parâmetro "user" na URL, busca informação individual
+  if (params.has("user")) {
+    const username = params.get("user");
+    // Chamada dedicada para usuário específico
+    fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`)
+      .then((response) => {
+        if (!response.ok) throw new Error("Erro ao carregar dados do usuário.");
+        return response.json();
+      })
+      .then((data) => {
+        // Construção dos objetos principais
+        const graphData = data.graphData || {};
+        const streamInfo = data.streamInfo || {};
+        // Prioridade de escolha do vídeo: edgeURL > cdnURL > src
+        const videoSrc = streamInfo.edgeURL || streamInfo.cdnURL || (graphData.preview && graphData.preview.src);
 
-  fetch("https://api.xcam.gay/?limit=1500&format=json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erro ao carregar lista de transmissões");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const items = data?.broadcasts?.items || [];
-      const camera = items.find((item) => item[searchKey] === searchValue);
+        if (!videoSrc) {
+          console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
+          reloadWithFallback();
+          return;
+        }
 
-      if (!camera) {
-        console.warn(
-          `Nenhuma câmera encontrada com o ${searchKey}:`,
-          searchValue
-        );
+        // Prioridade de imagem: poster > profileImageURL > padrão loading
+        const poster = graphData.preview?.poster || graphData.profileImageURL || "https://xcam.gay/src/loading.gif";
+
+        // Monta tags para JW Player
+        const camera = {
+          username: graphData.username || username,
+          tags: graphData.tags || [],
+          preview: { poster }
+        };
+
+        setupPlayer(camera, username, videoSrc, poster);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar dados do usuário:", err);
         reloadWithFallback();
-        return;
-      }
+      });
 
-      if (!camera.preview?.src) {
-        console.warn(
-          "Nenhum stream válido encontrado em preview.src. Aplicando fallback local."
-        );
+  } else if (params.has("id")) {
+    // Fallback para busca pela lista geral usando 'id'
+    const searchValue = params.get("id");
+    fetch("https://api.xcam.gay/?limit=1500&format=json")
+      .then((response) => {
+        if (!response.ok) throw new Error("Erro ao carregar lista de transmissões");
+        return response.json();
+      })
+      .then((data) => {
+        const items = data?.broadcasts?.items || [];
+        const camera = items.find((item) => item.id == searchValue);
+
+        if (!camera) {
+          console.warn(`Nenhuma câmera encontrada com o id: ${searchValue}`);
+          reloadWithFallback();
+          return;
+        }
+
+        if (!camera.preview?.src) {
+          console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
+          reloadWithFallback();
+          return;
+        }
+
+        const poster = camera.preview?.poster || camera.profileImageURL || "https://xcam.gay/src/loading.gif";
+        setupPlayer(camera, camera.username, camera.preview.src, poster);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar a lista geral:", err);
         reloadWithFallback();
-        return;
-      }
+      });
 
-      setupPlayer(camera, camera.username, camera.preview.src);
-    })
-    .catch((err) => {
-      console.error("Erro ao carregar a lista geral:", err);
-      reloadWithFallback();
-    });
-} else {
-  console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
-  reloadWithFallback();
+  } else {
+    // Não há user nem id: fallback imediato
+    console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
+    reloadWithFallback();
+  }
 }
 
+// Executa lógica principal após DOM pronto
+document.addEventListener("DOMContentLoaded", initializePlayer);
+
 /**
- * Lida com erros no JW Player.
- * @param {Object} event
+ * Função para tratamento detalhado de erros do JW Player (mantida do original).
+ * Exibe mensagens customizadas e countdown para fallback.
  */
 function handlePlayerError(event) {
   console.error("Erro no JW Player:", event.message);
@@ -208,8 +245,8 @@ function handlePlayerError(event) {
 }
 
 /**
- * Adiciona botão de download ao player.
- * @param {Object} playerInstance
+ * (Opcional) Função para adicionar botão de download ao player.
+ * Pode ser vinculada em eventos JW Player se desejado.
  */
 function addDownloadButton(playerInstance) {
   const buttonId = "download-video-button";
@@ -234,8 +271,8 @@ function addDownloadButton(playerInstance) {
 }
 
 /**
- * Alinha o time slider com outros controles.
- * @param {Object} playerInstance
+ * (Opcional) Função para alinhar o time slider do player
+ * Pode ser chamada após setupPlayer se desejado customizar UI.
  */
 function alignTimeSlider(playerInstance) {
   const playerContainer = playerInstance.getContainer();
@@ -248,13 +285,15 @@ function alignTimeSlider(playerInstance) {
 }
 
 /**
- * Exibe o modal de anúncios com contagem regressiva.
+ * Exibe o modal de anúncios com contagem regressiva (mantido do original).
  */
 document.addEventListener("DOMContentLoaded", () => {
   const adModal = document.getElementById("ad-modal");
   const closeAdButton = document.getElementById("close-ad-btn");
   const countdownElement = document.getElementById("ad-countdown");
   const player = document.getElementById("player");
+
+  if (!adModal || !closeAdButton || !countdownElement || !player) return;
 
   let countdown = 10;
 
