@@ -9,7 +9,7 @@ function reloadWithFallback() {
   if (player) {
     player.innerHTML = ""; // Limpa qualquer conteúdo anterior
     jwplayer("player").setup({
-      file: "https://drive.xcam.gay/0:/src/file/error.mp4",
+      file: "https://xcam.gay/src/error.mp4",
       autostart: true,
       repeat: true,
       controls: false
@@ -19,12 +19,12 @@ function reloadWithFallback() {
 
 // === Pré-carregamento de assets e exibição de imagem de carregamento ===
 const preloadImage = new Image();
-preloadImage.src = "https://drive.xcam.gay/0:/src/img/loading.gif";
+preloadImage.src = "https://xcam.gay/src/loading.gif";
 
 const preloadVideo = document.createElement("link");
 preloadVideo.rel = "preload";
 preloadVideo.as = "fetch";
-preloadVideo.href = "https://drive.xcam.gay/0:/src/file/error.mp4";
+preloadVideo.href = "https://xcam.gay/src/error.mp4";
 document.head.appendChild(preloadVideo);
 
 // Exibe a imagem de loading até o player ser carregado
@@ -55,7 +55,7 @@ function setupPlayer(camera, username, videoSrc) {
     aboutlink: "https://xcam.gay/",
     skin: { name: "netflix" },
     logo: {
-      file: "https://drive.xcam.gay/0:/logo2.png",
+      file: "https://xcam.gay/src/logo.png",
       link: "https://xcam.gay"
     },
     captions: {
@@ -68,7 +68,7 @@ function setupPlayer(camera, username, videoSrc) {
       {
         title: `@${camera.username || username}`,
         description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
-        image: camera.preview?.poster || "https://drive.xcam.gay/0:/src/img/loading.gif",
+        image: camera.preview?.poster || "https://xcam.gay/src/loading.gif",
         sources: [
           {
             file: videoSrc,
