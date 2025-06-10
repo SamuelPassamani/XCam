@@ -2,57 +2,121 @@
 <html lang="en">
 
 <head>
+  <!--
+    Metadados essenciais para compatibilidade, responsividade e SEO.
+    Inclui configuração de viewport para garantir layout responsivo,
+    charset UTF-8 para suporte a múltiplos idiomas e título da página.
+  -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XCam.Gay / Live Player</title>
+
+  <!--
+    Inclusão das folhas de estilo:
+    - style.css: customizações locais do player e responsividade.
+    - style.css remoto: estilos globais compartilhados entre produtos XCam.
+    - Favicon para melhor identificação visual da aba.
+  -->
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="https://xcam.gay/style.css">
   <link rel="icon" type="image/svg+xml" href="https://drive.xcam.gay/0:/logo2.svg">
   <link rel="icon" type="image/png" href="https://drive.xcam.gay/0:/logo2.png">
+
+  <!--
+    Estilos internos essenciais para garantir que todo o conteúdo ocupe 100% da viewport,
+    evitando barras de rolagem e garantindo que o player seja totalmente responsivo.
+    O uso de max/min e overflow hidden impede qualquer "vazamento" do player na tela.
+  -->
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Remove barras de rolagem da página */
+      box-sizing: border-box;
+    }
+    #player {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Player Section -->
+  <!--
+    Player Section
+    Div principal onde o JWPlayer será renderizado dinamicamente pelo script.js.
+    A responsividade é garantida por CSS tanto interno quanto externo.
+  -->
   <div id="player"></div>
 
-  <!-- Ads Modal -->
+  <!--
+    Ads Modal
+    Modal para exibição de publicidade, posicionado no topo da camada visual.
+    O modal é responsivo e centralizado. O botão de fechar só é ativado após countdown.
+  -->
   <div class="ad-modal" id="ad-modal">
     <div class="ad-modal-container">
-      <iframe id="ad-iframe" title="Advertisement"></iframe>
+      <!--
+        Iframe de publicidade.
+        O conteúdo e dimensão do iframe são definidos dinamicamente via JavaScript,
+        conforme o tamanho da tela do usuário (mobile/desktop).
+      -->
+      <iframe id="ad-iframe" title="Advertisement" style="border:0;"></iframe>
+      <!--
+        Botão de fechamento do anúncio, bloqueado até o countdown terminar.
+      -->
       <button id="close-ad-btn">Aguarde... <span id="ad-countdown">10</span>s</button>
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!--
+    Inclusão dos scripts:
+    - JWPlayer: biblioteca de vídeo.
+    - script.js: lógica de inicialização, responsividade e fallback do player.
+  -->
   <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
   <script src="./script.js"></script>
 
+  <!--
+    Script auxiliar para responsividade do IFrame de anúncios.
+    Alterna entre formatos mobile e desktop de acordo com a largura da tela.
+    Atualiza automaticamente ao redimensionar a janela.
+  -->
   <script>
-    // Função para atualizar o iframe da publicidade de acordo com o tamanho da tela
+    /**
+     * Atualiza o iframe de anúncio conforme o tamanho da tela.
+     * Evita barras de rolagem e garante melhor experiência UX.
+     */
     function updateAdIframe() {
       const adIframe = document.getElementById('ad-iframe');
       const screenWidth = window.innerWidth;
 
-      // Defina o código do iframe com base no tamanho da tela
       if (screenWidth < 768) {
-        // Publicidade para dispositivos móveis
+        // Publicidade mobile: formato 320x50
         adIframe.src = 'https://ads.xcam.gay/320x50.html';
         adIframe.width = '320';
         adIframe.height = '50';
       } else {
-        // Publicidade para dispositivos maiores (desktop)
+        // Publicidade desktop: formato 300x250
         adIframe.src = 'https://ads.xcam.gay/300x250.html';
         adIframe.width = '300';
         adIframe.height = '250';
       }
     }
 
-    // Atualiza o iframe ao carregar a página
-    updateAdIframe();
-
-    // Atualiza o iframe quando a janela é redimensionada
+    // Inicializa o anúncio ao carregar a página e ao redimensionar a janela.
+    window.addEventListener('DOMContentLoaded', updateAdIframe);
     window.addEventListener('resize', updateAdIframe);
   </script>
 </body>
-
 </html>

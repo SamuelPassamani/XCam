@@ -3,11 +3,15 @@
 /**
  * Exibe imediatamente a imagem de loading ao abrir a página,
  * garantindo feedback visual ao usuário durante o carregamento.
+ * 
+ * Ajuste solicitado: 
+ * - Adicionada propriedade 'display:block;' ao style da imagem de loading
+ * - Mantido todo o restante do fluxo original
  */
 const playerContainer = document.getElementById("player");
 if (playerContainer) {
   playerContainer.innerHTML =
-    `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />`;
+    `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;display:block;" />`;
 }
 
 /**
