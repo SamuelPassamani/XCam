@@ -2,10 +2,10 @@
  * ================================================================
  * XCam API Worker - xcam-api/index.js
  * ================================================================
- * 
+ *
  * Descrição geral:
  * Este arquivo implementa o Worker principal da API XCam utilizando Cloudflare Workers para orquestrar, filtrar, transformar e servir dados públicos da plataforma CAM4 de forma flexível e segura.
- * 
+ *
  * Funcionalidades principais:
  * - Integração direta com múltiplos endpoints públicos do CAM4, reunindo dados de transmissões ao vivo (GraphQL), informações de stream e detalhes de perfil.
  * - Endpoints dinâmicos e inteligentes: permite consultas agregadas por usuário (?user=USERNAME), listagens filtradas, paginação e exportação em formatos JSON ou CSV.
@@ -15,14 +15,14 @@
  *
  * Público-alvo:
  * - Sistemas e aplicações que demandam integração com dados públicos do CAM4, incluindo produtos da suíte XCam, dashboards, automações, análises e integrações externas.
- * 
+ *
  * Manutenção e escalabilidade:
  * - Estruturado para fácil extensão/modificação, permitindo inclusão de novos filtros, endpoints e integrações com mínimo impacto.
  * - Código documentado, com tratamento rigoroso de erros, mensagens claras e status HTTP apropriados para cada cenário.
- * 
+ *
  * Autor original: Samuel Passamani
  * Manutenção e evolução: Equipe XCam
- * Última atualização: 2025-06-09
+ * Última atualização: 2025-06-10
  * ================================================================
  */
 
@@ -172,6 +172,7 @@ function buildCam4Body(offset, limit) {
 /**
  * Realiza fetch dos dados de perfil público do usuário no CAM4.
  * Endpoint: /rest/v1.0/profile/${username}/info
+ * Retorna objeto de dados ou erro.
  * @param {string} username - Nome do usuário CAM4.
  * @param {Object} corsHeaders - Headers CORS gerados dinamicamente.
  * @returns {Object} Dados de perfil ou erro.
@@ -199,6 +200,7 @@ async function handleUserProfile(username, corsHeaders) {
 /**
  * Realiza fetch das informações de stream ao vivo do usuário.
  * Endpoint: /rest/v1.0/profile/${username}/streamInfo
+ * Retorna objeto de dados ou erro.
  * @param {string} username - Nome do usuário CAM4.
  * @param {Object} corsHeaders - Headers CORS.
  * @returns {Object} Dados de stream ou erro.
@@ -225,6 +227,7 @@ async function handleLiveInfo(username, corsHeaders) {
 // =====================================================================
 /**
  * Busca informações completas de um usuário a partir do parâmetro de query user.
+ * Sempre retorna todos os campos (graphData, streamInfo, profileInfo), mesmo que algum deles seja null ou contenha erro.
  * Executa três requisições:
  *   1. Busca de transmissões públicas (GraphQL) e filtra pelo username.
  *   2. Busca detalhes de stream ao vivo.
@@ -232,54 +235,48 @@ async function handleLiveInfo(username, corsHeaders) {
  * Agrega as três respostas em um único JSON.
  * @param {string} user - Nome do usuário a ser consultado.
  * @param {Object} corsHeaders - Headers CORS.
- * @returns {Response} Resposta HTTP JSON com dados agregados.
+ * @returns {Response} Resposta HTTP JSON com dados agregados, mesmo se parcial.
  */
 async function handleUserFullInfo(user, corsHeaders) {
   const limit = 300;
+  let graphData = null;
+
   // 1. Busca inicial dos broadcasts (transmissões ao vivo)
-  const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "apollographql-client-name": "CAM4-client",
-      "apollographql-client-version": "25.5.15-113220utc"
-    },
-    body: buildCam4Body(0, limit)
-  });
-
-  // Validação da resposta da API CAM4
-  if (!firstRes.ok) {
-    return new Response(JSON.stringify({ error: "Erro inicial CAM4", details: firstRes.status }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
+  try {
+    const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "apollographql-client-name": "CAM4-client",
+        "apollographql-client-version": "25.5.15-113220utc"
+      },
+      body: buildCam4Body(0, limit)
     });
+    if (firstRes.ok) {
+      const firstJson = await firstRes.json();
+      const allItems = firstJson?.data?.broadcasts?.items || [];
+      graphData = allItems.find(item => item.username === user) || null;
+    } else {
+      // Retorna erro descritivo se a chamada falhar
+      graphData = { error: "Erro inicial CAM4", details: firstRes.status };
+    }
+  } catch (err) {
+    // Retorna erro se request/parse falhar
+    graphData = { error: "Falha na consulta GraphQL", details: err.message };
   }
 
-  const firstJson = await firstRes.json();
-  const allItems = firstJson?.data?.broadcasts?.items || [];
-
-  // 2. Filtro pelo username exato (case-sensitive)
-  const graphData = allItems.find(item => item.username === user);
-
-  if (!graphData) {
-    return new Response(JSON.stringify({ error: "Usuário não encontrado no CAM4 (broadcasts)", user }), {
-      status: 404,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
-    });
-  }
-
-  // 3. Busca paralela dos detalhes de stream e perfil
+  // 2. Busca paralela dos detalhes de stream e perfil (sempre tenta retornar algo)
   const [streamInfo, profileInfo] = await Promise.all([
     handleLiveInfo(user, corsHeaders),
     handleUserProfile(user, corsHeaders)
   ]);
 
-  // 4. Monta resposta única com todas as informações
+  // 3. Retorna todos os campos, mesmo que incompletos ou com erro
   return new Response(JSON.stringify({
     user,
-    graphData,    // Dados públicos do usuário (GraphQL)
-    streamInfo,   // Dados de stream ao vivo
-    profileInfo   // Detalhes do perfil
+    graphData,
+    streamInfo,
+    profileInfo
   }, null, 2), {
     headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
   });
@@ -321,7 +318,7 @@ export default {
     // =============================================
     const userParam = url.searchParams.get("user");
     if (userParam) {
-      // Retorna dados agregados (GraphQL, streamInfo, info)
+      // Retorna dados agregados (GraphQL, streamInfo, info), sempre em JSON, mesmo se houver falha parcial.
       return await handleUserFullInfo(userParam, corsHeaders);
     }
 
@@ -443,7 +440,7 @@ export default {
             }
           })
         : new Response(JSON.stringify(responseData, null, 2), {
-            headers: { "Cache-Control": "no-store",  ...corsHeaders, "Content-Type": "application/json" }
+            headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
           });
       return finalResponse;
 
@@ -456,24 +453,27 @@ export default {
     }
   }
 };
-// === Fim do código ===
-// Nota: Este Worker Cloudflare atua como middleware inteligente entre clientes e a API pública do CAM4, centralizando e enriquecendo a experiência de consumo de dados em diversos contextos da plataforma XCam.
-//
-// Funcionalidades principais:
-// - Permite consultas agregadas e customizadas por usuário, utilizando o parâmetro user na URL para retornar dados consolidados de múltiplas fontes (GraphQL/broadcasts, /streamInfo, /info).
-// - Oferece listagem dinâmica de transmissões ao vivo, com suporte a filtros avançados (gênero, país, orientação sexual, tags) e paginação eficiente.
-// - Suporta exportação de resultados em múltiplos formatos, incluindo JSON (default) e CSV, facilitando integrações com sistemas de BI, automações e análises externas.
-// - Implementa CORS dinâmico e restritivo, garantindo que apenas domínios autorizados possam consumir a API, elevando o nível de segurança e controle de acesso em ambientes distribuídos.
-//
-// Arquitetura e design:
-// - O código é altamente modular, com funções separadas para manipulação de requisições, construção de bodies GraphQL, tratamento de erros, filtros e formatação de respostas.
-// - Utiliza requisições assíncronas em paralelo sempre que possível, minimizando o tempo de resposta e otimizando recursos do ambiente serverless do Cloudflare Workers.
-// - Toda a lógica de tratamento de erros retorna mensagens claras e status HTTP apropriados, facilitando debugging e integração com sistemas externos.
-//
-// Boas práticas e escalabilidade:
-// - Estruturado segundo princípios de Clean Architecture, priorizando legibilidade, manutenibilidade e reuso.
-// - Fácil de estender para novos endpoints ou integrações futuras, bastando adicionar novos handlers ou filtros.
-// - Serve como blueprint para projetos que demandam orquestração de múltiplos serviços externos, controle de segurança via CORS e flexibilidade de formatos de resposta em ambientes serverless.
-//
-// Recomenda-se o uso deste worker como camada de API Gateway para produtos XCam e aplicações integradas, otimizando o consumo de dados do CAM4 de forma segura, performática e escalável.
-// === Fim do código ===
+
+/**
+ * === Fim do código ===
+ * Nota: Este Worker Cloudflare atua como middleware inteligente entre clientes e a API pública do CAM4, centralizando e enriquecendo a experiência de consumo de dados em diversos contextos da plataforma XCam.
+ *
+ * Funcionalidades principais:
+ * - Permite consultas agregadas e customizadas por usuário, utilizando o parâmetro user na URL para retornar dados consolidados de múltiplas fontes (GraphQL/broadcasts, /streamInfo, /info).
+ * - Oferece listagem dinâmica de transmissões ao vivo, com suporte a filtros avançados (gênero, país, orientação sexual, tags) e paginação eficiente.
+ * - Suporta exportação de resultados em múltiplos formatos, incluindo JSON (default) e CSV, facilitando integrações com sistemas de BI, automações e análises externas.
+ * - Implementa CORS dinâmico e restritivo, garantindo que apenas domínios autorizados possam consumir a API, elevando o nível de segurança e controle de acesso em ambientes distribuídos.
+ *
+ * Arquitetura e design:
+ * - O código é altamente modular, com funções separadas para manipulação de requisições, construção de bodies GraphQL, tratamento de erros, filtros e formatação de respostas.
+ * - Utiliza requisições assíncronas em paralelo sempre que possível, minimizando o tempo de resposta e otimizando recursos do ambiente serverless do Cloudflare Workers.
+ * - Toda a lógica de tratamento de erros retorna mensagens claras e status HTTP apropriados, facilitando debugging e integração com sistemas externos.
+ *
+ * Boas práticas e escalabilidade:
+ * - Estruturado segundo princípios de Clean Architecture, priorizando legibilidade, manutenibilidade e reuso.
+ * - Fácil de estender para novos endpoints ou integrações futuras, bastando adicionar novos handlers ou filtros.
+ * - Serve como blueprint para projetos que demandam orquestração de múltiplos serviços externos, controle de segurança via CORS e flexibilidade de formatos de resposta em ambientes serverless.
+ *
+ * Recomenda-se o uso deste worker como camada de API Gateway para produtos XCam e aplicações integradas, otimizando o consumo de dados do CAM4 de forma segura, performática e escalável.
+ * === Fim do código ===
+ */
