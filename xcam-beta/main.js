@@ -1,29 +1,30 @@
 // main.js
-// Arquivo principal de bootstrap do XCam Beta App V3.2.
-// Responsável por iniciar os módulos visuais, funcionais e de dados da aplicação.
-// Totalmente alinhado ao novo fluxo de busca incremental, filtragem e resolução de imagens robusta da grade de transmissões.
+// Bootstrap principal do XCam Beta App V3.3
+// Responsável por inicializar todos os módulos visuais, funcionais e de dados da aplicação.
+// Estrategicamente alinhado ao novo fluxo otimizado de carregamento, filtragem e renderização da grade de transmissões.
+// Cada módulo é inicializado em ordem lógica e funcional, garantindo performance, UX e manutenção facilitada.
 
 // =====================
 // IMPORTAÇÕES DE MÓDULOS
 // =====================
 
-// Carrossel de destaques no topo da página
+// Carrossel de destaques (topo)
 import { setupCarousel } from "./carousel.js";
 
-// Menu de navegação responsivo (desktop + mobile)
+// Menu responsivo (desktop/mobile)
 import { setupMenu } from "./menu.js";
 
-// Modal universal que exibe a transmissão e detalhes do usuário ao clicar em um card
+// Modal universal para transmissões ao clicar em um card
 import { setupModal } from "./modal.js";
 
-// Lógica e eventos de filtro (gênero, país, orientação etc) - só envia valores aceitos pela API
+// Lógica e eventos de filtro (gênero, país, orientação, etc)
 import { setupFilters } from "./filters.js";
 
-// Inicialização da grade de transmissões (grid principal de cards)
-// Agora realiza preload incremental e resolução inteligente de imagens
+// Inicialização da grade de transmissões (grid principal)
+// Agora utiliza fluxo de placeholders, atualização incremental e fetch único da API principal
 import { setupBroadcasts } from "./broadcasts.js";
 
-// Popula dinamicamente os selects dos filtros com dados da API (países, gêneros etc) - só value em inglês/código
+// População dinâmica dos selects dos filtros (valores em inglês/código)
 import { populateFilterOptions } from "./filters-populate.js";
 
 // =====================
@@ -45,58 +46,53 @@ export function initApp() {
 // =====================
 document.addEventListener("DOMContentLoaded", () => {
   /*
-    Ordem crítica para funcionamento correto dos filtros e grid:
-    1. Popula selects dos filtros com valores em inglês/código (API-ready)
-    2. Configura listeners dos filtros (setupFilters)
-    3. Inicializa grid de transmissões (setupBroadcasts)
-    O carrossel, menu e modal podem ser inicializados antes, pois não afetam filtros nem grade.
+    Ordem estratégica para funcionamento otimizado dos filtros e grade:
+    1. Inicializa componentes visuais independentes da grade/filtros.
+    2. Preenche selects dos filtros com valores corretos (API-ready).
+    3. Configura listeners dos filtros.
+    4. Inicializa a grid de transmissões, que já renderiza placeholders imediatamente.
+    Observação: Não é necessário chamar refreshBroadcasts, pois setupBroadcasts já realiza o fetch inicial.
   */
 
-  // Inicializa componentes visuais independentes do grid/filtros
-  setupCarousel(); // Carrossel superior de destaques
-  setupMenu();     // Menu de navegação responsivo
-  setupModal();    // Modal universal
+  // Módulos visuais independentes
+  setupCarousel();
+  setupMenu();
+  setupModal();
 
-  // Preenche os filtros ANTES de configurar listeners para garantir selects corretos
+  // Filtros: popula opções e configura listeners ANTES da grid para garantir valores corretos
   populateFilterOptions();
-
-  // Configura listeners/lógica dos filtros (sempre no padrão aceito pela API)
   setupFilters();
 
-  // Inicializa a grade de transmissões com busca incremental, fallback de imagens e integração total de filtros
+  // Inicializa a grade de transmissões com placeholders e atualização incremental
   setupBroadcasts();
-
-  // Observação: NÃO é necessário chamar refreshBroadcasts aqui, pois setupBroadcasts já realiza o primeiro fetch.
 });
 
 /*
-🔍 Descrição dos módulos integrados (revisado, 2025):
+🔍 Módulos integrados (revisado, 2025):
 
 - carousel.js:
-  Controla o carrossel de slides de destaque com rotação automática e controles manuais.
+  Carrossel de destaques, rotação automática e controles manuais.
 
 - menu.js:
-  Gerencia o menu principal e a versão mobile (hambúrguer), incluindo toggle e responsividade.
+  Menu principal e mobile, com toggle e responsividade.
 
 - modal.js:
-  Abre um modal detalhado ao clicar em um card, carregando dados do usuário e exibindo o XCam Player integrado.
+  Modal detalhado ao clicar em um card, carregando player XCam.
 
 - filters.js:
-  Aplica filtros ao conjunto de transmissões com base nos selects (gênero, país, etc).
-  Os valores enviados à API são sempre em inglês/código e nunca "all" ou em português.
+  Aplica filtros robustos, enviando apenas valores válidos à API (nunca "all" ou em português).
 
 - filters-populate.js:
-  Popula os selects dos filtros com valores em inglês/código (API-ready) e labels amigáveis em português.
+  Preenche selects dos filtros com valores API-ready, labels amigáveis.
 
 - broadcasts.js:
-  Responsável por carregar as transmissões da API, renderizar os cards, aplicar filtros, paginação e busca incremental.
-  Implementa fallback inteligente de imagens (preview, avatar, profile, loading.gif).
+  Carrega transmissões da API única, renderiza placeholders (loading.gif), atualiza cards incrementalmente, nunca faz fetch individual, garante performance máxima e UX suave.
 
-✅ Benefícios desta arquitetura:
-- Cada módulo tem responsabilidade única e bem definida.
-- Inicialização em ordem lógica e funcional, evitando bugs de filtro e valores inválidos.
-- Escalável: novos módulos podem ser adicionados sem reescrever a base.
-- Clareza e facilidade de manutenção, com comentários descritivos e integração transparente entre fluxos de filtro, grid e UX.
+✅ Benefícios:
+- Responsabilidade única por módulo.
+- Inicialização em ordem lógica, evitando bugs de filtro e valores inválidos.
+- Escalável para novos módulos e features.
+- Estrutura robusta para manutenção, performance e clareza.
 
-📦 Versão de referência: XCam Beta App V3.2 (busca incremental, filtros robustos e imagens sempre válidas)
+📦 Versão de referência: XCam Beta App V3.3 (grade otimizada, fetch único, placeholders, filtros robustos)
 */

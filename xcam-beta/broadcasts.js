@@ -1,10 +1,11 @@
 // broadcasts.js
-// Responsável por carregar, filtrar e renderizar a grade de transmissões ao vivo com pré-carregamento de imagens robusto.
-// Implementa fallback progressivo para imagens e busca individual de dados detalhados por usuário, conforme estratégia XCam 2025.
+// Responsável por carregar, filtrar e renderizar a grade de transmissões ao vivo do XCam
+// Estratégia otimizada: apenas UMA chamada para API principal, renderização instantânea de placeholders, atualização incremental dos cards
+// Não faz fetch individual por transmissão. Busca incremental/desempenho máximo.
 
 // === Importações necessárias ===
-import { t } from "./i18n.js"; // Função de tradução (labels/UX)
-import { countryNames } from "./translations.js"; // Map. código país → nome completo
+import { t } from "./i18n.js"; // Função de tradução para labels/UX
+import { countryNames } from "./translations.js"; // Mapeia código país → nome completo
 
 // === Função utilitária: Criação de elementos DOM com atributos e filhos ===
 function createEl(type, props = {}, children = []) {
@@ -12,21 +13,21 @@ function createEl(type, props = {}, children = []) {
   Object.entries(props).forEach(([key, value]) => {
     if (key === "text") el.textContent = value;
     else if (key === "html") el.innerHTML = value;
-    else if (key.startsWith("on") && typeof value === "function")
-      el[key] = value;
+    else if (key.startsWith("on") && typeof value === "function") el[key] = value;
     else el.setAttribute(key, value);
   });
   children.forEach((child) => child && el.appendChild(child));
   return el;
 }
 
-// === Variáveis de controle de paginação e filtros ===
+// === Variáveis de controle da grid, paginação e filtros ===
 let currentPage = 1;
 const itemsPerPage = 30;
 let allItems = [];
+let renderedItems = []; // Para controle incremental dos cards já exibidos
 let grid;
 
-// Filtros padrão: todos em branco para buscar "todos" por padrão
+// Configuração dos filtros (vazios = sem filtro)
 let filters = {
   gender: "",
   country: "",
@@ -35,9 +36,8 @@ let filters = {
   tags: []
 };
 
-// Imagem padrão XCam (terceira opção de fallback)
+// Imagem padrão de loading e default do CAM4 (que nunca deve ser usada)
 const FALLBACK_IMAGE = "https://xcam.gay/src/loading.gif";
-// Imagem default do CAM4 que NÃO deve ser usada
 const BAD_DEFAULT_IMAGE = "https://cam4-static-test.xcdnpro.com/web/images/defaults/default_Male.png";
 
 // === Elementos de carregamento e botão "Carregar mais" ===
@@ -57,10 +57,9 @@ const loadMoreBtn = createEl(
 );
 loadMoreBtn.style.display = "none";
 
-// === Função: Monta a URL da API com base nos filtros aplicados ===
-function buildApiUrl(filters, page = 1, limit = itemsPerPage) {
+// === Função: Monta a URL da API principal baseada nos filtros ===
+function buildApiUrl(filters, limit = itemsPerPage) {
   const params = new URLSearchParams({
-    page: String(page),
     limit: String(limit),
     format: "json"
   });
@@ -73,10 +72,10 @@ function buildApiUrl(filters, page = 1, limit = itemsPerPage) {
   return `https://api.xcam.gay/?${params.toString()}`;
 }
 
-// === Função: Busca as transmissões básicas da API (página x) ===
-async function fetchBroadcastsPage(page = 1, limit = itemsPerPage) {
+// === Função: Busca as transmissões da API principal ===
+async function fetchBroadcasts(limit = itemsPerPage) {
   try {
-    const url = buildApiUrl(filters, page, limit);
+    const url = buildApiUrl(filters, limit);
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
@@ -97,169 +96,155 @@ async function fetchBroadcastsPage(page = 1, limit = itemsPerPage) {
   }
 }
 
-// === Função: Busca dados detalhados para cada transmissão individual ===
-async function fetchUserDetails(username) {
-  try {
-    const url = `https://api.xcam.gay/?user=${encodeURIComponent(username)}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Erro ao buscar dados detalhados");
-    const data = await response.json();
-    return data;
-  } catch (e) {
-    console.warn(`Falha ao obter detalhes de ${username}:`, e);
-    return null;
-  }
-}
-
-// === Função: Resolve a melhor imagem possível para o card ===
-function resolvePreviewImage(userData) {
-  // graphData vem da resposta detalhada
-  const graph = userData && userData.graphData ? userData.graphData : {};
-  const profile = userData && userData.profileInfo ? userData.profileInfo : {};
-
-  // 1. preview.poster (preferencial)
-  let poster = graph.preview && graph.preview.poster ? graph.preview.poster : null;
-  // 2. avatarUrl
-  let avatar = profile.avatarUrl || null;
-  // 3. profileImageURL
-  let profileImg = graph.profileImageURL || profile.profileImageUrl || null;
-
-  // Não usar BAD_DEFAULT_IMAGE
-  [poster, avatar, profileImg] = [poster, avatar, profileImg].map(img =>
-    img === BAD_DEFAULT_IMAGE ? null : img
-  );
-
-  // Retorna o primeiro válido, senão fallback
-  return poster || avatar || profileImg || FALLBACK_IMAGE;
-}
-
-// Garantia defensiva de que o grid está inicializado
+// === Garantia defensiva de que o grid está inicializado ===
 function ensureGridElement() {
   if (!grid) {
     grid = document.getElementById("broadcasts-grid");
   }
 }
 
-// === Função: Renderiza um único card de transmissão ===
-function renderBroadcastCard(data, resolvedImage) {
+// === Função: Resolve a melhor imagem possível para o card ===
+function resolvePreviewImage(data) {
+  // 1. preview.poster (se não for BAD_DEFAULT_IMAGE)
+  let poster = data.preview && data.preview.poster && data.preview.poster !== BAD_DEFAULT_IMAGE ? data.preview.poster : null;
+  // 2. profileImageURL (se não for BAD_DEFAULT_IMAGE)
+  let profileImg = data.profileImageURL && data.profileImageURL !== BAD_DEFAULT_IMAGE ? data.profileImageURL : null;
+  // 3. fallback loading.gif
+  return poster || profileImg || FALLBACK_IMAGE;
+}
+
+// === Função: Renderiza um único card de transmissão (placeholder ou completo) ===
+function renderBroadcastCard(data, isPlaceholder = false) {
   ensureGridElement();
+
   const username = data.username;
   const viewers = data.viewers;
   const country = data.country || "xx";
   const tags = Array.isArray(data.tags) ? data.tags : [];
-  if (!resolvedImage || !username || viewers == null) return;
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
-  const card = createEl(
-    "div",
-    {
-      class: "broadcast-card",
-      role: "region",
-      "aria-label": `Transmissão de ${username}`,
-      "data-broadcast-id": data.id,
-      "data-username": username
-    },
-    [
-      createEl("div", { class: "card-thumbnail" }, [
-        createEl("img", {
-          src: resolvedImage,
-          alt: `Prévia da transmissão de ${username}`,
-          loading: "lazy"
-        }),
-        createEl("div", { class: "card-overlay" }, [
-          createEl(
-            "button",
-            {
-              class: "play-button",
-              "aria-label": `${t("play")} @${username}`,
-              tabindex: "0"
-            },
-            [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
-          )
-        ]),
-        createEl("div", { class: "live-badge", "aria-label": t("live") }, [
-          createEl("span", { text: t("live") })
-        ])
-      ]),
-      createEl("div", { class: "card-info" }, [
-        createEl("div", { class: "card-header" }, [
-          createEl("h4", {
-            class: "card-username",
-            tabindex: "0",
-            text: `@${username}`
+
+  // Define imagem: se placeholder, sempre loading.gif, senão tenta preview
+  const imgSrc = isPlaceholder ? FALLBACK_IMAGE : resolvePreviewImage(data);
+
+  // Verifica se o card já existe (para atualização incremental)
+  let card = grid.querySelector(`.broadcast-card[data-username="${username}"]`);
+  if (!card) {
+    // Cria o card do zero se ainda não existe
+    card = createEl(
+      "div",
+      {
+        class: "broadcast-card",
+        role: "region",
+        "aria-label": `Transmissão de ${username}`,
+        "data-username": username
+      },
+      [
+        createEl("div", { class: "card-thumbnail" }, [
+          createEl("img", {
+            src: imgSrc,
+            alt: `Prévia da transmissão de ${username}`,
+            loading: "lazy"
           }),
-          createEl("div", { class: "card-country" }, [
-            createEl("img", {
-              src: `https://flagcdn.com/24x18/${country}.png`,
-              alt: `País: ${countryName}`,
-              title: countryName
-            })
+          createEl("div", { class: "card-overlay" }, [
+            createEl(
+              "button",
+              {
+                class: "play-button",
+                "aria-label": `${t("play")} @${username}`,
+                tabindex: "0"
+              },
+              [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
+            )
+          ]),
+          createEl("div", { class: "live-badge", "aria-label": t("live") }, [
+            createEl("span", { text: t("live") })
           ])
         ]),
-        createEl("div", { class: "card-viewers" }, [
-          createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
-          createEl("span", { text: ` ${viewers} ${t("viewers")}` })
-        ]),
-        createEl(
-          "div",
-          { class: "card-tags" },
-          tags.map((tag) =>
-            createEl("span", {
-              class: "tag",
-              text: `#${typeof tag === "string" ? tag : tag.name}`
-            })
+        createEl("div", { class: "card-info" }, [
+          createEl("div", { class: "card-header" }, [
+            createEl("h4", {
+              class: "card-username",
+              tabindex: "0",
+              text: `@${username}`
+            }),
+            createEl("div", { class: "card-country" }, [
+              createEl("img", {
+                src: `https://flagcdn.com/24x18/${country}.png`,
+                alt: `País: ${countryName}`,
+                title: countryName
+              })
+            ])
+          ]),
+          createEl("div", { class: "card-viewers" }, [
+            createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
+            createEl("span", { text: ` ${viewers} ${t("viewers")}` })
+          ]),
+          createEl(
+            "div",
+            { class: "card-tags" },
+            tags.map((tag) =>
+              createEl("span", {
+                class: "tag",
+                text: `#${typeof tag === "string" ? tag : tag.name}`
+              })
+            )
           )
-        )
-      ])
-    ]
-  );
-  grid.appendChild(card);
-}
-
-// === Função: Renderiza um lote de transmissões (com preload dos detalhes e imagens) ===
-async function renderBatch(startIndex, count) {
-  ensureGridElement();
-  const batch = allItems.slice(startIndex, startIndex + count);
-  if (!batch.length) return;
-  // Pré-carrega detalhes em paralelo controlado (Promise.all, mas pode ser throttling)
-  // Limite simultâneo: 10 (ajustável)
-  const CONCURRENT_LIMIT = 10;
-  let i = 0;
-  async function processNext() {
-    if (i >= batch.length) return;
-    const idx = i++;
-    const item = batch[idx];
-    // Busca detalhes
-    const userDetails = await fetchUserDetails(item.username);
-    // Resolve imagem (passando userDetails, se não veio, tenta com o básico)
-    let resolvedImg = resolvePreviewImage(userDetails) || FALLBACK_IMAGE;
-    // Se userDetails falhar, tenta pelo próprio item (básico)
-    if (resolvedImg === FALLBACK_IMAGE) {
-      // fallback: usa previewPoster direto da listagem, se válido e não BAD_DEFAULT
-      let tryPoster = (item.preview && item.preview.poster !== BAD_DEFAULT_IMAGE) ? item.preview.poster : null;
-      resolvedImg = tryPoster || FALLBACK_IMAGE;
-    }
-    renderBroadcastCard(item, resolvedImg);
-    await processNext();
+        ])
+      ]
+    );
+    grid.appendChild(card);
+  } else {
+    // Atualiza apenas a imagem se já existe
+    const img = card.querySelector("img");
+    if (img && img.src !== imgSrc) img.src = imgSrc;
+    // (Opcional: atualizar viewers/tags em tempo real se necessário)
   }
-  // Inicia CONCURRENT_LIMIT tarefas simultâneas
-  const tasks = [];
-  for (let c = 0; c < CONCURRENT_LIMIT; c++) tasks.push(processNext());
-  await Promise.all(tasks);
 }
 
-// === Renderiza o próximo lote paginado ===
+// === Função: Renderiza lote de cards (placeholder ou completos) ===
+function renderBatch(startIndex, count, asPlaceholder = false, itemsSource = allItems) {
+  ensureGridElement();
+  const batch = itemsSource.slice(startIndex, startIndex + count);
+  batch.forEach(data => renderBroadcastCard(data, asPlaceholder));
+}
+
+// === Renderiza o próximo lote paginado (completa ou atualiza cards já exibidos) ===
 async function renderNextBatch() {
   ensureGridElement();
-  const start = (currentPage - 1) * itemsPerPage;
-  await renderBatch(start, itemsPerPage);
+
+  // Se for a primeira página, renderiza placeholders imediatamente
+  if (currentPage === 1 && allItems.length > 0 && renderedItems.length === 0) {
+    renderBatch(0, itemsPerPage, true, allItems);
+  }
+
+  // Busca todos os itens disponíveis (limit alto), para atualizar cards já exibidos e adicionar mais 15
+  const totalNeeded = currentPage * itemsPerPage;
+  let result = await fetchBroadcasts(3333);
+  if (!result.length) {
+    showEmptyMessage();
+    return;
+  }
+
+  // Atualiza grade incrementalmente: atualiza já exibidos e adiciona novos
+  allItems = result;
+  // Atualiza todos já exibidos (cards de 0 até renderedItems.length)
+  for (let i = 0; i < renderedItems.length; i++) {
+    renderBroadcastCard(allItems[i], false);
+  }
+  // Adiciona os próximos 15 (ou até o limite)
+  const nextBatch = allItems.slice(renderedItems.length, totalNeeded);
+  nextBatch.forEach(data => renderBroadcastCard(data, false));
+  renderedItems = allItems.slice(0, totalNeeded);
+
   currentPage++;
   loadMoreBtn.style.display =
-    currentPage * itemsPerPage >= allItems.length ? "none" : "block";
+    renderedItems.length >= allItems.length ? "none" : "block";
 }
 
 // === Exibe mensagem caso não haja transmissões ===
 function showEmptyMessage() {
   ensureGridElement();
+  grid.innerHTML = "";
   const empty = createEl(
     "div",
     { class: "empty-state", "aria-live": "polite" },
@@ -278,6 +263,7 @@ function showEmptyMessage() {
 // === Exibe mensagem de erro de rede/API ===
 function showErrorMessage() {
   ensureGridElement();
+  grid.innerHTML = "";
   const errorDiv = createEl(
     "div",
     { class: "error-state", "aria-live": "assertive" },
@@ -290,7 +276,6 @@ function showErrorMessage() {
       createEl("p", { text: t("error.description") })
     ]
   );
-  grid.innerHTML = "";
   grid.appendChild(errorDiv);
 }
 
@@ -298,6 +283,7 @@ function showErrorMessage() {
 async function loadFilteredBroadcasts() {
   currentPage = 1;
   allItems = [];
+  renderedItems = [];
   ensureGridElement();
   grid.innerHTML = "";
   loader.remove();
@@ -305,17 +291,8 @@ async function loadFilteredBroadcasts() {
   grid.appendChild(loader);
 
   try {
-    // 1. Busca os 30 primeiros (default)
-    let result = await fetchBroadcastsPage(1, itemsPerPage);
-    // 2. Busca mais 15 da página 2 (se for necessário para paginação)
-    if (result.length >= itemsPerPage) {
-      // Busca até 150 itens para navegação "carregar mais"
-      for (let page = 2; result.length < 150; page++) {
-        const nextPage = await fetchBroadcastsPage(page, 15);
-        if (!nextPage.length) break;
-        result = result.concat(nextPage);
-      }
-    }
+    // Busca os 30 primeiros para formar a grade rapidamente
+    let result = await fetchBroadcasts(itemsPerPage);
     loader.remove();
 
     if (!result.length) {
@@ -324,7 +301,13 @@ async function loadFilteredBroadcasts() {
     }
 
     allItems = result;
-    await renderNextBatch();
+    renderedItems = [];
+    // Renderiza placeholders imediatamente
+    renderBatch(0, itemsPerPage, true, allItems);
+
+    // Em background já busca todos os cards para atualizar os placeholders e para a próxima paginação
+    setTimeout(() => renderNextBatch(), 100);
+
     grid.parentElement.appendChild(loadMoreBtn);
     loadMoreBtn.style.display = "block";
   } catch (err) {
@@ -339,9 +322,12 @@ export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", renderNextBatch);
   loadFilteredBroadcasts();
 }
+
 export function refreshBroadcasts() {
   loadFilteredBroadcasts();
 }
+
+// Recebe filtros e recarrega a grade
 export function applyBroadcastFilters(newFilters) {
   filters = {
     ...filters,
@@ -351,15 +337,18 @@ export function applyBroadcastFilters(newFilters) {
   };
   loadFilteredBroadcasts();
 }
+
+// Inicializa referência do grid assim que o DOM estiver pronto
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });
 
 /*
 Resumo das melhorias/correções (2025):
-- Busca dados detalhados de cada transmissão via https://api.xcam.gay/?user={username}.
-- Resolve imagem em ordem: preview.poster > avatarUrl > profileImageURL > fallback XCam.
-- Nunca usa a imagem default do CAM4 ("default_Male.png").
-- Pré-carrega os 30 primeiros, depois +15 por vez, conforme paginação/carregar mais.
-- Modular, performático e robusto para mudanças futuras de API.
+- Não faz mais fetch individual por transmissão; utiliza apenas a API principal para máxima performance.
+- Renderização instantânea de placeholders (loading.gif) para UX rápida.
+- Atualização incremental dos cards após chegada dos dados reais.
+- Atualiza cards já exibidos ao clicar em "Carregar mais", mantendo a grade sincronizada.
+- Imagem segue prioridade: preview.poster > profileImageURL > loading.gif, nunca usa imagem default do CAM4.
+- Código limpo, organizado, modular e altamente performático para demandas de streaming ao vivo.
 */

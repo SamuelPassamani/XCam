@@ -48,17 +48,17 @@
     }
   </script>
   <!-- 
-    Ajustes estratégicos:
-    - Os valores dos <option> dos selects de filtros são SEMPRE em inglês/código, controlando via JS o envio correto.
-    - O value "all" nunca é enviado para a API (tratado no JS).
-    - Labels dos selects são sempre em português para usabilidade.
-    - Elementos de grade, filtros, carrossel e modal organizados para máxima integração entre os módulos JS.
-    - Comentários detalhados nos principais blocos do HTML para facilitar manutenção e escalabilidade.
+    Estratégia XCam:
+    - Todos os <option> dos filtros são SEMPRE em inglês/código (conforme API).
+    - Opção "all" tratada via JS, nunca enviada à API.
+    - Labels dos selects em português, UX-friendly.
+    - Estruturas de grade, filtros, carrossel e modal otimizadas para integração modular e performance.
+    - Comentários detalhados para manutenção futura.
   -->
 </head>
 
 <body>
-  <!-- ===== HEADER/NAVBAR ===== -->
+  <!-- ===== HEADER/NAVBAR: Branding e Navegação ===== -->
   <header class="header">
     <a href="//xcam.gay" aria-label="Página inicial XCam">
       <img src="https://xcam.gay/src/logo.png" alt="XCam" class="logo">
@@ -77,7 +77,7 @@
     </button>
   </header>
 
-  <!-- ===== MENU MOBILE (Acessível e responsivo) ===== -->
+  <!-- ===== MENU MOBILE (Acessível e responsivo para UX mobile-first) ===== -->
   <nav class="mobile-menu" id="mobile-menu" aria-label="Menu Mobile">
     <a href="//xcam.gay" class="nav-link">Início</a>
     <a href="#" class="nav-link">Explorar</a>
@@ -88,7 +88,7 @@
     </div>
   </nav>
 
-  <!-- ===== CARROSSEL DE DESTAQUES ===== -->
+  <!-- ===== CARROSSEL DE DESTAQUES: conteúdo dinâmico (modular) ===== -->
   <section class="carousel-section" aria-label="Destaques">
     <div class="carousel-container carousel">
       <div class="carousel-controls">
@@ -100,28 +100,28 @@
     </div>
   </section>
 
-  <!-- ===== FILTROS DE BUSCA (populados via JS sempre em inglês/código) ===== -->
+  <!-- ===== FILTROS DE BUSCA: populados via JS, valores API-ready ===== -->
   <section class="filters-section" aria-label="Filtros">
     <form class="filters-container" id="filters-form" autocomplete="off">
-      <!-- Filtro por país -->
+      <!-- País (populado via filters-populate.js: value=all,br,us...) -->
       <div class="filter-group">
         <label class="filter-label" for="country-filter">País</label>
         <select class="filter-select" id="country-filter" name="country">
-          <!-- Opções dinâmicas via JS: value="all", value="br", value="us", etc -->
+          <!-- Opções inseridas via JS -->
         </select>
       </div>
-      <!-- Filtro por gênero -->
+      <!-- Gênero (populado via filters-populate.js: value=all,male,female,trans) -->
       <div class="filter-group">
         <label class="filter-label" for="gender-filter">Gênero</label>
         <select class="filter-select" id="gender-filter" name="gender">
-          <!-- Opções dinâmicas via JS: value="all", value="male", "female", "trans" -->
+          <!-- Opções inseridas via JS -->
         </select>
       </div>
-      <!-- Filtro por orientação -->
+      <!-- Orientação (populado via filters-populate.js: value=all,straight,gay,...) -->
       <div class="filter-group">
         <label class="filter-label" for="orientation-filter">Orientação</label>
         <select class="filter-select" id="orientation-filter" name="orientation">
-          <!-- Opções dinâmicas via JS: value="all", value="straight", "gay", etc -->
+          <!-- Opções inseridas via JS -->
         </select>
       </div>
       <button class="filter-button" id="apply-filters" type="submit">
@@ -130,7 +130,7 @@
     </form>
   </section>
 
-  <!-- ===== GRADE DE TRANSMISSÕES AO VIVO (grid principal) ===== -->
+  <!-- ===== GRADE DE TRANSMISSÕES AO VIVO: renderização incremental, UX rápida ===== -->
   <section class="broadcasts-section" aria-label="Transmissões ao Vivo">
     <div class="header-row">
       <h2 class="section-title"><i class="fas fa-broadcast-tower"></i> Transmissões ao Vivo</h2>
@@ -139,7 +139,7 @@
       </button>
     </div>
     <div class="broadcasts-grid" id="broadcasts-grid">
-      <!-- Conteúdo inicial/populado dinamicamente via JS (grade de cards com imagens sempre válidas) -->
+      <!-- Cards são populados dinamicamente via broadcasts.js (placeholder/loading.gif + atualização incremental) -->
       <div class="loading-state">
         <div class="loader"></div>
         <p>Carregando transmissões...</p>
@@ -152,17 +152,17 @@
     </div>
   </section>
 
-  <!-- ===== MODAL DE TRANSMISSÃO (estrutura base, conteúdo via JS) ===== -->
+  <!-- ===== MODAL DE TRANSMISSÃO: estrutura mínima, conteúdo via modal.js ===== -->
   <div class="modal-overlay" id="broadcast-modal" aria-modal="true" role="dialog" style="display:none;">
     <div class="modal-content" id="modal-content">
-      <!-- Conteúdo do modal é inserido dinamicamente via JavaScript -->
+      <!-- Conteúdo criado dinamicamente ao abrir modal -->
     </div>
   </div>
 
-  <!-- ===== CONTAINER DE NOTIFICAÇÕES (TOASTS) ===== -->
+  <!-- ===== CONTAINER DE NOTIFICAÇÕES (TOASTS): modular ===== -->
   <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- ===== RODAPÉ ===== -->
+  <!-- ===== RODAPÉ: institucional ===== -->
   <footer class="footer">
     <div class="footer-content">
       <div>
@@ -186,7 +186,7 @@
   </footer>
 
   <!-- ===== SCRIPTS ===== -->
-  <!-- Script principal da aplicação (modular e incremental) -->
+  <!-- Script principal da aplicação (modular, incremental e performático) -->
   <script type="module" src="./main.js"></script>
   <!-- Publicidade: descomente para ativar, se necessário -->
   <!-- <script src="https://pl26608496.profitableratecpm.com/74/31/14/7431142f309cabb259fa3dd356d8094b.js"></script> -->
