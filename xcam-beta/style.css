@@ -910,13 +910,13 @@ body.modal-open {
 }
 
 /* ============================================================
-   MODAL DE TRANSMISSÃO (DEDICADO E MELHORADO)
+   MODAL DE TRANSMISSÃO (DEDICADO E REAJUSTADO)
    ============================================================
    - Overlay centralizado, escurecido, com animação de entrada.
    - Modal mais largo, responsivo (até 900px), padding zero para máximo aproveitamento ao player.
    - Iframe ocupa 100% da área útil do modal e é responsivo em altura e largura.
    - Botão de fechar sempre visível, sobreposto.
-   - Compatível com mobile.
+   - Compatível com mobile e altura máxima de tela, sem cortes.
 =============================================================== */
 
 .modal-overlay {
@@ -948,13 +948,13 @@ body.modal-open {
   width: 90vw;
   max-width: 900px;
   min-width: 320px;
-  min-height: 320px;
+  max-height: 92vh;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   animation: fadeIn 0.2s;
 }
 
@@ -986,45 +986,54 @@ body.modal-open {
 
 /* Container do iframe do player */
 .modal-iframe-container {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  min-height: 420px;
+  min-height: 400px;
+  max-height: 80vh;
+  height: 100%;
   position: relative;
 }
 
 /* Iframe ocupa 100% da área útil do modal */
 .modal-iframe {
   width: 100%;
-  height: 60vh;
-  min-height: 360px;
+  height: 70vh;
+  min-height: 340px;
+  max-height: 80vh;
   border: none;
   background: #000;
   border-radius: 0 0 14px 14px;
   display: block;
+  flex: 1 1 0;
 }
 
-/* Responsivo para telas menores */
+/* Responsivo para telas médias */
 @media (max-width: 1000px) {
   .modal-content {
     max-width: 99vw;
     min-width: 0;
+    max-height: 96vh;
   }
   .modal-iframe-container {
-    min-height: 280px;
+    min-height: 220px;
+    max-height: 72vh;
   }
   .modal-iframe {
-    height: 44vw;
-    min-height: 220px;
+    height: 54vw;
+    min-height: 180px;
+    max-height: 72vh;
   }
 }
 
+/* Responsivo para telas pequenas */
 @media (max-width: 600px) {
   .modal-content {
     width: 100vw;
     max-width: 100vw;
     border-radius: 0;
+    max-height: 100vh;
   }
   .modal-close {
     top: 8px;
@@ -1034,11 +1043,13 @@ body.modal-open {
     height: 34px;
   }
   .modal-iframe-container {
-    min-height: 160px;
+    min-height: 120px;
+    max-height: 70vh;
   }
   .modal-iframe {
-    height: 46vw;
-    min-height: 140px;
+    height: 58vw;
+    min-height: 120px;
+    max-height: 70vh;
     border-radius: 0 0 8px 8px;
   }
 }
