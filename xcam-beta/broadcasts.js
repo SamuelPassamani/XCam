@@ -1,10 +1,10 @@
 // broadcasts.js
-// Responsável por carregar, filtrar e renderizar a grade de transmissões ao vivo.
-// Corrigido para só enviar à API valores aceitos (em inglês/código) e nunca "all" ou português nos filtros.
+// Responsável por carregar, filtrar e renderizar a grade de transmissões ao vivo com pré-carregamento de imagens robusto.
+// Implementa fallback progressivo para imagens e busca individual de dados detalhados por usuário, conforme estratégia XCam 2025.
 
 // === Importações necessárias ===
-import { t } from "./i18n.js"; // Função de tradução (apenas para labels/UX)
-import { countryNames } from "./translations.js"; // Mapeamento de códigos de países → nomes por extenso
+import { t } from "./i18n.js"; // Função de tradução (labels/UX)
+import { countryNames } from "./translations.js"; // Map. código país → nome completo
 
 // === Função utilitária: Criação de elementos DOM com atributos e filhos ===
 function createEl(type, props = {}, children = []) {
@@ -28,12 +28,17 @@ let grid;
 
 // Filtros padrão: todos em branco para buscar "todos" por padrão
 let filters = {
-  gender: "",        // "" = sem filtro (mostra todos)
+  gender: "",
   country: "",
   orientation: "",
   minViewers: null,
   tags: []
 };
+
+// Imagem padrão XCam (terceira opção de fallback)
+const FALLBACK_IMAGE = "https://xcam.gay/src/loading.gif";
+// Imagem default do CAM4 que NÃO deve ser usada
+const BAD_DEFAULT_IMAGE = "https://cam4-static-test.xcdnpro.com/web/images/defaults/default_Male.png";
 
 // === Elementos de carregamento e botão "Carregar mais" ===
 const loader = createEl("div", { class: "loading-state" }, [
@@ -50,42 +55,31 @@ const loadMoreBtn = createEl(
   },
   [createEl("span", { text: t("loadMore") })]
 );
-
 loadMoreBtn.style.display = "none";
 
 // === Função: Monta a URL da API com base nos filtros aplicados ===
-function buildApiUrl(filters) {
-  // Sempre usa limit alto para buscar tudo, paginação é só no front
+function buildApiUrl(filters, page = 1, limit = itemsPerPage) {
   const params = new URLSearchParams({
-    page: "1",
-    limit: "1500",
+    page: String(page),
+    limit: String(limit),
     format: "json"
   });
-
-  // Só envia filtros se valor for válido ("male", "female", "trans", etc), nunca "all", "Todos" ou vazio
   if (filters.gender && filters.gender !== "all") params.set("gender", filters.gender);
   if (filters.country && filters.country !== "all") params.set("country", filters.country);
   if (filters.orientation && filters.orientation !== "all") params.set("orientation", filters.orientation);
-
-  // Aceita minViewers = 0 como válido
   if (filters.minViewers !== undefined && !isNaN(filters.minViewers)) params.set("minViewers", filters.minViewers);
-
-  // Garante que só tags válidas são enviadas
-  if (Array.isArray(filters.tags) && filters.tags.filter(Boolean).length > 0) {
+  if (Array.isArray(filters.tags) && filters.tags.filter(Boolean).length > 0)
     params.set("tags", filters.tags.filter(Boolean).join(","));
-  }
-
   return `https://api.xcam.gay/?${params.toString()}`;
 }
 
-// === Função: Consulta a API e retorna os dados de transmissões ===
-async function fetchBroadcasts() {
+// === Função: Busca as transmissões básicas da API (página x) ===
+async function fetchBroadcastsPage(page = 1, limit = itemsPerPage) {
   try {
-    const url = buildApiUrl(filters);
+    const url = buildApiUrl(filters, page, limit);
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
-
     if (
       data &&
       typeof data === "object" &&
@@ -94,7 +88,6 @@ async function fetchBroadcasts() {
     ) {
       return data.broadcasts.items;
     }
-
     console.warn("Formato inesperado da resposta:", data);
     return [];
   } catch (error) {
@@ -102,6 +95,42 @@ async function fetchBroadcasts() {
     showErrorMessage();
     return [];
   }
+}
+
+// === Função: Busca dados detalhados para cada transmissão individual ===
+async function fetchUserDetails(username) {
+  try {
+    const url = `https://api.xcam.gay/?user=${encodeURIComponent(username)}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Erro ao buscar dados detalhados");
+    const data = await response.json();
+    return data;
+  } catch (e) {
+    console.warn(`Falha ao obter detalhes de ${username}:`, e);
+    return null;
+  }
+}
+
+// === Função: Resolve a melhor imagem possível para o card ===
+function resolvePreviewImage(userData) {
+  // graphData vem da resposta detalhada
+  const graph = userData && userData.graphData ? userData.graphData : {};
+  const profile = userData && userData.profileInfo ? userData.profileInfo : {};
+
+  // 1. preview.poster (preferencial)
+  let poster = graph.preview && graph.preview.poster ? graph.preview.poster : null;
+  // 2. avatarUrl
+  let avatar = profile.avatarUrl || null;
+  // 3. profileImageURL
+  let profileImg = graph.profileImageURL || profile.profileImageUrl || null;
+
+  // Não usar BAD_DEFAULT_IMAGE
+  [poster, avatar, profileImg] = [poster, avatar, profileImg].map(img =>
+    img === BAD_DEFAULT_IMAGE ? null : img
+  );
+
+  // Retorna o primeiro válido, senão fallback
+  return poster || avatar || profileImg || FALLBACK_IMAGE;
 }
 
 // Garantia defensiva de que o grid está inicializado
@@ -112,19 +141,14 @@ function ensureGridElement() {
 }
 
 // === Função: Renderiza um único card de transmissão ===
-function renderBroadcastCard(data) {
-  ensureGridElement(); // 🔒 Garantir que 'grid' esteja definido antes de usar
-
-  const poster = data.preview?.poster;
+function renderBroadcastCard(data, resolvedImage) {
+  ensureGridElement();
   const username = data.username;
   const viewers = data.viewers;
   const country = data.country || "xx";
   const tags = Array.isArray(data.tags) ? data.tags : [];
-
-  if (!poster || !username || viewers == null) return;
-
+  if (!resolvedImage || !username || viewers == null) return;
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
-
   const card = createEl(
     "div",
     {
@@ -132,12 +156,12 @@ function renderBroadcastCard(data) {
       role: "region",
       "aria-label": `Transmissão de ${username}`,
       "data-broadcast-id": data.id,
-      "data-username": username // Importante para funcionar com modal.js
+      "data-username": username
     },
     [
       createEl("div", { class: "card-thumbnail" }, [
         createEl("img", {
-          src: poster,
+          src: resolvedImage,
           alt: `Prévia da transmissão de ${username}`,
           loading: "lazy"
         }),
@@ -188,29 +212,54 @@ function renderBroadcastCard(data) {
       ])
     ]
   );
-
   grid.appendChild(card);
 }
 
-// === Função: Renderiza o próximo lote de transmissões (paginado) ===
-function renderNextBatch() {
-  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
+// === Função: Renderiza um lote de transmissões (com preload dos detalhes e imagens) ===
+async function renderBatch(startIndex, count) {
+  ensureGridElement();
+  const batch = allItems.slice(startIndex, startIndex + count);
+  if (!batch.length) return;
+  // Pré-carrega detalhes em paralelo controlado (Promise.all, mas pode ser throttling)
+  // Limite simultâneo: 10 (ajustável)
+  const CONCURRENT_LIMIT = 10;
+  let i = 0;
+  async function processNext() {
+    if (i >= batch.length) return;
+    const idx = i++;
+    const item = batch[idx];
+    // Busca detalhes
+    const userDetails = await fetchUserDetails(item.username);
+    // Resolve imagem (passando userDetails, se não veio, tenta com o básico)
+    let resolvedImg = resolvePreviewImage(userDetails) || FALLBACK_IMAGE;
+    // Se userDetails falhar, tenta pelo próprio item (básico)
+    if (resolvedImg === FALLBACK_IMAGE) {
+      // fallback: usa previewPoster direto da listagem, se válido e não BAD_DEFAULT
+      let tryPoster = (item.preview && item.preview.poster !== BAD_DEFAULT_IMAGE) ? item.preview.poster : null;
+      resolvedImg = tryPoster || FALLBACK_IMAGE;
+    }
+    renderBroadcastCard(item, resolvedImg);
+    await processNext();
+  }
+  // Inicia CONCURRENT_LIMIT tarefas simultâneas
+  const tasks = [];
+  for (let c = 0; c < CONCURRENT_LIMIT; c++) tasks.push(processNext());
+  await Promise.all(tasks);
+}
 
+// === Renderiza o próximo lote paginado ===
+async function renderNextBatch() {
+  ensureGridElement();
   const start = (currentPage - 1) * itemsPerPage;
-  const end = currentPage * itemsPerPage;
-  const batch = allItems.slice(start, end);
-  batch.forEach(renderBroadcastCard);
+  await renderBatch(start, itemsPerPage);
   currentPage++;
-
-  // Esconde o botão se todas já foram renderizadas
   loadMoreBtn.style.display =
     currentPage * itemsPerPage >= allItems.length ? "none" : "block";
 }
 
 // === Exibe mensagem caso não haja transmissões ===
 function showEmptyMessage() {
-  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
-
+  ensureGridElement();
   const empty = createEl(
     "div",
     { class: "empty-state", "aria-live": "polite" },
@@ -223,14 +272,12 @@ function showEmptyMessage() {
       createEl("p", { text: t("noBroadcasts.description") })
     ]
   );
-
   grid.appendChild(empty);
 }
 
 // === Exibe mensagem de erro de rede/API ===
 function showErrorMessage() {
-  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
-
+  ensureGridElement();
   const errorDiv = createEl(
     "div",
     { class: "error-state", "aria-live": "assertive" },
@@ -251,15 +298,24 @@ function showErrorMessage() {
 async function loadFilteredBroadcasts() {
   currentPage = 1;
   allItems = [];
-
-  ensureGridElement(); // 🔒 Garante que o 'grid' esteja definido antes de usar
+  ensureGridElement();
   grid.innerHTML = "";
   loader.remove();
   loadMoreBtn.remove();
   grid.appendChild(loader);
 
   try {
-    const result = await fetchBroadcasts();
+    // 1. Busca os 30 primeiros (default)
+    let result = await fetchBroadcastsPage(1, itemsPerPage);
+    // 2. Busca mais 15 da página 2 (se for necessário para paginação)
+    if (result.length >= itemsPerPage) {
+      // Busca até 150 itens para navegação "carregar mais"
+      for (let page = 2; result.length < 150; page++) {
+        const nextPage = await fetchBroadcastsPage(page, 15);
+        if (!nextPage.length) break;
+        result = result.concat(nextPage);
+      }
+    }
     loader.remove();
 
     if (!result.length) {
@@ -268,7 +324,7 @@ async function loadFilteredBroadcasts() {
     }
 
     allItems = result;
-    renderNextBatch();
+    await renderNextBatch();
     grid.parentElement.appendChild(loadMoreBtn);
     loadMoreBtn.style.display = "block";
   } catch (err) {
@@ -279,21 +335,14 @@ async function loadFilteredBroadcasts() {
 }
 
 // === Funções públicas expostas para uso externo ===
-
-// Inicializa a grade de transmissões ao carregar a página
 export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", renderNextBatch);
   loadFilteredBroadcasts();
 }
-
-// Atualiza a grade sem reinicializar listeners
 export function refreshBroadcasts() {
   loadFilteredBroadcasts();
 }
-
-// Atualiza/Aplica filtros vindos do formulário (sempre no padrão aceito pela API)
 export function applyBroadcastFilters(newFilters) {
-  // Remove filtros que não tem valor válido
   filters = {
     ...filters,
     ...Object.fromEntries(Object.entries(newFilters).filter(([_, v]) =>
@@ -302,17 +351,15 @@ export function applyBroadcastFilters(newFilters) {
   };
   loadFilteredBroadcasts();
 }
-
-// === Inicializa a referência do grid assim que o DOM estiver pronto ===
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });
 
 /*
-Resumo das melhorias/correções:
-- Por padrão, carrega "todos" (sem filtro), nunca apenas "male".
-- buildApiUrl só inclui parâmetros se valor for válido (em inglês/código e não "all").
-- applyBroadcastFilters sempre limpa filtros nulos, vazios ou "all".
-- Comentários detalhados em todas as etapas.
-- Garante 100% compatibilidade com o formato esperado pela XCam API.
+Resumo das melhorias/correções (2025):
+- Busca dados detalhados de cada transmissão via https://api.xcam.gay/?user={username}.
+- Resolve imagem em ordem: preview.poster > avatarUrl > profileImageURL > fallback XCam.
+- Nunca usa a imagem default do CAM4 ("default_Male.png").
+- Pré-carrega os 30 primeiros, depois +15 por vez, conforme paginação/carregar mais.
+- Modular, performático e robusto para mudanças futuras de API.
 */
