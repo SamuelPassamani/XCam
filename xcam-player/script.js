@@ -71,7 +71,7 @@ function setupPlayer(camera, username, videoSrc, poster) {
         sources: [
           {
             file: videoSrc,
-            type: "application/vnd.apple.mpegurl",
+            type: "video/m3u8",
             label: "Source"
           }
         ]
@@ -108,7 +108,7 @@ function initializePlayer() {
         const graphData = data.graphData || {};
         const streamInfo = data.streamInfo || {};
         // Prioridade de escolha do vídeo: edgeURL > cdnURL > src
-        const videoSrc = streamInfo.edgeURL || streamInfo.cdnURL || (graphData.preview && graphData.preview.src);
+        const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
 
         if (!videoSrc) {
           console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
