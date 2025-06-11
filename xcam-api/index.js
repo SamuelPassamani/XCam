@@ -12,6 +12,7 @@
  * - Implementa CORS dinâmico, restringindo requisições a domínios autorizados e reforçando a segurança de acesso.
  * - Otimização de desempenho: uso de fetch assíncrono paralelo para múltiplas fontes, minimizando latência e garantindo respostas rápidas.
  * - Modularidade e clareza: arquitetura separando responsabilidades em funções puras para fetch, filtros, formatação e tratamento de erros, seguindo Clean Architecture.
+ * - Novo endpoint: ?rec={username} - proxy para Google Apps Script, retorna apenas dados do rec.json do usuário.
  *
  * Público-alvo:
  * - Sistemas e aplicações que demandam integração com dados públicos do CAM4, incluindo produtos da suíte XCam, dashboards, automações, análises e integrações externas.
@@ -22,13 +23,14 @@
  *
  * Autor original: Samuel Passamani
  * Manutenção e evolução: Equipe XCam
- * Última atualização: 2025-06-10
+ * Última atualização: 2025-06-11
  * ================================================================
  */
 
 // ===============================
 // === Conversor JSON para CSV ===
 // ===============================
+
 /**
  * Converte um array de objetos JSON para uma string CSV.
  * - Adiciona aspas duplas em strings que contenham vírgulas ou aspas.
@@ -56,6 +58,7 @@ function jsonToCsv(items) {
 // ========================================
 // === Lista de domínios permitidos CORS ===
 // ========================================
+
 /**
  * Lista estática de domínios autorizados para requisições CORS.
  * Inclui domínios oficiais XCam, subdomínios e ambientes de testes.
@@ -97,6 +100,7 @@ const ALLOWED_ORIGINS = [
 // ====================================
 // === Headers dinâmicos para CORS  ===
 // ====================================
+
 /**
  * Gera headers CORS dinâmicos conforme origem da requisição.
  * - Permite apenas domínios da lista ALLOWED_ORIGINS.
@@ -119,6 +123,7 @@ function getCorsHeaders(origin) {
 // =========================================================
 // === Monta corpo GraphQL para listagem de transmissões ===
 // =========================================================
+
 /**
  * Gera o corpo da requisição GraphQL para buscar transmissões públicas do CAM4.
  * - Usa filtro de gênero "male" e ordena por "trending".
@@ -169,6 +174,7 @@ function buildCam4Body(offset, limit) {
 // ==================================================
 // === Handler: Busca informações de perfil público ===
 // ==================================================
+
 /**
  * Realiza fetch dos dados de perfil público do usuário no CAM4.
  * Endpoint: /rest/v1.0/profile/${username}/info
@@ -197,6 +203,7 @@ async function handleUserProfile(username, corsHeaders) {
 // ====================================================
 // === Handler: Busca informações de stream ao vivo  ===
 // ====================================================
+
 /**
  * Realiza fetch das informações de stream ao vivo do usuário.
  * Endpoint: /rest/v1.0/profile/${username}/streamInfo
@@ -225,6 +232,7 @@ async function handleLiveInfo(username, corsHeaders) {
 // =====================================================================
 // === Handler: Busca e agrega todas as infos de um usuário específico ===
 // =====================================================================
+
 /**
  * Busca informações completas de um usuário a partir do parâmetro de query user.
  * Sempre retorna todos os campos (graphData, streamInfo, profileInfo), mesmo que algum deles seja null ou contenha erro.
@@ -282,14 +290,73 @@ async function handleUserFullInfo(user, corsHeaders) {
   });
 }
 
+// =====================================================================
+// === Handler: Proxy Google Apps Script para rec.json do usuário    ====
+// =====================================================================
+
+/**
+ * Handler para novo endpoint ?rec={username}
+ * Faz requisição ao Google Apps Script e retorna apenas o conteúdo recebido,
+ * sem adicionar outros campos, respeitando CORS e fluxo seguro.
+ * @param {string} username
+ * @param {Object} corsHeaders
+ * @returns {Response}
+ */
+async function handleRecProxy(username, corsHeaders) {
+  // URL do Google Apps Script responsável por servir rec.json do usuário
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbz6cucO0SvdNSbnlFrUCR9nvh4FCDzMCp138iaRyiuDDWQ9JfPvFlmeevhHUtn0soc_IQ/exec?rec=" + encodeURIComponent(username);
+
+  try {
+    // Faz o fetch do Google Apps Script
+    const response = await fetch(GAS_URL, {
+      headers: { 'accept': 'application/json' }
+    });
+
+    const contentType = response.headers.get('content-type') || '';
+    const bodyText = await response.text();
+    // Responde exatamente como o GAS, mantendo CORS e content-type correto
+    // Se a resposta do GAS for JSON, envia como application/json
+    if (contentType.includes("application/json")) {
+      return new Response(bodyText, {
+        headers: {
+          ...corsHeaders,
+          "Cache-Control": "no-store",
+          "Content-Type": "application/json"
+        }
+      });
+    } else {
+      // fallback: responde como texto puro (caso GAS retorne text/plain)
+      return new Response(bodyText, {
+        headers: {
+          ...corsHeaders,
+          "Cache-Control": "no-store",
+          "Content-Type": contentType || "text/plain"
+        }
+      });
+    }
+  } catch (err) {
+    // Em caso de erro na consulta ao GAS, retorna erro JSON padronizado
+    return new Response(JSON.stringify({ error: "Falha ao consultar rec.json via GAS", details: String(err) }), {
+      status: 502,
+      headers: {
+        ...corsHeaders,
+        "Cache-Control": "no-store",
+        "Content-Type": "application/json"
+      }
+    });
+  }
+}
+
 // ===============================================================
 // === Worker principal: roteamento, filtros, respostas e erros ===
 // ===============================================================
+
 /**
  * Worker principal responsável por:
  * - Tratar requisições OPTIONS (CORS preflight)
  * - Roteamento dos endpoints dinâmicos:
  *    - /?user=USERNAME: agrega dados de 3 fontes (GraphQL, streamInfo, info)
+ *    - /?rec=USERNAME: proxy para Apps Script (retorna só driveData)
  *    - /user/:username/liveInfo: retorna apenas dados de transmissão ao vivo
  *    - /user/:username: retorna apenas dados de perfil público
  *    - Demais rotas: retorna lista paginada/filtrada de transmissões públicas
@@ -311,6 +378,15 @@ export default {
     // =========================
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders });
+    }
+
+    // ===================================================================
+    // === Novo endpoint: consulta direta ao rec.json via GAS ?rec=USER ===
+    // ===================================================================
+    const recParam = url.searchParams.get("rec");
+    if (recParam) {
+      // Retorna só a resposta pura da API GAS (rec.json do usuário), não mistura com outros dados
+      return await handleRecProxy(recParam, corsHeaders);
     }
 
     // =============================================
@@ -463,6 +539,7 @@ export default {
  * - Oferece listagem dinâmica de transmissões ao vivo, com suporte a filtros avançados (gênero, país, orientação sexual, tags) e paginação eficiente.
  * - Suporta exportação de resultados em múltiplos formatos, incluindo JSON (default) e CSV, facilitando integrações com sistemas de BI, automações e análises externas.
  * - Implementa CORS dinâmico e restritivo, garantindo que apenas domínios autorizados possam consumir a API, elevando o nível de segurança e controle de acesso em ambientes distribuídos.
+ * - Novo endpoint: ?rec={username} integrado ao Google Apps Script.
  *
  * Arquitetura e design:
  * - O código é altamente modular, com funções separadas para manipulação de requisições, construção de bodies GraphQL, tratamento de erros, filtros e formatação de respostas.
