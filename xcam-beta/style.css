@@ -910,10 +910,12 @@ body.modal-open {
 }
 
 /* ============================================================
-   MODAL DE TRANSMISSÃO — RESPONSIVO, ADAPTÁVEL E MODERNO
+   MODAL DE TRANSMISSÃO — RESPONSIVO, ADAPTÁVEL E MODERNO (ATUALIZADO)
    ============================================================
    - Overlay centralizado e escurecido com animação suave.
    - Modal com largura e altura limitadas ao viewport, sem overflow.
+   - LARGURA MÁXIMA MAIOR no desktop (1200px), maior área útil para o player.
+   - Modal sempre centralizado (flex vertical/horizontal).
    - Player responsivo (iframe), proporção garantida e máxima usabilidade.
    - Botão de fechar acessível em todos os tamanhos.
    - Otimizado para mobile, tablet, desktop e ultrawide.
@@ -942,12 +944,12 @@ body.modal-open {
 /* Conteúdo central do modal */
 .modal-content {
   background: #181818;
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.65);
-  width: 94vw;
-  max-width: 900px;
-  min-width: 0;
-  max-height: 94vh;
+  width: 98vw;           /* Maior largura responsiva */
+  max-width: 1200px;     /* Largura máxima aumentada */
+  min-width: 320px;
+  max-height: 96vh;
   min-height: 180px;
   padding: 0;
   display: flex;
@@ -1004,7 +1006,7 @@ body.modal-open {
   max-height: 80vh;
   border: none;
   background: #000;
-  border-radius: 0 0 14px 14px;
+  border-radius: 0 0 16px 16px;
   display: block;
   flex: 1 1 0;
   aspect-ratio: 16/9;
@@ -1014,9 +1016,9 @@ body.modal-open {
 @media (max-width: 1000px) {
   .modal-content {
     max-width: 99vw;
-    max-height: 98vh;
+    border-radius: 12px;
     min-width: 0;
-    border-radius: 10px;
+    max-height: 98vh;
   }
   .modal-iframe-container {
     min-height: 100px;
@@ -1026,7 +1028,7 @@ body.modal-open {
     height: 46vw;
     min-height: 100px;
     max-height: 72vh;
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 12px 12px;
   }
 }
 
