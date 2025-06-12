@@ -1,32 +1,34 @@
 // xcam-modal/script.js
-// Este script preenche dinamicamente o modal fullscreen do XCam com informações de um usuário/transmissão,
-// utilizando traduções carregadas externamente de https://beta.xcam.gay/translations.js
-// e tradução reversa de https://beta.xcam.gay/translations-reverse.js
-// O script remove imagens e links externos da bio, seja em HTML ou BBCode.
+// Script principal do modal fullscreen informacional do XCam
+// - Carrega dados do usuário/transmissão da API
+// - Usa traduções dinâmicas externas
+// - Exibe informações seguras, responsivas e acessíveis
+// - Bio SEM HTML/BBCode, truncada e com "mais info..." quando necessário
+// - Foco em Clean Architecture, modularidade e UX
 
 // ======================= IMPORTAÇÃO DINÂMICA DE TRADUÇÕES ========================
 let translate, getCountryName, reverseTranslate, getCountryCode;
 
 /**
- * Carrega os módulos de tradução e tradução reversa de forma assíncrona.
- * Após o carregamento, dispara o evento "translationsReady" para iniciar o app.
+ * Carrega módulos de tradução e dispara evento para iniciar o app.
+ * Modular, assíncrono e desacoplado.
  */
 (async () => {
-  // Importa o módulo de traduções (PT-BR)
+  // Importa traduções PT-BR
   const translationsModule = await import(
     "https://beta.xcam.gay/translations.js"
   );
   translate = translationsModule.translate;
   getCountryName = translationsModule.getCountryName;
 
-  // Importa o módulo de tradução reversa (UI -> slug/API)
+  // Importa tradução reversa (UI <-> slug/API)
   const reverseModule = await import(
     "https://beta.xcam.gay/translations-reverse.js"
   );
   reverseTranslate = reverseModule.reverseTranslate;
   getCountryCode = reverseModule.getCountryCode;
 
-  // Dispara evento para indicar que as traduções estão prontas
+  // Dispara evento: traduções prontas
   document.dispatchEvent(new Event("translationsReady"));
 })();
 
@@ -35,7 +37,7 @@ let translate, getCountryName, reverseTranslate, getCountryCode;
 /**
  * Escapa texto para inserção segura em HTML (previne XSS).
  * @param {string} str - Texto a ser escapado.
- * @returns {string} Texto seguro para HTML.
+ * @returns {string} Texto seguro
  */
 function escapeHTML(str) {
   const div = document.createElement("div");
@@ -44,31 +46,50 @@ function escapeHTML(str) {
 }
 
 /**
- * Remove imagens e links externos (HTML e BBCode) de um HTML/texto.
- * @param {string} bio - Conteúdo da bio (pode ter HTML/BBCode).
- * @returns {string} Bio limpa, sem imagens nem links externos.
+ * Remove TODO HTML/BBCode e entidades da bio.
+ * Nunca renderiza HTML, só texto puro (segurança máxima).
+ * @param {string} bio - Texto original (HTML/BBCode/texto)
+ * @returns {string} - Texto limpo, só texto simples
  */
-function sanitizeBio(bio) {
+function stripHtmlAndBBCode(bio) {
   if (!bio) return "";
-  // Remove [img]...[/img] e [url]...[/url] (BBCode)
-  let sanitized = bio
-    .replace(/\[img\][^\[]*\[\/img\]/gi, "")
-    .replace(/\[url=[^\]]*\][^\[]*\[\/url\]/gi, "")
-    .replace(/\[url\][^\[]*\[\/url\]/gi, "");
-  // Remove <img ...> (HTML)
-  sanitized = sanitized.replace(/<img[^>]*>/gi, "");
-  // Remove <a ...>...</a> mas preserva o texto interno
-  sanitized = sanitized.replace(/<a [^>]*>(.*?)<\/a>/gi, "$1");
-  // Remove eventuais iframes, objects, embeds
-  sanitized = sanitized.replace(/<(iframe|object|embed)[^>]*>.*?<\/\1>/gi, "");
-  return sanitized;
+  // Remove BBCode: [tag]...[/tag]
+  let clean = bio.replace(/\[.*?\]/g, "");
+  // Remove tags HTML
+  clean = clean.replace(/<\/?[^>]+(>|$)/g, "");
+  // Remove entidades HTML
+  const div = document.createElement("div");
+  div.innerHTML = clean;
+  return div.textContent || div.innerText || "";
 }
 
 /**
- * Formata as tags da transmissão para exibição no modal.
- * Aceita array de objetos {name, slug} ou strings.
+ * Trunca texto para não ultrapassar área do modal/tela.
+ * Se truncado, adiciona "mais info..." apontando para o perfil público.
+ * Segurança: nunca insere HTML da bio, só texto escapado.
+ * @param {string} text - Texto já sanitizado
+ * @param {string} username - Username p/ link
+ * @param {number} maxLen - Limite de caracteres (ajuste conforme UX)
+ * @returns {string} - HTML seguro para exibição
+ */
+function getTruncatedBio(text, username, maxLen = 250) {
+  if (!text) return "";
+  if (text.length > maxLen) {
+    const infoUrl = `https://xcam.gay/?user=${encodeURIComponent(username)}`;
+    const safeText = escapeHTML(text.slice(0, maxLen).trim());
+    return (
+      `${safeText}... <a href="${infoUrl}" target="_blank" rel="noopener" class="bio-more-link">mais info...</a>`
+    );
+  } else {
+    return escapeHTML(text);
+  }
+}
+
+/**
+ * Formata tags (hashtags) da transmissão para exibição.
+ * Array de objetos ou strings.
  * @param {Array} tags
- * @returns {string} HTML das tags formatadas.
+ * @returns {string} HTML das tags
  */
 function formatTags(tags) {
   if (!tags || !tags.length) return "";
@@ -78,10 +99,10 @@ function formatTags(tags) {
 }
 
 /**
- * Formata links de redes sociais com ícones SVG.
- * O objeto icons armazena o SVG de cada rede social suportada.
- * @param {Object} socialNetworks - { twitter: url, instagram: url, tiktok: url, facebook: url, telegram: url, snapchat: url, ... }
- * @returns {string} HTML dos links com ícones.
+ * Renderiza links de redes sociais com SVGs.
+ * Segurança: URLs escapadas, rel="noopener"
+ * @param {Object} socialNetworks
+ * @returns {string} HTML dos links
  */
 function formatSocialLinks(socialNetworks) {
   if (!socialNetworks) return "";
@@ -108,21 +129,19 @@ function formatSocialLinks(socialNetworks) {
 }
 
 /**
- * Retorna o SVG universal para gênero informado.
- * Este ícone será utilizado para todos os valores de gender.
- * @returns {string} SVG universal de gender
+ * SVG universal para gênero, usado para todos os valores.
+ * @returns {string} SVG
  */
 function getGenderIcon() {
-  // SVG universal padronizado para todos os valores de gênero
   return `<svg fill="currentColor" width="19" height="19" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
     <path d="M219.9978,23.95557q-.00219-.56984-.05749-1.13819c-.018-.18408-.05237-.36279-.07849-.54443-.02979-.20557-.05371-.41211-.09424-.61621-.04029-.20362-.09607-.40088-.14649-.60059-.04541-.18017-.08484-.36084-.13867-.53906-.05884-.19434-.13159-.38135-.19971-.57129-.06445-.17969-.12353-.36084-.19677-.5376-.07349-.17724-.15967-.34668-.24109-.51953-.08582-.18213-.16687-.36621-.26257-.54492-.088-.16455-.18824-.32031-.2837-.48047-.10534-.17627-.2052-.355-.32031-.52685-.11572-.17334-.24475-.33545-.369-.502-.11-.14746-.21252-.29834-.3302-.4414-.23462-.28614-.4834-.55957-.74316-.82227-.01782-.01807-.03247-.03809-.05054-.05615-.01831-.01856-.03857-.0332-.05688-.05127q-.39441-.38966-.82227-.74317c-.13965-.11474-.28686-.21435-.43042-.32177-.16992-.127-.33606-.25879-.51269-.377-.16883-.11328-.34424-.21093-.51734-.31445-.16333-.09765-.32324-.20019-.49145-.29-.1731-.09277-.3512-.1709-.52759-.25439-.17871-.08448-.35462-.17383-.538-.24951-.16932-.07032-.34229-.12647-.514-.18848-.19751-.07129-.39307-.14649-.59534-.208-.16882-.05078-.34045-.08789-.51086-.13135-.20874-.05322-.41529-.11132-.62818-.15332-.19055-.03759-.383-.05957-.57507-.08789-.19544-.02881-.38831-.06494-.58679-.08447-.33252-.03271-.666-.04541-.99988-.05078C208.11853,12.0083,208.0603,12,208,12H172a12,12,0,0,0,0,24h7.0293l-15.051,15.05127A71.97526,71.97526,0,1,0,108,178.981V192H88a12,12,0,0,0,0,24h20v16a12,12,0,0,0,24,0V216h20a12,12,0,0,0,0-24H132V178.981A71.928,71.928,0,0,0,180.27783,68.69287L196,52.9707V60a12,12,0,0,0,24,0V24C220,23.98486,219.9978,23.97021,219.9978,23.95557ZM120,156a48,48,0,1,1,48-48A48.05468,48.05468,0,0,1,120,156Z"/>
   </svg>`;
 }
 
 /**
- * Recupera um parâmetro da querystring da URL.
- * @param {string} param - Nome do parâmetro.
- * @returns {string|null} Valor do parâmetro ou null se não encontrado.
+ * Recupera valor de query string (?user=...)
+ * @param {string} param
+ * @returns {string|null}
  */
 function getUrlParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -130,12 +149,13 @@ function getUrlParam(param) {
 }
 
 /**
- * Busca os dados do usuário e transmissão na API.
- * @param {string} username - Nome do usuário para busca.
- * @returns {Promise<{user: object, broadcast: object}>} Dados do usuário e transmissão.
+ * Busca dados do usuário e transmissão na API oficial.
+ * Executa de forma paralela (performance).
+ * @param {string} username
+ * @returns {Promise<{user: object, broadcast: object}>}
  */
 async function fetchUserData(username) {
-  // Busca os dados do usuário e as transmissões em paralelo
+  // Busca dados em paralelo
   const [userRes, broadcastsRes] = await Promise.all([
     fetch(`https://api.xcam.gay/user/${encodeURIComponent(username)}`),
     fetch(`https://api.xcam.gay/?limit=1500`)
@@ -148,10 +168,10 @@ async function fetchUserData(username) {
     const data = await broadcastsRes.json();
     broadcasts = data?.broadcasts?.items || [];
   } catch (e) {
-    // Silencia erro caso não consiga carregar transmissões (não é crítico)
+    // Silencia erro em transmissões (não é crítico)
   }
 
-  // Encontra a transmissão correspondente ao usuário (se houver) no array de items
+  // Encontra broadcast do user (caso haja)
   const broadcast =
     broadcasts && broadcasts.length
       ? broadcasts.find(
@@ -163,33 +183,28 @@ async function fetchUserData(username) {
 }
 
 /**
- * Atualiza o modal com os dados do usuário e transmissão.
- * Preenche todos os campos do modal dinâmico com base nos dados recebidos.
- * Remove imagens e links externos da bio.
+ * Preenche todos os campos do modal dinâmico.
+ * Bio SEM HTML, truncada com link, responsivo e seguro.
  * @param {object} param0 - { user, broadcast }
  */
 function updateModal({ user, broadcast }) {
-  // Preenche título e nome do usuário
+  // 1. Nome/título
   document.querySelectorAll(".modal-title, .user-name").forEach((el) => {
     if (user && user.username) el.textContent = "@" + user.username;
     else el.textContent = "";
   });
 
-  // Avatar do usuário (usa avatarUrl ou profileImageUrl, com fallback padrão)
+  // 2. Avatar (com fallback)
   const avatarDiv = document.querySelector(".user-avatar");
   avatarDiv.innerHTML = "";
-
   const defaultMaleUrl =
     "https://cam4-static-test.xcdnpro.com/web/images/defaults/default_Male.png";
   const customAvatarUrl =
     "https://drive.xcam.gay/download.aspx?file=EvLJuC5kYRMbycGPXbRtFBKjLRcW7n33H4A2odf30LwmvFKIQk0EDA1knifvPE3%2F&expiry=MgIjvSCpzP8gDghCiR1LSw%3D%3D&mac=ca46e35b8bc19a0a23593835770ea3c085cfb6882562d5871414e64b0f1f06c0";
-
-  // Seleciona o melhor avatar disponível
   let avatarUrl = null;
   if (user && user.avatarUrl) avatarUrl = user.avatarUrl;
   else if (user && user.profileImageUrl) avatarUrl = user.profileImageUrl;
   if (avatarUrl === defaultMaleUrl) avatarUrl = customAvatarUrl;
-
   if (avatarUrl) {
     avatarDiv.innerHTML = `<img src="${escapeHTML(
       avatarUrl
@@ -198,7 +213,7 @@ function updateModal({ user, broadcast }) {
     avatarDiv.textContent = user.username[0].toUpperCase();
   }
 
-  // País do usuário (nome e flag)
+  // 3. País (nome + flag)
   const countrySpan = document.querySelector(".country-name");
   if (user && user.countryId) {
     countrySpan.textContent =
@@ -206,7 +221,6 @@ function updateModal({ user, broadcast }) {
   } else {
     countrySpan.textContent = "";
   }
-
   const flagImg = document.querySelector(".country-flag");
   if (user && user.countryId) {
     flagImg.src = `https://flagcdn.com/w20/${user.countryId.toLowerCase()}.png`;
@@ -216,7 +230,7 @@ function updateModal({ user, broadcast }) {
     flagImg.style.display = "none";
   }
 
-  // Exibe número de espectadores ao vivo
+  // 4. Espectadores ao vivo
   const viewersSpan = document.querySelector(".user-viewers span");
   if (broadcast && typeof broadcast.viewers === "number") {
     viewersSpan.textContent = `${broadcast.viewers} espectadores`;
@@ -224,13 +238,40 @@ function updateModal({ user, broadcast }) {
     viewersSpan.textContent = "";
   }
 
-  // Estatísticas principais: sexo (gender), orientação sexual, tipo de transmissão
+  // 5. Estatísticas principais (gênero, orientação, tipo)
   const statItems = document.querySelectorAll(".stat-item");
-
-  // Ícone SVG Heart para Orientação Sexual (cor branca)
+  // Gênero
+  let genderValue =
+    broadcast && broadcast.gender
+      ? broadcast.gender
+      : user && user.gender
+      ? user.gender
+      : null;
+  if (genderValue) {
+    statItems[0].innerHTML = `${getGenderIcon()} <span>${escapeHTML(
+      translate("gender", genderValue)
+    )}</span>`;
+  } else {
+    statItems[0].innerHTML = "";
+  }
+  // Orientação sexual
+  let orientation = "";
+  if (user && user.sexPreference) {
+    orientation = translate("sexPreference", user.sexPreference);
+  } else if (user && user.sexualOrientation) {
+    orientation = translate("sexualOrientation", user.sexualOrientation);
+  } else if (broadcast && broadcast.sexualOrientation) {
+    orientation = translate("sexualOrientation", broadcast.sexualOrientation);
+  }
   const heartSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 512 512"><path d="M462.3 62.7C407 7.6 325.4-10.6 256 48.6 186.6-10.6 105 7.6 49.7 62.7-16.6 128.9-10.6 229.9 43 284.2l193.5 199.8c7.6 7.8 20.8 7.8 28.4 0L469 284.2c53.5-54.3 59.5-155.3-6.7-221.5z"/></svg>`;
-
-  // Ícone de usuário (tipo transmissão) como SVG inline branco (cor garantida por CSS)
+  if (orientation) {
+    statItems[1].innerHTML = `${heartSVG} <span>${escapeHTML(
+      orientation
+    )}</span>`;
+  } else {
+    statItems[1].innerHTML = "";
+  }
+  // Tipo de transmissão
   const userSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 512 512">
     <g>
       <path d="M103.169,256.828c43.703,0,79.125-35.438,79.125-79.141c0-43.688-35.422-79.125-79.125-79.125
@@ -245,40 +286,6 @@ function updateModal({ user, broadcast }) {
         C6.685,280.234,2.591,282.969,0.856,287.156z"/>
     </g>
   </svg>`;
-
-  // Gênero (gender) - usa SVG universal e a tradução do valor
-  let genderValue =
-    broadcast && broadcast.gender
-      ? broadcast.gender
-      : user && user.gender
-      ? user.gender
-      : null;
-  if (genderValue) {
-    statItems[0].innerHTML = `${getGenderIcon()} <span>${escapeHTML(
-      translate("gender", genderValue)
-    )}</span>`;
-  } else {
-    statItems[0].innerHTML = "";
-  }
-
-  // Orientação sexual (sexPreference ou sexualOrientation) - busca preferencialmente no user, depois no broadcast
-  let orientation = "";
-  if (user && user.sexPreference) {
-    orientation = translate("sexPreference", user.sexPreference);
-  } else if (user && user.sexualOrientation) {
-    orientation = translate("sexualOrientation", user.sexualOrientation);
-  } else if (broadcast && broadcast.sexualOrientation) {
-    orientation = translate("sexualOrientation", broadcast.sexualOrientation);
-  }
-  if (orientation) {
-    statItems[1].innerHTML = `${heartSVG} <span>${escapeHTML(
-      orientation
-    )}</span>`;
-  } else {
-    statItems[1].innerHTML = "";
-  }
-
-  // Tipo de transmissão (broadcastType) - usa tradução correta do arquivo de traduções!
   if (broadcast && broadcast.broadcastType) {
     statItems[2].innerHTML = `${userSVG} <span>${escapeHTML(
       translate("broadcastType", broadcast.broadcastType)
@@ -287,7 +294,7 @@ function updateModal({ user, broadcast }) {
     statItems[2].innerHTML = "";
   }
 
-  // Tags (hashtags) da transmissão
+  // 6. Tags (hashtags)
   const tagsDiv = document.querySelector(".user-tags");
   if (broadcast && broadcast.tags && broadcast.tags.length) {
     tagsDiv.innerHTML = formatTags(broadcast.tags);
@@ -295,17 +302,17 @@ function updateModal({ user, broadcast }) {
     tagsDiv.innerHTML = "";
   }
 
-  // Bio do usuário (HTML ou texto puro) - LIMPA imagens e links externos
+  // 7. Bio do usuário (texto puro, truncado, com "mais info..." se necessário)
   const bioDiv = document.querySelector(".info-section-content");
-  if (user && user.htmlBio) {
-    bioDiv.innerHTML = sanitizeBio(user.htmlBio);
-  } else if (user && user.bio) {
-    bioDiv.textContent = sanitizeBio(user.bio);
+  if (user && (user.htmlBio || user.bio)) {
+    const rawBio = user.htmlBio || user.bio;
+    const plainBio = stripHtmlAndBBCode(rawBio);
+    bioDiv.innerHTML = getTruncatedBio(plainBio, user.username);
   } else {
     bioDiv.textContent = "";
   }
 
-  // Redes sociais (links dinâmicos com SVGs)
+  // 8. Redes sociais (links dinâmicos, SVG)
   const socialLinksDiv = document.querySelector(".social-links");
   if (user && user.socialNetworks && Object.keys(user.socialNetworks).length) {
     socialLinksDiv.innerHTML = formatSocialLinks(user.socialNetworks);
@@ -313,7 +320,7 @@ function updateModal({ user, broadcast }) {
     socialLinksDiv.innerHTML = "";
   }
 
-  // Player (iframe do vídeo ao vivo)
+  // 9. Player (iframe do vídeo ao vivo)
   const iframe = document.querySelector(".player-iframe");
   if (user && user.username) {
     iframe.src = `https://live.xcam.gay/?user=${encodeURIComponent(
@@ -347,17 +354,18 @@ function clearModal() {
   document.querySelector(".player-iframe").src = "";
 }
 
-// ===================== FLUXO DE INICIALIZAÇÃO =====================
+// =========================== FLUXO DE INICIALIZAÇÃO ===========================
 
 /**
- * Aguarda o carregamento das traduções antes de inicializar o modal.
+ * Aguarda carregamento das traduções antes de inicializar modal.
  * Busca os dados do usuário informado na URL (?user=nome) e preenche o modal.
+ * Foco em modularidade, UX e segurança.
  */
 document.addEventListener("translationsReady", async function () {
   document.body.style.overflow = "hidden";
   clearModal();
 
-  // Recupera o parâmetro user da URL (?user=...)
+  // Recupera parâmetro user da URL (?user=...)
   const username = getUrlParam("user");
   if (!username) return;
 
@@ -372,8 +380,8 @@ document.addEventListener("translationsReady", async function () {
 // ===================== FUNÇÕES OPCIONAIS E TRACKING =====================
 
 /**
- * Ativa o modal manualmente (reserva para uso futuro).
- * @param {object} userData Dados do usuário para abrir o modal manualmente.
+ * Ativa modal manualmente (reserva para uso futuro).
+ * @param {object} userData 
  */
 function openUserModal(userData) {
   document.getElementById("modalOverlay").classList.add("active");
@@ -381,8 +389,8 @@ function openUserModal(userData) {
 }
 
 /**
- * Script de tracking/Cloudflare (mantido conforme original, caso necessário)
- * Responsável por inserir de forma oculta um iframe com script de desafio Cloudflare.
+ * Script de tracking/Cloudflare (compatibilidade)
+ * Insere iframe oculto para desafio Cloudflare (não interfere na UX)
  */
 (function () {
   function c() {
@@ -417,3 +425,16 @@ function openUserModal(userData) {
     }
   }
 })();
+
+/*
+==================================================================================
+  Arquitetura:
+  - 100% seguro contra XSS/HTML injection na bio
+  - Modular, desacoplado e pronto para CI/CD
+  - Truncamento de bio adaptável (por caractere, pode evoluir para linhas)
+  - Foco em performance, UX, acessibilidade e internacionalização
+  - Comentários detalhados em cada etapa para futuras manutenções e auditorias
+
+  Para dúvidas ou expansão, consulte a documentação XCam ou peça exemplos de uso.
+==================================================================================
+*/
