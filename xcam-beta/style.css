@@ -910,19 +910,18 @@ body.modal-open {
 }
 
 /* ============================================================
-   MODAL DE TRANSMISSÃO (DEDICADO E REAJUSTADO)
+   MODAL DE TRANSMISSÃO — RESPONSIVO, ADAPTÁVEL E MODERNO
    ============================================================
-   - Overlay centralizado, escurecido, com animação de entrada.
-   - Modal mais largo, responsivo (até 900px), padding zero para máximo aproveitamento ao player.
-   - Iframe ocupa 100% da área útil do modal e é responsivo em altura e largura.
-   - Botão de fechar sempre visível, sobreposto.
-   - Compatível com mobile e altura máxima de tela, sem cortes.
+   - Overlay centralizado e escurecido com animação suave.
+   - Modal com largura e altura limitadas ao viewport, sem overflow.
+   - Player responsivo (iframe), proporção garantida e máxima usabilidade.
+   - Botão de fechar acessível em todos os tamanhos.
+   - Otimizado para mobile, tablet, desktop e ultrawide.
 =============================================================== */
 
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0; /* top, right, bottom, left: 0 */
   width: 100vw;
   height: 100vh;
   background: rgba(0,0,0,0.92);
@@ -940,15 +939,16 @@ body.modal-open {
   visibility: visible;
 }
 
-/* Container do conteúdo do modal */
+/* Conteúdo central do modal */
 .modal-content {
   background: #181818;
   border-radius: 14px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.65);
-  width: 90vw;
+  width: 94vw;
   max-width: 900px;
-  min-width: 320px;
-  max-height: 92vh;
+  min-width: 0;
+  max-height: 94vh;
+  min-height: 180px;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -958,7 +958,7 @@ body.modal-open {
   animation: fadeIn 0.2s;
 }
 
-/* Botão de fechar centralizado no topo direito */
+/* Botão de fechar sempre visível e adaptativo */
 .modal-close {
   position: absolute;
   top: 14px;
@@ -984,55 +984,59 @@ body.modal-open {
   outline: none;
 }
 
-/* Container do iframe do player */
+/* Container do player: ocupa toda área útil */
 .modal-iframe-container {
   flex: 1 1 0;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  min-height: 400px;
+  min-height: 120px;
   max-height: 80vh;
   height: 100%;
   position: relative;
 }
 
-/* Iframe ocupa 100% da área útil do modal */
+/* Player (iframe) responsivo, sem overflow, proporção preservada */
 .modal-iframe {
   width: 100%;
-  height: 70vh;
-  min-height: 340px;
+  height: 65vh;
+  min-height: 120px;
   max-height: 80vh;
   border: none;
   background: #000;
   border-radius: 0 0 14px 14px;
   display: block;
   flex: 1 1 0;
+  aspect-ratio: 16/9;
 }
 
-/* Responsivo para telas médias */
+/* Tablets e telas médias */
 @media (max-width: 1000px) {
   .modal-content {
     max-width: 99vw;
+    max-height: 98vh;
     min-width: 0;
-    max-height: 96vh;
+    border-radius: 10px;
   }
   .modal-iframe-container {
-    min-height: 220px;
+    min-height: 100px;
     max-height: 72vh;
   }
   .modal-iframe {
-    height: 54vw;
-    min-height: 180px;
+    height: 46vw;
+    min-height: 100px;
     max-height: 72vh;
+    border-radius: 0 0 10px 10px;
   }
 }
 
-/* Responsivo para telas pequenas */
+/* Mobile: ocupa toda tela, sem borda, controles adaptados */
 @media (max-width: 600px) {
   .modal-content {
     width: 100vw;
     max-width: 100vw;
     border-radius: 0;
+    min-width: 0;
     max-height: 100vh;
   }
   .modal-close {
@@ -1043,14 +1047,24 @@ body.modal-open {
     height: 34px;
   }
   .modal-iframe-container {
-    min-height: 120px;
-    max-height: 70vh;
+    min-height: 60px;
+    max-height: 72vh;
   }
   .modal-iframe {
-    height: 58vw;
-    min-height: 120px;
-    max-height: 70vh;
-    border-radius: 0 0 8px 8px;
+    height: 56vw;
+    min-height: 60px;
+    max-height: 72vh;
+    border-radius: 0;
+  }
+}
+
+/* Ultrawide/telas muito altas: previne modal "esticado" demais */
+@media (min-height: 900px) and (min-width: 1200px) {
+  .modal-content {
+    max-height: 720px;
+  }
+  .modal-iframe {
+    max-height: 650px;
   }
 }
 
