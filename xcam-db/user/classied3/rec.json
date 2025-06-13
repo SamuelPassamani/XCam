@@ -1,17 +1,28 @@
 {
   "username": "classied3",
-  "records": 1,
+  "records": 2,
   "videos": [
     {
       "video": "x7I4pdogq",
       "title": "classied3_31-05-2025_07-54_33m6s",
       "file": "classied3_31-05-2025_07-54_33m6s.mp4",
       "url": "https://short.icu/x7I4pdogq",
-      "poster": "https://db.xcam.gay/user/classied3/x7I4pdogq.jpg",
-      "urlIframe": "https://short.icu/x7I4pdogq?thumbnail=https://db.xcam.gay/user/classied3/x7I4pdogq.jpg",
+      "poster": "",
+      "urlIframe": "https://short.icu/x7I4pdogq",
       "data": "31-05-2025",
       "horario": "07-54",
       "tempo": "33m6s"
+    },
+    {
+      "video": "cSLV3YLmC",
+      "title": "classied3_10-06-2025_19-29_11m56s",
+      "file": "classied3_10-06-2025_19-29_11m56s.mp4",
+      "url": "https://short.icu/cSLV3YLmC",
+      "poster": "https://lh3.googleusercontent.com/d/17yTO59QutPe3qf2ankZ2k7xR584vttsw?authuser=0",
+      "urlIframe": "https://short.icu/cSLV3YLmC?thumbnail=https://lh3.googleusercontent.com/d/17yTO59QutPe3qf2ankZ2k7xR584vttsw?authuser=0",
+      "data": "10-06-2025",
+      "horario": "19-29",
+      "tempo": "11m56s"
     }
   ]
 }
