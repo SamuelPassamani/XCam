@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "https://lh3.googleusercontent.com/:splat"
+  to = "https://lh3.googleusercontent.com/d/:splat"
   status = 200
   force = true
     [redirects.headers]
