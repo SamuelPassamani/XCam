@@ -1,17 +1,28 @@
 {
   "username": "Beardedveteran",
-  "records": 1,
+  "records": 2,
   "videos": [
     {
       "video": "2y3MDvXne",
       "title": "Beardedveteran_31-05-2025_07-54_33m8s",
       "file": "Beardedveteran_31-05-2025_07-54_33m8s.mp4",
       "url": "https://short.icu/2y3MDvXne",
-      "poster": "https://db.xcam.gay/user/Beardedveteran/2y3MDvXne.jpg",
-      "urlIframe": "https://short.icu/2y3MDvXne?thumbnail=https://db.xcam.gay/user/Beardedveteran/2y3MDvXne.jpg",
+      "poster": "",
+      "urlIframe": "https://short.icu/2y3MDvXne",
       "data": "31-05-2025",
       "horario": "07-54",
       "tempo": "33m8s"
+    },
+    {
+      "video": "ogJR5Uf7d",
+      "title": "Beardedveteran_10-06-2025_20-08_14m47s",
+      "file": "Beardedveteran_10-06-2025_20-08_14m47s.mp4",
+      "url": "https://short.icu/ogJR5Uf7d",
+      "poster": "https://lh3.googleusercontent.com/d/18OnwEZHbmnYwZuCf0m0i-vWc5Jc9qdGg?authuser=0",
+      "urlIframe": "https://short.icu/ogJR5Uf7d?thumbnail=https://lh3.googleusercontent.com/d/18OnwEZHbmnYwZuCf0m0i-vWc5Jc9qdGg?authuser=0",
+      "data": "10-06-2025",
+      "horario": "20-08",
+      "tempo": "14m47s"
     }
   ]
 }
