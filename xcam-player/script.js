@@ -107,8 +107,8 @@ function initializePlayer() {
         // Construção dos objetos principais
         const graphData = data.graphData || {};
         const streamInfo = data.streamInfo || {};
-        // Prioridade de escolha do vídeo: edgeURL > cdnURL > src
-        const videoSrc = streamInfo.edgeURL || streamInfo.cdnURL || (graphData.preview && graphData.preview.src);
+        // Prioridade de escolha do vídeo: cdnURL > edgeURL > src
+        const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
 
         if (!videoSrc) {
           console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
