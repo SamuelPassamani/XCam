@@ -87,86 +87,115 @@ function setupPlayer(camera, username, videoSrc, poster) {
 }
 
 /**
- * Função principal que controla o fluxo de inicialização do player.
- * - Decide qual API chamar (lista geral ou usuário específico)
- * - Processa a resposta e inicializa o player corretamente
+ * Função principal responsável por iniciar o player de vídeo.
+ * - Verifica os parâmetros da URL para decidir qual fonte de dados utilizar.
+ * - Busca os dados na API, processa a resposta e inicializa o player.
+ * - Aplica fallback local caso não seja possível reproduzir a transmissão.
  */
 function initializePlayer() {
+  // Obtém os parâmetros da query string da URL atual (?user=... ou ?id=...)
   const params = new URLSearchParams(window.location.search);
 
-  // Se houver parâmetro "user" na URL, busca informação individual
+  // --- Fluxo 1: Busca por usuário específico ---
   if (params.has("user")) {
+    // Extrai o nome de usuário do parâmetro
     const username = params.get("user");
-    // Chamada dedicada para usuário específico
+
+    // Chama a API específica para dados do usuário
     fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`)
       .then((response) => {
+        // Verifica se a resposta foi bem sucedida
         if (!response.ok) throw new Error("Erro ao carregar dados do usuário.");
-        return response.json();
+        return response.json(); // Converte a resposta para JSON
       })
       .then((data) => {
-        // Construção dos objetos principais
+        // Desestrutura os dados recebidos para facilitar o acesso
         const graphData = data.graphData || {};
         const streamInfo = data.streamInfo || {};
-        // Prioridade de escolha do vídeo: cdnURL > edgeURL > src
-        const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
 
+        // Seleciona a melhor URL de vídeo disponível (ordem de prioridade: cdnURL > edgeURL > preview.src)
+        const videoSrc = streamInfo.cdnURL
+          || streamInfo.edgeURL
+          || (graphData.preview && graphData.preview.src);
+
+        // Caso não exista uma URL de vídeo válida, ativa o fallback local
         if (!videoSrc) {
           console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
           reloadWithFallback();
           return;
         }
 
-        // Prioridade de imagem: poster > profileImageURL > padrão loading
-        const poster = graphData.preview?.poster || graphData.profileImageURL || "https://xcam.gay/src/loading.gif";
+        // Seleciona a melhor imagem de poster para o player
+        // Ordem: poster do preview > imagem de perfil > gif de loading padrão
+        const poster = graphData.preview?.poster
+          || graphData.profileImageURL
+          || "https://xcam.gay/src/loading.gif";
 
-        // Monta tags para JW Player
+        // Monta o objeto de informações da câmera para o player (inclui tags se existirem)
         const camera = {
           username: graphData.username || username,
           tags: graphData.tags || [],
           preview: { poster }
         };
 
+        // Inicializa o player JWPlayer com os dados processados
         setupPlayer(camera, username, videoSrc, poster);
       })
       .catch((err) => {
+        // Caso ocorra algum erro na requisição, reporta no console e ativa fallback
         console.error("Erro ao buscar dados do usuário:", err);
         reloadWithFallback();
       });
 
+  // --- Fluxo 2: Busca por ID da transmissão na lista geral ---
   } else if (params.has("id")) {
-    // Fallback para busca pela lista geral usando 'id'
+    // Extrai o ID da transmissão do parâmetro
     const searchValue = params.get("id");
-    fetch("https://api.xcam.gay/?limit=1500&format=json")
+
+    // Chama a API para obter a lista geral de transmissões (limitada e em formato JSON)
+    fetch("https://api.xcam.gay/?limit=3333&format=json")
       .then((response) => {
+        // Verifica se a resposta foi bem sucedida
         if (!response.ok) throw new Error("Erro ao carregar lista de transmissões");
-        return response.json();
+        return response.json(); // Converte a resposta para JSON
       })
       .then((data) => {
+        // Obtém a lista de transmissões disponíveis
         const items = data?.broadcasts?.items || [];
+
+        // Procura a câmera/transmissão cujo ID corresponda ao buscado
         const camera = items.find((item) => item.id == searchValue);
 
+        // Caso não encontre uma câmera correspondente, ativa fallback
         if (!camera) {
           console.warn(`Nenhuma câmera encontrada com o id: ${searchValue}`);
           reloadWithFallback();
           return;
         }
 
+        // Se não houver fonte de vídeo válida, ativa fallback
         if (!camera.preview?.src) {
           console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
           reloadWithFallback();
           return;
         }
 
-        const poster = camera.preview?.poster || camera.profileImageURL || "https://xcam.gay/src/loading.gif";
+        // Seleciona o poster da transmissão (ordem: poster > imagem de perfil > gif padrão)
+        const poster = camera.preview?.poster
+          || camera.profileImageURL
+          || "https://xcam.gay/src/loading.gif";
+
+        // Inicializa o player JWPlayer com os dados da transmissão encontrada
         setupPlayer(camera, camera.username, camera.preview.src, poster);
       })
       .catch((err) => {
+        // Caso ocorra erro ao carregar a lista, ativa fallback
         console.error("Erro ao carregar a lista geral:", err);
         reloadWithFallback();
       });
 
+  // --- Fluxo 3: Nenhum parâmetro válido encontrado, aplica fallback imediatamente ---
   } else {
-    // Não há user nem id: fallback imediato
     console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
     reloadWithFallback();
   }
