@@ -201,7 +201,7 @@ function getUrlParam(param) {
 async function fetchUserData(username) {
   const [userRes, broadcastsRes] = await Promise.all([
     fetch(`https://api.xcam.gay/user/${encodeURIComponent(username)}`),
-    fetch(`https://api.xcam.gay/?limit=1500`)
+    fetch(`https://api.xcam.gay/?limit=3333`)
   ]);
   if (!userRes.ok) throw new Error("Usuário não encontrado");
   const user = await userRes.json();
@@ -244,7 +244,7 @@ function updateModal({ user, broadcast }) {
   const defaultMaleUrl =
     "https://cam4-static-test.xcdnpro.com/web/images/defaults/default_Male.png";
   const customAvatarUrl =
-    "https://drive.xcam.gay/download.aspx?file=EvLJuC5kYRMbycGPXbRtFBKjLRcW7n33H4A2odf30LwmvFKIQk0EDA1knifvPE3%2F&expiry=MgIjvSCpzP8gDghCiR1LSw%3D%3D&mac=ca46e35b8bc19a0a23593835770ea3c085cfb6882562d5871414e64b0f1f06c0";
+    "https://xcam.gay/src/profileImageURL.png";
   let avatarUrl = null;
   if (user && user.avatarUrl) avatarUrl = user.avatarUrl;
   else if (user && user.profileImageUrl) avatarUrl = user.profileImageUrl;
@@ -425,41 +425,61 @@ function openUserModal(userData) {
 
 /**
  * Script de tracking/Cloudflare (compatibilidade)
- * Insere iframe oculto para desafio Cloudflare (não interfere na UX)
+ * Insere um iframe oculto que executa o desafio Cloudflare para proteção adicional.
+ * Não interfere na experiência do usuário (UX).
  */
 (function () {
+  // Função responsável por injetar o script de desafio dentro do iframe assim que ele estiver pronto
   function c() {
+    // Obtém o documento interno do iframe (contentDocument para navegadores modernos, contentWindow.document para compatibilidade)
     var b = a.contentDocument || a.contentWindow.document;
     if (b) {
+      // Cria um novo elemento <script> dentro do iframe
       var d = b.createElement("script");
+      // Define o conteúdo do script: inicializa parâmetros Cloudflare e carrega o script principal de desafio
       d.innerHTML =
-        "window.__CF$cv$params={r:'94687675a6ecec3a',t:'MTc0ODM3OTg0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.head.appendChild(a);";
+        "window.__CF$cv$params={r:'94687675a6ecec3a',t:'MTc0ODM3OTg0Ni4wMDAwMDA='};" + // Parâmetros de verificação do Cloudflare
+        "var a=document.createElement('script');" + // Cria novo script
+        "a.nonce='';" + // Define o atributo nonce (pode ser usado para CSP, aqui vazio)
+        "a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';" + // Define o caminho do script de desafio
+        "document.head.appendChild(a);"; // Insere o script no <head> do iframe
+      // Adiciona o <script> criado ao <head> do iframe
       b.getElementsByTagName("head")[0].appendChild(d);
     }
   }
+  // Verifica se o <body> já está disponível no documento principal
   if (document.body) {
+    // Cria um novo iframe que ficará oculto na página
     var a = document.createElement("iframe");
-    a.height = 1;
-    a.width = 1;
-    a.style.position = "absolute";
-    a.style.top = 0;
-    a.style.left = 0;
-    a.style.border = "none";
-    a.style.visibility = "hidden";
+    a.height = 1; // Define altura mínima (1px) para não ocupar espaço visual
+    a.width = 1;  // Define largura mínima (1px)
+    a.style.position = "absolute"; // Posiciona absolutamente na tela (fora do fluxo normal)
+    a.style.top = 0;               // Posiciona no topo
+    a.style.left = 0;              // Posiciona à esquerda
+    a.style.border = "none";       // Remove borda do iframe
+    a.style.visibility = "hidden"; // Torna o iframe invisível ao usuário
+    // Adiciona o iframe ao <body> do documento
     document.body.appendChild(a);
+
+    // Chama a função c() imediatamente se o documento já estiver carregado
     if ("loading" !== document.readyState) c();
+    // Caso contrário, aguarda o evento DOMContentLoaded para garantir que o iframe esteja pronto
     else if (window.addEventListener)
       document.addEventListener("DOMContentLoaded", c);
+    // Suporte para navegadores antigos que não possuem addEventListener
     else {
+      // Guarda o antigo manipulador de onreadystatechange, se houver
       var e = document.onreadystatechange || function () {};
+      // Define um novo manipulador para onreadystatechange
       document.onreadystatechange = function (b) {
-        e(b);
+        e(b); // Executa o antigo manipulador
+        // Quando o estado não for mais "loading", restaura o antigo e chama c()
         "loading" !== document.readyState &&
           ((document.onreadystatechange = e), c());
       };
     }
   }
-})();
+})(); 
 
 /*
 ==================================================================================

@@ -16,36 +16,47 @@
   font-family: "Inter", sans-serif;
 }
 
-/* Corpo centralizado, ocupando toda viewport */
+/* ============================================================
+   BODY (corpo da página)
+   - Centraliza todo o conteúdo na tela usando flexbox.
+   - Garante que o corpo ocupe 100% do viewport, sem barras de rolagem.
+   - Define cor de fundo escura e cor de texto principal via variáveis.
+=============================================================== */
 body {
-  background-color: #121212;
-  color: var(--text-primary);
-  min-height: 100vh;
-  min-width: 100vw;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+  background-color: #121212;           /* Cor de fundo escura para toda a página */
+  color: var(--text-primary);          /* Cor principal do texto, configurável por variável */
+  min-height: 100vh;                   /* Garante altura mínima igual à altura da viewport */
+  min-width: 100vw;                    /* Garante largura mínima igual à largura da viewport */
+  width: 100vw;                        /* Ocupa toda a largura da tela */
+  height: 100vh;                       /* Ocupa toda a altura da tela */
+  overflow: hidden;                    /* Remove qualquer rolagem da página */
+  display: flex;                       /* Ativa flexbox para centralizar o conteúdo */
+  align-items: center;                 /* Centraliza verticalmente */
+  justify-content: center;             /* Centraliza horizontalmente */
+  padding: 0;                          /* Remove qualquer espaçamento interno */
 }
 
-/* Overlay do modal: centralização vertical e horizontal com flexbox */
+/* ============================================================
+   OVERLAY DO MODAL (.modal-overlay)
+   - Cobre toda a tela com um fundo escurecido.
+   - Centraliza vertical e horizontalmente o modal filho.
+   - Utiliza flexbox para centralização eficiente.
+   - Controla visibilidade e transição de opacidade.
+=============================================================== */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--modal-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--transition-speed) ease,
-    visibility var(--transition-speed) ease;
+  position: fixed;                   /* Fixa o overlay acima do conteúdo da página */
+  inset: 0;                          /* Define top, right, bottom, left como 0 (cobre toda a viewport) */
+  width: 100vw;                      /* Garante que ocupe toda a largura da tela */
+  height: 100vh;                     /* Garante que ocupe toda a altura da tela */
+  background-color: var(--modal-overlay); /* Cor de fundo semitransparente configurável por variável */
+  display: flex;                     /* Ativa flexbox para centralização do conteúdo filho */
+  align-items: center;               /* Centraliza verticalmente o modal */
+  justify-content: center;           /* Centraliza horizontalmente o modal */
+  z-index: 1000;                     /* Mantém o overlay acima de todos os outros elementos */
+  opacity: 0;                        /* Inicialmente invisível, controlado por classe .active */
+  visibility: hidden;                /* Inicialmente oculto, aparece apenas quando ativado */
+  transition: opacity var(--transition-speed) ease,  /* Transição suave de opacidade */
+    visibility var(--transition-speed) ease;          /* Transição suave de visibilidade */
 }
 
 .modal-overlay.active {
@@ -54,27 +65,28 @@ body {
 }
 
 /* ============================================================
-   CONTAINER PRINCIPAL DO MODAL
-   - Largura máxima aumentada para desktop widescreen.
-   - Responsivo pelo viewport, sem ultrapassar limites.
-   - Centralizado por flex do overlay.
+   CONTAINER PRINCIPAL DO MODAL (.modal)
+   - O modal ocupa 100% da largura e altura da tela, sem bordas arredondadas.
+   - Ideal para experiência fullscreen, sem margens externas.
+   - Mantém responsividade e centralização pelo overlay.
 =============================================================== */
 .modal {
-  width: 98vw;          /* Maior área utilizável horizontalmente */
-  max-width: 1200px;    /* Aumentado para desktop */
-  min-width: 320px;
-  height: auto;
-  max-height: 96vh;     /* Evita overflow vertical */
-  background-color: var(--modal-bg);
-  border-radius: var(--border-radius);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.65);
-  animation: fadeIn 0.2s;
-  position: relative;
-  /* Sempre centralizado pelo .modal-overlay */
+  width: 100vw !important;         /* Ocupa toda a largura do viewport */
+  max-width: 100vw !important;     /* Garante que não ultrapasse o viewport */
+  min-width: 100vw !important;     /* Evita encolhimento em telas muito pequenas */
+  height: 100vh !important;        /* Ocupa toda a altura do viewport */
+  max-height: 100vh !important;    /* Garante que não ultrapasse a altura do viewport */
+  min-height: 100vh !important;    /* Evita encolhimento vertical */
+  background-color: var(--modal-bg); /* Cor de fundo configurável via CSS custom property */
+  border-radius: 0 !important;     /* Remove bordas arredondadas para ficar 100% fullscreen */
+  display: flex;                   /* Permite layout flexível dos filhos internos */
+  flex-direction: column;          /* Organiza o conteúdo do modal em coluna (vertical) */
+  overflow-y: auto;                /* Permite rolagem vertical se necessário */
+  overflow-x: hidden;              /* Impede rolagem horizontal */
+  box-shadow: none !important;     /* Remove sombra para um visual limpo, sem efeito de janela */
+  animation: fadeIn 0.2s;          /* Aplica animação de fade-in na abertura */
+  position: relative;              /* Permite posicionamento relativo de elementos filhos */
+  /* Centralização garantida pelo .modal-overlay */
 }
 
 /* Cabeçalho do modal */
