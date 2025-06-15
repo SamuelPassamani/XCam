@@ -1,69 +1,135 @@
 "use strict";
 
 /**
- * Fallback local em caso de erro no player.
- * Exibe um vídeo de erro simples caso não seja possível carregar o stream.
+ * =========================================================
+ * XCam Player - script.js
+ * =========================================================
+ * Este script customiza o comportamento do JW Player para:
+ * - Sempre ocultar controles, overlays e botões.
+ * - Jamais permitir pausar/reproduzir por clique.
+ * - Executar preview automático mudo no carregamento.
+ * - Permitir play mudo por hover e pause em mouseleave.
+ * - (Opcional) Clique pode abrir modal customizado.
+ * - Garantir fallback local em caso de erro.
+ * - Código organizado, robusto, auditável e extensível.
+ * =========================================================
+ */
+
+/* =========================================================
+ * 1. Injeção de CSS para ocultar todos os controles do JW Player
+ * ---------------------------------------------------------
+ * Garante que todos os controles, overlays, botões, títulos,
+ * legendas, tooltips e overlays sejam sempre ocultos,
+ * independente do estado ou atualização do player.
+ * =========================================================
+ */
+(function injectPlayerCSS() {
+  const style = document.createElement('style');
+  style.innerHTML = `
+    #player .jw-controls,
+    #player .jw-display,
+    #player .jw-display-container,
+    #player .jw-preview,
+    #player .jw-logo,
+    #player .jw-title,
+    #player .jw-nextup-container,
+    #player .jw-playlist-container,
+    #player .jw-captions,
+    #player .jw-button-container,
+    #player .jw-tooltip,
+    #player .jw-rightclick,
+    #player .jw-icon,
+    #player .jw-controlbar {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        background: transparent !important;
+    }
+    #player .jw-state-paused .jw-preview,
+    #player .jw-flag-paused .jw-preview,
+    #player .jw-preview {
+      opacity: 1 !important;
+      filter: none !important;
+      background: none !important;
+    }
+    #player .jw-display-container { background: transparent !important; }
+  `;
+  document.head.appendChild(style);
+})();
+
+/* =========================================================
+ * 2. Exibir imagem de carregamento enquanto player não está pronto
+ * ---------------------------------------------------------
+ * Carrega um GIF animado no container do player para indicar
+ * ao usuário que a transmissão está sendo preparada/buscada.
+ * =========================================================
+ */
+(function showLoading() {
+  const preloadImage = new Image();
+  preloadImage.src = "https://xcam.gay/src/loading.gif";
+  const playerContainer = document.getElementById("player");
+  if (playerContainer) {
+    playerContainer.innerHTML =
+      `<img src="${preloadImage.src}" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />`;
+  }
+})();
+
+/* =========================================================
+ * 3. Fallback: exibe vídeo local de erro caso falhe o player
+ * ---------------------------------------------------------
+ * Em qualquer erro grave, limpa o player e exibe um vídeo
+ * local de erro (mudo, sem controles, em loop). Garante
+ * experiência amigável mesmo em caso de falha.
+ * =========================================================
  */
 function reloadWithFallback() {
   const player = document.getElementById("player");
   if (player) {
-    player.innerHTML = ""; // Limpa qualquer conteúdo anterior
+    // Limpa o conteúdo anterior
+    player.innerHTML = "";
+    // Configura JW Player para exibir o vídeo local de erro
     jwplayer("player").setup({
       file: "https://xcam.gay/src/error.mp4",
       autostart: true,
       repeat: true,
-      controls: false
+      controls: false,
+      mute: true,
     });
+    // Garante que controles estejam desabilitados e áudio mudo
+    jwplayer("player").setControls(false);
+    jwplayer("player").setMute(true);
   }
 }
 
-// === Pré-carregamento de assets e exibição de imagem de carregamento ===
-const preloadImage = new Image();
-preloadImage.src = "  https://xcam.gay/src/loading.gif";
-
-const preloadVideo = document.createElement("link");
-preloadVideo.rel = "preload";
-preloadVideo.as = "fetch";
-preloadVideo.href = "https://xcam.gay/src/error.mp4";
-document.head.appendChild(preloadVideo);
-
-// Exibe a imagem de loading até o player ser carregado
-const playerContainer = document.getElementById("player");
-playerContainer.innerHTML =
-  '<img src="' +
-  preloadImage.src +
-  '" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />';
-
-/**
- * Configura o JW Player com os dados da câmera e a URL do vídeo.
- * @param {Object} camera - Objeto contendo os dados da transmissão.
- * @param {string} username - Nome de usuário da câmera.
- * @param {string} videoSrc - URL do vídeo m3u8.
+/* =========================================================
+ * 4. Configuração principal do JW Player
+ * ---------------------------------------------------------
+ * - Remove tela de carregamento
+ * - Configura player SEMPRE sem controles e mudo
+ * - Adiciona playlist e thumbnail customizados
+ * - Garante fallback em caso de erro
+ * - Executa preview automático mudo de 1s ao carregar
+ * - Ativa eventos customizados de hover/click
+ * =========================================================
+ * @param {Object} camera    Dados da transmissão
+ * @param {string} username  Nome de usuário da câmera
+ * @param {string} videoSrc  URL do stream m3u8
  */
 function setupPlayer(camera, username, videoSrc) {
-  // Remove tela de carregamento, se existir
   const playerContainer = document.getElementById("player");
-  playerContainer.innerHTML = ""; // Limpa o conteúdo
+  if (playerContainer) playerContainer.innerHTML = "";
 
   jwplayer("player").setup({
-    controls: true,
-    sharing: true,
-    autostart: false,
-    displaytitle: true,
-    displaydescription: true,
-    abouttext: "Buy me a coffee ☕",
-    aboutlink: "https://xcam.gay/",
-    skin: { name: "netflix" },
-    logo: {
-      file: "https://xcam.gay/src/logo.png",
-      link: "https://xcam.gay"
-    },
-    captions: {
-      color: "#efcc00",
-      fontSize: 16,
-      backgroundOpacity: 0,
-      edgeStyle: "raised"
-    },
+    controls: false, // SEM CONTROLES
+    autostart: false, // Autostart controlado manualmente
+    mute: true,       // SEM ÁUDIO
+    sharing: false,
+    displaytitle: false,
+    displaydescription: false,
+    abouttext: "",
+    aboutlink: "",
+    skin: { name: "netflix" }, // Tema não afeta pois controles sempre ocultos
     playlist: [
       {
         title: `@${camera.username || username}`,
@@ -73,208 +139,145 @@ function setupPlayer(camera, username, videoSrc) {
           {
             file: videoSrc,
             type: "video/m3u8",
-            label: "Source"
-          }
-        ]
-      }
+            label: "Source",
+          },
+        ],
+      },
     ],
     events: {
+      // Em qualquer erro, aciona fallback local
       error: () => {
         console.warn("Erro ao reproduzir vídeo. Exibindo fallback local.");
         reloadWithFallback();
-      }
-    }
-  });
-}
-
-// === Lógica principal: leitura da URL e carregamento dos dados ===
-const params = new URLSearchParams(window.location.search);
-
-if (params.has("user") || params.has("id")) {
-  const isUser = params.has("user");
-  const searchKey = isUser ? "username" : "id";
-  const searchValue = params.get(isUser ? "user" : "id");
-
-  fetch("https://api.xcam.gay/?limit=1500&format=json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erro ao carregar lista de transmissões");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const items = data?.broadcasts?.items || [];
-      const camera = items.find((item) => item[searchKey] === searchValue);
-
-      if (!camera) {
-        console.warn(
-          `Nenhuma câmera encontrada com o ${searchKey}:`,
-          searchValue
-        );
-        reloadWithFallback();
-        return;
-      }
-
-      if (!camera.preview?.src) {
-        console.warn(
-          "Nenhum stream válido encontrado em preview.src. Aplicando fallback local."
-        );
-        reloadWithFallback();
-        return;
-      }
-
-      setupPlayer(camera, camera.username, camera.preview.src);
-    })
-    .catch((err) => {
-      console.error("Erro ao carregar a lista geral:", err);
-      reloadWithFallback();
-    });
-} else {
-  console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
-  reloadWithFallback();
-}
-
-/**
- * Lida com erros no JW Player.
- * @param {Object} event
- */
-function handlePlayerError(event) {
-  console.error("Erro no JW Player:", event.message);
-
-  const playerContainer = document.getElementById("player");
-  let countdown = 5;
-
-  // Tabela de mensagens de erro por código
-  const errorMessages = {
-    100000: "<strong>Erro desconhecido.</strong> O player falhou ao carregar.",
-    100001: "<strong>Tempo limite.</strong> A configuração do player demorou muito.",
-    100011: "<strong>Licença ausente.</strong> Chave de licença não fornecida.",
-    100012: "<strong>Licença inválida.</strong> Chave de licença inválida.",
-    100013: "<strong>Licença expirada.</strong> A chave de licença expirou.",
-    101100: "<strong>Componente ausente.</strong> Falha ao carregar um componente necessário do player.",
-    224002: "<strong>Formato não suportado.</strong> O formato do vídeo não é suportado.",
-    224003: "<strong>Vídeo corrompido.</strong> O vídeo está em formato inválido ou danificado.",
-    230000: "<strong>Erro de decodificação.</strong> O player não conseguiu decodificar o vídeo.",
-    232001: "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo.",
-    232002: "<strong>Erro de rede.</strong> Falha na solicitação de mídia.",
-    232003: "<strong>Erro de mídia.</strong> O arquivo de vídeo pode estar corrompido.",
-    232004: "<strong>Erro de DRM.</strong> Conteúdo protegido não pôde ser reproduzido.",
-    232005: "<strong>Erro de CORS.</strong> O recurso solicitado não está acessível.",
-    232006: "<strong>Erro de autenticação.</strong> Acesso não autorizado ao conteúdo.",
-    232007: "<strong>Erro de licença.</strong> Falha ao validar a licença do conteúdo.",
-    232008: "<strong>Token inválido.</strong> Token de acesso expirado ou corrompido.",
-    232009: "<strong>Erro de assinatura.</strong> Verificação de integridade do conteúdo falhou.",
-    232010: "<strong>Restrição geográfica.</strong> O conteúdo não está disponível na sua região.",
-    232011: "<strong>Erro de conexão.</strong> Problemas de rede ou configurações do navegador.",
-    232012: "<strong>Erro de tempo limite.</strong> O conteúdo demorou muito para carregar.",
-    232013: "<strong>Formato incompatível.</strong> O formato do vídeo não é compatível.",
-    232014: "<strong>Erro de codec.</strong> Codec necessário não está disponível.",
-    232015: "<strong>Erro de resolução.</strong> Resolução de vídeo não suportada.",
-    232016: "<strong>Erro de bitrate.</strong> A taxa de bits é muito alta para o dispositivo.",
-    232017: "<strong>Erro de buffer.</strong> O vídeo não pode ser carregado corretamente.",
-    232018: "<strong>Erro de sincronização.</strong> Falha ao sincronizar áudio e vídeo.",
-    232019: "<strong>Erro de renderização.</strong> O vídeo não pôde ser renderizado.",
-    232020: "<strong>Erro desconhecido na reprodução.</strong> Um erro não identificado ocorreu.",
-    232600: "<strong>Erro no stream.</strong> O arquivo está indisponível ou corrompido."
-  };
-
-  const displayErrorMessage = (message) => {
-    playerContainer.innerHTML = `
-      <div style="color: #FFF; background: #333; text-align: center; padding: 20px;">
-        <p>${message}</p>
-        <p>Recarregando o player em <span id="countdown">${countdown}</span> segundos...</p>
-      </div>
-    `;
-
-    const interval = setInterval(() => {
-      countdown -= 1;
-      document.getElementById("countdown").textContent = countdown;
-
-      if (countdown === 0) {
-        clearInterval(interval);
-        reloadWithFallback();
-      }
-    }, 1000);
-  };
-
-  const message = errorMessages[event.code];
-  if (message) {
-    displayErrorMessage(message);
-  } else {
-    displayErrorMessage(
-      "<strong>Erro desconhecido.</strong> Algo deu errado na reprodução."
-    );
-  }
-}
-
-/**
- * Adiciona botão de download ao player.
- * @param {Object} playerInstance
- */
-function addDownloadButton(playerInstance) {
-  const buttonId = "download-video-button";
-  const iconPath = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL[...]";
-  const tooltipText = "Download Video";
-
-  playerInstance.addButton(
-    iconPath,
-    tooltipText,
-    () => {
-      const playlistItem = playerInstance.getPlaylistItem();
-      const anchor = document.createElement("a");
-      anchor.setAttribute("href", playlistItem.file);
-      anchor.setAttribute("download", playlistItem.file.split("/").pop());
-      anchor.style.display = "none";
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
+      },
     },
-    buttonId
-  );
-}
-
-/**
- * Alinha o time slider com outros controles.
- * @param {Object} playerInstance
- */
-function alignTimeSlider(playerInstance) {
-  const playerContainer = playerInstance.getContainer();
-  const buttonContainer = playerContainer.querySelector(".jw-button-container");
-  const spacer = buttonContainer.querySelector(".jw-spacer");
-  const timeSlider = playerContainer.querySelector(".jw-slider-time");
-  if (spacer && timeSlider) {
-    buttonContainer.replaceChild(timeSlider, spacer);
-  }
-}
-
-/**
- * Exibe o modal de anúncios com contagem regressiva.
- */
-document.addEventListener("DOMContentLoaded", () => {
-  const adModal = document.getElementById("ad-modal");
-  const closeAdButton = document.getElementById("close-ad-btn");
-  const countdownElement = document.getElementById("ad-countdown");
-  const player = document.getElementById("player");
-
-  let countdown = 10;
-
-  const interval = setInterval(() => {
-    countdown -= 1;
-    countdownElement.textContent = countdown;
-
-    if (countdown === 0) {
-      clearInterval(interval);
-      closeAdButton.textContent = "Fechar";
-      closeAdButton.classList.add("enabled");
-      closeAdButton.removeAttribute("disabled");
-      closeAdButton.style.cursor = "pointer";
-    }
-  }, 1000);
-
-  closeAdButton.addEventListener("click", () => {
-    if (countdown === 0) {
-      adModal.style.display = "none"; // Oculta o modal
-      player.style.display = "block"; // Exibe o player
-    }
   });
-});
+
+  // Garante SEMPRE mute, SEM controles e preview automático mudo
+  jwplayer("player").on("ready", () => {
+    jwplayer("player").setControls(false);
+    jwplayer("player").setMute(true);
+
+    // Preview automático de 1 segundo (MUDO)
+    jwplayer("player").play(true);
+    setTimeout(() => {
+      jwplayer("player").pause(true);
+    }, 1000);
+
+    // Ativa eventos customizados: hover play/pause + clique para modal
+    addHoverPlayPauseAndModal();
+  });
+}
+
+/* =========================================================
+ * 5. Eventos customizados: hover play/pause e clique para modal
+ * ---------------------------------------------------------
+ * - Hover: play mudo (NUNCA áudio)
+ * - Mouseleave: pause
+ * - Clique: abre modal customizado (NÃO pausa/reproduz)
+ * =========================================================
+ */
+function addHoverPlayPauseAndModal() {
+  const playerContainer = document.getElementById("player");
+  const jw = jwplayer("player");
+
+  // Garante SEMPRE SEM controles
+  jw.setControls(false);
+
+  // Play mudo ao passar mouse sobre o player
+  playerContainer.addEventListener("mouseenter", () => {
+    jw.setControls(false);
+    jw.setMute(true);
+    jw.play(true);
+  });
+
+  // Pause ao remover mouse do player
+  playerContainer.addEventListener("mouseleave", () => {
+    jw.pause(true);
+    jw.setControls(false);
+  });
+
+  // Clique: chama função de modal (desabilitada, ver abaixo)
+  playerContainer.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    abrirModalDeInformacoes();
+  });
+}
+
+/* =========================================================
+ * 6. Lógica principal: busca dados na API e inicializa player
+ * ---------------------------------------------------------
+ * - Lê parâmetros da URL (user/id)
+ * - Busca lista de transmissões via API
+ * - Encontra transmissão correta
+ * - Inicializa player ou fallback caso erro
+ * =========================================================
+ */
+(function main() {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.has("user") || params.has("id")) {
+    const isUser = params.has("user");
+    const searchKey = isUser ? "username" : "id";
+    const searchValue = params.get(isUser ? "user" : "id");
+
+    fetch("https://api.xcam.gay/?limit=1500&format=json")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao carregar lista de transmissões");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const items = data?.broadcasts?.items || [];
+        const camera = items.find((item) => item[searchKey] === searchValue);
+
+        if (!camera) {
+          console.warn(`Nenhuma câmera encontrada com o ${searchKey}:`, searchValue);
+          reloadWithFallback();
+          return;
+        }
+
+        if (!camera.preview?.src) {
+          console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
+          reloadWithFallback();
+          return;
+        }
+
+        setupPlayer(camera, camera.username, camera.preview.src);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar a lista geral:", err);
+        reloadWithFallback();
+      });
+  } else {
+    console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
+    reloadWithFallback();
+  }
+})();
+
+/* =========================================================
+ * 7. Função placeholder: abrir modal customizado de informações
+ * ---------------------------------------------------------
+ * Atualmente desabilitada. Permanece no código para futura
+ * implementação de modal customizado ao clique no player.
+ * =========================================================
+ */
+function abrirModalDeInformacoes() {
+  // Função desabilitada; não faz nada por enquanto.
+  // Para habilitar, implemente o modal customizado aqui.
+  // Exemplo:
+  // const modal = document.getElementById('video-info-modal');
+  // if (modal) {
+  //   modal.style.display = 'block';
+  // }
+  // else {
+  //   alert("Modal de informações não implementado.");
+  // }
+}
+
+/* =========================================================
+ * FIM DO SCRIPT PRINCIPAL DO PLAYER XCam
+ * =========================================================
+ */
