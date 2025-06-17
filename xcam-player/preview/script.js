@@ -234,7 +234,7 @@ async function initializePlayer() {
 
     // Etapa 2: Buscar dados da API
     const response = await fetch(
-      `https://api.xcam.gay/?user=${encodeURIComponent(username)}`
+      `https://api.xcam.gay/user/${encodeURIComponent(username)}/liveInfo`
     );
     if (!response.ok) {
       throw new Error(
