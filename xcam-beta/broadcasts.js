@@ -34,7 +34,8 @@ function createEl(type, props = {}, children = []) {
   Object.entries(props).forEach(([key, value]) => {
     if (key === "text") el.textContent = value;
     else if (key === "html") el.innerHTML = value;
-    else if (key.startsWith("on") && typeof value === "function") el[key] = value;
+    else if (key.startsWith("on") && typeof value === "function")
+      el[key] = value;
     else el.setAttribute(key, value);
   });
   children.forEach((child) => child && el.appendChild(child));
@@ -85,15 +86,20 @@ loadMoreBtn.style.display = "none";
  * @param {number} limit - [CONFIGURÁVEL] O número máximo de resultados a serem pedidos para a API.
  * @returns {string} A URL completa para a chamada da API.
  */
-function buildApiUrl(filters, limit = 100) { // Busca um lote maior para paginação local.
+function buildApiUrl(filters, limit = 100) {
+  // Busca um lote maior para paginação local.
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
   });
-  if (filters.gender && filters.gender !== "all") params.set("gender", filters.gender);
-  if (filters.country && filters.country !== "all") params.set("country", filters.country);
-  if (filters.orientation && filters.orientation !== "all") params.set("orientation", filters.orientation);
-  if (filters.minViewers !== undefined && !isNaN(filters.minViewers)) params.set("minViewers", filters.minViewers);
+  if (filters.gender && filters.gender !== "all")
+    params.set("gender", filters.gender);
+  if (filters.country && filters.country !== "all")
+    params.set("country", filters.country);
+  if (filters.orientation && filters.orientation !== "all")
+    params.set("orientation", filters.orientation);
+  if (filters.minViewers !== undefined && !isNaN(filters.minViewers))
+    params.set("minViewers", filters.minViewers);
   if (Array.isArray(filters.tags) && filters.tags.filter(Boolean).length > 0)
     params.set("tags", filters.tags.filter(Boolean).join(","));
   return `https://api.xcam.gay/?${params.toString()}`;
@@ -167,7 +173,11 @@ function renderBroadcastCard(data) {
         createEl("div", { class: "card-overlay" }, [
           createEl(
             "button",
-            { class: "play-button", "aria-label": `${t("play")} @${username}`, tabindex: "0" },
+            {
+              class: "play-button",
+              "aria-label": `${t("play")} @${username}`,
+              tabindex: "0"
+            },
             [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
           )
         ]),
@@ -177,17 +187,32 @@ function renderBroadcastCard(data) {
       ]),
       createEl("div", { class: "card-info" }, [
         createEl("div", { class: "card-header" }, [
-          createEl("h4", { class: "card-username", tabindex: "0", text: `@${username}` }),
+          createEl("h4", {
+            class: "card-username",
+            tabindex: "0",
+            text: `@${username}`
+          }),
           createEl("div", { class: "card-country" }, [
-            createEl("img", { src: `https://flagcdn.com/24x18/${country}.png`, alt: `País: ${countryName}`, title: countryName })
+            createEl("img", {
+              src: `https://flagcdn.com/24x18/${country}.png`,
+              alt: `País: ${countryName}`,
+              title: countryName
+            })
           ])
         ]),
         createEl("div", { class: "card-viewers" }, [
           createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
           createEl("span", { text: ` ${viewers} ${t("viewers")}` })
         ]),
-        createEl("div", { class: "card-tags" },
-          tags.map((tag) => createEl("span", { class: "tag", text: `#${typeof tag === "string" ? tag : tag.name}` }))
+        createEl(
+          "div",
+          { class: "card-tags" },
+          tags.map((tag) =>
+            createEl("span", {
+              class: "tag",
+              text: `#${typeof tag === "string" ? tag : tag.name}`
+            })
+          )
         )
       ])
     ]
@@ -200,13 +225,17 @@ function renderBroadcastCard(data) {
  */
 function renderNextBatch() {
   ensureGridElement();
-  
-  const nextItems = allItems.slice(renderedItemsCount, renderedItemsCount + itemsPerPage);
-  nextItems.forEach(item => renderBroadcastCard(item));
+
+  const nextItems = allItems.slice(
+    renderedItemsCount,
+    renderedItemsCount + itemsPerPage
+  );
+  nextItems.forEach((item) => renderBroadcastCard(item));
   renderedItemsCount += nextItems.length;
 
   // Mostra ou esconde o botão "Carregar mais" se chegamos ao fim da lista.
-  loadMoreBtn.style.display = renderedItemsCount >= allItems.length ? "none" : "block";
+  loadMoreBtn.style.display =
+    renderedItemsCount >= allItems.length ? "none" : "block";
 }
 
 // === Funções de Estado da UI (Vazio, Erro) ===
@@ -214,8 +243,14 @@ function renderNextBatch() {
 function showEmptyMessage() {
   ensureGridElement();
   grid.innerHTML = "";
-  const empty = createEl("div", { class: "empty-state", "aria-live": "polite" }, [
-      createEl("i", { class: "fas fa-info-circle empty-icon", "aria-hidden": "true" }),
+  const empty = createEl(
+    "div",
+    { class: "empty-state", "aria-live": "polite" },
+    [
+      createEl("i", {
+        class: "fas fa-info-circle empty-icon",
+        "aria-hidden": "true"
+      }),
       createEl("h3", { text: t("noBroadcasts.title") }),
       createEl("p", { text: t("noBroadcasts.description") })
     ]
@@ -226,8 +261,14 @@ function showEmptyMessage() {
 function showErrorMessage() {
   ensureGridElement();
   grid.innerHTML = "";
-  const errorDiv = createEl("div", { class: "error-state", "aria-live": "assertive" }, [
-      createEl("i", { class: "fas fa-exclamation-triangle", "aria-hidden": "true" }),
+  const errorDiv = createEl(
+    "div",
+    { class: "error-state", "aria-live": "assertive" },
+    [
+      createEl("i", {
+        class: "fas fa-exclamation-triangle",
+        "aria-hidden": "true"
+      }),
       createEl("h3", { text: t("error.title") }),
       createEl("p", { text: t("error.description") })
     ]
@@ -261,11 +302,11 @@ async function loadFilteredBroadcasts() {
     // 3. Renderiza a primeira página e prepara as próximas.
     allItems = result;
     renderNextBatch(); // Renderiza a primeira página de 'itemsPerPage' cards.
-    
+
     // 4. Adiciona o botão "Carregar Mais" se houver mais itens para mostrar.
     if (allItems.length > renderedItemsCount) {
-        grid.parentElement.appendChild(loadMoreBtn);
-        loadMoreBtn.style.display = "block";
+      grid.parentElement.appendChild(loadMoreBtn);
+      loadMoreBtn.style.display = "block";
     }
   } catch (err) {
     console.error("Erro ao processar transmissões:", err);
@@ -298,9 +339,11 @@ export function refreshBroadcasts() {
 export function applyBroadcastFilters(newFilters) {
   filters = {
     ...filters,
-    ...Object.fromEntries(Object.entries(newFilters).filter(([_, v]) =>
-      v !== undefined && v !== null && v !== "" && v !== "all"
-    ))
+    ...Object.fromEntries(
+      Object.entries(newFilters).filter(
+        ([_, v]) => v !== undefined && v !== null && v !== "" && v !== "all"
+      )
+    )
   };
   loadFilteredBroadcasts();
 }
