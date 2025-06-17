@@ -6,7 +6,7 @@
  * =====================================================================================
  *
  * @author      [Seu Nome/Empresa]
- * @version     3.1.0
+ * @version     3.2.0
  * @lastupdate  17/06/2025
  *
  * @description Este script é responsável por montar e controlar o player de vídeo
@@ -21,11 +21,17 @@
  * sem áudio e com interações de mouse para play/pause.
  * 4. **Ordem de Prioridade de Vídeo**: Busca a fonte do vídeo na seguinte
  * ordem: `edgeURL`, `cdnURL`, `preview.src`.
- * 5. **Fallback Robusto**: Em caso de qualquer erro (API, usuário offline,
- * etc.), exibe um vídeo de erro local para que o iframe nunca quebre.
+ * 5. **Fallback Robusto com Tentativas**: Em caso de erro, tenta recarregar
+ * o player 3 vezes com um intervalo de 5 segundos antes de mostrar
+ * um vídeo de erro final.
  *
  * =====================================================================================
  */
+
+// === Variáveis de Controle de Tentativas ===
+let retryCount = 0;
+const MAX_RETRIES = 3; // [CONFIGURÁVEL] Número máximo de tentativas de recarregamento.
+const RETRY_DELAY = 5000; // [CONFIGURÁVEL] Tempo de espera entre tentativas (em milissegundos).
 
 /**
  * 1. Injeção de CSS para Ocultar a UI do JW Player
@@ -83,11 +89,11 @@
 })();
 
 /**
- * 3. Função de Fallback
- * Em caso de qualquer erro durante o processo, esta função é chamada para
- * carregar um vídeo de erro local, garantindo uma experiência consistente.
+ * 3. Função de Fallback Final
+ * Esta função é chamada SOMENTE após todas as tentativas de recarregamento falharem.
+ * Ela carrega um vídeo de erro local que fica em loop.
  */
-function reloadWithFallback() {
+function showFinalFallback() {
   const player = document.getElementById("player");
   if (player) {
     player.innerHTML = "";
@@ -113,6 +119,9 @@ function reloadWithFallback() {
 function setupPlayer(camera, videoSrc) {
   const playerContainer = document.getElementById("player");
   if (playerContainer) playerContainer.innerHTML = ""; // Limpa a tela de loading
+
+  // Reseta a contagem de tentativas em caso de sucesso
+  retryCount = 0;
 
   // Configuração do JW Player
   jwplayer("player").setup({
@@ -141,11 +150,9 @@ function setupPlayer(camera, videoSrc) {
     ],
     events: {
       // Gatilho de erro do player
-      error: () => {
-        console.warn(
-          "JW Player encontrou um erro ao reproduzir o vídeo. Exibindo fallback local."
-        );
-        reloadWithFallback();
+      error: (e) => {
+        console.warn("JW Player encontrou um erro ao reproduzir o vídeo.", e);
+        handleRetry();
       }
     }
   });
@@ -193,17 +200,35 @@ function addHoverPlayPause() {
 }
 
 /**
- * 6. Função Principal (Main)
+ * Gerencia a lógica de tentativas de recarregamento.
+ */
+function handleRetry() {
+  retryCount++;
+  if (retryCount < MAX_RETRIES) {
+    console.log(
+      `Tentando recarregar o player em ${
+        RETRY_DELAY / 1000
+      } segundos... (Tentativa ${retryCount}/${MAX_RETRIES})`
+    );
+    setTimeout(initializePlayer, RETRY_DELAY);
+  } else {
+    console.error(
+      `Número máximo de tentativas (${MAX_RETRIES}) atingido. Exibindo fallback final.`
+    );
+    showFinalFallback(); // Desiste e mostra o vídeo de erro.
+  }
+}
+
+/**
+ * 6. Função de Inicialização (Anteriormente 'main')
  * Orquestra todo o processo: lê a URL, busca os dados e chama a montagem do player.
  */
-(async function main() {
+async function initializePlayer() {
   try {
     // Etapa 1: Ler o nome de usuário da URL
     const params = new URLSearchParams(window.location.search);
     if (!params.has("user")) {
-      throw new Error(
-        "[ERRO v3] Nenhum parâmetro 'user' foi fornecido na URL."
-      );
+      throw new Error("Nenhum parâmetro 'user' foi fornecido na URL.");
     }
     const username = params.get("user");
 
@@ -213,16 +238,14 @@ function addHoverPlayPause() {
     );
     if (!response.ok) {
       throw new Error(
-        `[ERRO v3] A API retornou um status de erro: ${response.status} ${response.statusText}`
+        `A API retornou um status de erro: ${response.status} ${response.statusText}`
       );
     }
     const data = await response.json();
     console.log("API Response Data:", data); // DEBUG: Exibe a resposta completa no console.
 
     if (!data) {
-      throw new Error(
-        "[ERRO v3] Resposta da API está vazia ou em formato inesperado."
-      );
+      throw new Error("Resposta da API está vazia ou em formato inesperado.");
     }
 
     // Etapa 3: Determinar a fonte do vídeo com ordem de prioridade
@@ -232,7 +255,7 @@ function addHoverPlayPause() {
       data.graphData?.preview?.src;
     if (!videoSrc) {
       throw new Error(
-        "[ERRO v3] Nenhuma fonte de vídeo (edgeURL, cdnURL, preview.src) foi encontrada."
+        "Nenhuma fonte de vídeo (edgeURL, cdnURL, preview.src) foi encontrada."
       );
     }
 
@@ -246,13 +269,14 @@ function addHoverPlayPause() {
     // Etapa 5: Chamar a função para montar o player
     setupPlayer(camera, videoSrc);
   } catch (err) {
-    // Etapa de Erro: Se qualquer etapa acima falhar, exibe o fallback
-    console.warn(
-      `Falha ao carregar o player: ${err.message} Aplicando fallback local.`
-    );
-    reloadWithFallback();
+    // Etapa de Erro: Se qualquer etapa acima falhar, aciona a lógica de nova tentativa.
+    console.warn(`Falha ao carregar o player: ${err.message}.`);
+    handleRetry();
   }
-})();
+}
+
+// Inicia todo o processo de carregamento do player pela primeira vez.
+initializePlayer();
 
 /**
  * =====================================================================================
@@ -260,6 +284,7 @@ function addHoverPlayPause() {
  * =====================================================================================
  *
  * @log de mudanças:
+ * - v3.2.0: Adicionada lógica de tentativas automáticas (retry) em caso de falha.
  * - v3.1.0: Adicionada documentação completa (cabeçalho, rodapé, comentários).
  * - v3.0.0: Removidas funções de modal. Adicionada nova ordem de prioridade de
  * vídeo (edgeURL > cdnURL > preview.src).
