@@ -115,7 +115,6 @@ function setupPlayer(camera, videoSrc) {
       {
         title: `@${camera.username}`,
         description: (camera.tags || []).map(tag => `#${tag.name}`).join(" "),
-        // CORRIGIDO: Usa a propriedade 'poster' do nosso objeto 'camera'
         image: camera.poster || "https://xcam.gay/src/loading.gif",
         sources: [
           {
@@ -129,7 +128,7 @@ function setupPlayer(camera, videoSrc) {
     events: {
       // Em qualquer erro, faz fallback local
       error: () => {
-        console.warn("Erro ao reproduzir vídeo. Exibindo fallback local.");
+        console.warn("JW Player encontrou um erro ao reproduzir o vídeo. Exibindo fallback local.");
         reloadWithFallback();
       },
     },
@@ -195,41 +194,39 @@ function addHoverPlayPauseAndModal() {
     try {
         const params = new URLSearchParams(window.location.search);
         if (!params.has("user")) {
-            throw new Error("Nenhum parâmetro 'user' foi fornecido na URL.");
+            throw new Error("[ERRO v2] Nenhum parâmetro 'user' foi fornecido na URL.");
         }
 
         const username = params.get("user");
         const response = await fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`);
 
         if (!response.ok) {
-            throw new Error(`A API retornou um erro: ${response.statusText}`);
+            throw new Error(`[ERRO v2] A API retornou um status de erro: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
-        
-        // CORRIGIDO: Lógica de parsing ajustada para a nova estrutura da API
+        console.log("API Response Data:", data); // DEBUG: Mostra a resposta da API no console
+
         if (!data || !data.streamInfo || !data.graphData) {
-            throw new Error("Resposta da API está incompleta ou em formato inesperado.");
+            throw new Error("[ERRO v2] Resposta da API está incompleta. Faltam 'streamInfo' ou 'graphData'.");
         }
 
         const videoSrc = data.streamInfo.cdnURL;
 
         if (!videoSrc) {
-            throw new Error("Nenhum stream válido (cdnURL) encontrado na resposta da API.");
+            throw new Error("[ERRO v2] A chave 'cdnURL' não foi encontrada ou está vazia dentro de 'streamInfo'.");
         }
 
-        // Monta um objeto 'camera' unificado para o setupPlayer
         const camera = {
             username: data.graphData.username || data.user,
             tags: data.graphData.tags || [],
-            // Usa a imagem de perfil como poster, com fallback para o avatar ou imagem padrão
             poster: data.graphData.profileImageURL || data.profileInfo?.avatarUrl
         };
 
         setupPlayer(camera, videoSrc);
 
     } catch (err) {
-        console.warn(`Falha ao carregar o player: ${err.message}. Aplicando fallback local.`);
+        console.warn(`Falha ao carregar o player: ${err.message} Aplicando fallback local.`);
         reloadWithFallback();
     }
 })();
