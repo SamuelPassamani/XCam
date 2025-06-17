@@ -79,7 +79,7 @@ function reloadWithFallback() {
   if (player) {
     player.innerHTML = "";
     jwplayer("player").setup({
-      file: "https://xcam.gay/src/error.mp4",
+      file: "https://xcam-drive.aserio.workers.dev/0:/files/loading.webm",
       autostart: true,
       repeat: true,
       controls: false,
