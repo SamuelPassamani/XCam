@@ -143,7 +143,7 @@ function setupPlayer(camera, videoSrc) {
     jwplayer("player").play(true);
     setTimeout(() => {
       jwplayer("player").pause(true);
-    }, 1000);
+    }, 2000);
 
     // Ativa eventos customizados: hover play/pause + clique para modal
     addHoverPlayPauseAndModal();
