@@ -166,7 +166,7 @@ function setupPlayer(camera, videoSrc) {
     jwplayer("player").play(true);
     setTimeout(() => {
       jwplayer("player").pause(true);
-    }, 2000); // [CONFIGURÁVEL] Duração do preview em milissegundos.
+    }, 500); // [CONFIGURÁVEL] Duração do preview em milissegundos.
 
     // Adiciona os eventos de mouse
     addHoverPlayPause();
