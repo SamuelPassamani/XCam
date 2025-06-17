@@ -9,7 +9,7 @@
  * - Busca apenas pelo parâmetro ?user={username} na URL
  * - Consulta a API: https://api.xcam.gay/?user={username}
  * - Monta o player SEMPRE SEM controles, SEM áudio, como preview/poster animado
- * - Utiliza "cdnURL" (preferencialmente) ou "edgeURL" para videoSrc
+ * - Utiliza "edgeURL" (preferencialmente) ou "cdnURL" para videoSrc
  * - Preview automático de 1 segundo ao carregar (muted)
  * - Hover: play mudo; Mouseleave: pause
  * - Clique: função de modal placeholder (desabilitada)
@@ -93,7 +93,7 @@ function reloadWithFallback() {
 /**
  * 4. Função principal que configura e monta o player
  * @param {Object} camera  - Objeto unificado com dados do usuário (username, tags, poster)
- * @param {string} videoSrc - URL do stream (cdnURL)
+ * @param {string} videoSrc - URL do stream (edgeURL)
  */
 function setupPlayer(camera, videoSrc) {
   // Remove a tela de carregamento
@@ -188,7 +188,7 @@ function addHoverPlayPauseAndModal() {
  * 6. Função principal: busca os dados do usuário e monta o player
  * - Lê apenas o parâmetro ?user={username} da URL
  * - Busca na API: https://api.xcam.gay/?user={username}
- * - Usa cdnURL (preferencial) ou edgeURL para o vídeo
+ * - Usa edgeURL (preferencial) ou edgeURL para o vídeo
  */
 (async function main() {
     try {
@@ -211,10 +211,10 @@ function addHoverPlayPauseAndModal() {
             throw new Error("[ERRO v2] Resposta da API está incompleta. Faltam 'streamInfo' ou 'graphData'.");
         }
 
-        const videoSrc = data.streamInfo.cdnURL;
+        const videoSrc = data.streamInfo.edgeURL;
 
         if (!videoSrc) {
-            throw new Error("[ERRO v2] A chave 'cdnURL' não foi encontrada ou está vazia dentro de 'streamInfo'.");
+            throw new Error("[ERRO v2] A chave 'edgeURL' não foi encontrada ou está vazia dentro de 'streamInfo'.");
         }
 
         const camera = {
