@@ -92,8 +92,8 @@ function reloadWithFallback() {
 
 /**
  * 4. Função principal que configura e monta o player
- * @param {Object} camera  - Objeto retornado da API para o usuário
- * @param {string} videoSrc - URL do stream (cdnURL ou edgeURL)
+ * @param {Object} camera  - Objeto unificado com dados do usuário (username, tags, poster)
+ * @param {string} videoSrc - URL do stream (cdnURL)
  */
 function setupPlayer(camera, videoSrc) {
   // Remove a tela de carregamento
@@ -115,7 +115,8 @@ function setupPlayer(camera, videoSrc) {
       {
         title: `@${camera.username}`,
         description: (camera.tags || []).map(tag => `#${tag.name}`).join(" "),
-        image: camera.preview?.poster || "https://xcam.gay/src/loading.gif",
+        // CORRIGIDO: Usa a propriedade 'poster' do nosso objeto 'camera'
+        image: camera.poster || "https://xcam.gay/src/loading.gif",
         sources: [
           {
             file: videoSrc,
@@ -205,14 +206,25 @@ function addHoverPlayPauseAndModal() {
         }
 
         const data = await response.json();
-        const camera = data?.broadcast;
         
-        // LÓGICA CORRETA RESTAURADA AQUI:
-        const videoSrc = camera?.cdnURL || camera?.edgeURL;
-
-        if (!camera || !videoSrc) {
-            throw new Error("Nenhum stream válido (cdnURL/edgeURL) encontrado para o usuário.");
+        // CORRIGIDO: Lógica de parsing ajustada para a nova estrutura da API
+        if (!data || !data.streamInfo || !data.graphData) {
+            throw new Error("Resposta da API está incompleta ou em formato inesperado.");
         }
+
+        const videoSrc = data.streamInfo.cdnURL;
+
+        if (!videoSrc) {
+            throw new Error("Nenhum stream válido (cdnURL) encontrado na resposta da API.");
+        }
+
+        // Monta um objeto 'camera' unificado para o setupPlayer
+        const camera = {
+            username: data.graphData.username || data.user,
+            tags: data.graphData.tags || [],
+            // Usa a imagem de perfil como poster, com fallback para o avatar ou imagem padrão
+            poster: data.graphData.profileImageURL || data.profileInfo?.avatarUrl
+        };
 
         setupPlayer(camera, videoSrc);
 
