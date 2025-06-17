@@ -1,27 +1,26 @@
 "use strict";
 
 /**
- * =========================================================
+ * ==========================================================
  * XCam Player - script.js
- * =========================================================
- * Este script customiza o comportamento do JW Player para:
- * - Sempre ocultar controles, overlays e botões.
- * - Jamais permitir pausar/reproduzir por clique.
- * - Executar preview automático mudo no carregamento.
- * - Permitir play mudo por hover e pause em mouseleave.
- * - (Opcional) Clique pode abrir modal customizado.
- * - Garantir fallback local em caso de erro.
- * - Código organizado, robusto, auditável e extensível.
- * =========================================================
+ * ==========================================================
+ * Descrição:
+ * Este script monta e controla o JW Player de acordo com os seguintes requisitos:
+ * - Busca apenas pelo parâmetro ?user={username} na URL
+ * - Consulta a API: https://api.xcam.gay/?user={username}
+ * - Monta o player SEMPRE SEM controles, SEM áudio, como preview/poster animado
+ * - Utiliza "cdnURL" (preferencialmente) ou "edgeURL" para videoSrc
+ * - Preview automático de 1 segundo ao carregar (muted)
+ * - Hover: play mudo; Mouseleave: pause
+ * - Clique: função de modal placeholder (desabilitada)
+ * - Fallback automático para vídeo local em caso de erro
+ * - Código auditável, comentado e organizado
+ * ==========================================================
  */
 
-/* =========================================================
- * 1. Injeção de CSS para ocultar todos os controles do JW Player
- * ---------------------------------------------------------
- * Garante que todos os controles, overlays, botões, títulos,
- * legendas, tooltips e overlays sejam sempre ocultos,
- * independente do estado ou atualização do player.
- * =========================================================
+/**
+ * 1. Injeção de CSS para ocultar todos os controles/overlays do JW Player
+ * Garante visual limpo, sem controles, overlays, tooltips etc.
  */
 (function injectPlayerCSS() {
   const style = document.createElement('style');
@@ -58,12 +57,8 @@
   document.head.appendChild(style);
 })();
 
-/* =========================================================
- * 2. Exibir imagem de carregamento enquanto player não está pronto
- * ---------------------------------------------------------
- * Carrega um GIF animado no container do player para indicar
- * ao usuário que a transmissão está sendo preparada/buscada.
- * =========================================================
+/**
+ * 2. Mostra imagem animada de carregamento enquanto player não está pronto
  */
 (function showLoading() {
   const preloadImage = new Image();
@@ -75,20 +70,14 @@
   }
 })();
 
-/* =========================================================
- * 3. Fallback: exibe vídeo local de erro caso falhe o player
- * ---------------------------------------------------------
- * Em qualquer erro grave, limpa o player e exibe um vídeo
- * local de erro (mudo, sem controles, em loop). Garante
- * experiência amigável mesmo em caso de falha.
- * =========================================================
+/**
+ * 3. Função de fallback: player exibe vídeo local de erro caso haja falha
+ * Player sem controles, mudo, em loop infinito
  */
 function reloadWithFallback() {
   const player = document.getElementById("player");
   if (player) {
-    // Limpa o conteúdo anterior
     player.innerHTML = "";
-    // Configura JW Player para exibir o vídeo local de erro
     jwplayer("player").setup({
       file: "https://xcam.gay/src/error.mp4",
       autostart: true,
@@ -96,56 +85,48 @@ function reloadWithFallback() {
       controls: false,
       mute: true,
     });
-    // Garante que controles estejam desabilitados e áudio mudo
     jwplayer("player").setControls(false);
     jwplayer("player").setMute(true);
   }
 }
 
-/* =========================================================
- * 4. Configuração principal do JW Player
- * ---------------------------------------------------------
- * - Remove tela de carregamento
- * - Configura player SEMPRE sem controles e mudo
- * - Adiciona playlist e thumbnail customizados
- * - Garante fallback em caso de erro
- * - Executa preview automático mudo de 1s ao carregar
- * - Ativa eventos customizados de hover/click
- * =========================================================
- * @param {Object} camera    Dados da transmissão
- * @param {string} username  Nome de usuário da câmera
- * @param {string} videoSrc  URL do stream m3u8
+/**
+ * 4. Função principal que configura e monta o player
+ * @param {Object} camera  - Objeto retornado da API para o usuário
+ * @param {string} videoSrc - URL do stream (cdnURL ou edgeURL)
  */
-function setupPlayer(camera, username, videoSrc) {
+function setupPlayer(camera, videoSrc) {
+  // Remove a tela de carregamento
   const playerContainer = document.getElementById("player");
   if (playerContainer) playerContainer.innerHTML = "";
 
+  // Configura o JW Player SEMPRE SEM controles e mudo
   jwplayer("player").setup({
-    controls: false, // SEM CONTROLES
-    autostart: false, // Autostart controlado manualmente
-    mute: true,       // SEM ÁUDIO
+    controls: false,
+    autostart: false,
+    mute: true,
     sharing: false,
     displaytitle: false,
     displaydescription: false,
     abouttext: "",
     aboutlink: "",
-    skin: { name: "netflix" }, // Tema não afeta pois controles sempre ocultos
+    skin: { name: "netflix" },
     playlist: [
       {
-        title: `@${camera.username || username}`,
-        description: camera.tags?.map((tag) => `#${tag.name}`).join(" ") || "",
+        title: `@${camera.username}`,
+        description: (camera.tags || []).map(tag => `#${tag.name}`).join(" "),
         image: camera.preview?.poster || "https://xcam.gay/src/loading.gif",
         sources: [
           {
             file: videoSrc,
-            type: "video/m3u8",
-            label: "Source",
-          },
+            type: "application/x-mpegURL",
+            label: "HD"
+          }
         ],
       },
     ],
     events: {
-      // Em qualquer erro, aciona fallback local
+      // Em qualquer erro, faz fallback local
       error: () => {
         console.warn("Erro ao reproduzir vídeo. Exibindo fallback local.");
         reloadWithFallback();
@@ -153,12 +134,12 @@ function setupPlayer(camera, username, videoSrc) {
     },
   });
 
-  // Garante SEMPRE mute, SEM controles e preview automático mudo
+  // Quando pronto: preview de 1s, configura eventos hover/click
   jwplayer("player").on("ready", () => {
     jwplayer("player").setControls(false);
     jwplayer("player").setMute(true);
 
-    // Preview automático de 1 segundo (MUDO)
+    // Preview animado de 1 segundo (poster dinâmico)
     jwplayer("player").play(true);
     setTimeout(() => {
       jwplayer("player").pause(true);
@@ -169,13 +150,11 @@ function setupPlayer(camera, username, videoSrc) {
   });
 }
 
-/* =========================================================
- * 5. Eventos customizados: hover play/pause e clique para modal
- * ---------------------------------------------------------
- * - Hover: play mudo (NUNCA áudio)
- * - Mouseleave: pause
- * - Clique: abre modal customizado (NÃO pausa/reproduz)
- * =========================================================
+/**
+ * 5. Eventos customizados para player
+ * - Hover: play mudo
+ * - Mouseleave: pausa
+ * - Clique: chama função placeholder de modal (desabilitada)
  */
 function addHoverPlayPauseAndModal() {
   const playerContainer = document.getElementById("player");
@@ -184,20 +163,20 @@ function addHoverPlayPauseAndModal() {
   // Garante SEMPRE SEM controles
   jw.setControls(false);
 
-  // Play mudo ao passar mouse sobre o player
+  // Play mudo ao hover
   playerContainer.addEventListener("mouseenter", () => {
     jw.setControls(false);
     jw.setMute(true);
     jw.play(true);
   });
 
-  // Pause ao remover mouse do player
+  // Pause ao tirar mouse
   playerContainer.addEventListener("mouseleave", () => {
     jw.pause(true);
     jw.setControls(false);
   });
 
-  // Clique: chama função de modal (desabilitada, ver abaixo)
+  // Clique: chama modal (placeholder)
   playerContainer.addEventListener("click", function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -205,79 +184,50 @@ function addHoverPlayPauseAndModal() {
   });
 }
 
-/* =========================================================
- * 6. Lógica principal: busca dados na API e inicializa player
- * ---------------------------------------------------------
- * - Lê parâmetros da URL (user/id)
- * - Busca lista de transmissões via API
- * - Encontra transmissão correta
- * - Inicializa player ou fallback caso erro
- * =========================================================
+/**
+ * 6. Função principal: busca os dados do usuário e monta o player
+ * - Lê apenas o parâmetro ?user={username} da URL
+ * - Busca na API: https://api.xcam.gay/?user={username}
+ * - Usa cdnURL (preferencial) ou edgeURL para o vídeo
  */
-(function main() {
-  const params = new URLSearchParams(window.location.search);
+(async function main() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.has("user")) {
+            throw new Error("Nenhum parâmetro 'user' foi fornecido na URL.");
+        }
 
-  if (params.has("user") || params.has("id")) {
-    const isUser = params.has("user");
-    const searchKey = isUser ? "username" : "id";
-    const searchValue = params.get(isUser ? "user" : "id");
+        const username = params.get("user");
+        const response = await fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`);
 
-    fetch("https://api.xcam.gay/?limit=1500&format=json")
-      .then((response) => {
         if (!response.ok) {
-          throw new Error("Erro ao carregar lista de transmissões");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const items = data?.broadcasts?.items || [];
-        const camera = items.find((item) => item[searchKey] === searchValue);
-
-        if (!camera) {
-          console.warn(`Nenhuma câmera encontrada com o ${searchKey}:`, searchValue);
-          reloadWithFallback();
-          return;
+            throw new Error(`A API retornou um erro: ${response.statusText}`);
         }
 
-        if (!camera.preview?.src) {
-          console.warn("Nenhum stream válido encontrado em preview.src. Aplicando fallback local.");
-          reloadWithFallback();
-          return;
+        const data = await response.json();
+        const camera = data?.broadcast;
+        
+        // LÓGICA CORRETA RESTAURADA AQUI:
+        const videoSrc = camera?.cdnURL || camera?.edgeURL;
+
+        if (!camera || !videoSrc) {
+            throw new Error("Nenhum stream válido (cdnURL/edgeURL) encontrado para o usuário.");
         }
 
-        setupPlayer(camera, camera.username, camera.preview.src);
-      })
-      .catch((err) => {
-        console.error("Erro ao carregar a lista geral:", err);
+        setupPlayer(camera, videoSrc);
+
+    } catch (err) {
+        console.warn(`Falha ao carregar o player: ${err.message}. Aplicando fallback local.`);
         reloadWithFallback();
-      });
-  } else {
-    console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
-    reloadWithFallback();
-  }
+    }
 })();
 
-/* =========================================================
- * 7. Função placeholder: abrir modal customizado de informações
- * ---------------------------------------------------------
- * Atualmente desabilitada. Permanece no código para futura
- * implementação de modal customizado ao clique no player.
- * =========================================================
+
+/**
+ * 7. Função placeholder: modal customizado (desabilitada)
+ * Mantém no código para futura implementação, mas não faz nada
  */
 function abrirModalDeInformacoes() {
-  // Função desabilitada; não faz nada por enquanto.
-  // Para habilitar, implemente o modal customizado aqui.
-  // Exemplo:
-  // const modal = document.getElementById('video-info-modal');
-  // if (modal) {
-  //   modal.style.display = 'block';
-  // }
-  // else {
-  //   alert("Modal de informações não implementado.");
-  // }
+  // Função desabilitada. Não faz nada por enquanto.
+  // Para implementar: exiba um modal customizado aqui.
 }
-
-/* =========================================================
- * FIM DO SCRIPT PRINCIPAL DO PLAYER XCam
- * =========================================================
- */
