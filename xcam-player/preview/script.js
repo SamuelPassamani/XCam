@@ -9,7 +9,7 @@
  * - Busca apenas pelo parâmetro ?user={username} na URL
  * - Consulta a API: https://api.xcam.gay/?user={username}
  * - Monta o player SEMPRE SEM controles, SEM áudio, como preview/poster animado
- * - Utiliza "edgeURL" (preferencialmente) ou "cdnURL" para videoSrc
+ * - Utiliza "cdnURL" (preferencialmente) ou "edgeURL" para videoSrc
  * - Preview automático de 1 segundo ao carregar (muted)
  * - Hover: play mudo; Mouseleave: pause
  * - Clique: função de modal placeholder (desabilitada)
@@ -23,37 +23,37 @@
  * Garante visual limpo, sem controles, overlays, tooltips etc.
  */
 (function injectPlayerCSS() {
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.innerHTML = `
-    #player .jw-controls,
-    #player .jw-display,
-    #player .jw-display-container,
-    #player .jw-preview,
-    #player .jw-logo,
-    #player .jw-title,
-    #player .jw-nextup-container,
-    #player .jw-playlist-container,
-    #player .jw-captions,
-    #player .jw-button-container,
-    #player .jw-tooltip,
-    #player .jw-rightclick,
-    #player .jw-icon,
-    #player .jw-controlbar {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-        background: transparent !important;
-    }
-    #player .jw-state-paused .jw-preview,
-    #player .jw-flag-paused .jw-preview,
-    #player .jw-preview {
-      opacity: 1 !important;
-      filter: none !important;
-      background: none !important;
-    }
-    #player .jw-display-container { background: transparent !important; }
-  `;
+    #player .jw-controls,
+    #player .jw-display,
+    #player .jw-display-container,
+    #player .jw-preview,
+    #player .jw-logo,
+    #player .jw-title,
+    #player .jw-nextup-container,
+    #player .jw-playlist-container,
+    #player .jw-captions,
+    #player .jw-button-container,
+    #player .jw-tooltip,
+    #player .jw-rightclick,
+    #player .jw-icon,
+    #player .jw-controlbar {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        background: transparent !important;
+    }
+    #player .jw-state-paused .jw-preview,
+    #player .jw-flag-paused .jw-preview,
+    #player .jw-preview {
+      opacity: 1 !important;
+      filter: none !important;
+      background: none !important;
+    }
+    #player .jw-display-container { background: transparent !important; }
+  `;
   document.head.appendChild(style);
 })();
 
@@ -65,8 +65,7 @@
   preloadImage.src = "https://xcam.gay/src/loading.gif";
   const playerContainer = document.getElementById("player");
   if (playerContainer) {
-    playerContainer.innerHTML =
-      `<img src="${preloadImage.src}" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />`;
+    playerContainer.innerHTML = `<img src="${preloadImage.src}" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;" />`;
   }
 })();
 
@@ -83,7 +82,7 @@ function reloadWithFallback() {
       autostart: true,
       repeat: true,
       controls: false,
-      mute: true,
+      mute: true
     });
     jwplayer("player").setControls(false);
     jwplayer("player").setMute(true);
@@ -92,15 +91,14 @@ function reloadWithFallback() {
 
 /**
  * 4. Função principal que configura e monta o player
- * @param {Object} camera  - Objeto unificado com dados do usuário (username, tags, poster)
- * @param {string} videoSrc - URL do stream (edgeURL)
+ * @param {Object} camera  - Objeto unificado com dados do usuário (username, tags, poster)
+ * @param {string} videoSrc - URL do stream
  */
 function setupPlayer(camera, videoSrc) {
   // Remove a tela de carregamento
   const playerContainer = document.getElementById("player");
-  if (playerContainer) playerContainer.innerHTML = "";
+  if (playerContainer) playerContainer.innerHTML = ""; // Configura o JW Player SEMPRE SEM controles e mudo
 
-  // Configura o JW Player SEMPRE SEM controles e mudo
   jwplayer("player").setup({
     controls: false,
     autostart: false,
@@ -114,7 +112,7 @@ function setupPlayer(camera, videoSrc) {
     playlist: [
       {
         title: `@${camera.username}`,
-        description: (camera.tags || []).map(tag => `#${tag.name}`).join(" "),
+        description: (camera.tags || []).map((tag) => `#${tag.name}`).join(" "),
         image: camera.poster || "https://xcam.gay/src/loading.gif",
         sources: [
           {
@@ -122,30 +120,29 @@ function setupPlayer(camera, videoSrc) {
             type: "application/x-mpegURL",
             label: "HD"
           }
-        ],
-      },
+        ]
+      }
     ],
     events: {
       // Em qualquer erro, faz fallback local
       error: () => {
-        console.warn("JW Player encontrou um erro ao reproduzir o vídeo. Exibindo fallback local.");
+        console.warn(
+          "JW Player encontrou um erro ao reproduzir o vídeo. Exibindo fallback local."
+        );
         reloadWithFallback();
-      },
-    },
-  });
+      }
+    }
+  }); // Quando pronto: preview de 1s, configura eventos hover/click
 
-  // Quando pronto: preview de 1s, configura eventos hover/click
   jwplayer("player").on("ready", () => {
     jwplayer("player").setControls(false);
-    jwplayer("player").setMute(true);
+    jwplayer("player").setMute(true); // Preview animado de 1 segundo (poster dinâmico)
 
-    // Preview animado de 1 segundo (poster dinâmico)
     jwplayer("player").play(true);
     setTimeout(() => {
       jwplayer("player").pause(true);
-    }, 2000);
+    }, 2000); // Ativa eventos customizados: hover play/pause + clique para modal
 
-    // Ativa eventos customizados: hover play/pause + clique para modal
     addHoverPlayPauseAndModal();
   });
 }
@@ -158,25 +155,21 @@ function setupPlayer(camera, videoSrc) {
  */
 function addHoverPlayPauseAndModal() {
   const playerContainer = document.getElementById("player");
-  const jw = jwplayer("player");
+  const jw = jwplayer("player"); // Garante SEMPRE SEM controles
 
-  // Garante SEMPRE SEM controles
-  jw.setControls(false);
+  jw.setControls(false); // Play mudo ao hover
 
-  // Play mudo ao hover
   playerContainer.addEventListener("mouseenter", () => {
     jw.setControls(false);
     jw.setMute(true);
     jw.play(true);
-  });
+  }); // Pause ao tirar mouse
 
-  // Pause ao tirar mouse
   playerContainer.addEventListener("mouseleave", () => {
     jw.pause(true);
     jw.setControls(false);
-  });
+  }); // Clique: chama modal (placeholder)
 
-  // Clique: chama modal (placeholder)
   playerContainer.addEventListener("click", function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -188,49 +181,63 @@ function addHoverPlayPauseAndModal() {
  * 6. Função principal: busca os dados do usuário e monta o player
  * - Lê apenas o parâmetro ?user={username} da URL
  * - Busca na API: https://api.xcam.gay/?user={username}
- * - Usa edgeURL (preferencial) ou edgeURL para o vídeo
+ * - Usa cdnURL (preferencial) ou edgeURL para o vídeo
  */
 (async function main() {
-    try {
-        const params = new URLSearchParams(window.location.search);
-        if (!params.has("user")) {
-            throw new Error("[ERRO v2] Nenhum parâmetro 'user' foi fornecido na URL.");
-        }
-
-        const username = params.get("user");
-        const response = await fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`);
-
-        if (!response.ok) {
-            throw new Error(`[ERRO v2] A API retornou um status de erro: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log("API Response Data:", data); // DEBUG: Mostra a resposta da API no console
-
-        if (!data || !data.streamInfo || !data.graphData) {
-            throw new Error("[ERRO v2] Resposta da API está incompleta. Faltam 'streamInfo' ou 'graphData'.");
-        }
-
-        const videoSrc = data.streamInfo.edgeURL;
-
-        if (!videoSrc) {
-            throw new Error("[ERRO v2] A chave 'edgeURL' não foi encontrada ou está vazia dentro de 'streamInfo'.");
-        }
-
-        const camera = {
-            username: data.graphData.username || data.user,
-            tags: data.graphData.tags || [],
-            poster: data.graphData.profileImageURL || data.profileInfo?.avatarUrl
-        };
-
-        setupPlayer(camera, videoSrc);
-
-    } catch (err) {
-        console.warn(`Falha ao carregar o player: ${err.message} Aplicando fallback local.`);
-        reloadWithFallback();
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("user")) {
+      throw new Error(
+        "[ERRO v3] Nenhum parâmetro 'user' foi fornecido na URL."
+      );
     }
-})();
 
+    const username = params.get("user");
+    const response = await fetch(
+      `https://api.xcam.gay/?user=${encodeURIComponent(username)}`
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `[ERRO v3] A API retornou um status de erro: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+    console.log("API Response Data:", data); // DEBUG: Mostra a resposta da API no console
+
+    if (!data) {
+      throw new Error(
+        "[ERRO v3] Resposta da API está vazia ou em formato inesperado."
+      );
+    }
+
+    // AJUSTADO: Lógica de busca da URL do vídeo com a nova ordem de prioridade.
+    const videoSrc =
+      data.streamInfo?.edgeURL ||
+      data.streamInfo?.cdnURL ||
+      data.graphData?.preview?.src;
+
+    if (!videoSrc) {
+      throw new Error(
+        "[ERRO v3] Nenhuma fonte de vídeo (edgeURL, cdnURL, preview.src) foi encontrada."
+      );
+    }
+
+    const camera = {
+      username: data.graphData?.username || data.user,
+      tags: data.graphData?.tags || [],
+      poster: data.graphData?.profileImageURL || data.profileInfo?.avatarUrl
+    };
+
+    setupPlayer(camera, videoSrc);
+  } catch (err) {
+    console.warn(
+      `Falha ao carregar o player: ${err.message} Aplicando fallback local.`
+    );
+    reloadWithFallback();
+  }
+})();
 
 /**
  * 7. Função placeholder: modal customizado (desabilitada)
