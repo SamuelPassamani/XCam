@@ -1,11 +1,32 @@
-// broadcasts.js
-// Responsável por carregar, filtrar e renderizar a grade de transmissões ao vivo do XCam
-// Estratégia otimizada: apenas UMA chamada para API principal, renderização instantânea de placeholders, atualização incremental dos cards
-// Não faz fetch individual por transmissão. Busca incremental/desempenho máximo.
+/**
+ * =====================================================================================
+ * XCam - Grade de Transmissões (broadcasts.js)
+ * =====================================================================================
+ *
+ * @author      [Seu Nome/Empresa]
+ * @version     2.0.0
+ * @lastupdate  17/06/2025
+ *
+ * @description Este script é o coração da página principal do XCam. Ele é responsável
+ * por buscar a lista de todas as transmissões ao vivo disponíveis através
+ * de uma única chamada à API, renderizar os cards na tela e gerenciar os
+ * filtros de usuário e a paginação (botão "Carregar Mais").
+ *
+ * @strategy    A estratégia foi otimizada para performance máxima e experiência do usuário:
+ * 1. **Chamada Única**: Em vez de múltiplas requisições, fazemos uma chamada
+ * robusta para a API para buscar um grande lote de transmissões.
+ * 2. **Paginação Local**: A paginação é gerenciada no lado do cliente
+ * (frontend), tornando a ação de "Carregar Mais" instantânea.
+ * 3. **Renderização Direta com Iframe**: Cada card de transmissão agora
+ * utiliza um `iframe` que aponta para um player de preview dedicado,
+ * substituindo a imagem estática por um preview de vídeo real e dinâmico.
+ *
+ * =====================================================================================
+ */
 
 // === Importações necessárias ===
-import { t } from "./i18n.js"; // Função de tradução para labels/UX
-import { countryNames } from "./translations.js"; // Mapeia código país → nome completo
+import { t } from "./i18n.js"; // Módulo de tradução para internacionalização (i18n).
+import { countryNames } from "./translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
 
 // === Função utilitária: Criação de elementos DOM com atributos e filhos ===
 function createEl(type, props = {}, children = []) {
@@ -20,14 +41,16 @@ function createEl(type, props = {}, children = []) {
   return el;
 }
 
-// === Variáveis de controle da grid, paginação e filtros ===
-let currentPage = 1;
-const itemsPerPage = 30;
-let allItems = [];
-let renderedItems = []; // Para controle incremental dos cards já exibidos
-let grid;
+// === Variáveis de Controle e Configurações Globais ===============================
 
-// Configuração dos filtros (vazios = sem filtro)
+// [CONFIGURÁVEL] Define quantos cards são exibidos por página/clique no "Carregar Mais".
+const itemsPerPage = 30;
+
+let allItems = []; // Array que armazena TODAS as transmissões buscadas da API.
+let renderedItemsCount = 0; // Contador para controlar a paginação local.
+let grid; // Referência ao elemento DOM da grade, inicializado no 'DOMContentLoaded'.
+
+// [CONFIGURÁVEL] Objeto que armazena o estado atual dos filtros aplicados.
 let filters = {
   gender: "",
   country: "",
@@ -35,12 +58,9 @@ let filters = {
   minViewers: null,
   tags: []
 };
+// =================================================================================
 
-// Imagem padrão de loading e default do CAM4 (que nunca deve ser usada)
-const FALLBACK_IMAGE = "https://xcam.gay/src/loading.gif";
-const BAD_DEFAULT_IMAGE = "https://cam4-static-test.xcdnpro.com/web/images/defaults/default_Male.png";
-
-// === Elementos de carregamento e botão "Carregar mais" ===
+// === Elementos de UI reutilizáveis ===
 const loader = createEl("div", { class: "loading-state" }, [
   createEl("div", { class: "loader" }),
   createEl("p", { text: t("loading") })
@@ -57,8 +77,15 @@ const loadMoreBtn = createEl(
 );
 loadMoreBtn.style.display = "none";
 
-// === Função: Monta a URL da API principal baseada nos filtros ===
-function buildApiUrl(filters, limit = itemsPerPage) {
+// === Lógica Principal ==========================================================
+
+/**
+ * Monta a URL da API com base nos filtros ativos.
+ * @param {object} filters - O objeto de filtros atual.
+ * @param {number} limit - [CONFIGURÁVEL] O número máximo de resultados a serem pedidos para a API.
+ * @returns {string} A URL completa para a chamada da API.
+ */
+function buildApiUrl(filters, limit = 100) { // Busca um lote maior para paginação local.
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
@@ -72,19 +99,18 @@ function buildApiUrl(filters, limit = itemsPerPage) {
   return `https://api.xcam.gay/?${params.toString()}`;
 }
 
-// === Função: Busca as transmissões da API principal ===
-async function fetchBroadcasts(limit = itemsPerPage) {
+/**
+ * Busca as transmissões da API principal.
+ * @param {number} limit - O limite de transmissões a serem buscadas.
+ * @returns {Promise<Array>} Uma promessa que resolve para um array de transmissões.
+ */
+async function fetchBroadcasts(limit) {
   try {
     const url = buildApiUrl(filters, limit);
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
-    if (
-      data &&
-      typeof data === "object" &&
-      data.broadcasts &&
-      Array.isArray(data.broadcasts.items)
-    ) {
+    if (data?.broadcasts?.items) {
       return data.broadcasts.items;
     }
     console.warn("Formato inesperado da resposta:", data);
@@ -96,25 +122,18 @@ async function fetchBroadcasts(limit = itemsPerPage) {
   }
 }
 
-// === Garantia defensiva de que o grid está inicializado ===
+// Garante que a variável `grid` tenha uma referência ao elemento DOM.
 function ensureGridElement() {
   if (!grid) {
     grid = document.getElementById("broadcasts-grid");
   }
 }
 
-// === Função: Resolve a melhor imagem possível para o card ===
-function resolvePreviewImage(data) {
-  // 1. preview.poster (se não for BAD_DEFAULT_IMAGE)
-  let poster = data.preview && data.preview.poster && data.preview.poster !== BAD_DEFAULT_IMAGE ? data.preview.poster : null;
-  // 2. profileImageURL (se não for BAD_DEFAULT_IMAGE)
-  let profileImg = data.profileImageURL && data.profileImageURL !== BAD_DEFAULT_IMAGE ? data.profileImageURL : null;
-  // 3. fallback loading.gif
-  return poster || profileImg || FALLBACK_IMAGE;
-}
-
-// === Função: Renderiza um único card de transmissão (placeholder ou completo) ===
-function renderBroadcastCard(data, isPlaceholder = false) {
+/**
+ * Cria e renderiza um único card de transmissão na grade.
+ * @param {object} data - O objeto de dados para uma única transmissão.
+ */
+function renderBroadcastCard(data) {
   ensureGridElement();
 
   const username = data.username;
@@ -123,136 +142,80 @@ function renderBroadcastCard(data, isPlaceholder = false) {
   const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Define imagem: se placeholder, sempre loading.gif, senão tenta preview
-  const imgSrc = isPlaceholder ? FALLBACK_IMAGE : resolvePreviewImage(data);
+  // [PONTO CHAVE] URL do iframe para o player de preview.
+  const previewUrl = `https://player.xcam.gay/preview/?user=${username}`;
 
-  // Verifica se o card já existe (para atualização incremental)
-  let card = grid.querySelector(`.broadcast-card[data-username="${username}"]`);
-  if (!card) {
-    // Cria o card do zero se ainda não existe
-    card = createEl(
-      "div",
-      {
-        class: "broadcast-card",
-        role: "region",
-        "aria-label": `Transmissão de ${username}`,
-        "data-username": username
-      },
-      [
-        createEl("div", { class: "card-thumbnail" }, [
-          createEl("img", {
-            src: imgSrc,
-            alt: `Prévia da transmissão de ${username}`,
-            loading: "lazy"
-          }),
-          createEl("div", { class: "card-overlay" }, [
-            createEl(
-              "button",
-              {
-                class: "play-button",
-                "aria-label": `${t("play")} @${username}`,
-                tabindex: "0"
-              },
-              [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
-            )
-          ]),
-          createEl("div", { class: "live-badge", "aria-label": t("live") }, [
-            createEl("span", { text: t("live") })
+  const card = createEl(
+    "div",
+    {
+      class: "broadcast-card",
+      role: "region",
+      "aria-label": `Transmissão de ${username}`,
+      "data-username": username
+    },
+    [
+      createEl("div", { class: "card-thumbnail" }, [
+        // MODIFICAÇÃO PRINCIPAL: Usa um iframe para o preview de vídeo dinâmico.
+        createEl("iframe", {
+          src: previewUrl,
+          title: `Prévia da transmissão de ${username}`,
+          loading: "lazy", // Otimização de performance: carrega o iframe apenas quando visível.
+          frameborder: "0",
+          scrolling: "no",
+          allow: "autoplay; muted" // Permissões necessárias para o preview funcionar.
+        }),
+        createEl("div", { class: "card-overlay" }, [
+          createEl(
+            "button",
+            { class: "play-button", "aria-label": `${t("play")} @${username}`, tabindex: "0" },
+            [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
+          )
+        ]),
+        createEl("div", { class: "live-badge", "aria-label": t("live") }, [
+          createEl("span", { text: t("live") })
+        ])
+      ]),
+      createEl("div", { class: "card-info" }, [
+        createEl("div", { class: "card-header" }, [
+          createEl("h4", { class: "card-username", tabindex: "0", text: `@${username}` }),
+          createEl("div", { class: "card-country" }, [
+            createEl("img", { src: `https://flagcdn.com/24x18/${country}.png`, alt: `País: ${countryName}`, title: countryName })
           ])
         ]),
-        createEl("div", { class: "card-info" }, [
-          createEl("div", { class: "card-header" }, [
-            createEl("h4", {
-              class: "card-username",
-              tabindex: "0",
-              text: `@${username}`
-            }),
-            createEl("div", { class: "card-country" }, [
-              createEl("img", {
-                src: `https://flagcdn.com/24x18/${country}.png`,
-                alt: `País: ${countryName}`,
-                title: countryName
-              })
-            ])
-          ]),
-          createEl("div", { class: "card-viewers" }, [
-            createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
-            createEl("span", { text: ` ${viewers} ${t("viewers")}` })
-          ]),
-          createEl(
-            "div",
-            { class: "card-tags" },
-            tags.map((tag) =>
-              createEl("span", {
-                class: "tag",
-                text: `#${typeof tag === "string" ? tag : tag.name}`
-              })
-            )
-          )
-        ])
-      ]
-    );
-    grid.appendChild(card);
-  } else {
-    // Atualiza apenas a imagem se já existe
-    const img = card.querySelector("img");
-    if (img && img.src !== imgSrc) img.src = imgSrc;
-    // (Opcional: atualizar viewers/tags em tempo real se necessário)
-  }
+        createEl("div", { class: "card-viewers" }, [
+          createEl("i", { class: "fas fa-eye", "aria-hidden": "true" }),
+          createEl("span", { text: ` ${viewers} ${t("viewers")}` })
+        ]),
+        createEl("div", { class: "card-tags" },
+          tags.map((tag) => createEl("span", { class: "tag", text: `#${typeof tag === "string" ? tag : tag.name}` }))
+        )
+      ])
+    ]
+  );
+  grid.appendChild(card);
 }
 
-// === Função: Renderiza lote de cards (placeholder ou completos) ===
-function renderBatch(startIndex, count, asPlaceholder = false, itemsSource = allItems) {
+/**
+ * Renderiza o próximo lote de cards com base na paginação local.
+ */
+function renderNextBatch() {
   ensureGridElement();
-  const batch = itemsSource.slice(startIndex, startIndex + count);
-  batch.forEach(data => renderBroadcastCard(data, asPlaceholder));
+  
+  const nextItems = allItems.slice(renderedItemsCount, renderedItemsCount + itemsPerPage);
+  nextItems.forEach(item => renderBroadcastCard(item));
+  renderedItemsCount += nextItems.length;
+
+  // Mostra ou esconde o botão "Carregar mais" se chegamos ao fim da lista.
+  loadMoreBtn.style.display = renderedItemsCount >= allItems.length ? "none" : "block";
 }
 
-// === Renderiza o próximo lote paginado (completa ou atualiza cards já exibidos) ===
-async function renderNextBatch() {
-  ensureGridElement();
+// === Funções de Estado da UI (Vazio, Erro) ===
 
-  // Se for a primeira página, renderiza placeholders imediatamente
-  if (currentPage === 1 && allItems.length > 0 && renderedItems.length === 0) {
-    renderBatch(0, itemsPerPage, true, allItems);
-  }
-
-  // Busca todos os itens disponíveis (limit alto), para atualizar cards já exibidos e adicionar mais 15
-  const totalNeeded = currentPage * itemsPerPage;
-  let result = await fetchBroadcasts(3333);
-  if (!result.length) {
-    showEmptyMessage();
-    return;
-  }
-
-  // Atualiza grade incrementalmente: atualiza já exibidos e adiciona novos
-  allItems = result;
-  // Atualiza todos já exibidos (cards de 0 até renderedItems.length)
-  for (let i = 0; i < renderedItems.length; i++) {
-    renderBroadcastCard(allItems[i], false);
-  }
-  // Adiciona os próximos 15 (ou até o limite)
-  const nextBatch = allItems.slice(renderedItems.length, totalNeeded);
-  nextBatch.forEach(data => renderBroadcastCard(data, false));
-  renderedItems = allItems.slice(0, totalNeeded);
-
-  currentPage++;
-  loadMoreBtn.style.display =
-    renderedItems.length >= allItems.length ? "none" : "block";
-}
-
-// === Exibe mensagem caso não haja transmissões ===
 function showEmptyMessage() {
   ensureGridElement();
   grid.innerHTML = "";
-  const empty = createEl(
-    "div",
-    { class: "empty-state", "aria-live": "polite" },
-    [
-      createEl("i", {
-        class: "fas fa-info-circle empty-icon",
-        "aria-hidden": "true"
-      }),
+  const empty = createEl("div", { class: "empty-state", "aria-live": "polite" }, [
+      createEl("i", { class: "fas fa-info-circle empty-icon", "aria-hidden": "true" }),
       createEl("h3", { text: t("noBroadcasts.title") }),
       createEl("p", { text: t("noBroadcasts.description") })
     ]
@@ -260,18 +223,11 @@ function showEmptyMessage() {
   grid.appendChild(empty);
 }
 
-// === Exibe mensagem de erro de rede/API ===
 function showErrorMessage() {
   ensureGridElement();
   grid.innerHTML = "";
-  const errorDiv = createEl(
-    "div",
-    { class: "error-state", "aria-live": "assertive" },
-    [
-      createEl("i", {
-        class: "fas fa-exclamation-triangle",
-        "aria-hidden": "true"
-      }),
+  const errorDiv = createEl("div", { class: "error-state", "aria-live": "assertive" }, [
+      createEl("i", { class: "fas fa-exclamation-triangle", "aria-hidden": "true" }),
       createEl("h3", { text: t("error.title") }),
       createEl("p", { text: t("error.description") })
     ]
@@ -279,11 +235,13 @@ function showErrorMessage() {
   grid.appendChild(errorDiv);
 }
 
-// === Carrega as transmissões filtradas e inicializa a grid ===
+/**
+ * Orquestra o carregamento inicial ou a recarga da grade com base nos filtros.
+ */
 async function loadFilteredBroadcasts() {
-  currentPage = 1;
+  // 1. Reseta o estado atual para uma nova busca.
+  renderedItemsCount = 0;
   allItems = [];
-  renderedItems = [];
   ensureGridElement();
   grid.innerHTML = "";
   loader.remove();
@@ -291,8 +249,8 @@ async function loadFilteredBroadcasts() {
   grid.appendChild(loader);
 
   try {
-    // Busca os 30 primeiros para formar a grade rapidamente
-    let result = await fetchBroadcasts(itemsPerPage);
+    // 2. Busca um lote grande de transmissões para trabalhar localmente.
+    const result = await fetchBroadcasts(100);
     loader.remove();
 
     if (!result.length) {
@@ -300,16 +258,15 @@ async function loadFilteredBroadcasts() {
       return;
     }
 
+    // 3. Renderiza a primeira página e prepara as próximas.
     allItems = result;
-    renderedItems = [];
-    // Renderiza placeholders imediatamente
-    renderBatch(0, itemsPerPage, true, allItems);
-
-    // Em background já busca todos os cards para atualizar os placeholders e para a próxima paginação
-    setTimeout(() => renderNextBatch(), 100);
-
-    grid.parentElement.appendChild(loadMoreBtn);
-    loadMoreBtn.style.display = "block";
+    renderNextBatch(); // Renderiza a primeira página de 'itemsPerPage' cards.
+    
+    // 4. Adiciona o botão "Carregar Mais" se houver mais itens para mostrar.
+    if (allItems.length > renderedItemsCount) {
+        grid.parentElement.appendChild(loadMoreBtn);
+        loadMoreBtn.style.display = "block";
+    }
   } catch (err) {
     console.error("Erro ao processar transmissões:", err);
     loader.remove();
@@ -317,17 +274,27 @@ async function loadFilteredBroadcasts() {
   }
 }
 
-// === Funções públicas expostas para uso externo ===
+// === Funções Públicas (API do Módulo) =========================================
+
+/**
+ * Inicializa a grade de transmissões e adiciona os event listeners.
+ */
 export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", renderNextBatch);
   loadFilteredBroadcasts();
 }
 
+/**
+ * Força a recarga completa da grade, útil para um botão de "Atualizar".
+ */
 export function refreshBroadcasts() {
   loadFilteredBroadcasts();
 }
 
-// Recebe filtros e recarrega a grade
+/**
+ * Aplica um novo conjunto de filtros e recarrega a grade.
+ * @param {object} newFilters - O novo objeto de filtros a ser aplicado.
+ */
 export function applyBroadcastFilters(newFilters) {
   filters = {
     ...filters,
@@ -337,18 +304,29 @@ export function applyBroadcastFilters(newFilters) {
   };
   loadFilteredBroadcasts();
 }
+// =================================================================================
 
-// Inicializa referência do grid assim que o DOM estiver pronto
+// === Inicialização do Script ===
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });
 
-/*
-Resumo das melhorias/correções (2025):
-- Não faz mais fetch individual por transmissão; utiliza apenas a API principal para máxima performance.
-- Renderização instantânea de placeholders (loading.gif) para UX rápida.
-- Atualização incremental dos cards após chegada dos dados reais.
-- Atualiza cards já exibidos ao clicar em "Carregar mais", mantendo a grade sincronizada.
-- Imagem segue prioridade: preview.poster > profileImageURL > loading.gif, nunca usa imagem default do CAM4.
-- Código limpo, organizado, modular e altamente performático para demandas de streaming ao vivo.
-*/
+/**
+ * =====================================================================================
+ * FIM DO SCRIPT
+ * =====================================================================================
+ *
+ * @log de mudanças:
+ * - v2.0.0 (17/06/2025): Substituída a renderização de imagem estática (`<img>`) por
+ * `<iframe>` para exibir um player de preview dinâmico. Lógica de placeholders
+ * removida em favor da renderização direta. Paginação agora é 100% local após
+ * uma busca inicial mais robusta.
+ * - v1.0.0: Versão inicial com placeholders e atualização incremental.
+ *
+ * @roadmap futuro:
+ * - Implementar "Infinite Scrolling" em vez do botão "Carregar Mais".
+ * - Adicionar funcionalidade de "Favoritos" com persistência em localStorage.
+ * - Animações de entrada para os cards recém-carregados para uma UX mais fluida.
+ *
+ * =====================================================================================
+ */
