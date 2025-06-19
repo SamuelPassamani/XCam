@@ -1,101 +1,84 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b3bf1a04-7e16-40b3-8972-676895751821/deploy-status)](https://app.netlify.com/projects/xcam-api/deploys)
+# **Documentação Arquitetural e Técnica: XCam API**
 
-<p align="center">
-  <img src="https://xcam.site.my.eu.org/0:/logo2.png" alt="XCam Web App Logo" width="180"/>
-</p>
+## **1\. Filosofia e Visão Geral**
 
-# 📡 XCam API — Documentação Técnica Central
+A **XCam API** é o sistema nervoso central do ecossistema XCam. Projetada com uma filosofia de **separação** de domínios **de dados**, ela desacopla as informações de transmissão (graphData), os dados de perfil (profileInfo), o estado da live (streamInfo) e o acervo de gravações (driveData).
 
-Este diretório reúne os recursos e gateways que compõem a infraestrutura de APIs da plataforma XCam.  
-Inclui proxy reverso com Netlify, Worker do Cloudflare e integração OAuth2 com o Imgur.
+Essa arquitetura orientada a serviços permite que os clientes (frontends) orquestrem a obtenção de dados de forma inteligente e performática, solicitando apenas o necessário para cada contexto de interface, o que reduz a carga e melhora a experiência do usuário.
 
----
+* **URL Base:** https://api.xcam.gay/
 
-## 🔁 Gateway de API Pública (Netlify)
+## **2\. Modelos de Dados (Schemas de Resposta)**
 
-- **URL base:** [`https://api.xcam.gay`](https://api.xcam.gay)
-- **Destino:** Redireciona todas as requisições para o Worker do Cloudflare.
-- **Gerenciado por:** Netlify com domínio customizado e `netlify.toml`
-- **Repositório:** Diretório [`/api/netlify`](./netlify)
+Para entender a API, é fundamental conhecer as estruturas de dados que ela retorna.
 
-### 🧭 Exemplo de redirecionamento
+#### **2.1. Objeto broadcast**
 
-```
-GET https://api.xcam.gay/user/kleotwink
-→ Internamente redirecionado para:
-GET https://xcam.aserio.workers.dev/user/kleotwink
-```
+*Representa* um modelo *em transmissão ou online, retornado no array items do endpoint principal.*
 
----
+| Campo | Tipo | Descrição | Exemplo |
+| :---- | :---- | :---- | :---- |
+| XCamId | Integer | ID interno do modelo no sistema XCam. | 8 |
+| id | String | ID do modelo na plataforma de origem. | "50549085" |
+| username | String | Nome de usuário do modelo. | "psvpeludo30" |
+| country | String | Código do país (ISO 3166-1 alpha-2). | "br" |
+| sexualOrientation | String | Orientação sexual declarada. | "gay" |
+| profileImageURL | String | URL para a imagem de perfil. | (URL) |
+| preview | Object | Contém URLs para o preview da transmissão. | { "src": "(URL)", "poster": "(URL)" } |
+| viewers | Integer | Número atual de espectadores. | 93 |
+| broadcastType | String | Categoria da transmissão (gênero). | "male" |
+| gender | String | Gênero do modelo. | "male" |
+| tags | Array | Lista de objetos de tags associadas. | \[ { "name": "cum", "slug": "cum" } \] |
 
-## ⚙️ Cloudflare Worker (Core API)
+#### **2.2. Objeto profileInfo**
 
-- **URL direta:** [`https://xcam.aserio.workers.dev`](https://xcam.aserio.workers.dev)
-- **Responsável por:**
-  - Rota `/`: listagem paginada das transmissões ao vivo
-  - Rota `/user/<username>`: informações de perfil
-  - Rota `/user/<username>/liveInfo`: status da transmissão ao vivo
-- **Formato de resposta:** JSON (ou CSV via `?format=csv`)
-- **Versão atual implantada:** `XCam API V.19.1`
+*Representa os dados detalhados e relativamente estáticos de um perfil de usuário.*
 
-### ✅ Funcionalidades da rota `/`
+| Campo | Tipo | Descrição | Exemplo |
+| :---- | :---- | :---- | :---- |
+| username | String | Nome de usuário. | "28andrea86" |
+| userId | Integer | ID numérico do usuário. | 2157870 |
+| age | Integer | Idade do usuário. | 39 |
+| gender | String | Gênero. | "male" |
+| countryId | String | Código do país. | "it" |
+| maleBodyType | String | Tipo de corpo (enum). | "SLIM" |
+| penisSize | String | Tamanho do pênis (enum). | "AVERAGE" |
+| penisType | String | Tipo do pênis (enum). | "UNCUT" |
+| maleRole | String | Papel sexual (enum). | "VERSATILE" |
+| socialNetworks | Object | Links para redes sociais. | { "twitter": "(URL)" } |
+| creationDate | Timestamp | Data de criação do perfil (ms). | 1247143839000 |
 
-- Filtros por query string: `country`, `orientation`, `tags`, `page`, `limit`
-- Ordenação automática por número de viewers
-- Suporte a exportação CSV (`?format=csv`)
-- Cache automático com `caches.default`
-- Filtros aplicados localmente após coleta dos dados do CAM4
-- CORS dinâmico para domínios confiáveis como `xcam.gay`
+#### **2.3. Objeto streamInfo**
 
-🔎 **Nota:**  
-O filtro `gender` é fixo na query original (`gender: "male"`). Quando passado via query string, ele não é reaplicado no lado do Worker.  
-Isso é aceito como comportamento padrão da versão atual.
+*Representa* os dados técnicos e voláteis da transmissão ao *vivo.*
 
----
+| Campo | Tipo | Descrição | Exemplo |
+| :---- | :---- | :---- | :---- |
+| webRTC | Object | Detalhes para conexão via WebRTC. | { "sdpUrl": "wss://...", ... } |
+| canUseCDN | Boolean | Indica se o CDN está disponível para esta stream. | true |
+| edgeURL | String | URL HLS direta do servidor de borda (edge). | (URL) |
+| cdnURL | String | URL HLS otimizada através da CDN global. | (URL) |
 
-## 🖼️ Integração com Imgur (Upload de Imagens)
+#### **2.4. Objeto driveData**
 
-- **Finalidade:** Realizar upload via URL com autenticação segura
-- **Base:** OAuth2 Imgur usando `auth.js` e `callback.html`
-- **Local:** [`/api/oauth/imgur`](./oauth/imgur)
-- **Scripts:**
-  - `auth.js`: inicia autenticação via OAuth2
-  - `callback.html`: handler do retorno autorizado do Imgur
+*Representa o acervo de gravações de um usuário.*
 
----
+| Campo | Tipo | Descrição | Exemplo |
+| :---- | :---- | :---- | :---- |
+| username | String | Nome de usuário. | "28andrea86" |
+| records | Integer | Número total de gravações. | 2 |
+| videos | Array | Lista de objetos de vídeo. | \[ { "video": "hPunQ-oQ7", ... } \] |
 
-## 🧩 Estrutura Geral
+## **3\. Endpoints da API: Guia Detalhado**
 
-```
-/api/
-├── netlify/           → Gateway e proxy (Netlify + toml)
-├── oauth/
-│   └── imgur/         → Integração OAuth2 com Imgur
-└── workers/           → Cloudflare Worker com rotas REST
-```
+### **3.1. Consulta de Broadcasts: GET /**
 
----
+Este endpoint retorna uma lista de transmissões (broadcasts) com base nos parâmetros de consulta fornecidos. É o endpoint ideal para popular a página principal ou de categorias.
 
-## 📘 Notas técnicas e boas práticas
+#### **Parâmetros de Consulta**
 
-- Modularização clara com funções reutilizáveis
-- Uso de GraphQL via `fetch` para consulta ao CAM4
-- Filtros aplicados em memória após coleta completa
-- Exportação de dados em CSV com headers dinâmicos
-- CORS dinâmico com origem validada
-- Uso de cache interno do Worker para performance
-- Respostas uniformes com tratamento de erros explícito
+| Parâmetro | Descrição | Regras e Valores Aceitáveis |  |
+| :---- | :---- | :---- | :---- |
+| limit | Define o número máximo de resultados por | página. | Inteiro positivo (e.g., 25, 50). |
+| page | Define a pá de resultados agina |  |  |
 
----
-
-## 📌 Considerações
-
-- Nenhuma chave secreta ou token sensível é versionado
-- Documentação e status são atualizados em `deploy-check.md` e `CHANGELOG.md`
-- Este diretório pode ser usado como ponto de partida para CI/CD da API pública
-
----
-
-<p align="center">
-  <strong>© XCam Web App — 2025</strong>
-</p>
