@@ -102,7 +102,7 @@ function setupPlayer(camera, videoSrc) {
     aboutlink: "",
     hlsjsConfig: {
 
-    withCredentials: false
+    withCredentials: true,
 
     },
     skin: { name: "netflix" },
