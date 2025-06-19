@@ -2,11 +2,11 @@
 
 /**
  * =====================================================================================
- * XCam Player - Script Unificado (v5.0)
+ * XCam Player - Script Unificado (v5.1)
  * =====================================================================================
  *
  * @author      Samuel Passamani
- * @version     5.0.0
+ * @version     5.1.0
  * @lastupdate  18/06/2025
  *
  * @description Este script controla o player de vídeo do XCam e opera em dois modos,
@@ -186,6 +186,9 @@ function initializeMainPlayer() {
       `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;display:block;" />`;
   }
   
+  // A lógica do modal de anúncio é chamada aqui, pois só pertence ao player principal.
+  initializeAdModal();
+  
   const params = new URLSearchParams(window.location.search);
 
   // --- Fluxo 1: Busca por usuário específico ---
@@ -315,12 +318,8 @@ function reloadWithFallback() {
   }
 }
 
-// Lógica original para o modal de anúncio
-document.addEventListener("DOMContentLoaded", () => {
-    // Esta verificação garante que a lógica do modal só execute se não for modo preview.
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("mode") === "preview") return;
-
+// Lógica para o modal de anúncio, agora como uma função separada.
+function initializeAdModal() {
     const adModal = document.getElementById("ad-modal");
     const closeAdButton = document.getElementById("close-ad-btn");
     const countdownElement = document.getElementById("ad-countdown");
@@ -350,4 +349,4 @@ document.addEventListener("DOMContentLoaded", () => {
             player.style.display = "block";
         }
     });
-});
+}
