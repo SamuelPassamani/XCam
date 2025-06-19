@@ -64,7 +64,7 @@
     Modal para exibição de publicidade, posicionado no topo da camada visual.
     O modal é responsivo e centralizado. O botão de fechar só é ativado após countdown.
   -->
-  <div class="ad-modal" id="ad-modal">
+  <div class="ad-modal" id="ad-modal" style="display: none;">
     <div class="ad-modal-container">
       <!--
         Iframe de publicidade.
@@ -75,7 +75,7 @@
       <!--
         Botão de fechamento do anúncio, bloqueado até o countdown terminar.
       -->
-      <button id="close-ad-btn">Aguarde... <span id="ad-countdown">10</span>s</button>
+      <button id="close-ad-btn" disabled>Aguarde... <span id="ad-countdown">10</span>s</button>
     </div>
   </div>
 
