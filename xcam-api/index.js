@@ -75,7 +75,8 @@ const ALLOWED_ORIGINS = [
   "https://xcam-drive.netlify.app",
   "https://xcam-status.netlify.app",
   "https://xcam-player.netlify.app",
-  "https://xcam-beta.netlify.app"
+  "https://xcam-beta.netlify.app",
+  "https://playhls.com"
 ];
 
 // ====================================
