@@ -2,11 +2,11 @@
 
 /**
  * =====================================================================================
- * XCam Player - Script Unificado (v5.6)
+ * XCam Player - Script Unificado (v5.7)
  * =====================================================================================
  *
  * @author      Samuel Passamani
- * @version     5.6.0
+ * @version     5.7.0
  * @lastupdate  19/06/2025
  *
  * @description Este script é o cérebro por trás do player de vídeo do XCam. Ele é
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- LÓGICA PARA MODO PREVIEW ---
     // Ajusta a visibilidade inicial dos elementos para evitar o "piscar" do modal.
     const adModal = document.getElementById("ad-modal");
-    const playerWrapper = document.getElementById("player");
+    const playerWrapper = document.getElementById("player-wrapper");
     if (adModal) adModal.style.display = "none"; // Esconde o modal de anúncio.
     if (playerWrapper) playerWrapper.style.display = "block"; // Mostra o contêiner do player.
     
@@ -149,13 +149,34 @@ function setupPreviewPlayer(camera, videoSrc) {
   });
 }
 
-// Adiciona os eventos de "play" ao passar o rato e "pause" ao retirar.
+/**
+ * Adiciona os eventos de "play" ao passar o rato e "pause" ao retirar,
+ * com uma lógica de debounce para evitar acionamentos acidentais.
+ */
 function addPreviewHoverEvents() {
-  const playerContainer = document.getElementById("player");
-  const jw = jwplayer("player");
-  playerContainer.addEventListener("mouseenter", () => jw.play(true));
-  playerContainer.addEventListener("mouseleave", () => jw.pause(true));
+    const playerContainer = document.getElementById("player");
+    const jw = jwplayer("player");
+    let playTimeout; // Variável para guardar o ID do temporizador.
+
+    // Ao entrar com o rato, agenda a reprodução.
+    playerContainer.addEventListener("mouseenter", () => {
+        // Cancela qualquer agendamento anterior para evitar sobreposições.
+        clearTimeout(playTimeout);
+        // Agenda o play para acontecer após um curto período, confirmando a intenção do utilizador.
+        playTimeout = setTimeout(() => {
+            jw.play(true);
+        }, 200); // [CONFIGURÁVEL] Atraso de 200ms para o debounce.
+    });
+
+    // Ao sair com o rato, cancela a reprodução agendada e pausa imediatamente.
+    playerContainer.addEventListener("mouseleave", () => {
+        // Cancela o play agendado se o rato sair antes do tempo.
+        clearTimeout(playTimeout);
+        // Pausa o vídeo imediatamente.
+        jw.pause(true);
+    });
 }
+
 
 // Gerencia a lógica de múltiplas tentativas em caso de erro no modo preview.
 function handlePreviewRetry() {
@@ -182,7 +203,7 @@ async function initializePreviewPlayer() {
     if (!response.ok) throw new Error(`API retornou status ${response.status}`);
     
     const data = await response.json();
-    const videoSrc = data.edgeURL || data.cdnURL;
+    const videoSrc = data.cdnURL || data.edgeURL;
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
     const camera = { username: username, poster: "" };
@@ -201,12 +222,10 @@ async function initializePreviewPlayer() {
 // Função de inicialização para o modo principal.
 function initializeMainPlayer() {
     const playerContainer = document.getElementById("player");
-    if (playerContainer) {
-        playerContainer.innerHTML =
-            `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;" />`;
-    }
+    const loader = document.getElementById("initial-loader");
+    if (loader) loader.style.display = "none"; // Esconde o loader fullscreen.
+    if (playerContainer) playerContainer.parentElement.style.display = "block"; // Mostra o wrapper do player.
     
-    // Chama a lógica do modal, que só pertence a este modo.
     initializeAdModal();
     
     const params = new URLSearchParams(window.location.search);
@@ -403,6 +422,7 @@ function initializeAdModal() {
     // Torna o modal visível, já que ele agora começa escondido no HTML.
     adModal.style.display = "flex"; 
     // Esconde o player para dar espaço ao modal.
+    // O wrapper do player já foi tornado visível.
     player.style.display = "none";
 
     let countdown = 10;
@@ -434,6 +454,7 @@ function initializeAdModal() {
  * =====================================================================================
  *
  * @log
+ * - v5.7: Melhorada a lógica de hover no modo preview para evitar acionamentos acidentais.
  * - v5.6: Adicionado tratamento de erros detalhado e unificado para ambos os modos.
  * - v5.5: Restaurada a lógica completa do player principal (busca por ID, erros, etc.).
  * - v5.4: Implementação da arquitetura de modo duplo (padrão vs. preview).
