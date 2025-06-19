@@ -32,7 +32,7 @@ const playerInstance = jwplayer("player").setup({
         "https://yts.mx/assets/images/movies/sabina_tortured_for_christ_the_nazi_years_2021/large-screenshot3.jpg",
       sources: [
         {
-          file: "https://api.xcam.gay/stream/likescock5",
+          file: "https://api.xcam.gay/stream/marcfitnessx",
           type: "video/webm",
           label: "720p"
         },
