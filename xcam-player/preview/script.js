@@ -100,6 +100,11 @@ function setupPlayer(camera, videoSrc) {
     displaydescription: false,
     abouttext: "",
     aboutlink: "",
+    hlsjsConfig: {
+
+    withCredentials: false
+
+    },
     skin: { name: "netflix" },
     playlist: [
       {
