@@ -96,16 +96,6 @@ playerInstance.on("ready", function () {
   const timeSlider = playerContainer.querySelector(".jw-slider-time");
   buttonContainer.replaceChild(timeSlider, spacer);
 
-  // Detect adblock
-  playerInstance.on("adBlock", () => {
-    const modal = document.querySelector("div.modal");
-    modal.style.display = "flex";
-
-    document
-      .getElementById("close")
-      .addEventListener("click", () => location.reload());
-  });
-
   // Forward 10 seconds
   const rewindContainer = playerContainer.querySelector(
     ".jw-display-icon-rewind"
