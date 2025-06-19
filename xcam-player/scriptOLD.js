@@ -2,11 +2,11 @@
 
 /**
  * =====================================================================================
- * XCam Player - Script Unificado (v6.2)
+ * XCam Player - Script Unificado (v5.7)
  * =====================================================================================
  *
  * @author      Samuel Passamani
- * @version     6.2.0
+ * @version     5.7.0
  * @lastupdate  19/06/2025
  *
  * @description Este script é o cérebro por trás do player de vídeo do XCam. Ele é
@@ -14,54 +14,70 @@
  * controlados pelo parâmetro de URL `?mode=preview`.
  *
  * @mode        1. **Modo Padrão (Player Completo):**
- * - Executado quando nenhum parâmetro `mode` é fornecido.
- * - Preserva TODA a funcionalidade original e estável, incluindo busca por `user` e `id`,
- * o modal de anúncio e o tratamento de erros detalhado.
+ * - Ativado por defeito.
+ * - Exibe um player de vídeo completo com todos os controlos,
+ * logo, opções de partilha e um modal de anúncio inicial.
+ * - Suporta o carregamento de transmissões por `?user=` ou `?id=`.
  *
  * @mode        2. **Modo Preview (Poster Animado):**
- * - Ativado com `?mode=preview`.
- * - Ideal para ser usado em `iframes` numa grelha.
- * - Oculta toda a interface do player via CSS e executa uma lógica de preview.
+ * - Ativado com a adição de `?mode=preview` à URL.
+ * - Ideal para ser embutido em `iframes` numa grelha de utilizadores.
+ * - Oculta completamente a interface do player via injeção de CSS.
+ * - Comportamento: Autoplay mudo por um tempo configurável, pausa,
+ * e reativa com a passagem do rato (hover).
+ * - Implementa um sistema robusto de tentativas em caso de erro.
  *
  * =====================================================================================
  */
 
 // --- Roteador Principal ---
-// Ponto de entrada que decide qual modo do player inicializar.
+// Este evento é o ponto de entrada. Ele espera o DOM estar pronto e então decide
+// qual modo do player inicializar com base nos parâmetros da URL.
 document.addEventListener("DOMContentLoaded", () => {
+  // Cria um objeto para facilitar a manipulação dos parâmetros da URL.
   const params = new URLSearchParams(window.location.search);
+  // Verifica se o parâmetro `mode` com o valor `preview` existe.
   const isPreviewMode = params.get("mode") === "preview";
 
   if (isPreviewMode) {
+    // --- LÓGICA PARA MODO PREVIEW ---
+    // Ajusta a visibilidade inicial dos elementos para evitar o "piscar" do modal.
+    const adModal = document.getElementById("ad-modal");
+    const player = document.getElementById("player");
+    if (adModal) adModal.style.display = "none"; // Esconde o modal de anúncio.
+    if (player) player.style.display = "block"; // Mostra o contêiner do player.
+    
+    // Chama a função que inicializa o player no modo de preview.
     initializePreviewPlayer();
   } else {
-    // A lógica do modal de anúncio pertence apenas ao player principal.
-    initializeAdModal();
-    // A inicialização do player principal já mostra um loading.
+    // --- LÓGICA PARA MODO PADRÃO ---
+    // Chama a função que inicializa o player completo.
     initializeMainPlayer();
   }
 });
 
 
 // =====================================================================================
-// === MODO PREVIEW (Poster Animado) ===================================================
+// === MODO PREVIEW ====================================================================
 // =====================================================================================
 
+// Objeto de configuração para o modo preview, centralizando os valores ajustáveis.
 const PREVIEW_CONFIG = {
-  MAX_RETRIES: 3,
-  RETRY_DELAY: 5000,
-  PREVIEW_DURATION: 500,
-  API_ENDPOINT: "https://api.xcam.gay/user/",
-  FALLBACK_VIDEO: "https://xcam-drive.aserio.workers.dev/0:/files/loading.webm",
-  LOADING_GIF: "https://xcam.gay/src/loading.gif"
+  MAX_RETRIES: 7,       // [CONFIGURÁVEL] Número máximo de tentativas de recarregamento.
+  RETRY_DELAY: 5000,    // [CONFIGURÁVEL] Tempo de espera entre as tentativas (em ms).
+  PREVIEW_DURATION: 3000, // [CONFIGURÁVEL] Duração do autoplay inicial (em ms).
+  API_ENDPOINT: "https://api.xcam.gay/user/", // Endpoint da API para o preview.
+  FALLBACK_VIDEO: "https://xcam-drive.aserio.workers.dev/0:/files/loading.webm", // Vídeo de erro.
+  LOADING_GIF: "https://xcam.gay/src/loading.gif" // Imagem de carregamento.
 };
 
+// Contador para as tentativas de recarregamento no modo preview.
 let previewRetryCount = 0;
 
+// Injeta o CSS que oculta toda a interface do JW Player.
 function injectPreviewCSS() {
   const style = document.createElement("style");
   style.innerHTML = `
-    body { background-image: none !important; }
     #player .jw-controls, #player .jw-display, #player .jw-display-container,
     #player .jw-preview, #player .jw-logo, #player .jw-title, #player .jw-nextup-container,
     #player .jw-playlist-container, #player .jw-captions, #player .jw-button-container,
@@ -69,17 +85,23 @@ function injectPreviewCSS() {
         display: none !important; opacity: 0 !important; visibility: hidden !important;
         pointer-events: none !important; background: transparent !important;
     }
+    #player .jw-state-paused .jw-preview, #player .jw-flag-paused .jw-preview, #player .jw-preview {
+        opacity: 1 !important; filter: none !important; background: none !important;
+    }
+    #player .jw-display-container { background: transparent !important; }
   `;
   document.head.appendChild(style);
 }
 
+// Exibe a imagem de carregamento enquanto os dados são buscados.
 function showPreviewLoading() {
-    const playerContainer = document.getElementById("player");
-    if (playerContainer) {
-        playerContainer.innerHTML = `<img src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;" />`;
-    }
+  const playerContainer = document.getElementById("player");
+  if (playerContainer) {
+    playerContainer.innerHTML = `<img src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;" />`;
+  }
 }
 
+// Exibe o vídeo de fallback final após todas as tentativas falharem.
 function showPreviewFallback() {
   const player = document.getElementById("player");
   if (player) {
@@ -94,16 +116,15 @@ function showPreviewFallback() {
   }
 }
 
+// Configura e monta o player no modo preview.
 function setupPreviewPlayer(camera, videoSrc) {
   const playerContainer = document.getElementById("player");
-  if (!playerContainer) return;
-  
-  playerContainer.innerHTML = "";
-  previewRetryCount = 0;
+  if (playerContainer) playerContainer.innerHTML = "";
+  previewRetryCount = 0; // Reseta o contador de tentativas em caso de sucesso.
 
   jwplayer("player").setup({
     controls: false,
-    autostart: true,
+    autostart: true, // Começa a tocar automaticamente para o efeito de preview.
     mute: true,
     hlsjsConfig: { withCredentials: true },
     playlist: [{
@@ -112,43 +133,64 @@ function setupPreviewPlayer(camera, videoSrc) {
       sources: [{ file: videoSrc, type: "application/x-mpegURL" }]
     }],
     events: {
-      error: handlePreviewPlayerError
+      error: handlePreviewPlayerError // Usa o handler de erro específico do modo preview.
     }
   });
 
+  // Quando o player está pronto, define o comportamento de autoplay/pause.
   jwplayer("player").on("ready", () => {
     setTimeout(() => {
+      // Pausa o vídeo após a duração do preview, se ainda estiver a tocar.
       if (jwplayer("player")?.getState() !== 'paused') {
         jwplayer("player").pause(true);
       }
     }, PREVIEW_CONFIG.PREVIEW_DURATION);
-    addPreviewHoverEvents();
+    addPreviewHoverEvents(); // Adiciona os eventos de interação do rato.
   });
 }
 
+/**
+ * Adiciona os eventos de "play" ao passar o rato e "pause" ao retirar,
+ * com uma lógica de debounce para evitar acionamentos acidentais.
+ */
 function addPreviewHoverEvents() {
     const playerContainer = document.getElementById("player");
     const jw = jwplayer("player");
-    let playTimeout;
+    let playTimeout; // Variável para guardar o ID do temporizador.
+
+    // Ao entrar com o rato, agenda a reprodução.
     playerContainer.addEventListener("mouseenter", () => {
+        // Cancela qualquer agendamento anterior para evitar sobreposições.
         clearTimeout(playTimeout);
-        playTimeout = setTimeout(() => jw.play(true), 200);
+        // Agenda o play para acontecer após um curto período, confirmando a intenção do utilizador.
+        playTimeout = setTimeout(() => {
+            jw.play(true);
+        }, 200); // [CONFIGURÁVEL] Atraso de 200ms para o debounce.
     });
+
+    // Ao sair com o rato, cancela a reprodução agendada e pausa imediatamente.
     playerContainer.addEventListener("mouseleave", () => {
+        // Cancela o play agendado se o rato sair antes do tempo.
         clearTimeout(playTimeout);
+        // Pausa o vídeo imediatamente.
         jw.pause(true);
     });
 }
 
+
+// Gerencia a lógica de múltiplas tentativas em caso de erro no modo preview.
 function handlePreviewRetry() {
   previewRetryCount++;
   if (previewRetryCount <= PREVIEW_CONFIG.MAX_RETRIES) {
+    console.log(`Tentando recarregar... (${previewRetryCount}/${PREVIEW_CONFIG.MAX_RETRIES})`);
     setTimeout(initializePreviewPlayer, PREVIEW_CONFIG.RETRY_DELAY);
   } else {
+    console.error(`Máximo de tentativas atingido. Exibindo fallback.`);
     showPreviewFallback();
   }
 }
 
+// Função de inicialização para o modo preview.
 async function initializePreviewPlayer() {
   injectPreviewCSS();
   showPreviewLoading();
@@ -174,81 +216,77 @@ async function initializePreviewPlayer() {
 
 
 // =====================================================================================
-// === MODO PADRÃO (Player Completo - LÓGICA ORIGINAL PRESERVADA) ======================
+// === MODO PADRÃO (Player Completo - Lógica Original Preservada) ======================
 // =====================================================================================
 
+// Função de inicialização para o modo principal.
 function initializeMainPlayer() {
-  const playerContainer = document.getElementById("player");
-  if (playerContainer) {
-    playerContainer.innerHTML =
-      `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;display:block;" />`;
-  }
-  
-  const params = new URLSearchParams(window.location.search);
+    const playerContainer = document.getElementById("player");
+    const loader = document.getElementById("player");
+    if (loader) loader.style.display = "none"; // Esconde o loader fullscreen.
+    if (playerContainer) playerContainer.parentElement.style.display = "block"; // Mostra o  do player.
+    
+    initializeAdModal();
+    
+    const params = new URLSearchParams(window.location.search);
 
-  if (params.has("user")) {
-    const username = params.get("user");
-    fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`)
-      .then((response) => {
-        if (!response.ok) throw new Error("Erro ao carregar dados do usuário.");
-        return response.json();
-      })
-      .then((data) => {
-        const graphData = data.graphData || {};
-        const streamInfo = data.streamInfo || {};
-        const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
+    // Fluxo 1: Carrega por nome de utilizador.
+    if (params.has("user")) {
+        const username = params.get("user");
+        fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`)
+            .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+            .then(data => {
+                const graphData = data.graphData || {};
+                const streamInfo = data.streamInfo || {};
+                const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || graphData.preview?.src;
 
-        if (!videoSrc) {
-          console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
-          reloadWithFallback();
-          return;
-        }
-        const poster = graphData.preview?.poster || graphData.profileImageURL || "https://xcam.gay/src/loading.gif";
-        const camera = {
-          username: graphData.username || username,
-          tags: graphData.tags || [],
-          preview: { poster }
-        };
-        setupMainPlayer(camera, username, videoSrc, poster);
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar dados do usuário:", err);
+                if (!videoSrc) {
+                    reloadWithFallback();
+                    return;
+                }
+
+                const poster = graphData.preview?.poster || graphData.profileImageURL || "https://xcam.gay/src/loading.gif";
+                const camera = {
+                    username: graphData.username || username,
+                    tags: graphData.tags || [],
+                };
+                setupMainPlayer(camera, username, videoSrc, poster);
+            })
+            .catch(err => {
+                console.error("Erro ao buscar dados do usuário:", err);
+                reloadWithFallback();
+            });
+    // Fluxo 2: Carrega por ID da transmissão.
+    } else if (params.has("id")) {
+        const searchValue = params.get("id");
+        fetch("https://api.xcam.gay/?limit=3333&format=json")
+            .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+            .then(data => {
+                const items = data?.broadcasts?.items || [];
+                const camera = items.find(item => item.id == searchValue);
+                if (!camera || !camera.preview?.src) {
+                    reloadWithFallback();
+                    return;
+                }
+                const poster = camera.preview?.poster || camera.profileImageURL || "https://xcam.gay/src/loading.gif";
+                setupMainPlayer(camera, camera.username, camera.preview.src, poster);
+            })
+            .catch(err => {
+                console.error("Erro ao carregar a lista geral:", err);
+                reloadWithFallback();
+            });
+    // Fluxo 3: Nenhum parâmetro válido.
+    } else {
         reloadWithFallback();
-      });
-
-  } else if (params.has("id")) {
-    const searchValue = params.get("id");
-    fetch("https://api.xcam.gay/?limit=3333&format=json")
-      .then((response) => {
-        if (!response.ok) throw new Error("Erro ao carregar lista de transmissões");
-        return response.json();
-      })
-      .then((data) => {
-        const items = data?.broadcasts?.items || [];
-        const camera = items.find((item) => item.id == searchValue);
-        if (!camera || !camera.preview?.src) {
-          console.warn(`Nenhuma câmera encontrada com o id: ${searchValue}`);
-          reloadWithFallback();
-          return;
-        }
-        const poster = camera.preview?.poster || camera.profileImageURL || "https://xcam.gay/src/loading.gif";
-        setupMainPlayer(camera, camera.username, camera.preview.src, poster);
-      })
-      .catch((err) => {
-        console.error("Erro ao carregar a lista geral:", err);
-        reloadWithFallback();
-      });
-  } else {
-    console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
-    reloadWithFallback();
-  }
+    }
 }
 
+// Configura e monta o player no modo principal.
 function setupMainPlayer(camera, username, videoSrc, poster) {
     const playerContainer = document.getElementById("player");
     if (playerContainer) playerContainer.innerHTML = "";
 
-    const playerInstance = jwplayer("player").setup({
+    jwplayer("player").setup({
         controls: true,
         sharing: true,
         autostart: false,
@@ -261,16 +299,11 @@ function setupMainPlayer(camera, username, videoSrc, poster) {
             file: "https://xcam.gay/src/logo.png",
             link: "https://xcam.gay"
         },
-        captions: {
-            color: "#efcc00",
-            fontSize: 16,
-            backgroundOpacity: 0,
-            edgeStyle: "raised"
-        },
+        hlsjsConfig: { withCredentials: true },
         playlist: [{
             title: `@${camera?.username || username || "Unknown"}`,
-            description: Array.isArray(camera?.tags) ? camera.tags.map((tag) => `#${tag.name}`).join(" ") : "",
-            image: poster || "https://xcam.gay/src/loading.gif",
+            description: Array.isArray(camera?.tags) ? camera.tags.map(tag => `#${tag.name}`).join(" ") : "",
+            image: poster,
             sources: [{
                 file: videoSrc,
                 type: "application/x-mpegURL",
@@ -278,17 +311,18 @@ function setupMainPlayer(camera, username, videoSrc, poster) {
             }]
         }],
         events: {
-            error: handleMainPlayerError
+            error: handleMainPlayerError // Usa o handler de erro detalhado para o modo principal.
         }
     });
 }
 
+// Função de fallback simples para o modo principal.
 function reloadWithFallback() {
     const player = document.getElementById("player");
     if (player) {
         player.innerHTML = "";
         jwplayer("player").setup({
-            file: "https://xcam.gay/src/error.mp4",
+            file: "https://xcam-drive.aserio.workers.dev/0:/files/error.webm",
             autostart: true,
             repeat: true,
             controls: false
@@ -297,9 +331,10 @@ function reloadWithFallback() {
 }
 
 // =====================================================================================
-// === TRATAMENTO DE ERROS (Lógica original preservada e expandida) ====================
+// === TRATAMENTO DE ERROS UNIFICADO ===================================================
 // =====================================================================================
 
+// Mapeamento completo dos códigos de erro do JW Player para mensagens amigáveis.
 const ERROR_MESSAGES = {
     100000: "<strong>Erro desconhecido.</strong> O player falhou ao carregar.",
     100001: "<strong>Tempo limite.</strong> A configuração do player demorou muito.",
@@ -333,22 +368,23 @@ const ERROR_MESSAGES = {
     232600: "<strong>Erro no stream.</strong> O arquivo está indisponível ou corrompido."
 };
 
+/**
+ * Exibe uma mensagem de erro detalhada no player e inicia um countdown para uma ação de fallback.
+ * @param {object} event - O objeto de erro do JW Player.
+ * @param {function} fallbackAction - A função a ser chamada após o countdown (ex: reloadWithFallback ou handlePreviewRetry).
+ */
 function displayErrorMessage(event, fallbackAction) {
-  console.error("Erro no JW Player:", event.message);
+    console.error("Erro no JW Player:", event);
+    const playerContainer = document.getElementById("player");
+    let countdown = 5;
+    const message = ERROR_MESSAGES[event.code] || `<strong>Erro desconhecido (${event.code}).</strong>`;
+    
+    playerContainer.innerHTML = `
+      <div style="color: #FFF; background: #333; text-align: center; padding: 20px; font-family: sans-serif; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <p style="margin: 0; font-size: 14px;">${message}</p>
+        <p style="margin: 10px 0 0 0; font-size: 12px;">A tentar novamente em <span id="countdown">${countdown}</span>s...</p>
+      </div>`;
 
-  const playerContainer = document.getElementById("player");
-  let countdown = 5;
-
-  const message = ERROR_MESSAGES[event.code] || `<strong>Erro desconhecido (${event.code}).</strong>`;
-
-  const display = () => {
-    if(playerContainer) {
-        playerContainer.innerHTML = `
-          <div style="color: #FFF; background: #333; text-align: center; padding: 20px; font-family: sans-serif; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-            <p style="margin: 0; font-size: 14px;">${message}</p>
-            <p style="margin: 10px 0 0 0; font-size: 12px;">A tentar novamente em <span id="countdown">${countdown}</span>s...</p>
-          </div>`;
-    }
     const interval = setInterval(() => {
         countdown--;
         const countdownSpan = document.getElementById("countdown");
@@ -358,18 +394,18 @@ function displayErrorMessage(event, fallbackAction) {
             fallbackAction();
         }
     }, 1000);
-  };
-  
-  display();
 }
 
+// Handler de erro específico para o modo principal, que chama o fallback simples.
 function handleMainPlayerError(event) {
     displayErrorMessage(event, reloadWithFallback);
 }
 
+// Handler de erro específico para o modo preview, que chama a lógica de múltiplas tentativas.
 function handlePreviewPlayerError(event) {
     displayErrorMessage(event, handlePreviewRetry);
 }
+
 
 // =====================================================================================
 // === LÓGICA DO MODAL DE ANÚNCIO (Apenas para Modo Padrão) ============================
@@ -383,13 +419,15 @@ function initializeAdModal() {
 
     if (!adModal || !closeAdButton || !countdownElement || !player) return;
 
-    // Remove a imagem de fundo do body e mostra o modal.
-    document.body.style.backgroundImage = 'none';
-    adModal.style.display = "flex";
+    // Torna o modal visível, já que ele agora começa escondido no HTML.
+    adModal.style.display = "flex"; 
+    // Esconde o player para dar espaço ao modal.
+    // O  do player já foi tornado visível.
     player.style.display = "none";
 
     let countdown = 10;
     countdownElement.textContent = countdown;
+
     const interval = setInterval(() => {
         countdown--;
         countdownElement.textContent = countdown;
@@ -410,59 +448,20 @@ function initializeAdModal() {
 }
 
 
-// =====================================================================================
-// === Funções Auxiliares Preservadas do Script Original ===============================
-// =====================================================================================
-
-function addDownloadButton(playerInstance) {
-  const buttonId = "download-video-button";
-  const iconPath = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL[...]";
-  const tooltipText = "Download Video";
-
-  playerInstance.addButton(
-    iconPath,
-    tooltipText,
-    () => {
-      const playlistItem = playerInstance.getPlaylistItem();
-      const anchor = document.createElement("a");
-      anchor.setAttribute("href", playlistItem.file);
-      anchor.setAttribute("download", playlistItem.file.split("/").pop());
-      anchor.style.display = "none";
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-    },
-    buttonId
-  );
-}
-
-function alignTimeSlider(playerInstance) {
-  const playerContainer = playerInstance.getContainer();
-  const buttonContainer = playerContainer.querySelector(".jw-button-container");
-  const spacer = buttonContainer.querySelector(".jw-spacer");
-  const timeSlider = playerContainer.querySelector(".jw-slider-time");
-  if (spacer && timeSlider) {
-    buttonContainer.replaceChild(timeSlider, spacer);
-  }
-}
-
 /**
  * =====================================================================================
  * FIM DO SCRIPT
  * =====================================================================================
  *
  * @log
- * - v5.8: Restaurada a lógica completa do player principal (busca por ID, erros, etc.)
- * e corrigida a inicialização para evitar "race conditions".
- * - v5.7: Melhorada a lógica de hover no modo preview com debounce.
- * - v5.6: Integrado tratamento de erros detalhado para ambos os modos.
+ * - v5.7: Melhorada a lógica de hover no modo preview para evitar acionamentos acidentais.
+ * - v5.6: Adicionado tratamento de erros detalhado e unificado para ambos os modos.
  * - v5.5: Restaurada a lógica completa do player principal (busca por ID, erros, etc.).
  * - v5.4: Implementação da arquitetura de modo duplo (padrão vs. preview).
  *
  * @roadmap
- * - Considerar a implementação de um sistema de cache no lado do servidor (com
- * Cloudflare Workers e KV) para diminuir a carga na API principal.
- * - Adicionar funcionalidade de "Favoritos" com persistência em localStorage.
+ * - Implementar "Infinite Scrolling" na grelha de `broadcasts.js`.
+ * - Adicionar funcionalidade de "Favoritos" com persistência em `localStorage`.
  *
  * =====================================================================================
  */
