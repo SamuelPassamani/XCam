@@ -6,38 +6,29 @@
  * =====================================================================================
  *
  * @author      Samuel Passamani
- * @version     4.0.0
+ * @version     4.2.0
  * @lastupdate  18/06/2025
  *
  * @description Este script é responsável por montar e controlar o player de vídeo
  * individual que aparece dentro de um iframe. Ele é projetado para ser
  * um "preview" dinâmico e sem controles.
  *
- * @strategy    1. **Busca por Parâmetro**: O script identifica qual usuário exibir
- * através do parâmetro `?user={username}` na URL do iframe.
- * 2. **Consulta à API**: Faz uma chamada à API `api.xcam.gay` para obter
- * os dados da transmissão daquele usuário específico.
- * 3. **Player Limpo**: Monta o JW Player sem quaisquer controles visíveis,
- * sem áudio e com interações de mouse para play/pause.
- * 4. **Ordem de Prioridade de Vídeo**: Busca a fonte do vídeo na seguinte
- * ordem: `edgeURL`, `cdnURL`.
- * 5. **Fallback Robusto com Tentativas**: Em caso de erro, tenta recarregar
- * o player 3 vezes com um intervalo de 5 segundos antes de mostrar
- * um vídeo de erro final.
+ * @strategy    1. **Busca por Parâmetro**: Identifica o usuário pelo `?user={username}`.
+ * 2. **Consulta à API**: Chama `api.xcam.gay/user/{username}/liveInfo`.
+ * 3. **Player Limpo**: Monta o JW Player sem UI, com interações de mouse.
+ * 4. **Ordem de Prioridade**: Busca o vídeo em `edgeURL`, `cdnURL`.
+ * 5. **Fallback com Tentativas**: Tenta recarregar em caso de falha.
  *
  * =====================================================================================
  */
 
 // === Variáveis de Controle de Tentativas ===
 let retryCount = 0;
-const MAX_RETRIES = 3; // [CONFIGURÁVEL] Número máximo de tentativas de recarregamento.
-const RETRY_DELAY = 5000; // [CONFIGURÁVEL] Tempo de espera entre tentativas (em milissegundos).
+const MAX_RETRIES = 3; // [CONFIGURÁVEL] Número máximo de tentativas.
+const RETRY_DELAY = 5000; // [CONFIGURÁVEL] Tempo de espera entre tentativas (ms).
 
 /**
  * 1. Injeção de CSS para Ocultar a UI do JW Player
- * Esta função injeta estilos diretamente no <head> da página para garantir que
- * todos os elementos visuais do player (controles, logo, título) sejam
- * completamente ocultos, resultando em um visual limpo de apenas vídeo.
  */
 (function injectPlayerCSS() {
   const style = document.createElement("style");
@@ -59,8 +50,6 @@ const RETRY_DELAY = 5000; // [CONFIGURÁVEL] Tempo de espera entre tentativas (e
 
 /**
  * 2. Exibição de Tela de Carregamento
- * Para melhorar a experiência do usuário, esta função exibe uma imagem de
- * "loading" animada enquanto os dados da API estão sendo buscados.
  */
 (function showLoading() {
   const preloadImage = new Image();
@@ -73,8 +62,7 @@ const RETRY_DELAY = 5000; // [CONFIGURÁVEL] Tempo de espera entre tentativas (e
 
 /**
  * 3. Função de Fallback Final
- * Esta função é chamada SOMENTE após todas as tentativas de recarregamento falharem.
- * Ela carrega um vídeo de erro local que fica em loop.
+ * Chamada após todas as tentativas falharem.
  */
 function showFinalFallback() {
   const player = document.getElementById("player");
@@ -94,16 +82,14 @@ function showFinalFallback() {
 
 /**
  * 4. Configuração e Montagem do Player
- * Função principal que recebe os dados da câmera e a URL do vídeo para
- * inicializar o JW Player com as configurações corretas.
- * @param {Object} camera  - Objeto com dados do usuário (username, tags, poster).
- * @param {string} videoSrc - A URL do stream de vídeo a ser reproduzido.
+ * @param {Object} camera  - Objeto com dados do usuário.
+ * @param {string} videoSrc - A URL do stream de vídeo.
  */
 function setupPlayer(camera, videoSrc) {
   const playerContainer = document.getElementById("player");
-  if (playerContainer) playerContainer.innerHTML = ""; // Limpa a tela de loading
+  if (playerContainer) playerContainer.innerHTML = "";
 
-  retryCount = 0; // Reseta a contagem de tentativas em caso de sucesso
+  retryCount = 0; // Reseta a contagem de tentativas em caso de sucesso.
 
   jwplayer("player").setup({
     controls: false,
@@ -115,6 +101,10 @@ function setupPlayer(camera, videoSrc) {
     abouttext: "",
     aboutlink: "",
     skin: { name: "netflix" },
+    // CORREÇÃO: Adicionado o bloco de configuração HLS para lidar com CORS/permissões.
+    hlsjsConfig: {
+      withCredentials: true
+    },
     playlist: [
       {
         title: `@${camera.username}`,
@@ -178,7 +168,7 @@ function handleRetry() {
 
 /**
  * 6. Função de Inicialização
- * Orquestra todo o processo.
+ * Orquestra todo o processo de carregamento do player.
  */
 async function initializePlayer() {
   try {
@@ -196,16 +186,14 @@ async function initializePlayer() {
     const data = await response.json();
     console.log("API Response Data:", data);
 
-    // CORREÇÃO: Busca as URLs diretamente no objeto 'data'
     const videoSrc = data.edgeURL || data.cdnURL;
     if (!videoSrc) {
       throw new Error("Nenhuma fonte de vídeo (edgeURL, cdnURL) encontrada na resposta da API.");
     }
 
-    // CORREÇÃO: Monta o objeto 'camera' com os dados disponíveis.
     const camera = {
-      username: username, // Usa o username da URL, que é confiável.
-      poster: data.profileImageURL || "" // Tenta usar um poster se existir.
+      username: username,
+      poster: "" 
     };
 
     setupPlayer(camera, videoSrc);
