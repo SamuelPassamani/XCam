@@ -1,46 +1,33 @@
 /**
  * ================================================================
- * XCam API Worker - xcam-api/index.js
+ * XCam API Worker - xcam-api/index.js (Refatorado com Proxy de Mídia)
  * ================================================================
  *
  * Descrição geral:
- * Este arquivo implementa o Worker principal da API XCam utilizando Cloudflare Workers para orquestrar, filtrar, transformar e servir dados públicos da plataforma CAM4 de forma flexível e segura.
+ * Este arquivo implementa o Worker principal da API XCam. Ele atua como um hub de dados inteligente
+ * e como um proxy de redirecionamento para streams de mídia, resolvendo problemas de CORS/Referer
+ * e abstraindo a complexidade das fontes de dados.
  *
  * Funcionalidades principais:
- * - Integração direta com múltiplos endpoints públicos do CAM4, reunindo dados de transmissões ao vivo (GraphQL), informações de stream e detalhes de perfil.
- * - Endpoints dinâmicos e inteligentes: permite consultas agregadas por usuário (?user=USERNAME), listagens filtradas, paginação e exportação em formatos JSON ou CSV.
- * - Implementa CORS dinâmico, restringindo requisições a domínios autorizados e reforçando a segurança de acesso.
- * - Otimização de desempenho: uso de fetch assíncrono paralelo para múltiplas fontes, minimizando latência e garantindo respostas rápidas.
- * - Modularidade e clareza: arquitetura separando responsabilidades em funções puras para fetch, filtros, formatação e tratamento de erros, seguindo Clean Architecture.
- * - Novo endpoint: ?rec={username} - proxy para Google Apps Script, retorna apenas dados do rec.json do usuário.
- *
- * Público-alvo:
- * - Sistemas e aplicações que demandam integração com dados públicos do CAM4, incluindo produtos da suíte XCam, dashboards, automações, análises e integrações externas.
- *
- * Manutenção e escalabilidade:
- * - Estruturado para fácil extensão/modificação, permitindo inclusão de novos filtros, endpoints e integrações com mínimo impacto.
- * - Código documentado, com tratamento rigoroso de erros, mensagens claras e status HTTP apropriados para cada cenário.
+ * - Roteamento avançado para múltiplos endpoints, incluindo:
+ * - `/?user={username}`: Agregação de dados de perfil, live e grafo.
+ * - `/?rec={username}`: Proxy para gravações via Google Apps Script.
+ * - `/stream/{username}`: NOVO! Proxy de redirecionamento para streams HLS.
+ * - E outros para filtragem e dados específicos.
+ * - Segurança de acesso com lista de domínios permitidos (CORS).
+ * - Arquitetura modular e de alta performance com chamadas paralelas.
  *
  * Autor original: Samuel Passamani
- * Manutenção e evolução: Equipe XCam
- * Última atualização: 2025-06-11
+ * Refatoração e Documentação: Equipe XCam & Gemini
+ * Última atualização: 2025-06-19
  * ================================================================
  */
 
 // ===============================
 // === Conversor JSON para CSV ===
 // ===============================
-
-/**
- * Converte um array de objetos JSON para uma string CSV.
- * - Adiciona aspas duplas em strings que contenham vírgulas ou aspas.
- * - Garante escape correto de aspas duplas.
- * - Utilizado quando o parâmetro format=csv é informado na URL.
- * @param {Array<Object>} items - Lista de objetos para conversão.
- * @returns {string} CSV gerado.
- */
 function jsonToCsv(items) {
-  if (!items.length) return "";
+  if (!items || items.length === 0) return "";
   const headers = Object.keys(items[0]);
   const csvRows = items.map(item =>
     headers.map(h => {
@@ -58,12 +45,6 @@ function jsonToCsv(items) {
 // ========================================
 // === Lista de domínios permitidos CORS ===
 // ========================================
-
-/**
- * Lista estática de domínios autorizados para requisições CORS.
- * Inclui domínios oficiais XCam, subdomínios e ambientes de testes.
- * Atualizar conforme contexto de deploy.
- */
 const ALLOWED_ORIGINS = [
   "https://xcam.gay",
   "https://beta.xcam.gay",
@@ -100,14 +81,6 @@ const ALLOWED_ORIGINS = [
 // ====================================
 // === Headers dinâmicos para CORS  ===
 // ====================================
-
-/**
- * Gera headers CORS dinâmicos conforme origem da requisição.
- * - Permite apenas domínios da lista ALLOWED_ORIGINS.
- * - Inclui headers padrão para métodos e content-type.
- * @param {string} origin - Origem da requisição.
- * @returns {Object} Headers apropriados para resposta CORS.
- */
 function getCorsHeaders(origin) {
   const headers = {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -123,15 +96,6 @@ function getCorsHeaders(origin) {
 // =========================================================
 // === Monta corpo GraphQL para listagem de transmissões ===
 // =========================================================
-
-/**
- * Gera o corpo da requisição GraphQL para buscar transmissões públicas do CAM4.
- * - Usa filtro de gênero "male" e ordena por "trending".
- * - Parâmetros offset e limit para paginação.
- * @param {number} offset - Offset/página inicial.
- * @param {number} limit - Limite máximo de resultados.
- * @returns {string} Corpo da requisição em formato JSON.
- */
 function buildCam4Body(offset, limit) {
   return JSON.stringify({
     operationName: "getGenderPreferencePageData",
@@ -174,16 +138,7 @@ function buildCam4Body(offset, limit) {
 // ==================================================
 // === Handler: Busca informações de perfil público ===
 // ==================================================
-
-/**
- * Realiza fetch dos dados de perfil público do usuário no CAM4.
- * Endpoint: /rest/v1.0/profile/${username}/info
- * Retorna objeto de dados ou erro.
- * @param {string} username - Nome do usuário CAM4.
- * @param {Object} corsHeaders - Headers CORS gerados dinamicamente.
- * @returns {Object} Dados de perfil ou erro.
- */
-async function handleUserProfile(username, corsHeaders) {
+async function handleUserProfile(username) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/info`;
   try {
     const response = await fetch(apiUrl, {
@@ -192,10 +147,10 @@ async function handleUserProfile(username, corsHeaders) {
         referer: `https://pt.cam4.com/${username}`
       }
     });
-    if (!response.ok) throw new Error(`Erro CAM4: ${response.status}`);
-    const data = await response.json();
-    return data;
+    if (!response.ok) throw new Error(`Erro CAM4 Profile: ${response.status}`);
+    return await response.json();
   } catch (err) {
+    console.error(`Falha ao buscar perfil para ${username}:`, err.message);
     return { error: "Falha ao buscar perfil", details: err.message };
   }
 }
@@ -203,16 +158,7 @@ async function handleUserProfile(username, corsHeaders) {
 // ====================================================
 // === Handler: Busca informações de stream ao vivo  ===
 // ====================================================
-
-/**
- * Realiza fetch das informações de stream ao vivo do usuário.
- * Endpoint: /rest/v1.0/profile/${username}/streamInfo
- * Retorna objeto de dados ou erro.
- * @param {string} username - Nome do usuário CAM4.
- * @param {Object} corsHeaders - Headers CORS.
- * @returns {Object} Dados de stream ou erro.
- */
-async function handleLiveInfo(username, corsHeaders) {
+async function handleLiveInfo(username) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`;
   try {
     const response = await fetch(apiUrl, {
@@ -221,10 +167,10 @@ async function handleLiveInfo(username, corsHeaders) {
         referer: `https://pt.cam4.com/${username}`
       }
     });
-    if (!response.ok) throw new Error(`Erro CAM4: ${response.status}`);
-    const data = await response.json();
-    return data;
+    if (!response.ok) throw new Error(`Erro CAM4 StreamInfo: ${response.status}`);
+    return await response.json();
   } catch (err) {
+    console.error(`Falha ao buscar streamInfo para ${username}:`, err.message);
     return { error: "Falha ao buscar streamInfo", details: err.message };
   }
 }
@@ -232,24 +178,10 @@ async function handleLiveInfo(username, corsHeaders) {
 // =====================================================================
 // === Handler: Busca e agrega todas as infos de um usuário específico ===
 // =====================================================================
-
-/**
- * Busca informações completas de um usuário a partir do parâmetro de query user.
- * Sempre retorna todos os campos (graphData, streamInfo, profileInfo), mesmo que algum deles seja null ou contenha erro.
- * Executa três requisições:
- *   1. Busca de transmissões públicas (GraphQL) e filtra pelo username.
- *   2. Busca detalhes de stream ao vivo.
- *   3. Busca detalhes de perfil público.
- * Agrega as três respostas em um único JSON.
- * @param {string} user - Nome do usuário a ser consultado.
- * @param {Object} corsHeaders - Headers CORS.
- * @returns {Response} Resposta HTTP JSON com dados agregados, mesmo se parcial.
- */
 async function handleUserFullInfo(user, corsHeaders) {
   const limit = 300;
   let graphData = null;
 
-  // 1. Busca inicial dos broadcasts (transmissões ao vivo)
   try {
     const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
       method: "POST",
@@ -265,21 +197,17 @@ async function handleUserFullInfo(user, corsHeaders) {
       const allItems = firstJson?.data?.broadcasts?.items || [];
       graphData = allItems.find(item => item.username === user) || null;
     } else {
-      // Retorna erro descritivo se a chamada falhar
       graphData = { error: "Erro inicial CAM4", details: firstRes.status };
     }
   } catch (err) {
-    // Retorna erro se request/parse falhar
     graphData = { error: "Falha na consulta GraphQL", details: err.message };
   }
 
-  // 2. Busca paralela dos detalhes de stream e perfil (sempre tenta retornar algo)
   const [streamInfo, profileInfo] = await Promise.all([
-    handleLiveInfo(user, corsHeaders),
-    handleUserProfile(user, corsHeaders)
+    handleLiveInfo(user),
+    handleUserProfile(user)
   ]);
 
-  // 3. Retorna todos os campos, mesmo que incompletos ou com erro
   return new Response(JSON.stringify({
     user,
     graphData,
@@ -293,236 +221,200 @@ async function handleUserFullInfo(user, corsHeaders) {
 // =====================================================================
 // === Handler: Proxy Google Apps Script para rec.json do usuário    ====
 // =====================================================================
-
-/**
- * Handler para novo endpoint ?rec={username}
- * Faz requisição ao Google Apps Script e retorna apenas o conteúdo recebido,
- * sem adicionar outros campos, respeitando CORS e fluxo seguro.
- * @param {string} username
- * @param {Object} corsHeaders
- * @returns {Response}
- */
 async function handleRecProxy(username, corsHeaders) {
-  // URL do Google Apps Script responsável por servir rec.json do usuário
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz6cucO0SvdNSbnlFrUCR9nvh4FCDzMCp138iaRyiuDDWQ9JfPvFlmeevhHUtn0soc_IQ/exec?rec=" + encodeURIComponent(username);
-
   try {
-    // Faz o fetch do Google Apps Script
     const response = await fetch(GAS_URL, {
+      redirect: 'follow',
       headers: { 'accept': 'application/json' }
     });
 
-    const contentType = response.headers.get('content-type') || '';
-    const bodyText = await response.text();
-    // Responde exatamente como o GAS, mantendo CORS e content-type correto
-    // Se a resposta do GAS for JSON, envia como application/json
-    if (contentType.includes("application/json")) {
-      return new Response(bodyText, {
-        headers: {
-          ...corsHeaders,
-          "Cache-Control": "no-store",
-          "Content-Type": "application/json"
-        }
-      });
-    } else {
-      // fallback: responde como texto puro (caso GAS retorne text/plain)
-      return new Response(bodyText, {
-        headers: {
-          ...corsHeaders,
-          "Cache-Control": "no-store",
-          "Content-Type": contentType || "text/plain"
-        }
-      });
-    }
+    const contentType = response.headers.get('content-type') || 'text/plain';
+    const body = await response.text();
+
+    return new Response(body, {
+      status: response.status,
+      headers: { ...corsHeaders, "Content-Type": contentType, "Cache-Control": "no-store" }
+    });
   } catch (err) {
-    // Em caso de erro na consulta ao GAS, retorna erro JSON padronizado
     return new Response(JSON.stringify({ error: "Falha ao consultar rec.json via GAS", details: String(err) }), {
       status: 502,
-      headers: {
-        ...corsHeaders,
-        "Cache-Control": "no-store",
-        "Content-Type": "application/json"
-      }
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   }
 }
 
 // ===============================================================
+// === NOVO! Handler: Proxy de Redirecionamento para Streams HLS ===
+// ===============================================================
+/**
+ * Implementa a lógica de proxy de redirecionamento.
+ * Busca o streamInfo de um usuário e retorna uma resposta HTTP 302
+ * com a URL real do stream no cabeçalho 'Location'.
+ * @param {string} username - O nome de usuário para buscar o stream.
+ * @param {string} type - O tipo de stream ('cdn' ou 'edge').
+ * @returns {Promise<Response>}
+ */
+async function handleStreamProxy(username, type) {
+  if (!username) {
+    return new Response('Nome de usuário não especificado.', { status: 400 });
+  }
+
+  // 1. Busca as informações da live para obter a URL do stream.
+  const streamInfo = await handleLiveInfo(username);
+
+  if (streamInfo.error) {
+    return new Response(JSON.stringify(streamInfo), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  // 2. Determina qual URL usar (cdn ou edge).
+  let targetUrl;
+  if (type === 'cdn' && streamInfo.cdnURL) {
+    targetUrl = streamInfo.cdnURL;
+  } else if (type === 'edge' && streamInfo.edgeURL) {
+    targetUrl = streamInfo.edgeURL;
+  } else {
+    // Fallback para a primeira URL disponível se o tipo especificado não existir.
+    targetUrl = streamInfo.cdnURL || streamInfo.edgeURL;
+  }
+
+  if (!targetUrl) {
+    return new Response(`Nenhuma URL de stream encontrada para o usuário ${username}.`, { status: 404 });
+  }
+
+  // 3. Retorna um redirecionamento 302.
+  // O navegador do cliente seguirá automaticamente para a `targetUrl`.
+  return Response.redirect(targetUrl, 302);
+}
+
+// ===============================================================
 // === Worker principal: roteamento, filtros, respostas e erros ===
 // ===============================================================
-
-/**
- * Worker principal responsável por:
- * - Tratar requisições OPTIONS (CORS preflight)
- * - Roteamento dos endpoints dinâmicos:
- *    - /?user=USERNAME: agrega dados de 3 fontes (GraphQL, streamInfo, info)
- *    - /?rec=USERNAME: proxy para Apps Script (retorna só driveData)
- *    - /user/:username/liveInfo: retorna apenas dados de transmissão ao vivo
- *    - /user/:username: retorna apenas dados de perfil público
- *    - Demais rotas: retorna lista paginada/filtrada de transmissões públicas
- * - Tratamento de erros e formatação de respostas
- * - Suporte a exportação em CSV via query param (format=csv)
- */
 export default {
   async fetch(request, env, ctx) {
-    // =========================
-    // === Preparação inicial===
-    // =========================
     const url = new URL(request.url);
     const origin = request.headers.get("Origin") || "";
     const corsHeaders = getCorsHeaders(origin);
     const pathname = url.pathname;
 
-    // =========================
-    // === Preflight CORS    ===
-    // =========================
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders });
     }
 
-    // ===================================================================
-    // === Novo endpoint: consulta direta ao rec.json via GAS ?rec=USER ===
-    // ===================================================================
-    const recParam = url.searchParams.get("rec");
-    if (recParam) {
-      // Retorna só a resposta pura da API GAS (rec.json do usuário), não mistura com outros dados
-      return await handleRecProxy(recParam, corsHeaders);
-    }
-
-    // =============================================
-    // === Novo endpoint: consulta agregada ?user ===
-    // =============================================
-    const userParam = url.searchParams.get("user");
-    if (userParam) {
-      // Retorna dados agregados (GraphQL, streamInfo, info), sempre em JSON, mesmo se houver falha parcial.
-      return await handleUserFullInfo(userParam, corsHeaders);
-    }
-
-    // ==========================================================
-    // === Endpoints REST compatíveis com padrão antigo /user/ ===
-    // ==========================================================
-    if (pathname.startsWith("/user/") && pathname.endsWith("/liveInfo")) {
-      // Exemplo: /user/NOME/liveInfo
-      const parts = pathname.split("/").filter(Boolean);
-      return new Response(JSON.stringify(await handleLiveInfo(parts[1], corsHeaders), null, 2), {
-        headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
-      });
-    }
-
-    if (pathname.startsWith("/user/")) {
-      // Exemplo: /user/NOME
-      const username = pathname.split("/")[2];
-      return new Response(JSON.stringify(await handleUserProfile(username, corsHeaders), null, 2), {
-        headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
-      });
-    }
-
-    // ===========================================================
-    // === Lista de transmissões públicas com filtros e paginação =
-    // ===========================================================
     try {
-      // Extração dos filtros de query string
-      const format = url.searchParams.get("format") || "json";
-      const pageNumber = parseInt(url.searchParams.get("page") || "1", 10) || 1;
-      const pageSize = parseInt(url.searchParams.get("limit") || "30", 10);
+      // ===============================================
+      // === ROTEADOR PRINCIPAL: Ordem de Prioridade ===
+      // ===============================================
 
-      // Filtros opcionais: gender, country, orientation, tags
-      const genderFilter = url.searchParams.get("gender");
-      const countryFilter = url.searchParams.get("country");
-      const orientationFilter = url.searchParams.get("orientation");
-      const tagsFilter = url.searchParams.get("tags")?.split(",").map(t => t.trim().toLowerCase()) || [];
-
-      // ===============================
-      // === Busca principal GraphQL ===
-      // ===============================
-      const limit = 300;
-      const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "apollographql-client-name": "CAM4-client",
-          "apollographql-client-version": "25.5.15-113220utc"
-        },
-        body: buildCam4Body(0, limit)
-      });
-
-      if (!firstRes.ok) throw new Error(`Erro inicial CAM4: ${firstRes.status}`);
-      const firstJson = await firstRes.json();
-      const total = firstJson?.data?.broadcasts?.total || 0;
-      const firstItems = firstJson?.data?.broadcasts?.items || [];
-
-      // Busca adicional para paginação além do primeiro batch (se necessário)
-      const fetchTasks = [];
-      for (let offset = limit; offset < total; offset += limit) {
-        fetchTasks.push(fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "apollographql-client-name": "CAM4-client",
-            "apollographql-client-version": "25.5.15-113220utc"
-          },
-          body: buildCam4Body(offset, limit)
-        }).then(r => r.json()));
+      // ROTA 1 (NOVA): Proxy de Stream /stream/{username}
+      const streamMatch = pathname.match(/^\/stream\/([a-zA-Z0-9_]+)\/?$/);
+      if (streamMatch) {
+        const username = streamMatch[1];
+        const type = url.searchParams.get('type') || 'cdn'; // cdn como padrão
+        return await handleStreamProxy(username, type);
+      }
+      
+      // ROTA 2: Proxy para gravações /?rec={username}
+      const recParam = url.searchParams.get("rec");
+      if (recParam) {
+        return await handleRecProxy(recParam, corsHeaders);
       }
 
-      // Aguarda todas as páginas
-      const results = await Promise.all(fetchTasks);
-      const allItems = results.flatMap(r => r?.data?.broadcasts?.items || []).concat(firstItems);
-
-      // Ordena por número de viewers e adiciona identificador sequencial
-      const sortedItems = allItems
-        .sort((a, b) => (b.viewers || 0) - (a.viewers || 0))
-        .map((item, index) => ({ XCamId: index + 1, ...item }));
-
-      // Aplica os filtros locais informados na query string
-      let filteredItems = sortedItems;
-      if (genderFilter) {
-        filteredItems = filteredItems.filter(b => b.gender === genderFilter);
-      }
-      if (countryFilter) {
-        filteredItems = filteredItems.filter(b => b.country?.toLowerCase() === countryFilter.toLowerCase());
-      }
-      if (orientationFilter) {
-        filteredItems = filteredItems.filter(b => b.sexualOrientation?.toLowerCase() === orientationFilter.toLowerCase());
-      }
-      if (tagsFilter.length > 0) {
-        filteredItems = filteredItems.filter(b =>
-          b.tags && b.tags.some(tag => tagsFilter.includes(tag.slug?.toLowerCase()))
-        );
+      // ROTA 3: Agregação completa de dados /?user={username}
+      const userParam = url.searchParams.get("user");
+      if (userParam) {
+        return await handleUserFullInfo(userParam, corsHeaders);
       }
 
-      // Paginação dos resultados filtrados
-      const totalFiltered = filteredItems.length;
-      const totalPages = Math.ceil(totalFiltered / pageSize);
-      const pagedItems = filteredItems.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
-
-      // Monta objeto final de resposta
-      const responseData = {
-        broadcasts: {
-          total: totalFiltered,
-          page: pageNumber,
-          totalPages,
-          items: pagedItems
-        }
-      };
-
-      // Responde em CSV ou JSON conforme formato solicitado
-      const finalResponse = format.toLowerCase() === "csv"
-        ? new Response(jsonToCsv(pagedItems), {
-            headers: {
-              ...corsHeaders,
-              "Content-Type": "text/csv; charset=utf-8",
-              "Content-Disposition": `attachment; filename="broadcasts_page${pageNumber}.csv"`
-            }
-          })
-        : new Response(JSON.stringify(responseData, null, 2), {
+      // ROTA 4: Endpoints REST legados /user/...
+      if (pathname.startsWith("/user/")) {
+        const parts = pathname.split("/").filter(Boolean);
+        const username = parts[1];
+        if (parts[2] === "liveInfo") { // /user/{username}/liveInfo
+          const data = await handleLiveInfo(username);
+          return new Response(JSON.stringify(data, null, 2), {
             headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
           });
-      return finalResponse;
+        }
+        // /user/{username}
+        const data = await handleUserProfile(username);
+        return new Response(JSON.stringify(data, null, 2), {
+          headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      // ROTA 5 (DEFAULT): Lista de transmissões públicas com filtros
+      if (pathname === '/') {
+        const format = url.searchParams.get("format") || "json";
+        const pageNumber = parseInt(url.searchParams.get("page") || "1", 10) || 1;
+        const pageSize = parseInt(url.searchParams.get("limit") || "30", 10);
+        const genderFilter = url.searchParams.get("gender");
+        const countryFilter = url.searchParams.get("country");
+        const orientationFilter = url.searchParams.get("orientation");
+        const tagsFilter = url.searchParams.get("tags")?.split(",").map(t => t.trim().toLowerCase()) || [];
+
+        const limit = 300;
+        const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+          method: "POST",
+          headers: { "content-type": "application/json", "apollographql-client-name": "CAM4-client", "apollographql-client-version": "25.5.15-113220utc" },
+          body: buildCam4Body(0, limit)
+        });
+
+        if (!firstRes.ok) throw new Error(`Erro inicial CAM4: ${firstRes.status}`);
+        const firstJson = await firstRes.json();
+        const total = firstJson?.data?.broadcasts?.total || 0;
+        const firstItems = firstJson?.data?.broadcasts?.items || [];
+        
+        const fetchTasks = [];
+        for (let offset = limit; offset < total && offset < 5000; offset += limit) { // Adicionado um limite de segurança de 5000 itens
+          fetchTasks.push(fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+            method: "POST",
+            headers: { "content-type": "application/json", "apollographql-client-name": "CAM4-client", "apollographql-client-version": "25.5.15-113220utc" },
+            body: buildCam4Body(offset, limit)
+          }).then(r => r.ok ? r.json() : Promise.resolve({ data: { broadcasts: { items: [] } } })));
+        }
+
+        const results = await Promise.all(fetchTasks);
+        let allItems = results.flatMap(r => r?.data?.broadcasts?.items || []).concat(firstItems);
+
+        const sortedItems = allItems.sort((a, b) => (b.viewers || 0) - (a.viewers || 0)).map((item, index) => ({ XCamId: index + 1, ...item }));
+        
+        let filteredItems = sortedItems;
+        if (genderFilter) filteredItems = filteredItems.filter(b => b.gender === genderFilter);
+        if (countryFilter) filteredItems = filteredItems.filter(b => b.country?.toLowerCase() === countryFilter.toLowerCase());
+        if (orientationFilter) filteredItems = filteredItems.filter(b => b.sexualOrientation?.toLowerCase() === orientationFilter.toLowerCase());
+        if (tagsFilter.length > 0) filteredItems = filteredItems.filter(b => b.tags && b.tags.some(tag => tagsFilter.includes(tag.slug?.toLowerCase())));
+
+        const totalFiltered = filteredItems.length;
+        const totalPages = Math.ceil(totalFiltered / pageSize);
+        const pagedItems = filteredItems.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+
+        const responseData = { broadcasts: { total: totalFiltered, page: pageNumber, totalPages, items: pagedItems } };
+        
+        if (format.toLowerCase() === "csv") {
+          return new Response(jsonToCsv(pagedItems), {
+            headers: { ...corsHeaders, "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="broadcasts_page${pageNumber}.csv"` }
+          });
+        }
+        
+        return new Response(JSON.stringify(responseData, null, 2), {
+          headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      // Rota não mapeada
+      return new Response(JSON.stringify({ error: "Endpoint não encontrado." }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
 
     } catch (err) {
-      // Tratamento global de erros para falhas de fetch, parsing ou lógica.
-      return new Response(JSON.stringify({ error: "Erro ao obter dados", details: err.message }), {
+      // Tratamento de erro global
+      console.error("Erro fatal no Worker:", err);
+      return new Response(JSON.stringify({ error: "Erro interno do servidor", details: err.message }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -540,6 +432,7 @@ export default {
  * - Suporta exportação de resultados em múltiplos formatos, incluindo JSON (default) e CSV, facilitando integrações com sistemas de BI, automações e análises externas.
  * - Implementa CORS dinâmico e restritivo, garantindo que apenas domínios autorizados possam consumir a API, elevando o nível de segurança e controle de acesso em ambientes distribuídos.
  * - Novo endpoint: ?rec={username} integrado ao Google Apps Script.
+ * - Novo endpoint: /stream/{username} para proxy de redirecionamento de mídia HLS.
  *
  * Arquitetura e design:
  * - O código é altamente modular, com funções separadas para manipulação de requisições, construção de bodies GraphQL, tratamento de erros, filtros e formatação de respostas.
