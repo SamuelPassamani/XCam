@@ -149,7 +149,7 @@ function renderBroadcastCard(data) {
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
   // [PONTO CHAVE] URL do iframe para o player de preview.
-  const previewUrl = `https://player.xcam.gay/preview/?user=${username}`;
+  const previewUrl = `https://live.xcam.gay/?user=${username}&mode=preview`;
 
   const card = createEl(
     "div",
