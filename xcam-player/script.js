@@ -2,11 +2,11 @@
 
 /**
  * =====================================================================================
- * XCam Player - Script Unificado (v5.1)
+ * XCam Player - Script Unificado (v5.2)
  * =====================================================================================
  *
  * @author      Samuel Passamani
- * @version     5.1.0
+ * @version     5.2.0
  * @lastupdate  18/06/2025
  *
  * @description Este script controla o player de vídeo do XCam e opera em dois modos,
@@ -35,6 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const isPreviewMode = params.get("mode") === "preview";
 
   if (isPreviewMode) {
+    // CORREÇÃO: Ajusta a visibilidade dos elementos imediatamente para o modo preview.
+    const adModal = document.getElementById("ad-modal");
+    const playerWrapper = document.getElementById("player");
+    if (adModal) adModal.style.display = "none";
+    if (playerWrapper) playerWrapper.style.display = "block";
+
     // Se o modo preview estiver ativo, executa a lógica do player de preview.
     initializePreviewPlayer();
   } else {
@@ -182,16 +188,15 @@ async function initializePreviewPlayer() {
 function initializeMainPlayer() {
   const playerContainer = document.getElementById("player");
   if (playerContainer) {
+    // A visibilidade inicial do player é controlada pelo CSS e pelo initializeAdModal
     playerContainer.innerHTML =
-      `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;display:block;" />`;
+      `<img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;display:block;" />`;
   }
   
-  // A lógica do modal de anúncio é chamada aqui, pois só pertence ao player principal.
   initializeAdModal();
   
   const params = new URLSearchParams(window.location.search);
 
-  // --- Fluxo 1: Busca por usuário específico ---
   if (params.has("user")) {
     const username = params.get("user");
     fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`)
@@ -224,7 +229,6 @@ function initializeMainPlayer() {
         reloadWithFallback();
       });
 
-  // --- Fluxo 2: Busca por ID da transmissão na lista geral ---
   } else if (params.has("id")) {
     const searchValue = params.get("id");
     fetch("https://api.xcam.gay/?limit=3333&format=json")
@@ -253,7 +257,6 @@ function initializeMainPlayer() {
         reloadWithFallback();
       });
 
-  // --- Fluxo 3: Nenhum parâmetro, fallback ---
   } else {
     console.warn("Nenhum parâmetro 'user' ou 'id' foi fornecido na URL.");
     reloadWithFallback();
@@ -318,7 +321,6 @@ function reloadWithFallback() {
   }
 }
 
-// Lógica para o modal de anúncio, agora como uma função separada.
 function initializeAdModal() {
     const adModal = document.getElementById("ad-modal");
     const closeAdButton = document.getElementById("close-ad-btn");
@@ -346,6 +348,8 @@ function initializeAdModal() {
     closeAdButton.addEventListener("click", () => {
         if (countdown <= 0) {
             adModal.style.display = "none";
+            // O player já começa com display:none no HTML,
+            // então precisamos torná-lo visível.
             player.style.display = "block";
         }
     });
