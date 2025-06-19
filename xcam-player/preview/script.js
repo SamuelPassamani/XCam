@@ -16,7 +16,7 @@
  * @strategy    1. **Busca por Parâmetro**: Identifica o usuário pelo `?user={username}`.
  * 2. **Consulta à API**: Chama `api.xcam.gay/user/{username}/liveInfo`.
  * 3. **Player Limpo**: Monta o JW Player sem UI, com interações de mouse.
- * 4. **Ordem de Prioridade**: Busca o vídeo em `cdnURL` (preferencial) e `edgeURL`.
+ * 4. **Ordem de Prioridade**: Busca o vídeo em `edgeURL` (preferencial) e `cdnURL`.
  * 5. **Fallback com Tentativas**: Tenta recarregar em caso de falha.
  *
  * =====================================================================================
@@ -183,9 +183,9 @@ async function initializePlayer() {
     console.log("API Response Data:", data);
 
     // CORREÇÃO: Invertida a prioridade para tentar a CDN primeiro, que é mais permissiva.
-    const videoSrc = data.cdnURL || data.edgeURL;
+    const videoSrc = data.edgeURL || data.cdnURL;
     if (!videoSrc) {
-      throw new Error("Nenhuma fonte de vídeo (cdnURL, edgeURL) encontrada na resposta da API.");
+      throw new Error("Nenhuma fonte de vídeo (edgeURL, cdnURL) encontrada na resposta da API.");
     }
 
     const camera = {
