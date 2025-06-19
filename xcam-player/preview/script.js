@@ -6,7 +6,7 @@
  * =====================================================================================
  *
  * @author      Samuel Passamani
- * @version     4.2.0
+ * @version     4.3.0
  * @lastupdate  18/06/2025
  *
  * @description Este script é responsável por montar e controlar o player de vídeo
@@ -16,7 +16,7 @@
  * @strategy    1. **Busca por Parâmetro**: Identifica o usuário pelo `?user={username}`.
  * 2. **Consulta à API**: Chama `api.xcam.gay/user/{username}/liveInfo`.
  * 3. **Player Limpo**: Monta o JW Player sem UI, com interações de mouse.
- * 4. **Ordem de Prioridade**: Busca o vídeo em `edgeURL`, `cdnURL`.
+ * 4. **Ordem de Prioridade**: Busca o vídeo em `cdnURL` (preferencial) e `edgeURL`.
  * 5. **Fallback com Tentativas**: Tenta recarregar em caso de falha.
  *
  * =====================================================================================
@@ -101,7 +101,6 @@ function setupPlayer(camera, videoSrc) {
     abouttext: "",
     aboutlink: "",
     skin: { name: "netflix" },
-    // CORREÇÃO: Adicionado o bloco de configuração HLS para lidar com CORS/permissões.
     hlsjsConfig: {
       withCredentials: true
     },
@@ -186,9 +185,10 @@ async function initializePlayer() {
     const data = await response.json();
     console.log("API Response Data:", data);
 
-    const videoSrc = data.edgeURL || data.cdnURL;
+    // CORREÇÃO: Invertida a prioridade para tentar a CDN primeiro, que é mais permissiva.
+    const videoSrc = data.cdnURL || data.edgeURL;
     if (!videoSrc) {
-      throw new Error("Nenhuma fonte de vídeo (edgeURL, cdnURL) encontrada na resposta da API.");
+      throw new Error("Nenhuma fonte de vídeo (cdnURL, edgeURL) encontrada na resposta da API.");
     }
 
     const camera = {
