@@ -101,9 +101,6 @@ function setupPlayer(camera, videoSrc) {
     abouttext: "",
     aboutlink: "",
     skin: { name: "netflix" },
-    hlsjsConfig: {
-      withCredentials: true
-    },
     playlist: [
       {
         title: `@${camera.username}`,
