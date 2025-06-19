@@ -43,9 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- LÓGICA PARA MODO PREVIEW ---
     // Ajusta a visibilidade inicial dos elementos para evitar o "piscar" do modal.
     const adModal = document.getElementById("ad-modal");
-    const playerWrapper = document.getElementById("player-wrapper");
+    const player = document.getElementById("player");
     if (adModal) adModal.style.display = "none"; // Esconde o modal de anúncio.
-    if (playerWrapper) playerWrapper.style.display = "block"; // Mostra o contêiner do player.
+    if (player) player.style.display = "block"; // Mostra o contêiner do player.
     
     // Chama a função que inicializa o player no modo de preview.
     initializePreviewPlayer();
@@ -224,7 +224,7 @@ function initializeMainPlayer() {
     const playerContainer = document.getElementById("player");
     const loader = document.getElementById("initial-loader");
     if (loader) loader.style.display = "none"; // Esconde o loader fullscreen.
-    if (playerContainer) playerContainer.parentElement.style.display = "block"; // Mostra o wrapper do player.
+    if (playerContainer) playerContainer.parentElement.style.display = "block"; // Mostra o  do player.
     
     initializeAdModal();
     
@@ -422,7 +422,7 @@ function initializeAdModal() {
     // Torna o modal visível, já que ele agora começa escondido no HTML.
     adModal.style.display = "flex"; 
     // Esconde o player para dar espaço ao modal.
-    // O wrapper do player já foi tornado visível.
+    // O  do player já foi tornado visível.
     player.style.display = "none";
 
     let countdown = 10;
