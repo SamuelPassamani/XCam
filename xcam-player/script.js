@@ -22,7 +22,7 @@
  * - Ativado com `?mode=preview`.
  * - Ideal para ser usado em `iframes` numa grelha.
  * - Oculta toda a interface do player via CSS.
- * - Comportamento: Autoplay mudo por 500ms, pausa, e reativa com hover.
+ * - Comportamento: Autoplay mudo por 1000ms, pausa, e reativa com hover.
  * - Implementa um sistema robusto de 3 tentativas em caso de erro.
  *
  * =====================================================================================
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const PREVIEW_CONFIG = {
   MAX_RETRIES: 3,
   RETRY_DELAY: 5000,
-  PREVIEW_DURATION: 500,
+  PREVIEW_DURATION: 1000,
   API_ENDPOINT: "https://api.xcam.gay/user/",
   FALLBACK_VIDEO: "https://xcam-drive.aserio.workers.dev/0:/files/loading.webm",
   LOADING_GIF: "https://xcam.gay/src/loading.gif"
