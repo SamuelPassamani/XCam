@@ -222,7 +222,7 @@ async function initializePreviewPlayer() {
 // Função de inicialização para o modo principal.
 function initializeMainPlayer() {
     const playerContainer = document.getElementById("player");
-    const loader = document.getElementById("initial-loader");
+    const loader = document.getElementById("player");
     if (loader) loader.style.display = "none"; // Esconde o loader fullscreen.
     if (playerContainer) playerContainer.parentElement.style.display = "block"; // Mostra o  do player.
     

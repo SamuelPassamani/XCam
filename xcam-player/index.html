@@ -1,26 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!--
-    Metadados essenciais para compatibilidade, responsividade e SEO.
-  -->
+  <!-- Metadados essenciais para compatibilidade, responsividade e SEO. -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XCam.Gay / Live Player</title>
 
-  <!--
-    Inclusão das folhas de estilo e ícones.
-  -->
+  <!-- Inclusão das folhas de estilo e ícones. -->
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="https://xcam.gay/style.css">
   <link rel="icon" type="image/svg+xml" href="https://xcam.gay/src/logo.svg">
   <link rel="icon" type="image/png" href="https://xcam.gay/src/logo.png">
 
-  <!--
-    Estilos internos para garantir uma experiência visual fluida e sem interrupções.
-  -->
+  <!-- Estilos Internos para Carregamento Inicial -->
   <style>
-    /* Garante que a página ocupe todo o espaço da viewport sem barras de rolagem. */
+    /* Garante que a página ocupe todo o espaço da viewport e exibe o loader
+      imediatamente, aplicando-o diretamente ao corpo do documento.
+    */
     html, body {
       width: 100%;
       height: 100%;
@@ -28,32 +24,10 @@
       padding: 0;
       overflow: hidden;
       background-color: #000;
-    }
-
-    /*
-      Loader de Carregamento Inicial
-      Este elemento cobre o ecrã inteiro e exibe a animação de carregamento.
-      Será escondido via JavaScript assim que o player estiver pronto.
-    */
-    #initial-loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #000;
       background-image: url('https://xcam.gay/src/loading.gif');
       background-position: center center;
       background-repeat: no-repeat;
       background-size: contain;
-      z-index: 9999; /* Garante que fique por cima de tudo */
-    }
-
-    /* Container do player, que começa escondido. */
-    #player-wrapper {
-        display: none;
-        width: 100%;
-        height: 100%;
     }
 
     /* O elemento onde o JW Player será renderizado. */
@@ -66,44 +40,26 @@
 
 <body>
 
-  <!-- Loader de Carregamento Inicial -->
-  <div id="initial-loader"></div>
+  <!-- Container do Player: O seu style.css já o formata para ecrã completo. -->
+  <div id="player"></div>
 
-  <!--
-    Container do Player
-    Este wrapper contém o player e o modal de anúncio.
-  -->
-  <div id="player">
-    <!-- Div onde o JW Player será renderizado. -->
-    <div id="player"></div>
-
-    <!--
-      Modal de Anúncio
-      Começa escondido e é controlado pelo script.js no modo padrão.
-    -->
-    <div class="ad-modal" id="ad-modal" style="display: none;">
-      <div class="ad-modal-container">
-        <iframe id="ad-iframe" title="Advertisement" style="border:0;"></iframe>
-        <button id="close-ad-btn" disabled>Aguarde... <span id="ad-countdown">10</span>s</button>
-      </div>
+  <!-- Modal de Anúncio: Começa escondido e é controlado pelo script.js. -->
+  <div class="ad-modal" id="ad-modal" style="display: none;">
+    <div class="ad-modal-container">
+      <iframe id="ad-iframe" title="Advertisement" style="border:0;"></iframe>
+      <button id="close-ad-btn" disabled>Aguarde... <span id="ad-countdown">10</span>s</button>
     </div>
   </div>
 
-  <!--
-    Inclusão dos scripts necessários para o funcionamento do player.
-  -->
+  <!-- Inclusão dos scripts necessários para o funcionamento do player. -->
   <script src="https://cdn.jwplayer.com/libraries/KB5zFt7A.js"></script>
   <script src="./script.js"></script>
 
-  <!--
-    Script auxiliar para a responsividade do IFrame de anúncios.
-    Este script não precisa de ser alterado, pois funciona em conjunto
-    com a lógica do modal já presente no script.js principal.
-  -->
+  <!-- Script auxiliar para a responsividade do IFrame de anúncios. -->
   <script>
     function updateAdIframe() {
       const adIframe = document.getElementById('ad-iframe');
-      if (!adIframe) return; // Garante que o elemento existe
+      if (!adIframe) return; // Garante que o elemento existe.
       
       const screenWidth = window.innerWidth;
 
@@ -119,10 +75,9 @@
         adIframe.height = '250';
       }
     }
-
-    // Inicializa e atualiza o iframe de anúncio.
     window.addEventListener('DOMContentLoaded', updateAdIframe);
     window.addEventListener('resize', updateAdIframe);
   </script>
+
 </body>
 </html>
