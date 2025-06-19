@@ -5,9 +5,9 @@
  * XCam Player - script.js
  * =====================================================================================
  *
- * @author      [Seu Nome/Empresa]
- * @version     3.2.0
- * @lastupdate  17/06/2025
+ * @author      Samuel Passamani
+ * @version     4.0.0
+ * @lastupdate  18/06/2025
  *
  * @description Este script é responsável por montar e controlar o player de vídeo
  * individual que aparece dentro de um iframe. Ele é projetado para ser
@@ -20,7 +20,7 @@
  * 3. **Player Limpo**: Monta o JW Player sem quaisquer controles visíveis,
  * sem áudio e com interações de mouse para play/pause.
  * 4. **Ordem de Prioridade de Vídeo**: Busca a fonte do vídeo na seguinte
- * ordem: `edgeURL`, `cdnURL`, `preview.src`.
+ * ordem: `edgeURL`, `cdnURL`.
  * 5. **Fallback Robusto com Tentativas**: Em caso de erro, tenta recarregar
  * o player 3 vezes com um intervalo de 5 segundos antes de mostrar
  * um vídeo de erro final.
@@ -42,32 +42,15 @@ const RETRY_DELAY = 5000; // [CONFIGURÁVEL] Tempo de espera entre tentativas (e
 (function injectPlayerCSS() {
   const style = document.createElement("style");
   style.innerHTML = `
-    #player .jw-controls,
-    #player .jw-display,
-    #player .jw-display-container,
-    #player .jw-preview,
-    #player .jw-logo,
-    #player .jw-title,
-    #player .jw-nextup-container,
-    #player .jw-playlist-container,
-    #player .jw-captions,
-    #player .jw-button-container,
-    #player .jw-tooltip,
-    #player .jw-rightclick,
-    #player .jw-icon,
-    #player .jw-controlbar {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-        background: transparent !important;
+    #player .jw-controls, #player .jw-display, #player .jw-display-container,
+    #player .jw-preview, #player .jw-logo, #player .jw-title, #player .jw-nextup-container,
+    #player .jw-playlist-container, #player .jw-captions, #player .jw-button-container,
+    #player .jw-tooltip, #player .jw-rightclick, #player .jw-icon, #player .jw-controlbar {
+        display: none !important; opacity: 0 !important; visibility: hidden !important;
+        pointer-events: none !important; background: transparent !important;
     }
-    #player .jw-state-paused .jw-preview,
-    #player .jw-flag-paused .jw-preview,
-    #player .jw-preview {
-      opacity: 1 !important;
-      filter: none !important;
-      background: none !important;
+    #player .jw-state-paused .jw-preview, #player .jw-flag-paused .jw-preview, #player .jw-preview {
+      opacity: 1 !important; filter: none !important; background: none !important;
     }
     #player .jw-display-container { background: transparent !important; }
   `;
@@ -120,10 +103,8 @@ function setupPlayer(camera, videoSrc) {
   const playerContainer = document.getElementById("player");
   if (playerContainer) playerContainer.innerHTML = ""; // Limpa a tela de loading
 
-  // Reseta a contagem de tentativas em caso de sucesso
-  retryCount = 0;
+  retryCount = 0; // Reseta a contagem de tentativas em caso de sucesso
 
-  // Configuração do JW Player
   jwplayer("player").setup({
     controls: false,
     autostart: false,
@@ -137,65 +118,47 @@ function setupPlayer(camera, videoSrc) {
     playlist: [
       {
         title: `@${camera.username}`,
-        description: (camera.tags || []).map((tag) => `#${tag.name}`).join(" "),
-        image: camera.poster || "https://xcam.gay/src/loading.gif", // Poster
+        description: "",
+        image: camera.poster || "https://xcam.gay/src/loading.gif",
         sources: [
-          {
-            file: videoSrc,
-            type: "application/x-mpegURL", // Tipo de stream
-            label: "HD"
-          }
+          { file: videoSrc, type: "application/x-mpegURL", label: "HD" }
         ]
       }
     ],
     events: {
-      // Gatilho de erro do player
       error: (e) => {
-        console.warn("JW Player encontrou um erro ao reproduzir o vídeo.", e);
+        console.warn("JW Player encontrou um erro:", e);
         handleRetry();
       }
     }
   });
 
-  // Evento que dispara quando o player está pronto
   jwplayer("player").on("ready", () => {
     jwplayer("player").setControls(false);
     jwplayer("player").setMute(true);
-
-    // Preview animado: Toca por 2 segundos e pausa
     jwplayer("player").play(true);
     setTimeout(() => {
-      jwplayer("player").pause(true);
-    }, 500); // [CONFIGURÁVEL] Duração do preview em milissegundos.
-
-    // Adiciona os eventos de mouse
+      if (jwplayer("player").getState() !== 'paused') {
+        jwplayer("player").pause(true);
+      }
+    }, 500);
     addHoverPlayPause();
   });
 }
 
 /**
  * 5. Adiciona Eventos de Interação por Mouse
- * Esta função adiciona os listeners para play (ao passar o mouse) e
- * pause (ao retirar o mouse).
  */
 function addHoverPlayPause() {
   const playerContainer = document.getElementById("player");
   const jw = jwplayer("player");
 
-  // Garante que os controles estão desabilitados
-  jw.setControls(false);
-
-  // Play mudo ao passar o mouse
   playerContainer.addEventListener("mouseenter", () => {
-    jw.setControls(false);
-    jw.setMute(true);
     jw.play(true);
   });
 
-  // Pausa ao retirar o mouse
   playerContainer.addEventListener("mouseleave", () => {
     jw.pause(true);
-    jw.setControls(false);
   });
 }
 
@@ -204,96 +167,60 @@ function addHoverPlayPause() {
  */
 function handleRetry() {
   retryCount++;
-  if (retryCount < MAX_RETRIES) {
-    console.log(
-      `Tentando recarregar o player em ${
-        RETRY_DELAY / 1000
-      } segundos... (Tentativa ${retryCount}/${MAX_RETRIES})`
-    );
+  if (retryCount <= MAX_RETRIES) {
+    console.log(`Tentando recarregar... (${retryCount}/${MAX_RETRIES})`);
     setTimeout(initializePlayer, RETRY_DELAY);
   } else {
-    console.error(
-      `Número máximo de tentativas (${MAX_RETRIES}) atingido. Exibindo fallback final.`
-    );
-    showFinalFallback(); // Desiste e mostra o vídeo de erro.
+    console.error(`Máximo de tentativas atingido. Exibindo fallback.`);
+    showFinalFallback();
   }
 }
 
 /**
- * 6. Função de Inicialização (Anteriormente 'main')
- * Orquestra todo o processo: lê a URL, busca os dados e chama a montagem do player.
+ * 6. Função de Inicialização
+ * Orquestra todo o processo.
  */
 async function initializePlayer() {
   try {
-    // Etapa 1: Ler o nome de usuário da URL
     const params = new URLSearchParams(window.location.search);
-    if (!params.has("user")) {
-      throw new Error("Nenhum parâmetro 'user' foi fornecido na URL.");
-    }
     const username = params.get("user");
+    if (!username) {
+      throw new Error("Parâmetro 'user' não encontrado na URL.");
+    }
 
-    // Etapa 2: Buscar dados da API
-    const response = await fetch(
-      `https://api.xcam.gay/user/${encodeURIComponent(username)}/liveInfo`
-    );
+    const response = await fetch(`https://api.xcam.gay/user/${encodeURIComponent(username)}/liveInfo`);
     if (!response.ok) {
-      throw new Error(
-        `A API retornou um status de erro: ${response.status} ${response.statusText}`
-      );
+      throw new Error(`API retornou status ${response.status}`);
     }
+
     const data = await response.json();
-    console.log("API Response Data:", data); // DEBUG: Exibe a resposta completa no console.
+    console.log("API Response Data:", data);
 
-    if (!data) {
-      throw new Error("Resposta da API está vazia ou em formato inesperado.");
-    }
-
-    // Etapa 3: Determinar a fonte do vídeo com ordem de prioridade
-    const videoSrc =
-      data.streamInfo?.edgeURL ||
-      data.streamInfo?.cdnURL ||
-      data.graphData?.preview?.src;
+    // CORREÇÃO: Busca as URLs diretamente no objeto 'data'
+    const videoSrc = data.edgeURL || data.cdnURL;
     if (!videoSrc) {
-      throw new Error(
-        "Nenhuma fonte de vídeo (edgeURL, cdnURL, preview.src) foi encontrada."
-      );
+      throw new Error("Nenhuma fonte de vídeo (edgeURL, cdnURL) encontrada na resposta da API.");
     }
 
-    // Etapa 4: Montar um objeto unificado com os dados da câmera
+    // CORREÇÃO: Monta o objeto 'camera' com os dados disponíveis.
     const camera = {
-      username: data.graphData?.username || data.user,
-      tags: data.graphData?.tags || [],
-      poster: data.graphData?.profileImageURL || data.profileInfo?.avatarUrl
+      username: username, // Usa o username da URL, que é confiável.
+      poster: data.profileImageURL || "" // Tenta usar um poster se existir.
     };
 
-    // Etapa 5: Chamar a função para montar o player
     setupPlayer(camera, videoSrc);
+
   } catch (err) {
-    // Etapa de Erro: Se qualquer etapa acima falhar, aciona a lógica de nova tentativa.
-    console.warn(`Falha ao carregar o player: ${err.message}.`);
+    console.warn(`Falha ao inicializar o player: ${err.message}`);
     handleRetry();
   }
 }
 
-// Inicia todo o processo de carregamento do player pela primeira vez.
+// Inicia todo o processo de carregamento do player.
 initializePlayer();
 
 /**
  * =====================================================================================
  * FIM DO SCRIPT
- * =====================================================================================
- *
- * @log de mudanças:
- * - v3.2.0: Adicionada lógica de tentativas automáticas (retry) em caso de falha.
- * - v3.1.0: Adicionada documentação completa (cabeçalho, rodapé, comentários).
- * - v3.0.0: Removidas funções de modal. Adicionada nova ordem de prioridade de
- * vídeo (edgeURL > cdnURL > preview.src).
- * - v2.0.0: Script adaptado para a nova estrutura de resposta da API.
- * - v1.0.0: Versão inicial.
- *
- * @roadmap futuro:
- * - Otimizar o tempo de carregamento inicial.
- * - Adicionar um tratamento de erro mais granular para diferentes respostas da API.
- *
  * =====================================================================================
  */
