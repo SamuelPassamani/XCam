@@ -4,23 +4,23 @@
  * =====================================================================================
  *
  * @author      [Seu Nome/Empresa]
- * @version     2.0.0
- * @lastupdate  17/06/2025
+ * @version     2.1.0
+ * @lastupdate  20/06/2025
  *
- * @description Este script é o coração da página principal do XCam. Ele é responsável
- * por buscar a lista de todas as transmissões ao vivo disponíveis através
- * de uma única chamada à API, renderizar os cards na tela e gerenciar os
- * filtros de usuário e a paginação (botão "Carregar Mais").
- *
- * @strategy    A estratégia foi otimizada para performance máxima e experiência do usuário:
- * 1. **Chamada Única**: Em vez de múltiplas requisições, fazemos uma chamada
- * robusta para a API para buscar um grande lote de transmissões.
- * 2. **Paginação Local**: A paginação é gerenciada no lado do cliente
- * (frontend), tornando a ação de "Carregar Mais" instantânea.
- * 3. **Renderização Direta com Iframe**: Cada card de transmissão agora
- * utiliza um `iframe` que aponta para um player de preview dedicado,
- * substituindo a imagem estática por um preview de vídeo real e dinâmico.
- *
+ * @description
+ * Este script constrói a grade principal de transmissões ao vivo do XCam.
+ * Ele busca e renderiza os cards de transmissões utilizando como poster seguro
+ * (imagem de preview) um frame dinâmico, extraído do endpoint seguro:
+ *   https://api.xcam.gay/v1/media/poster/{username}
+ * Isso garante compatibilidade máxima com CORS e Same-Origin Policy para uso
+ * direto em <img> ou <canvas>, otimizando performance e experiência.
+ * 
+ * Estratégias implementadas:
+ * - Busca robusta de transmissões (100+ de uma vez) com paginação local.
+ * - Renderização reativa de cards, cada um com poster dinâmico e seguro.
+ * - Filtros e paginação totalmente controlados no frontend.
+ * - UI responsiva para estados de carregamento, erro e vazio.
+ * 
  * =====================================================================================
  */
 
@@ -29,6 +29,13 @@ import { t } from "./i18n.js"; // Módulo de tradução para internacionalizaç�
 import { countryNames } from "./translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
 
 // === Função utilitária: Criação de elementos DOM com atributos e filhos ===
+/**
+ * Cria elementos DOM de forma declarativa com atributos e filhos.
+ * @param {string} type - Tipo do elemento (ex: "div", "img")
+ * @param {object} props - Atributos do elemento
+ * @param {Array} children - Elementos filhos
+ * @returns {HTMLElement}
+ */
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
   Object.entries(props).forEach(([key, value]) => {
@@ -44,14 +51,14 @@ function createEl(type, props = {}, children = []) {
 
 // === Variáveis de Controle e Configurações Globais ===============================
 
-// [CONFIGURÁVEL] Define quantos cards são exibidos por página/clique no "Carregar Mais".
+// [CONFIGURÁVEL] Quantos cards exibir por página/clique em "Carregar Mais"
 const itemsPerPage = 30;
 
-let allItems = []; // Array que armazena TODAS as transmissões buscadas da API.
-let renderedItemsCount = 0; // Contador para controlar a paginação local.
-let grid; // Referência ao elemento DOM da grade, inicializado no 'DOMContentLoaded'.
+let allItems = []; // Todas as transmissões buscadas da API
+let renderedItemsCount = 0; // Contador para paginação local
+let grid; // Referência ao elemento DOM principal da grade
 
-// [CONFIGURÁVEL] Objeto que armazena o estado atual dos filtros aplicados.
+// [CONFIGURÁVEL] Estado atual dos filtros aplicados
 let filters = {
   gender: "",
   country: "",
@@ -78,16 +85,45 @@ const loadMoreBtn = createEl(
 );
 loadMoreBtn.style.display = "none";
 
+// === Função utilitária para buscar o poster seguro do usuário =================
+
+/**
+ * Retorna uma URL segura para o poster do usuário XCam.
+ * @param {string} username - Nome do usuário
+ * @returns {string} URL do poster seguro (.ts, mas usável como src de <img>)
+ */
+function getPosterUrl(username) {
+  return `https://api.xcam.gay/v1/media/poster/${username}`;
+}
+
+/**
+ * Cria uma URL de objeto Blob a partir do segmento de vídeo retornado pelo endpoint,
+ * para ser usada em <img src>. Faz fallback para placeholder em caso de erro.
+ * @param {string} username - Nome do usuário
+ * @returns {Promise<string>} - URL para ser usado em <img src>
+ */
+async function fetchPosterImageUrl(username) {
+  try {
+    const resp = await fetch(getPosterUrl(username), { mode: "cors" });
+    if (!resp.ok) throw new Error("Poster não disponível");
+    const blob = await resp.blob();
+    // Cria uma URL de objeto para uso temporário em <img>
+    return URL.createObjectURL(blob);
+  } catch (err) {
+    // Fallback: imagem padrão
+    return "/assets/placeholder_poster.jpg";
+  }
+}
+
 // === Lógica Principal ==========================================================
 
 /**
  * Monta a URL da API com base nos filtros ativos.
  * @param {object} filters - O objeto de filtros atual.
- * @param {number} limit - [CONFIGURÁVEL] O número máximo de resultados a serem pedidos para a API.
+ * @param {number} limit - O número máximo de resultados a serem pedidos para a API.
  * @returns {string} A URL completa para a chamada da API.
  */
 function buildApiUrl(filters, limit = 100) {
-  // Busca um lote maior para paginação local.
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
@@ -136,7 +172,8 @@ function ensureGridElement() {
 }
 
 /**
- * Cria e renderiza um único card de transmissão na grade.
+ * Cria e renderiza um único card de transmissão.
+ * Usa o poster seguro como <img src> e faz fallback para placeholder em caso de erro.
  * @param {object} data - O objeto de dados para uma única transmissão.
  */
 function renderBroadcastCard(data) {
@@ -148,8 +185,18 @@ function renderBroadcastCard(data) {
   const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // [PONTO CHAVE] URL do iframe para o player de preview.
-  const previewUrl = `https://live.xcam.gay/?user=${username}&mode=preview`;
+  // Cria o elemento da imagem de poster (inicialmente placeholder, será atualizado via JS)
+  const posterImg = createEl("img", {
+    class: "poster-img",
+    src: "/assets/placeholder_poster.jpg", // Placeholder inicial
+    alt: `Poster da transmissão de ${username}`,
+    loading: "lazy"
+  });
+
+  // Após inserir o card, busca o poster dinâmico e atualiza o src
+  fetchPosterImageUrl(username).then((src) => {
+    posterImg.src = src;
+  });
 
   const card = createEl(
     "div",
@@ -161,22 +208,19 @@ function renderBroadcastCard(data) {
     },
     [
       createEl("div", { class: "card-thumbnail" }, [
-        // MODIFICAÇÃO PRINCIPAL: Usa um iframe para o preview de vídeo dinâmico.
-        createEl("iframe", {
-          src: previewUrl,
-          title: `Prévia da transmissão de ${username}`,
-          loading: "lazy", // Otimização de performance: carrega o iframe apenas quando visível.
-          frameborder: "0",
-          scrolling: "no",
-          allow: "autoplay; muted" // Permissões necessárias para o preview funcionar.
-        }),
+        // Substituição do iframe por <img> com poster seguro
+        posterImg,
         createEl("div", { class: "card-overlay" }, [
           createEl(
             "button",
             {
               class: "play-button",
               "aria-label": `${t("play")} @${username}`,
-              tabindex: "0"
+              tabindex: "0",
+              onclick: () => {
+                // Redireciona para o player ao clicar no play
+                window.open(`https://live.xcam.gay/?user=${username}`, "_blank");
+              }
             },
             [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
           )
@@ -240,6 +284,9 @@ function renderNextBatch() {
 
 // === Funções de Estado da UI (Vazio, Erro) ===
 
+/**
+ * Exibe mensagem amigável para lista vazia.
+ */
 function showEmptyMessage() {
   ensureGridElement();
   grid.innerHTML = "";
@@ -258,6 +305,9 @@ function showEmptyMessage() {
   grid.appendChild(empty);
 }
 
+/**
+ * Exibe mensagem de erro caso a API falhe.
+ */
 function showErrorMessage() {
   ensureGridElement();
   grid.innerHTML = "";
@@ -360,10 +410,10 @@ document.addEventListener("DOMContentLoaded", () => {
  * =====================================================================================
  *
  * @log de mudanças:
- * - v2.0.0 (17/06/2025): Substituída a renderização de imagem estática (`<img>`) por
- * `<iframe>` para exibir um player de preview dinâmico. Lógica de placeholders
- * removida em favor da renderização direta. Paginação agora é 100% local após
- * uma busca inicial mais robusta.
+ * - v2.1.0 (20/06/2025): Substituído preview dinâmico via <iframe> por <img> seguro
+ * consumindo o endpoint de poster seguro. Agora todos os posters são carregados
+ * dinamicamente do backend seguro, prevenindo problemas de CORS e melhorando a UX.
+ * - v2.0.0 (17/06/2025): Versão anterior com preview por <iframe>.
  * - v1.0.0: Versão inicial com placeholders e atualização incremental.
  *
  * @roadmap futuro:
