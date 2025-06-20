@@ -1,15 +1,36 @@
 /**
- * ================================================================
- * XCam API Worker - xcam-api/index.js (Proxy de Mídia + Poster Seguro)
- * ================================================================
+ * ============================================================================
+ * XCam API Worker - index.js
+ * ============================================================================
+ * 
+ * Descrição:
+ * Este arquivo implementa o Worker principal da XCam API, atuando como gateway
+ * inteligente para dados públicos, proxy seguro para redirecionamento de mídia,
+ * e geração dinâmica de poster seguro (frame de vídeo HLS) para uso em players,
+ * resolvendo problemas de CORS, Referer e Same-Origin Policy.
+ * 
+ * Funcionalidades principais:
+ * - Roteamento RESTful e versionado para múltiplos endpoints.
+ * - Proxy de redirecionamento para streams HLS (com 302).
+ * - Proxy de conteúdo para segmento .ts do HLS, permitindo captura segura de poster via canvas.
+ * - Integração com Google Apps Script para gravações.
+ * - Consolidação de dados públicos agregados por usuário.
+ * - Listagem dinâmica filtrável de transmissões públicas.
+ * - Segurança via CORS dinâmico e restritivo.
+ * - Estrutura modular, fácil de manter e expandir.
+ * 
  * Autor: Samuel Passamani | Equipe XCam & Gemini
  * Última atualização: 2025-06-20
- * ================================================================
+ * ============================================================================
  */
 
-// ===============================
-// === Conversor JSON para CSV ===
-// ===============================
+// ==========================
+// == Conversor JSON para CSV ==
+// ==========================
+/**
+ * Converte um array de objetos em CSV para exportação.
+ * Retorna string vazia se array for vazio.
+ */
 function jsonToCsv(items) {
   if (!items || items.length === 0) return "";
   const headers = Object.keys(items[0]);
@@ -26,9 +47,9 @@ function jsonToCsv(items) {
   return [headers.join(","), ...csvRows].join("\n");
 }
 
-// ========================================
-// === Lista de domínios permitidos CORS ===
-// ========================================
+// ===========================================
+// == Lista de domínios permitidos para CORS ==
+// ===========================================
 const ALLOWED_ORIGINS = [
   "https://xcam.gay", "https://beta.xcam.gay", "https://player.xcam.gay",
   "https://db.xcam.gay", "https://modal.xcam.gay", "https://live.xcam.gay",
@@ -45,9 +66,12 @@ const ALLOWED_ORIGINS = [
   "https://xcam-beta.netlify.app", "https://playhls.com"
 ];
 
-// ====================================
-// === Headers dinâmicos para CORS  ===
-// ====================================
+// =====================================
+// == Função utilitária para CORS ==
+// =====================================
+/**
+ * Retorna headers dinâmicos de CORS de acordo com o Origin.
+ */
 function getCorsHeaders(origin) {
   const headers = {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -60,9 +84,12 @@ function getCorsHeaders(origin) {
   return headers;
 }
 
-// =========================================================
-// === Monta corpo GraphQL para listagem de transmissões ===
-// =========================================================
+// ========================================================
+// == Função para montar body do GraphQL da listagem CAM4 ==
+// ========================================================
+/**
+ * Monta o payload para consulta GraphQL de transmissões públicas.
+ */
 function buildCam4Body(offset, limit) {
   return JSON.stringify({
     operationName: "getGenderPreferencePageData",
@@ -96,9 +123,12 @@ function buildCam4Body(offset, limit) {
   });
 }
 
-// ==================================================
-// === Handler: Busca informações de perfil público ===
-// ==================================================
+// ====================================================
+// == Handler: Busca informações públicas do perfil ==
+// ====================================================
+/**
+ * Busca informações públicas de perfil do usuário via REST CAM4.
+ */
 async function handleUserProfile(username) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/info`;
   try {
@@ -116,9 +146,12 @@ async function handleUserProfile(username) {
   }
 }
 
-// ====================================================
-// === Handler: Busca informações de stream ao vivo  ===
-// ====================================================
+// ===========================================================
+// == Handler: Busca informações de stream ao vivo (live)  ==
+// ===========================================================
+/**
+ * Busca informações da transmissão ao vivo do usuário via REST CAM4.
+ */
 async function handleLiveInfo(username) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`;
   try {
@@ -136,9 +169,12 @@ async function handleLiveInfo(username) {
   }
 }
 
-// =====================================================================
-// === Handler: Busca e agrega todas as infos de um usuário específico ===
-// =====================================================================
+// ===========================================================================
+// == Handler: Agrega dados públicos consolidados de um usuário (multi-origem)
+// ===========================================================================
+/**
+ * Busca dados GraphQL, liveInfo e profileInfo do usuário e retorna tudo junto.
+ */
 async function handleUserFullInfo(user, corsHeaders) {
   const limit = 300;
   let graphData = null;
@@ -178,9 +214,12 @@ async function handleUserFullInfo(user, corsHeaders) {
   });
 }
 
-// =====================================================================
-// === Handler: Proxy Google Apps Script para rec.json do usuário    ====
-// =====================================================================
+// ===============================================================================
+// == Handler: Proxy Google Apps Script para gravações (rec.json do usuário)    ==
+// ===============================================================================
+/**
+ * Encaminha requisição para um Google Apps Script que retorna gravações do usuário.
+ */
 async function handleRecProxy(username, corsHeaders) {
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz6cucO0SvdNSbnlFrUCR9nvh4FCDzMCp138iaRyiuDDWQ9JfPvFlmeevhHUtn0soc_IQ/exec?rec=" + encodeURIComponent(username);
   try {
@@ -188,10 +227,8 @@ async function handleRecProxy(username, corsHeaders) {
       redirect: 'follow',
       headers: { 'accept': 'application/json' }
     });
-
     const contentType = response.headers.get('content-type') || 'text/plain';
     const body = await response.text();
-
     return new Response(body, {
       status: response.status,
       headers: { ...corsHeaders, "Content-Type": contentType, "Cache-Control": "no-store" }
@@ -204,9 +241,13 @@ async function handleRecProxy(username, corsHeaders) {
   }
 }
 
-// ===============================================================
-// === Handler: Proxy de Redirecionamento para Streams HLS      ===
-// ===============================================================
+// ===========================================================================
+// == Handler: Proxy de redirecionamento para Streams HLS (302 Location)    ==
+// ===========================================================================
+/**
+ * Proxy de redirecionamento seguro (302) para o HLS do usuário, preservando Referer.
+ * Usado para players que não precisam acessar o conteúdo do vídeo via JavaScript.
+ */
 async function handleStreamProxy(username, type) {
   if (!username) {
     return new Response('Nome de usuário não especificado.', { status: 400 });
@@ -232,10 +273,16 @@ async function handleStreamProxy(username, type) {
   return Response.redirect(targetUrl, 302);
 }
 
-// ===============================================================
-// === Handler: Proxy seguro para segmento TS do HLS (poster)   ===
-// ===============================================================
+// =====================================================================================
+// == Handler: Proxy seguro para segmento TS do HLS (poster seguro para uso em canvas) ==
+// =====================================================================================
+/**
+ * Busca o manifesto HLS do usuário, encontra o primeiro segmento .ts, busca e retransmite com CORS permissivo.
+ * Permite captura segura de frame pelo canvas do navegador do cliente.
+ * O filtro foi aprimorado para aceitar segmentos .ts com querystring (ex: .ts?token=...).
+ */
 async function handlePosterSegmentProxy(username) {
+  // 1. Busca informações de transmissão ao vivo
   const streamInfo = await handleLiveInfo(username);
   if (streamInfo.error) {
     return new Response(JSON.stringify({ error: "Usuário offline ou sem stream." }), {
@@ -243,6 +290,7 @@ async function handlePosterSegmentProxy(username) {
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
+  // 2. Busca URL do HLS (manifesto .m3u8)
   const hlsUrl = streamInfo.cdnURL || streamInfo.edgeURL;
   if (!hlsUrl) {
     return new Response(JSON.stringify({ error: "URL de stream não encontrada." }), {
@@ -250,6 +298,7 @@ async function handlePosterSegmentProxy(username) {
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
+  // 3. Busca o manifesto HLS (.m3u8)
   const m3u8Res = await fetch(hlsUrl, { headers: { referer: `https://pt.cam4.com/${username}` } });
   if (!m3u8Res.ok) {
     return new Response(JSON.stringify({ error: "Falha ao buscar manifesto HLS." }), {
@@ -258,19 +307,27 @@ async function handlePosterSegmentProxy(username) {
     });
   }
   const m3u8Text = await m3u8Res.text();
+
+  // 4. Filtra linhas válidas (ignora comentários/instruções HLS)
   const lines = m3u8Text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-  const firstSegment = lines.find(l => l.endsWith('.ts'));
+
+  // 5. Encontra o primeiro segmento .ts (com ou sem querystring)
+  const firstSegment = lines.find(l => /\.ts(\?|$)/.test(l));
   if (!firstSegment) {
-    return new Response(JSON.stringify({ error: "Nenhum segmento .ts encontrado." }), {
+    return new Response(JSON.stringify({ error: "Nenhum segmento .ts encontrado no manifesto HLS." }), {
       status: 404,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
+
+  // 6. Monta URL absoluta do segmento se necessário
   let segmentUrl = firstSegment;
   if (!/^https?:\/\//.test(segmentUrl)) {
     const base = hlsUrl.substring(0, hlsUrl.lastIndexOf('/') + 1);
     segmentUrl = base + segmentUrl;
   }
+
+  // 7. Busca e retransmite o segmento .ts com CORS universal
   const segRes = await fetch(segmentUrl, { headers: { referer: `https://pt.cam4.com/${username}` } });
   if (!segRes.ok) {
     return new Response(JSON.stringify({ error: "Falha ao buscar segmento de vídeo." }), {
@@ -288,9 +345,20 @@ async function handlePosterSegmentProxy(username) {
   });
 }
 
-// ===============================================================
-// === Worker principal: roteamento, filtros, respostas e erros ===
-// ===============================================================
+// =====================================================================
+// == Worker principal: roteamento, filtros, respostas e erros globais ==
+// =====================================================================
+/**
+ * Função principal do Worker: roteia requisições, executa filtros, trata erros.
+ * Ordem de prioridade das rotas: 
+ * 1. Poster seguro (proxy .ts)
+ * 2. Proxy de redirecionamento de stream
+ * 3. Proxy gravações via GAS
+ * 4. Dados agregados do usuário
+ * 5. Endpoints legados
+ * 6. Listagem pública de transmissões
+ * 7. Fallback 404
+ */
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -298,18 +366,19 @@ export default {
     const corsHeaders = getCorsHeaders(origin);
     const pathname = url.pathname;
 
+    // Pré-tratamento CORS para OPTIONS
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders });
     }
 
     try {
-      // NOVA ROTA: Poster seguro para canvas via proxy de TS
+      // === 1. POSTER SEGURO (Proxy para segmento TS do HLS) ===
       if (pathname.match(/^\/v1\/media\/poster\/([a-zA-Z0-9_]+)\/?$/) && request.method === "GET") {
         const username = pathname.match(/^\/v1\/media\/poster\/([a-zA-Z0-9_]+)\/?$/)[1];
         return await handlePosterSegmentProxy(username);
       }
 
-      // Proxy de Stream /stream/{username}
+      // === 2. PROXY DE STREAM (Redirecionamento 302) ===
       const streamMatch = pathname.match(/^\/stream\/([a-zA-Z0-9_]+)\/?$/);
       if (streamMatch) {
         const username = streamMatch[1];
@@ -317,19 +386,19 @@ export default {
         return await handleStreamProxy(username, type);
       }
 
-      // Proxy para gravações /?rec={username}
+      // === 3. PROXY PARA GRAVAÇÕES ===
       const recParam = url.searchParams.get("rec");
       if (recParam) {
         return await handleRecProxy(recParam, corsHeaders);
       }
 
-      // Agregação completa de dados /?user={username}
+      // === 4. DADOS CONSOLIDADOS DE USUÁRIO ===
       const userParam = url.searchParams.get("user");
       if (userParam) {
         return await handleUserFullInfo(userParam, corsHeaders);
       }
 
-      // Endpoints REST legados /user/...
+      // === 5. ENDPOINTS REST LEGADOS ===
       if (pathname.startsWith("/user/")) {
         const parts = pathname.split("/").filter(Boolean);
         const username = parts[1];
@@ -345,7 +414,7 @@ export default {
         });
       }
 
-      // Lista de transmissões públicas com filtros
+      // === 6. LISTAGEM DE TRANSMISSÕES PÚBLICAS (com filtros avançados) ===
       if (pathname === '/') {
         const format = url.searchParams.get("format") || "json";
         const pageNumber = parseInt(url.searchParams.get("page") || "1", 10) || 1;
@@ -404,13 +473,14 @@ export default {
         });
       }
 
-      // Rota não mapeada
+      // === 7. FALLBACK: Endpoint não encontrado ===
       return new Response(JSON.stringify({ error: "Endpoint não encontrado." }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
 
     } catch (err) {
+      // Tratamento de erro global
       console.error("Erro fatal no Worker:", err);
       return new Response(JSON.stringify({ error: "Erro interno do servidor", details: err.message }), {
         status: 500,
@@ -421,6 +491,13 @@ export default {
 };
 
 /**
- * Patch: Adicionada rota /v1/media/poster/{username} para proxy seguro de segmento TS.
- * Código revisado para evitar duplicidade de export e manter ordem lógica dos handlers.
+ * ============================================================================
+ * Fim do arquivo: xcam-api/index.js
+ * 
+ * Observação:
+ * - Este Worker serve como gateway seguro XCam, centralizando lógica de proxy,
+ *   agregação de dados externos, roteamento RESTful e aplicando boas práticas
+ *   de arquitetura serverless, facilitando manutenções e futuras extensões.
+ * - Para dúvidas, consulte a documentação Gemini/XCam ou contate o autor.
+ * ============================================================================
  */
