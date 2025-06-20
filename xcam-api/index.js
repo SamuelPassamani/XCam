@@ -316,6 +316,9 @@ async function findFirstMediaSegment(m3u8Url, username, maxDepth = 2) {
  * Permite captura segura de frame pelo canvas do navegador do cliente.
  * Suporta segmentos .ts, .aac, .m4s, .mp4, sub-playlists e URLs absolutas ou relativas.
  */
+// =====================
+// Corrige: Busca robusta do HLS (tenta edgeURL e cdnURL)
+// =====================
 async function handlePosterSegmentProxy(username) {
   // 1. Busca informações de transmissão ao vivo
   const streamInfo = await handleLiveInfo(username);
@@ -325,40 +328,63 @@ async function handlePosterSegmentProxy(username) {
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
-  // 2. Busca URL do HLS (manifesto .m3u8)
-  const hlsUrl = streamInfo.cdnURL || streamInfo.edgeURL;
-  if (!hlsUrl) {
-    return new Response(JSON.stringify({ error: "URL de stream não encontrada." }), {
+
+  // 2. Coleta todas as possíveis URLs de HLS
+  const hlsUrls = [];
+  if (streamInfo.edgeURL) hlsUrls.push({ url: streamInfo.edgeURL, type: "edge" });
+  if (streamInfo.cdnURL) hlsUrls.push({ url: streamInfo.cdnURL, type: "cdn" });
+
+  if (hlsUrls.length === 0) {
+    return new Response(JSON.stringify({ error: "Nenhum URL de stream encontrada." }), {
       status: 404,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
-  // 3. Busca recursiva pelo primeiro segmento de mídia
-  const segmentUrl = await findFirstMediaSegment(hlsUrl, username, 2);
-  if (!segmentUrl) {
+
+  let foundSegment = null;
+  let segmentUrl, lastError;
+
+  // 3. Tenta cada HLS até encontrar um segmento válido
+  for (const { url: hlsUrl, type } of hlsUrls) {
+    try {
+      segmentUrl = await findFirstMediaSegment(hlsUrl, username, 2);
+      if (segmentUrl) {
+        foundSegment = { segmentUrl, hlsUrl, type };
+        break;
+      }
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  if (!foundSegment) {
     return new Response(JSON.stringify({ error: "Nenhum segmento de mídia encontrado no manifesto HLS." }), {
       status: 404,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
+
   // 4. Busca e retransmite o segmento com CORS universal
-  const segRes = await fetch(segmentUrl, { headers: { referer: `https://pt.cam4.com/${username}` } });
+  const segRes = await fetch(foundSegment.segmentUrl, {
+    headers: { referer: `https://pt.cam4.com/${username}` }
+  });
   if (!segRes.ok) {
     return new Response(JSON.stringify({ error: "Falha ao buscar segmento de mídia." }), {
       status: 502,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
+
   // 5. Detecta tipo mime pelo final do arquivo
   let mime = "video/MP2T";
-  if (segmentUrl.endsWith('.aac')) mime = "audio/aac";
-  if (segmentUrl.endsWith('.m4s')) mime = "video/iso.segment";
-  if (segmentUrl.endsWith('.mp4')) mime = "video/mp4";
+  if (foundSegment.segmentUrl.endsWith('.aac')) mime = "audio/aac";
+  if (foundSegment.segmentUrl.endsWith('.m4s')) mime = "video/iso.segment";
+  if (foundSegment.segmentUrl.endsWith('.mp4')) mime = "video/mp4";
   return new Response(segRes.body, {
     status: 200,
     headers: {
       "Content-Type": mime,
-      "Content-Disposition": "inline; filename=\"poster" + segmentUrl.slice(-8) + "\"",
+      "Content-Disposition": "inline; filename=\"poster" + foundSegment.segmentUrl.slice(-8) + "\"",
       "Access-Control-Allow-Origin": "*"
     }
   });
