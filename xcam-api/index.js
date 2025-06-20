@@ -317,7 +317,7 @@ async function handleStreamProxy(username, type) {
  * @param {number} maxDepth - Profundidade máxima de recursão
  * @returns {Promise<string|null>} - URL do segmento de mídia ou null
  */
-async function findFirstMediaSegment(m3u8Url, username, maxDepth = 8) {
+async function findFirstMediaSegment(m3u8Url, username, maxDepth = 30) {
   if (maxDepth < 0) return null;
   const res = await fetch(m3u8Url, { headers: { referer: `https://pt.cam4.com/${username}` } });
   if (!res.ok) return null;
