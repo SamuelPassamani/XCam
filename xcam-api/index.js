@@ -286,22 +286,24 @@ async function handleStreamProxy(username, type) {
  * @param {number} maxDepth - Profundidade máxima de recursão
  * @returns {Promise<string|null>} - URL do segmento de mídia ou null
  */
-async function findFirstMediaSegment(m3u8Url, username, maxDepth = 2) {
+async function findFirstMediaSegment(m3u8Url, username, maxDepth = 5) {
   if (maxDepth < 0) return null;
   const res = await fetch(m3u8Url, { headers: { referer: `https://pt.cam4.com/${username}` } });
   if (!res.ok) return null;
   const text = await res.text();
   const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+
   // 1. Procura segmento de mídia comum (ts, aac, m4s, mp4)
   const seg = lines.find(l => /\.(ts|aac|m4s|mp4)(\?|$)/i.test(l));
   if (seg) {
     if (/^https?:\/\//.test(seg)) return seg;
-    return m3u8Url.replace(/[^/]*$/, '') + seg;
+    // Resolve caminho relativo corretamente
+    return new URL(seg, m3u8Url).href;
   }
   // 2. Procura sub-playlist .m3u8
   const subplaylist = lines.find(l => l.endsWith('.m3u8'));
   if (subplaylist) {
-    const nextUrl = /^https?:\/\//.test(subplaylist) ? subplaylist : m3u8Url.replace(/[^/]*$/, '') + subplaylist;
+    const nextUrl = /^https?:\/\//.test(subplaylist) ? subplaylist : new URL(subplaylist, m3u8Url).href;
     return await findFirstMediaSegment(nextUrl, username, maxDepth - 1);
   }
   return null;
