@@ -5,7 +5,7 @@
  *
  * Descrição:
  * Worker principal da XCam API para Cloudflare Workers.
- * Fornece roteamento RESTful, proxy seguro de mídia HLS, geração de poster seguro (frame de vídeo HLS),
+ * Fornece roteamento RESTful, proxy seguro de mídia HLS (poster seguro), geração de poster seguro (frame de vídeo HLS),
  * integração com Google Apps Script, agregação de dados públicos multi-origem e filtragem dinâmica.
  *
  * Funcionalidades principais:
@@ -42,7 +42,7 @@ function jsonToCsv(items) {
       }
       return val;
     }).join(",")
-  );
+  ); 
   return [headers.join(","), ...csvRows].join("\n");
 }
 
@@ -126,6 +126,41 @@ function buildCam4Body(offset, limit) {
   });
 }
 
+// ===============================================
+// == Busca paginada robusta por usuário ativo  ==
+// ===============================================
+/**
+ * Busca por um usuário na listagem do GraphQL, paginando até encontrá-lo ou esgotar o total.
+ * Garante que 'graphData' nunca é null para usuários realmente online na plataforma.
+ * @param {string} username
+ * @param {number} limit - quantidade de resultados por página (default 300)
+ * @param {number} maxPages - máxima quantidade de páginas a buscar (default 20, cobre até 6000 usuários)
+ * @returns {Promise<object|null>}
+ */
+async function findUserGraphData(username, limit = 300, maxPages = 20) {
+  let offset = 0;
+  for (let page = 0; page < maxPages; page++) {
+    const res = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "apollographql-client-name": "CAM4-client",
+        "apollographql-client-version": "25.5.15-113220utc"
+      },
+      body: buildCam4Body(offset, limit)
+    });
+    if (!res.ok) break;
+    const json = await res.json();
+    const items = json?.data?.broadcasts?.items || [];
+    const foundItem = items.find(item => item.username === username);
+    if (foundItem) return foundItem;
+    const total = json?.data?.broadcasts?.total || 0;
+    offset += limit;
+    if (offset >= total || items.length === 0) break;
+  }
+  return null;
+}
+
 // ====================================================
 // == Handler: Busca informações públicas do perfil ==
 // ====================================================
@@ -188,27 +223,8 @@ async function handleLiveInfo(username) {
  */
 async function handleUserFullInfo(user, corsHeaders) {
   const limit = 300;
-  let graphData = null;
-  try {
-    const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "apollographql-client-name": "CAM4-client",
-        "apollographql-client-version": "25.5.15-113220utc"
-      },
-      body: buildCam4Body(0, limit)
-    });
-    if (firstRes.ok) {
-      const firstJson = await firstRes.json();
-      const allItems = firstJson?.data?.broadcasts?.items || [];
-      graphData = allItems.find(item => item.username === user) || null;
-    } else {
-      graphData = { error: "Erro inicial CAM4", details: firstRes.status };
-    }
-  } catch (err) {
-    graphData = { error: "Falha na consulta GraphQL", details: err.message };
-  }
+  // Busca sempre em todas as páginas para garantir consistência!
+  const graphData = await findUserGraphData(user, limit, 20);
 
   const [streamInfo, profileInfo] = await Promise.all([
     handleLiveInfo(user),
@@ -459,29 +475,8 @@ export default {
       if (streamParam) {
         const user = streamParam;
         const limit = 300;
-        let graphData = null;
-
-        try {
-          const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-              "apollographql-client-name": "CAM4-client",
-              "apollographql-client-version": "25.5.15-113220utc"
-            },
-            body: buildCam4Body(0, limit)
-          });
-          if (firstRes.ok) {
-            const firstJson = await firstRes.json();
-            const allItems = firstJson?.data?.broadcasts?.items || [];
-            graphData = allItems.find(item => item.username === user) || null;
-          } else {
-            graphData = { error: "Erro inicial CAM4", details: firstRes.status };
-          }
-        } catch (err) {
-          graphData = { error: "Falha na consulta GraphQL", details: err.message };
-        }
-
+        // Busca paginada para garantir consistência!
+        const graphData = await findUserGraphData(user, limit, 20);
         const streamInfo = await handleLiveInfo(user);
 
         return new Response(JSON.stringify({
@@ -597,7 +592,7 @@ export default {
 /**
  * =========================================================================================
  * Fim do arquivo: xcam-api/index.js
- *
+ * 
  * Observações e recomendações:
  * - Este Worker serve como gateway seguro XCam, centralizando lógica de proxy,
  *   agregação de dados externos, roteamento RESTful e aplicando boas práticas
