@@ -4,15 +4,16 @@
  * ============================================================================
  * 
  * Descrição:
- * Este arquivo implementa o Worker principal da XCam API, atuando como gateway
- * inteligente para dados públicos, proxy seguro para redirecionamento de mídia,
- * e geração dinâmica de poster seguro (frame de vídeo HLS) para uso em players,
- * resolvendo problemas de CORS, Referer e Same-Origin Policy.
+ * Este Worker é o backend principal da XCam API, fornecendo roteamento RESTful
+ * e proxy seguro para dados públicos, streams de mídia HLS e geração de poster
+ * seguro (frame de vídeo HLS) para players. Suporta recursividade em playlists
+ * HLS, procura segmentos de mídia em múltiplos formatos (.ts, .aac, .m4s, .mp4)
+ * e resolve problemas de CORS, Referer e Same-Origin Policy.
  * 
  * Funcionalidades principais:
  * - Roteamento RESTful e versionado para múltiplos endpoints.
  * - Proxy de redirecionamento para streams HLS (com 302).
- * - Proxy de conteúdo para segmento .ts do HLS, permitindo captura segura de poster via canvas.
+ * - Proxy de conteúdo para segmento de mídia HLS, permitindo captura segura de poster via canvas.
  * - Integração com Google Apps Script para gravações.
  * - Consolidação de dados públicos agregados por usuário.
  * - Listagem dinâmica filtrável de transmissões públicas.
@@ -273,13 +274,47 @@ async function handleStreamProxy(username, type) {
   return Response.redirect(targetUrl, 302);
 }
 
+// ==========================================================================================
+// == Função recursiva: busca o primeiro segmento de mídia em playlist HLS e sub-playlists ==
+// ==========================================================================================
+/**
+ * Busca o primeiro segmento de mídia (ts, aac, m4s, mp4) em um manifesto HLS, 
+ * seguindo sub-playlists se necessário (recursão limitada).
+ * 
+ * @param {string} m3u8Url - URL do manifesto HLS (.m3u8)
+ * @param {string} username - Nome do usuário para referer
+ * @param {number} maxDepth - Profundidade máxima de recursão
+ * @returns {Promise<string|null>} - URL do segmento de mídia ou null
+ */
+async function findFirstMediaSegment(m3u8Url, username, maxDepth = 2) {
+  if (maxDepth < 0) return null;
+  const res = await fetch(m3u8Url, { headers: { referer: `https://pt.cam4.com/${username}` } });
+  if (!res.ok) return null;
+  const text = await res.text();
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  // 1. Procura segmento de mídia comum (ts, aac, m4s, mp4)
+  const seg = lines.find(l => /\.(ts|aac|m4s|mp4)(\?|$)/i.test(l));
+  if (seg) {
+    if (/^https?:\/\//.test(seg)) return seg;
+    return m3u8Url.replace(/[^/]*$/, '') + seg;
+  }
+  // 2. Procura sub-playlist .m3u8
+  const subplaylist = lines.find(l => l.endsWith('.m3u8'));
+  if (subplaylist) {
+    const nextUrl = /^https?:\/\//.test(subplaylist) ? subplaylist : m3u8Url.replace(/[^/]*$/, '') + subplaylist;
+    return await findFirstMediaSegment(nextUrl, username, maxDepth - 1);
+  }
+  return null;
+}
+
 // =====================================================================================
-// == Handler: Proxy seguro para segmento TS do HLS (poster seguro para uso em canvas) ==
+// == Handler: Proxy seguro para segmento de mídia HLS (poster seguro para uso em canvas)
 // =====================================================================================
 /**
- * Busca o manifesto HLS do usuário, encontra o primeiro segmento .ts, busca e retransmite com CORS permissivo.
+ * Busca o manifesto HLS do usuário, encontra o primeiro segmento de mídia suportado,
+ * busca e retransmite com CORS permissivo.
  * Permite captura segura de frame pelo canvas do navegador do cliente.
- * O filtro foi aprimorado para aceitar segmentos .ts com querystring (ex: .ts?token=...).
+ * Suporta segmentos .ts, .aac, .m4s, .mp4, sub-playlists e URLs absolutas ou relativas.
  */
 async function handlePosterSegmentProxy(username) {
   // 1. Busca informações de transmissão ao vivo
@@ -298,48 +333,32 @@ async function handlePosterSegmentProxy(username) {
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
-  // 3. Busca o manifesto HLS (.m3u8)
-  const m3u8Res = await fetch(hlsUrl, { headers: { referer: `https://pt.cam4.com/${username}` } });
-  if (!m3u8Res.ok) {
-    return new Response(JSON.stringify({ error: "Falha ao buscar manifesto HLS." }), {
-      status: 502,
-      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
-    });
-  }
-  const m3u8Text = await m3u8Res.text();
-
-  // 4. Filtra linhas válidas (ignora comentários/instruções HLS)
-  const lines = m3u8Text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-
-  // 5. Encontra o primeiro segmento .ts (com ou sem querystring)
-  const firstSegment = lines.find(l => /\.ts(\?|$)/.test(l));
-  if (!firstSegment) {
-    return new Response(JSON.stringify({ error: "Nenhum segmento .ts encontrado no manifesto HLS." }), {
+  // 3. Busca recursiva pelo primeiro segmento de mídia
+  const segmentUrl = await findFirstMediaSegment(hlsUrl, username, 2);
+  if (!segmentUrl) {
+    return new Response(JSON.stringify({ error: "Nenhum segmento de mídia encontrado no manifesto HLS." }), {
       status: 404,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
-
-  // 6. Monta URL absoluta do segmento se necessário
-  let segmentUrl = firstSegment;
-  if (!/^https?:\/\//.test(segmentUrl)) {
-    const base = hlsUrl.substring(0, hlsUrl.lastIndexOf('/') + 1);
-    segmentUrl = base + segmentUrl;
-  }
-
-  // 7. Busca e retransmite o segmento .ts com CORS universal
+  // 4. Busca e retransmite o segmento com CORS universal
   const segRes = await fetch(segmentUrl, { headers: { referer: `https://pt.cam4.com/${username}` } });
   if (!segRes.ok) {
-    return new Response(JSON.stringify({ error: "Falha ao buscar segmento de vídeo." }), {
+    return new Response(JSON.stringify({ error: "Falha ao buscar segmento de mídia." }), {
       status: 502,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
+  // 5. Detecta tipo mime pelo final do arquivo
+  let mime = "video/MP2T";
+  if (segmentUrl.endsWith('.aac')) mime = "audio/aac";
+  if (segmentUrl.endsWith('.m4s')) mime = "video/iso.segment";
+  if (segmentUrl.endsWith('.mp4')) mime = "video/mp4";
   return new Response(segRes.body, {
     status: 200,
     headers: {
-      "Content-Type": "video/MP2T",
-      "Content-Disposition": "inline; filename=\"poster.ts\"",
+      "Content-Type": mime,
+      "Content-Disposition": "inline; filename=\"poster" + segmentUrl.slice(-8) + "\"",
       "Access-Control-Allow-Origin": "*"
     }
   });
@@ -351,8 +370,8 @@ async function handlePosterSegmentProxy(username) {
 /**
  * Função principal do Worker: roteia requisições, executa filtros, trata erros.
  * Ordem de prioridade das rotas: 
- * 1. Poster seguro (proxy .ts)
- * 2. Proxy de redirecionamento de stream
+ * 1. Poster seguro (proxy mídia HLS)
+ * 2. Proxy de stream (redirecionamento)
  * 3. Proxy gravações via GAS
  * 4. Dados agregados do usuário
  * 5. Endpoints legados
@@ -372,7 +391,7 @@ export default {
     }
 
     try {
-      // === 1. POSTER SEGURO (Proxy para segmento TS do HLS) ===
+      // === 1. POSTER SEGURO (Proxy para segmento de mídia HLS) ===
       if (pathname.match(/^\/v1\/media\/poster\/([a-zA-Z0-9_]+)\/?$/) && request.method === "GET") {
         const username = pathname.match(/^\/v1\/media\/poster\/([a-zA-Z0-9_]+)\/?$/)[1];
         return await handlePosterSegmentProxy(username);
