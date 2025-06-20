@@ -5,18 +5,17 @@
  *
  * Descrição:
  * Worker principal da XCam API para Cloudflare Workers.
- * Fornece roteamento RESTful, proxy seguro de mídia HLS (poster seguro), geração de poster seguro (frame de vídeo HLS),
- * integração com Google Apps Script, agregação de dados públicos multi-origem e filtragem dinâmica.
+ * Seu objetivo é consolidar e proteger integrações com a API CAM4,
+ * oferecer endpoints RESTful padronizados, proxy de mídia HLS seguro,
+ * geração de poster, agregação de dados multi-origem, integração com
+ * Google Apps Script e oferecer cache interno para otimização de
+ * performance e redução de dependência direta com a origem.
  *
- * Funcionalidades principais:
- * - Proxy seguro de segmento de mídia HLS (para canvas).
- * - Redirecionamento 302 para HLS (cdn/edge).
- * - Listagem pública de transmissões com filtros e paginação.
- * - Agregação de dados por usuário (dados completos ou só stream).
- * - Proxy para gravações (rec.json via GAS).
- * - Suporte robusto a playlists HLS aninhadas.
- * - Segurança via CORS dinâmico.
- * - Código modular, comentado e pronto para expansão.
+ * Novidade: A partir desta versão, as funções internas que precisam
+ * de dados de stream HLS e GraphQL usam a própria XCam API (?stream=)
+ * como backend, e não mais a API do CAM4 diretamente. Além disso,
+ * respostas dessas consultas são mantidas em cache (em memória/objeto)
+ * por alguns segundos, para eficiência e resiliência.
  *
  * Autor: Samuel Passamani | Equipe XCam & Gemini
  * Última atualização: 2025-06-20
@@ -42,7 +41,7 @@ function jsonToCsv(items) {
       }
       return val;
     }).join(",")
-  ); 
+  );
   return [headers.join(","), ...csvRows].join("\n");
 }
 
@@ -89,9 +88,6 @@ function getCorsHeaders(origin) {
 // ========================================================
 /**
  * Monta o payload para consulta GraphQL de transmissões públicas.
- * @param {number} offset - Offset para paginação.
- * @param {number} limit - Máximo de resultados.
- * @returns {string} - JSON string para body da request.
  */
 function buildCam4Body(offset, limit) {
   return JSON.stringify({
@@ -127,15 +123,36 @@ function buildCam4Body(offset, limit) {
 }
 
 // ===============================================
+// == Cache simples em memória (global)         ==
+// ===============================================
+/**
+ * Estrutura de cache simples (objeto global). 
+ * Cada chave armazena: { value, expires }
+ * TTL default: 10 segundos (configurável na função de set/get)
+ * Atenção: Em Workers, o escopo global dura enquanto o Worker não for descartado,
+ * então o cache pode ser limpo a qualquer momento pela plataforma (não é garantido).
+ */
+const XCamApiCache = {};
+function cacheGet(key) {
+  const entry = XCamApiCache[key];
+  if (entry && entry.expires > Date.now()) {
+    return entry.value;
+  }
+  return null;
+}
+function cacheSet(key, value, ttlMs = 10000) {
+  XCamApiCache[key] = {
+    value,
+    expires: Date.now() + ttlMs
+  };
+}
+
+// ===============================================
 // == Busca paginada robusta por usuário ativo  ==
 // ===============================================
 /**
  * Busca por um usuário na listagem do GraphQL, paginando até encontrá-lo ou esgotar o total.
  * Garante que 'graphData' nunca é null para usuários realmente online na plataforma.
- * @param {string} username
- * @param {number} limit - quantidade de resultados por página (default 300)
- * @param {number} maxPages - máxima quantidade de páginas a buscar (default 20, cobre até 6000 usuários)
- * @returns {Promise<object|null>}
  */
 async function findUserGraphData(username, limit = 300, maxPages = 20) {
   let offset = 0;
@@ -166,8 +183,6 @@ async function findUserGraphData(username, limit = 300, maxPages = 20) {
 // ====================================================
 /**
  * Busca informações públicas de perfil do usuário via REST CAM4.
- * @param {string} username
- * @returns {Promise<object>}
  */
 async function handleUserProfile(username) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/info`;
@@ -187,27 +202,31 @@ async function handleUserProfile(username) {
 }
 
 // ===========================================================
-// == Handler: Busca informações de stream ao vivo (live)  ==
+// == Handler: Busca informações de stream via XCam API    ==
 // ===========================================================
 /**
- * Busca informações da transmissão ao vivo do usuário via REST CAM4.
+ * Busca dados de streamInfo e graphData de um usuário na própria XCam API (?stream=).
+ * Usa cache para reduzir fetchs e aumentar resiliência/velocidade.
  * @param {string} username
- * @returns {Promise<object>}
+ * @param {number} ttlMs - tempo de cache em ms
+ * @returns {Promise<{graphData: object, streamInfo: object}>}
  */
-async function handleLiveInfo(username) {
-  const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`;
+async function handleStreamInfoViaXCam(username, ttlMs = 10000) {
+  const cacheKey = `streaminfo:${username}`;
+  const cached = cacheGet(cacheKey);
+  if (cached) return cached;
+  const apiUrl = `https://api.xcam.gay/?stream=${encodeURIComponent(username)}`;
   try {
-    const response = await fetch(apiUrl, {
-      headers: {
-        accept: "application/json, text/plain, */*",
-        referer: `https://pt.cam4.com/${username}`
-      }
-    });
-    if (!response.ok) throw new Error(`Erro CAM4 StreamInfo: ${response.status}`);
-    return await response.json();
+    const res = await fetch(apiUrl, { headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error(`Erro XCamAPI stream: ${res.status}`);
+    const data = await res.json();
+    if (data && typeof data === "object" && "graphData" in data && "streamInfo" in data) {
+      cacheSet(cacheKey, { graphData: data.graphData, streamInfo: data.streamInfo }, ttlMs);
+      return { graphData: data.graphData, streamInfo: data.streamInfo };
+    }
+    throw new Error("Formato inesperado da resposta da XCam API");
   } catch (err) {
-    console.error(`Falha ao buscar streamInfo para ${username}:`, err.message);
-    return { error: "Falha ao buscar streamInfo", details: err.message };
+    return { graphData: null, streamInfo: { error: "Falha ao buscar streamInfo XCam", details: err.message } };
   }
 }
 
@@ -217,19 +236,13 @@ async function handleLiveInfo(username) {
 /**
  * Busca dados GraphQL, liveInfo e profileInfo do usuário e retorna tudo junto.
  * Usado para ?user={username}
- * @param {string} user
- * @param {object} corsHeaders
- * @returns {Promise<Response>}
  */
 async function handleUserFullInfo(user, corsHeaders) {
-  const limit = 300;
-  // Busca sempre em todas as páginas para garantir consistência!
-  const graphData = await findUserGraphData(user, limit, 20);
+  // Busca streamInfo e graphData pela própria XCam API (com cache)
+  const { graphData, streamInfo } = await handleStreamInfoViaXCam(user, 10000);
 
-  const [streamInfo, profileInfo] = await Promise.all([
-    handleLiveInfo(user),
-    handleUserProfile(user)
-  ]);
+  // Profile continua sendo buscado diretamente (sem cache, pode ser implementado)
+  const profileInfo = await handleUserProfile(user);
 
   return new Response(JSON.stringify({
     user,
@@ -246,9 +259,6 @@ async function handleUserFullInfo(user, corsHeaders) {
 // ===============================================================================
 /**
  * Encaminha requisição para um Google Apps Script que retorna gravações do usuário.
- * @param {string} username
- * @param {object} corsHeaders
- * @returns {Promise<Response>}
  */
 async function handleRecProxy(username, corsHeaders) {
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz6cucO0SvdNSbnlFrUCR9nvh4FCDzMCp138iaRyiuDDWQ9JfPvFlmeevhHUtn0soc_IQ/exec?rec=" + encodeURIComponent(username);
@@ -275,19 +285,17 @@ async function handleRecProxy(username, corsHeaders) {
 // == Handler: Proxy de redirecionamento para Streams HLS (302 Location)    ==
 // ===========================================================================
 /**
- * Proxy de redirecionamento seguro (302) para o HLS do usuário, preservando Referer.
+ * Proxy de redirecionamento seguro (302) para o HLS do usuário, usando a XCam API para buscar URL.
  * Usado para players que não precisam acessar o conteúdo do vídeo via JavaScript.
- * @param {string} username
- * @param {string} type - 'cdn' ou 'edge'
- * @returns {Promise<Response>}
  */
 async function handleStreamProxy(username, type) {
   if (!username) {
     return new Response('Nome de usuário não especificado.', { status: 400 });
   }
-  const streamInfo = await handleLiveInfo(username);
-  if (streamInfo.error) {
-    return new Response(JSON.stringify(streamInfo), {
+  // Busca streamInfo pela própria XCam API (com cache)
+  const { streamInfo } = await handleStreamInfoViaXCam(username, 10000);
+  if (!streamInfo || streamInfo.error) {
+    return new Response(JSON.stringify(streamInfo || { error: "streamInfo não disponível" }), {
       status: 502,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -312,12 +320,8 @@ async function handleStreamProxy(username, type) {
 /**
  * Busca o primeiro segmento de mídia (ts, aac, m4s, mp4) em um manifesto HLS,
  * seguindo todas as sub-playlists (.m3u8) recursivamente até o limite maxDepth.
- * @param {string} m3u8Url - URL do manifesto HLS (.m3u8)
- * @param {string} username - Nome do usuário para referer
- * @param {number} maxDepth - Profundidade máxima de recursão
- * @returns {Promise<string|null>} - URL do segmento de mídia ou null
  */
-async function findFirstMediaSegment(m3u8Url, username, maxDepth = 30) {
+async function findFirstMediaSegment(m3u8Url, username, maxDepth = 8) {
   if (maxDepth < 0) return null;
   const res = await fetch(m3u8Url, { headers: { referer: `https://pt.cam4.com/${username}` } });
   if (!res.ok) return null;
@@ -346,15 +350,13 @@ async function findFirstMediaSegment(m3u8Url, username, maxDepth = 30) {
 // == Handler: Proxy seguro para segmento de mídia HLS (poster seguro para uso em canvas)
 // =====================================================================================
 /**
- * Busca o manifesto HLS do usuário, encontra o primeiro segmento de mídia suportado,
+ * Busca o manifesto HLS do usuário usando a XCam API, encontra o primeiro segmento de mídia suportado,
  * faz proxy com CORS universal para uso como poster em <canvas>.
- * @param {string} username
- * @returns {Promise<Response>}
  */
 async function handlePosterSegmentProxy(username) {
-  // Busca informações de transmissão ao vivo
-  const streamInfo = await handleLiveInfo(username);
-  if (streamInfo.error) {
+  // Busca dados de streamInfo e graphData via XCam API (com cache)
+  const { streamInfo } = await handleStreamInfoViaXCam(username, 10000);
+  if (!streamInfo || streamInfo.error) {
     return new Response(JSON.stringify({ error: "Usuário offline ou sem stream." }), {
       status: 404,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
@@ -433,7 +435,7 @@ async function handlePosterSegmentProxy(username) {
  * 3. Proxy gravações via GAS
  * 4. Dados resumidos de stream (?stream=)
  * 5. Dados agregados do usuário (?user=)
- * 6. Endpoints legados
+ * 6. Endpoints REST legados
  * 7. Listagem pública de transmissões
  * 8. Fallback 404
  */
@@ -595,7 +597,7 @@ export default {
  * 
  * Observações e recomendações:
  * - Este Worker serve como gateway seguro XCam, centralizando lógica de proxy,
- *   agregação de dados externos, roteamento RESTful e aplicando boas práticas
+ *   agregação de dados externos, roteamento RESTful, cache, e aplicando boas práticas
  *   de arquitetura serverless, facilitando manutenções e futuras extensões.
  * - Funções, filtros e lógica de segurança estão comentados e organizados por bloco.
  * - Para dúvidas, consulte a documentação Gemini/XCam ou contate o autor.
