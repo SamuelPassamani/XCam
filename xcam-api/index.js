@@ -479,7 +479,7 @@ export default {
         const limitParam = url.searchParams.get("limit");
         let limit = parseInt(limitParam, 10);
         // Limite máximo seguro para não exceder subrequests do Cloudflare
-        const MAX_SAFE = 20;
+        const MAX_SAFE = 25;
         if (!limitParam || isNaN(limit) || limit < 1) {
           return new Response(JSON.stringify({ error: "Parâmetro 'limit' obrigatório e deve ser um número maior que 0." }), {
             status: 400,
