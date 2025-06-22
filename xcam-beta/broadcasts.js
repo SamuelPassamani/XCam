@@ -346,7 +346,7 @@ async function loadFilteredBroadcasts() {
 
   try {
     // 2. Busca um lote grande de transmissões para trabalhar localmente.
-    const result = await fetchBroadcasts(100);
+    const result = await fetchBroadcasts(30);
     loader.remove();
 
     if (!result.length) {
