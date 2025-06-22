@@ -476,52 +476,63 @@ export default {
 
       // === 3.1. LISTAGEM DE TRANSMISSÕES COM STREAM=0 E LIMIT ===
       if (url.searchParams.get("stream") === "0") {
-        const limitParam = url.searchParams.get("limit");
-        let limit = parseInt(limitParam, 10);
-        // Limite máximo seguro para não exceder subrequests do Cloudflare
-        const MAX_SAFE = 25;
-        if (!limitParam || isNaN(limit) || limit < 1) {
-          return new Response(JSON.stringify({ error: "Parâmetro 'limit' obrigatório e deve ser um número maior que 0." }), {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
+        const cacheKey = new Request(request.url, request);
+        const cache = caches.default;
+        let response = await cache.match(cacheKey);
+
+        if (!response) {
+          const limitParam = url.searchParams.get("limit");
+          let limit = parseInt(limitParam, 10);
+          const MAX_SAFE = 25; // Limite máximo seguro para evitar sobrecarga
+          if (!limitParam || isNaN(limit) || limit < 1) {
+            response = new Response(JSON.stringify({ error: "Parâmetro 'limit' obrigatório e deve ser um número maior que 0." }), {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" }
+            });
+            return response;
+          }
+          if (limit > MAX_SAFE) limit = MAX_SAFE;
+          const fetchLimit = Math.min(limit, 100); 
+
+          const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              "apollographql-client-name": "CAM4-client",
+              "apollographql-client-version": "25.5.15-113220utc"
+            },
+            body: buildCam4Body(0, fetchLimit)
           });
-        }
-        if (limit > MAX_SAFE) limit = MAX_SAFE;
-        // Busca as transmissões públicas (limit máximo 100 para evitar sobrecarga)
-        const fetchLimit = Math.min(limit, 100);
-        const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-          method: "POST",
-          headers: {
-        "content-type": "application/json",
-        "apollographql-client-name": "CAM4-client",
-        "apollographql-client-version": "25.5.15-113220utc"
-          },
-          body: buildCam4Body(0, fetchLimit)
-        });
 
-        if (!firstRes.ok) {
-          return new Response(JSON.stringify({ error: "Erro ao buscar transmissões públicas." }), {
-        status: 502,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
+          if (!firstRes.ok) {
+            response = new Response(JSON.stringify({ error: "Erro ao buscar transmissões públicas." }), {
+              status: 502,
+              headers: { ...corsHeaders, "Content-Type": "application/json" }
+            });
+            return response;
+          }
+
+          const firstJson = await firstRes.json();
+          const items = firstJson?.data?.broadcasts?.items?.slice(0, fetchLimit) || [];
+
+          // Para cada usuário, busca graphData e streamInfo
+          const results = await Promise.all(items.map(async (item) => {
+            const username = item.username;
+            const [graphData, streamInfo] = await Promise.all([
+              findUserGraphData(username, 300, 20),
+              handleLiveInfo(username)
+            ]);
+            return { username, graphData, streamInfo };
+          }));
+
+          response = new Response(JSON.stringify({ total: results.length, items: results }, null, 2), {
+            headers: { "Cache-Control": "public, max-age=90", ...corsHeaders, "Content-Type": "application/json" } 
           });
+
+          // Armazena no cache por 30 segundos
+          await cache.put(cacheKey, response.clone());
         }
-
-        const firstJson = await firstRes.json();
-        const items = firstJson?.data?.broadcasts?.items?.slice(0, fetchLimit) || [];
-
-        // Para cada usuário, busca graphData e streamInfo
-        const results = await Promise.all(items.map(async (item) => {
-          const username = item.username;
-          const [graphData, streamInfo] = await Promise.all([
-        findUserGraphData(username, 300, 20),
-        handleLiveInfo(username)
-          ]);
-          return { username, graphData, streamInfo };
-        }));
-
-        return new Response(JSON.stringify({ total: results.length, items: results }, null, 2), {
-          headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
-        });
+        return response;
       }
 
       // === 4. NOVO: Dados resumidos de stream (?stream={username}) ===
