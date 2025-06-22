@@ -123,7 +123,7 @@ async function fetchPosterImageUrl(username) {
  * @param {number} limit - O número máximo de resultados a serem pedidos para a API.
  * @returns {string} A URL completa para a chamada da API.
  */
-function buildApiUrl(filters, limit = 100) {
+function buildApiUrl(filters, limit = 25) {
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
