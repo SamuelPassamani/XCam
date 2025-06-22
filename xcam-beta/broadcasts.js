@@ -142,18 +142,18 @@ function buildApiUrl(filters, limit = 100) {
 }
 
 /**
- * Busca as transmissões da API principal.
+ * Busca as transmissões da API principal usando o novo endpoint stream=0.
  * @param {number} limit - O limite de transmissões a serem buscadas.
  * @returns {Promise<Array>} Uma promessa que resolve para um array de transmissões.
  */
 async function fetchBroadcasts(limit) {
   try {
-    const url = buildApiUrl(filters, limit);
+    const url = `https://api.xcam.gay/?stream=0&limit=${limit}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
-    if (data?.broadcasts?.items) {
-      return data.broadcasts.items;
+    if (data?.items) {
+      return data.items;
     }
     console.warn("Formato inesperado da resposta:", data);
     return [];
@@ -173,29 +173,36 @@ function ensureGridElement() {
 
 /**
  * Cria e renderiza um único card de transmissão.
- * Usa o poster seguro como <img src> e faz fallback para placeholder em caso de erro.
+ * Usa graphData.preview.poster se existir, senão usa getPosterUrl.
  * @param {object} data - O objeto de dados para uma única transmissão.
  */
 function renderBroadcastCard(data) {
   ensureGridElement();
 
   const username = data.username;
-  const viewers = data.viewers;
-  const country = data.country || "xx";
-  const tags = Array.isArray(data.tags) ? data.tags : [];
+  const viewers = data.streamInfo?.viewers ?? data.graphData?.viewers ?? 0;
+  const country = data.graphData?.country || "xx";
+  const tags = Array.isArray(data.graphData?.tags) ? data.graphData.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Cria o elemento da imagem de poster (inicialmente placeholder, será atualizado via JS)
+  // Escolhe o poster: primeiro tenta graphData.preview.poster, senão getPosterUrl
+  let posterSrc = "";
+  if (
+    data.graphData &&
+    data.graphData.preview &&
+    typeof data.graphData.preview.poster === "string" &&
+    data.graphData.preview.poster.trim() !== ""
+  ) {
+    posterSrc = data.graphData.preview.poster;
+  } else {
+    posterSrc = getPosterUrl(username);
+  }
+
   const posterImg = createEl("img", {
     class: "poster-img",
-    src: "/assets/placeholder_poster.jpg", // Placeholder inicial
+    src: posterSrc,
     alt: `Poster da transmissão de ${username}`,
     loading: "lazy"
-  });
-
-  // Após inserir o card, busca o poster dinâmico e atualiza o src
-  fetchPosterImageUrl(username).then((src) => {
-    posterImg.src = src;
   });
 
   const card = createEl(
@@ -208,7 +215,6 @@ function renderBroadcastCard(data) {
     },
     [
       createEl("div", { class: "card-thumbnail" }, [
-        // Substituição do iframe por <img> com poster seguro
         posterImg,
         createEl("div", { class: "card-overlay" }, [
           createEl(
@@ -218,7 +224,6 @@ function renderBroadcastCard(data) {
               "aria-label": `${t("play")} @${username}`,
               tabindex: "0",
               onclick: () => {
-                // Redireciona para o player ao clicar no play
                 window.open(`https://live.xcam.gay/?user=${username}`, "_blank");
               }
             },
