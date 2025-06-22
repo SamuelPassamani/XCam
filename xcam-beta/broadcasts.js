@@ -148,7 +148,7 @@ function buildApiUrl(filters, limit = 20) {
  */
 async function fetchBroadcasts(limit) {
   try {
-    const url = `https://api.xcam.gay/?stream=0&limit=${limit}`;
+    const url = `https://api.xcam.gay/?limit=${limit}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
