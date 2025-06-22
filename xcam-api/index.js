@@ -477,14 +477,16 @@ export default {
       // === 3.1. LISTAGEM DE TRANSMISSÕES COM STREAM=0 E LIMIT ===
       if (url.searchParams.get("stream") === "0") {
         const limitParam = url.searchParams.get("limit");
-        const limit = parseInt(limitParam, 10);
+        let limit = parseInt(limitParam, 10);
+        // Limite máximo seguro para não exceder subrequests do Cloudflare
+        const MAX_SAFE = 20;
         if (!limitParam || isNaN(limit) || limit < 1) {
           return new Response(JSON.stringify({ error: "Parâmetro 'limit' obrigatório e deve ser um número maior que 0." }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
           });
         }
-
+        if (limit > MAX_SAFE) limit = MAX_SAFE;
         // Busca as transmissões públicas (limit máximo 100 para evitar sobrecarga)
         const fetchLimit = Math.min(limit, 100);
         const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
