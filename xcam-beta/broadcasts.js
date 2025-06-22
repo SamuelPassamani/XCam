@@ -222,10 +222,8 @@ function renderBroadcastCard(data) {
             {
               class: "play-button",
               "aria-label": `${t("play")} @${username}`,
-              tabindex: "0",
-              onclick: () => {
-                window.open(`https://live.xcam.gay/?user=${username}`, "_blank");
-              }
+              tabindex: "0"
+              // Remover o onclick daqui!
             },
             [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
           )
