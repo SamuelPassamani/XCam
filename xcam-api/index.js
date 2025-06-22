@@ -130,7 +130,7 @@ function buildCam4Body(offset, limit) {
  * Busca por um usuário na listagem do GraphQL, paginando até encontrá-lo ou esgotar o total.
  * Garante que 'graphData' nunca é null para usuários realmente online na plataforma.
  */
-async function findUserGraphData(username, limit = 300, maxPages = 20) {
+async function findUserGraphData(username, limit = 300, maxPages = 25) {
   let offset = 0;
   for (let page = 0; page < maxPages; page++) {
     const res = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
@@ -210,7 +210,7 @@ async function handleLiveInfo(username) {
  */
 async function handleUserFullInfo(user, corsHeaders) {
   const limit = 300;
-  const graphData = await findUserGraphData(user, limit, 20);
+  const graphData = await findUserGraphData(user, limit, 25);
   const [streamInfo, profileInfo] = await Promise.all([
     handleLiveInfo(user),
     handleUserProfile(user)
@@ -519,7 +519,7 @@ export default {
           const results = await Promise.all(items.map(async (item) => {
             const username = item.username;
             const [graphData, streamInfo] = await Promise.all([
-              findUserGraphData(username, 300, 20),
+              findUserGraphData(username, 300, 25), 
               handleLiveInfo(username)
             ]);
             return { username, graphData, streamInfo };
@@ -541,7 +541,7 @@ export default {
         const user = streamParam;
         const limit = 300;
         // Busca paginada para garantir consistência!
-        const graphData = await findUserGraphData(user, limit, 20);
+        const graphData = await findUserGraphData(user, limit, 25); 
         const streamInfo = await handleLiveInfo(user);
 
         return new Response(JSON.stringify({
