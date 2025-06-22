@@ -123,7 +123,7 @@ async function fetchPosterImageUrl(username) {
  * @param {number} limit - O número máximo de resultados a serem pedidos para a API.
  * @returns {string} A URL completa para a chamada da API.
  */
-function buildApiUrl(filters, limit = 25) {
+function buildApiUrl(filters, limit = 20) {
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
@@ -346,7 +346,7 @@ async function loadFilteredBroadcasts() {
 
   try {
     // 2. Busca um lote grande de transmissões para trabalhar localmente.
-    const result = await fetchBroadcasts(25);
+    const result = await fetchBroadcasts(20); // Ajuste o limite conforme necessário
     loader.remove();
 
     if (!result.length) {
