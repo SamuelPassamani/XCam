@@ -474,6 +474,54 @@ export default {
         return await handleRecProxy(recParam, corsHeaders);
       }
 
+      // === 3.1. LISTAGEM DE TRANSMISSÕES COM STREAM=0 E LIMIT ===
+      if (url.searchParams.get("stream") === "0") {
+        const limitParam = url.searchParams.get("limit");
+        const limit = parseInt(limitParam, 10);
+        if (!limitParam || isNaN(limit) || limit < 1) {
+          return new Response(JSON.stringify({ error: "Parâmetro 'limit' obrigatório e deve ser um número maior que 0." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        // Busca as transmissões públicas (limit máximo 100 para evitar sobrecarga)
+        const fetchLimit = Math.min(limit, 100);
+        const firstRes = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+          method: "POST",
+          headers: {
+        "content-type": "application/json",
+        "apollographql-client-name": "CAM4-client",
+        "apollographql-client-version": "25.5.15-113220utc"
+          },
+          body: buildCam4Body(0, fetchLimit)
+        });
+
+        if (!firstRes.ok) {
+          return new Response(JSON.stringify({ error: "Erro ao buscar transmissões públicas." }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        const firstJson = await firstRes.json();
+        const items = firstJson?.data?.broadcasts?.items?.slice(0, fetchLimit) || [];
+
+        // Para cada usuário, busca graphData e streamInfo
+        const results = await Promise.all(items.map(async (item) => {
+          const username = item.username;
+          const [graphData, streamInfo] = await Promise.all([
+        findUserGraphData(username, 300, 20),
+        handleLiveInfo(username)
+          ]);
+          return { username, graphData, streamInfo };
+        }));
+
+        return new Response(JSON.stringify({ total: results.length, items: results }, null, 2), {
+          headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
       // === 4. NOVO: Dados resumidos de stream (?stream={username}) ===
       const streamParam = url.searchParams.get("stream");
       if (streamParam) {
