@@ -232,7 +232,7 @@ async function handleUserFullInfo(user, corsHeaders) {
  * Encaminha requisição para um Google Apps Script que retorna gravações do usuário.
  */
 async function handleRecProxy(username, corsHeaders) {
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbz6cucO0SvdNSbnlFrUCR9nvh4FCDzMCp138iaRyiuDDWQ9JfPvFlmeevhHUtn0soc_IQ/exec?rec=" + encodeURIComponent(username);
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?rec=" + encodeURIComponent(username);
   try {
     const response = await fetch(GAS_URL, {
       redirect: 'follow',
