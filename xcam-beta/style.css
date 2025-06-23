@@ -260,9 +260,7 @@ body.modal-open {
   .search-bar {
     display: none !important;
   }
-  .mobile-menu {
-    /* display: flex; NÃO defina aqui, pois .active controla isso */
-  }
+  /* .mobile-menu { display: flex; NÃO defina aqui, pois .active controla isso } */
 }
 
 /* No desktop: esconde menu mobile */
