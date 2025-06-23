@@ -534,7 +534,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
           usersInfo[username] = {
             lastProcessed: new Date().toISOString(),
             fileName: fileName,
-            fileUrl: `https://cdn.xcam.gay/0:/src/poster/${username}.jpg`, // <-- novo campo logo após fileName
+            fileUrl: `https://poster.xcam.gay/${username}.jpg`, // <-- novo campo logo após fileName
             lastStatus: "ok",
             lastError: null,
             lastRunPage: page !== undefined ? page : null,
@@ -548,7 +548,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
           usersInfo[username] = {
             lastProcessed: new Date().toISOString(),
             fileName: fileName,
-            fileUrl: `https://cdn.xcam.gay/0:/src/poster/${username}.jpg`, // novo campo
+            fileUrl: `https://poster.xcam.gay/${username}.jpg`, // novo campo
             lastStatus: "error",
             lastError: e.message,
             lastRunPage: page !== undefined ? page : null,
@@ -609,7 +609,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
           usersInfo[username] = {
             lastProcessed: file.getLastUpdated().toISOString(),
             fileName: fileName,
-            fileUrl: `https://cdn.xcam.gay/0:/src/poster/${username}.jpg`, // novo campo
+            fileUrl: `https://poster.xcam.gay/${username}.jpg`,
             lastStatus: "legacy",
             lastError: null,
             lastRunPage: null,
@@ -631,7 +631,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
             usersInfo[username] = {
               lastProcessed: new Date().toISOString(),
               fileName: fileName,
-              fileUrl: `https://cdn.xcam.gay/0:/src/poster/${username}.jpg`, // novo campo
+              fileUrl: `https://poster.xcam.gay/${username}.jpg`,
               lastStatus: "updated",
               lastError: null,
               lastRunPage: null,
@@ -683,8 +683,8 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
 }
 
 /**
- * Audita o processed.json e insere o campo "fileUrl" para todos os usuários que ainda não possuem,
- * sempre logo abaixo de "fileName", seguindo o padrão solicitado.
+ * Audita o processed.json e garante que todos os usuários tenham o campo "fileUrl"
+ * seguindo o padrão "https://poster.xcam.gay/${username}.jpg", sempre logo após "fileName".
  * Respeita o tempo máximo de execução (MAX_EXECUTION_TIME_MS).
  * @param {string} [postersFolderId] - (Opcional) ID da pasta de posters.
  * @returns {Object} - Relatório da auditoria.
@@ -696,40 +696,55 @@ function auditProcessedJsonFileUrl(postersFolderId) {
   let usersInfo = processedInfo.users || {};
   let updatedCount = 0;
 
+  // Apenas usa MAX_EXECUTION_TIME_MS, não define aqui!
   const MAX_TIME = (typeof MAX_EXECUTION_TIME_MS !== 'undefined') ? MAX_EXECUTION_TIME_MS : 270000;
   const startTime = Date.now();
 
+  const CDN_PREFIX = "https://cdn.xcam.gay/0:/src/poster/";
+
   const usernames = Object.keys(usersInfo);
   for (let idx = 0; idx < usernames.length; idx++) {
-    // Respeita o tempo máximo de execução
     if (Date.now() - startTime > MAX_TIME - 2000) {
       Logger.log("⏰ Tempo limite de execução atingido durante auditoria do processed.json. Encerrando auditoria.");
       break;
     }
     const username = usernames[idx];
     const userObj = usersInfo[username];
-    // Se não tem fileUrl, insere logo após fileName
-    if (!userObj.fileUrl) {
-      // Cria novo objeto com fileUrl logo após fileName
+    const fileUrlCorreto = `https://poster.xcam.gay/${username}.jpg`;
+
+    // Corrige se:
+    // - fileUrl ausente
+    // - fileUrl diferente do padrão correto
+    // - fileUrl começa com o prefixo antigo do CDN
+    const precisaCorrigir =
+      !userObj.fileUrl ||
+      userObj.fileUrl !== fileUrlCorreto ||
+      (typeof userObj.fileUrl === "string" && userObj.fileUrl.startsWith(CDN_PREFIX));
+
+    if (precisaCorrigir) {
+      // Cria novo objeto com fileUrl correto logo após fileName
       const newUserObj = {};
       Object.keys(userObj).forEach(key => {
         newUserObj[key] = userObj[key];
         if (key === "fileName") {
-          newUserObj.fileUrl = `https://cdn.xcam.gay/0:/src/poster/${username}.jpg`;
+          newUserObj.fileUrl = fileUrlCorreto;
         }
       });
-      usersInfo[username] = newUserObj;
-      updatedCount++;
-      Logger.log(`🔧 Adicionado fileUrl para '${username}' em processed.json.`);
+      // Só atualiza se realmente mudou
+      if (JSON.stringify(userObj) !== JSON.stringify(newUserObj)) {
+        usersInfo[username] = newUserObj;
+        updatedCount++;
+        Logger.log(`🔧 Corrigido fileUrl para '${username}' em processed.json.`);
+      }
     }
   }
 
   if (updatedCount > 0) {
     processedInfo.users = usersInfo;
     saveProcessedInfo(postersRoot, processedInfo);
-    Logger.log(`✅ Auditoria concluída: ${updatedCount} usuários atualizados com fileUrl em processed.json.`);
+    Logger.log(`✅ Auditoria concluída: ${updatedCount} usuários atualizados/corrigidos com fileUrl em processed.json.`);
   } else {
-    Logger.log("✅ Auditoria concluída: todos os usuários já possuem fileUrl em processed.json.");
+    Logger.log("✅ Auditoria concluída: todos os usuários já possuem fileUrl correto em processed.json.");
   }
 
   return {

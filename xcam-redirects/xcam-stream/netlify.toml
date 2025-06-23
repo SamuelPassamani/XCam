@@ -1,0 +1,11 @@
+[[redirects]]
+  from = "/*"
+  to = "https://xcam-api.aserio.workers.dev/stream/:splat"
+  status = 200
+  force = true
+    [redirects.headers]
+    Access-Control-Allow-Origin = ""
+    Access-Control-Allow-Headers = ""
+    Access-Control-Allow-Methods = ""
+    Access-Control-Allow-Credentials = ""
+    Vary = ""
