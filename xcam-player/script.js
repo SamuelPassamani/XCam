@@ -130,10 +130,19 @@ function addPreviewHoverEvents() {
     const playerContainer = document.getElementById("player");
     const jw = jwplayer("player");
     let playTimeout;
+    let hasPlayedOnHover = false;
+
     playerContainer.addEventListener("mouseenter", () => {
         clearTimeout(playTimeout);
-        playTimeout = setTimeout(() => jw.play(true), 200);
+        // Garante que o play seja chamado na primeira entrada do mouse
+        if (!hasPlayedOnHover) {
+            jw.play(true);
+            hasPlayedOnHover = true;
+        } else {
+            playTimeout = setTimeout(() => jw.play(true), 200);
+        }
     });
+
     playerContainer.addEventListener("mouseleave", () => {
         clearTimeout(playTimeout);
         jw.pause(true);
