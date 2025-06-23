@@ -5,7 +5,7 @@
  * 
  * Descrição:
  * Este script do Google Apps Script implementa um endpoint webapp
- * dinâmico que atende dois fluxos distintos via parâmetros de URL:
+ * dinâmico que atende múltiplos fluxos via parâmetros de URL:
  * 
  * 1. ?user={username}
  *    - Retorna dados agregados: driveData (rec.json do Drive) e apiData (XCam API).
@@ -13,79 +13,125 @@
  * 2. ?rec={username}
  *    - Retorna apenas driveData: conteúdo do rec.json do Drive, sem chamar a XCam API.
  * 
+ * 3. ?poster={username}
+ *    - Retorna apenas os dados do usuário em processed.json.
+ * 
  * - Erros são sempre tratados de forma amigável, e a resposta é sempre JSON.
  * - Modular, fácil de manter e expandir.
  * 
  * Autor: ShemuElDi | XCam
- * Última atualização: 2025-06-11
+ * Última atualização: 2025-06-22
  * ================================================================
  */
 
 const ROOT_FOLDER_ID = '1R8q38lLoeS1PjASq7GhbtnJG_oo2NcoB';
 const POSTERS_FOLDER_ID = '1p1VyLW6mtOn6RAjazl9zR0QWsrQbZBCj'; // <-- Defina aqui o ID da pasta dos posters
+const PROCESSED_JSON_FILE_ID = '11etUAeC5JYPjp5abVAvQWYNj3Dw2632P';
 
 /**
  * Função principal de entrada para requisições GET.
- * Roteia entre os modos "user" (dados agregados) e "rec" (apenas driveData).
+ * Cada parâmetro é tratado de forma independente, sem prioridade.
+ * Se mais de um parâmetro for enviado, todos são processados e retornados juntos.
  * 
  * @param {Object} e - Objeto de evento da requisição, contém parâmetros de query.
- * @returns {TextOutput} - Resposta JSON conforme parâmetro recebido.
+ * @returns {TextOutput} - Resposta JSON conforme parâmetros recebidos.
  */
 function doGet(e) {
-  // Checa o parâmetro "rec" (prioridade sobre "user")
+  // Objeto de resposta agregada
+  let response = {};
+
+  // Processa ?poster
+  if (e.parameter.poster) {
+    const username = String(e.parameter.poster);
+    response.poster = handlePosterQueryRaw(username);
+  }
+
+  // Processa ?rec
   if (e.parameter.rec) {
     const username = String(e.parameter.rec);
-    return handleDriveDataOnly(username);
+    response.rec = handleDriveDataOnlyRaw(username);
   }
 
-  // Checa o parâmetro "user"
+  // Processa ?user
   if (e.parameter.user) {
     const username = String(e.parameter.user);
-    return handleAggregatedData(username);
+    response.user = handleAggregatedDataRaw(username);
   }
 
-  // Se nenhum parâmetro requerido estiver presente, retorna erro
-  return respondWithError("Parâmetro obrigatório ausente: use 'user' ou 'rec'.");
+  // Se nenhum parâmetro reconhecido foi enviado, retorna erro
+  if (
+    !e.parameter.poster &&
+    !e.parameter.rec &&
+    !e.parameter.user
+  ) {
+    return respondWithError("Parâmetro obrigatório ausente: use 'poster', 'user' ou 'rec'.");
+  }
+
+  // Retorna resposta agregada (pode conter um ou mais resultados)
+  return ContentService
+    .createTextOutput(JSON.stringify(response, null, 2))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
- * Handler: Retorna apenas o conteúdo de rec.json do Drive.
- * Não chama APIs externas, resposta contém só { driveData }.
+ * Handler: Busca o usuário no processed.json e retorna apenas seus dados (objeto JS).
+ * Usado internamente para resposta agregada.
+ * 
+ * @param {string} username - Nome do usuário a buscar.
+ * @returns {Object} - Dados do usuário ou objeto de erro.
+ */
+function handlePosterQueryRaw(username) {
+  try {
+    const processedData = readProcessedJsonFromDrive();
+    if (!processedData || !processedData.users) {
+      return { error: "Arquivo processed.json não encontrado ou inválido." };
+    }
+    const userData = processedData.users[username];
+    if (!userData) {
+      return { error: `Usuário '${username}' não encontrado em processed.json.` };
+    }
+    const result = {};
+    result[username] = userData;
+    return result;
+  } catch (error) {
+    return { error: "Erro ao processar consulta poster: " + error.message };
+  }
+}
+
+/**
+ * Handler: Retorna apenas o conteúdo de rec.json do Drive (objeto JS).
+ * Usado internamente para resposta agregada.
  * 
  * @param {string} username - Nome do usuário/pasta.
- * @returns {TextOutput} - JSON apenas com o campo driveData.
+ * @returns {Object} - { driveData } ou objeto de erro.
  */
-function handleDriveDataOnly(username) {
+function handleDriveDataOnlyRaw(username) {
   try {
     const driveData = getDriveRecJson(username);
-    return ContentService
-      .createTextOutput(JSON.stringify({ driveData }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return { driveData };
   } catch (error) {
-    return respondWithError(error.message);
+    return { error: error.message };
   }
 }
 
 /**
  * Handler: Retorna driveData (rec.json do Drive) + apiData (XCam API).
+ * Usado internamente para resposta agregada.
  * 
  * @param {string} username - Nome do usuário/pasta.
- * @returns {TextOutput} - JSON com user, driveData e apiData.
+ * @returns {Object} - { user, driveData, apiData } ou objeto de erro.
  */
-function handleAggregatedData(username) {
+function handleAggregatedDataRaw(username) {
   let driveData = null;
   let apiData = null;
 
   try {
-    // Busca rec.json no Google Drive
     driveData = getDriveRecJson(username);
   } catch (error) {
-    // Se falhar, driveData fica null, segue fluxo normalmente
     driveData = null;
   }
 
   try {
-    // Busca dados agregados da XCam API externa
     const apiUrl = `https://api.xcam.gay/?user=${encodeURIComponent(username)}`;
     const response = UrlFetchApp.fetch(apiUrl, {
       muteHttpExceptions: true,
@@ -97,16 +143,69 @@ function handleAggregatedData(username) {
     apiData = { error: "Falha ao consultar XCam API", details: String(error) };
   }
 
-  // Monta resposta agregada
-  const mergedData = {
+  return {
     user: username,
     driveData: driveData,
     apiData: apiData
   };
+}
 
+/**
+ * Handler: Busca o usuário no processed.json e retorna apenas seus dados (TextOutput).
+ * Mantido para compatibilidade, mas não é mais chamado diretamente pelo doGet.
+ * 
+ * @param {string} username - Nome do usuário a buscar.
+ * @returns {TextOutput} - Resposta JSON com os dados do usuário ou erro.
+ */
+function handlePosterQuery(username) {
+  const result = handlePosterQueryRaw(username);
   return ContentService
-    .createTextOutput(JSON.stringify(mergedData, null, 2))
+    .createTextOutput(JSON.stringify(result, null, 2))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Handler: Retorna apenas o conteúdo de rec.json do Drive (TextOutput).
+ * Mantido para compatibilidade, mas não é mais chamado diretamente pelo doGet.
+ * 
+ * @param {string} username - Nome do usuário/pasta.
+ * @returns {TextOutput} - JSON apenas com o campo driveData.
+ */
+function handleDriveDataOnly(username) {
+  const result = handleDriveDataOnlyRaw(username);
+  return ContentService
+    .createTextOutput(JSON.stringify(result, null, 2))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Handler: Retorna driveData (rec.json do Drive) + apiData (XCam API) (TextOutput).
+ * Mantido para compatibilidade, mas não é mais chamado diretamente pelo doGet.
+ * 
+ * @param {string} username - Nome do usuário/pasta.
+ * @returns {TextOutput} - JSON com user, driveData e apiData.
+ */
+function handleAggregatedData(username) {
+  const result = handleAggregatedDataRaw(username);
+  return ContentService
+    .createTextOutput(JSON.stringify(result, null, 2))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Lê e faz o parse do arquivo processed.json do Drive.
+ * 
+ * @returns {Object|null} - Objeto JS do processed.json ou null em caso de erro.
+ */
+function readProcessedJsonFromDrive() {
+  try {
+    const file = DriveApp.getFileById(PROCESSED_JSON_FILE_ID);
+    const content = file.getBlob().getDataAsString();
+    return JSON.parse(content);
+  } catch (e) {
+    Logger.log('Erro ao ler processed.json: ' + e.message);
+    return null;
+  }
 }
 
 /**

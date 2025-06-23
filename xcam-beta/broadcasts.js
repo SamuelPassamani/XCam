@@ -180,20 +180,22 @@ function renderBroadcastCard(data) {
   ensureGridElement();
 
   const username = data.username;
-  const viewers = data.streamInfo?.viewers ?? data.graphData?.viewers ?? 0;
-  const country = data.graphData?.country || "xx";
-  const tags = Array.isArray(data.graphData?.tags) ? data.graphData.tags : [];
+  const viewers = data.viewers ?? 0;
+  const country = data.country || "xx";
+  const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Escolhe o poster: primeiro tenta graphData.preview.poster, senão getPosterUrl
+  // Usa preview.poster se existir, senão preview como string, senão getPosterUrl
   let posterSrc = "";
   if (
-    data.graphData &&
-    data.graphData.preview &&
-    typeof data.graphData.preview.poster === "string" &&
-    data.graphData.preview.poster.trim() !== ""
+    typeof data.preview === "object" &&
+    data.preview !== null &&
+    typeof data.preview.poster === "string" &&
+    data.preview.poster.trim() !== ""
   ) {
-    posterSrc = data.graphData.preview.poster;
+    posterSrc = data.preview.poster;
+  } else if (typeof data.preview === "string" && data.preview.trim() !== "") {
+    posterSrc = data.preview;
   } else {
     posterSrc = getPosterUrl(username);
   }
@@ -223,7 +225,6 @@ function renderBroadcastCard(data) {
               class: "play-button",
               "aria-label": `${t("play")} @${username}`,
               tabindex: "0"
-              // Remover o onclick daqui!
             },
             [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
           )
