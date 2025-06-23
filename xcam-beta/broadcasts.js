@@ -24,41 +24,25 @@
  * =====================================================================================
  */
 
-// === Importações necessárias ===
-import { t } from "./i18n.js"; // Módulo de tradução para internacionalização (i18n).
-import { countryNames } from "./translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
-
-// === Função utilitária: Criação de elementos DOM com atributos e filhos ===
-/**
- * Cria elementos DOM de forma declarativa com atributos e filhos.
- * @param {string} type - Tipo do elemento (ex: "div", "img")
- * @param {object} props - Atributos do elemento
- * @param {Array} children - Elementos filhos
- * @returns {HTMLElement}
- */
-function createEl(type, props = {}, children = []) {
-  const el = document.createElement(type);
-  Object.entries(props).forEach(([key, value]) => {
-    if (key === "text") el.textContent = value;
-    else if (key === "html") el.innerHTML = value;
-    else if (key.startsWith("on") && typeof value === "function")
-      el[key] = value;
-    else el.setAttribute(key, value);
-  });
-  children.forEach((child) => child && el.appendChild(child));
-  return el;
-}
-
-// === Variáveis de Controle e Configurações Globais ===============================
-
-// [CONFIGURÁVEL] Quantos cards exibir por página/clique em "Carregar Mais"
-const itemsPerPage = 30;
+// === CONFIGURAÇÕES GLOBAIS E VARIÁVEIS DE CONTROLE ==============================
+const CONFIG = {
+  // Quantos cards exibir por página/clique em "Carregar Mais"
+  itemsPerPage: 30,
+  // Quantos itens buscar por requisição à API
+  apiFetchLimit: 60,
+  // URL base da API
+  apiBaseUrl: "https://api.xcam.gay/",
+  // URL base para posters seguros
+  posterBaseUrl: "https://api.xcam.gay/v1/media/poster/",
+  // Placeholder para poster
+  posterPlaceholder: "/assets/placeholder_poster.jpg"
+};
 
 let allItems = []; // Todas as transmissões buscadas da API
 let renderedItemsCount = 0; // Contador para paginação local
 let grid; // Referência ao elemento DOM principal da grade
 
-// [CONFIGURÁVEL] Estado atual dos filtros aplicados
+// Estado atual dos filtros aplicados
 let filters = {
   gender: "",
   country: "",
@@ -67,6 +51,53 @@ let filters = {
   tags: []
 };
 // =================================================================================
+
+// === Importações necessárias ===
+import { t } from "./i18n.js"; // Módulo de tradução para internacionalização (i18n).
+import { countryNames } from "./translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
+
+// === Função utilitária: Criação de elementos DOM com atributos e filhos ===
+/**
+ * Cria elementos DOM de forma declarativa com atributos e filhos.
+ * Compatível com navegadores modernos e antigos.
+ * @param {string} type - Tipo do elemento (ex: "div", "img")
+ * @param {object} props - Atributos do elemento
+ * @param {Array} children - Elementos filhos
+ * @returns {HTMLElement}
+ */
+function createEl(type, props = {}, children = []) {
+  const el = document.createElement(type);
+
+  Object.entries(props).forEach(([key, value]) => {
+    if (key === "text") {
+      el.textContent = value;
+    } else if (key === "html") {
+      el.innerHTML = value;
+    } else if (key.startsWith("on") && typeof value === "function") {
+      // Exemplo: onClick, onMouseOver
+      // Converte para minúsculo e adiciona como ouvinte de evento
+      const eventName = key.slice(2).toLowerCase();
+      el.addEventListener(eventName, value, false);
+    } else if (key === "class") {
+      el.className = value;
+    } else if (key === "style" && typeof value === "object") {
+      // Permite passar um objeto de estilos
+      Object.assign(el.style, value);
+    } else if (key in el) {
+      // Para propriedades DOM conhecidas (ex: id, value, tabindex)
+      el[key] = value;
+    } else {
+      // Fallback para setAttribute (ex: data-*, aria-*)
+      el.setAttribute(key, value);
+    }
+  });
+
+  (children || []).forEach((child) => {
+    if (child) el.appendChild(child);
+  });
+
+  return el;
+}
 
 // === Elementos de UI reutilizáveis ===
 const loader = createEl("div", { class: "loading-state" }, [
@@ -86,14 +117,13 @@ const loadMoreBtn = createEl(
 loadMoreBtn.style.display = "none";
 
 // === Função utilitária para buscar o poster seguro do usuário =================
-
 /**
  * Retorna uma URL segura para o poster do usuário XCam.
  * @param {string} username - Nome do usuário
  * @returns {string} URL do poster seguro (.ts, mas usável como src de <img>)
  */
 function getPosterUrl(username) {
-  return `https://api.xcam.gay/v1/media/poster/${username}`;
+  return `${CONFIG.posterBaseUrl}${username}`;
 }
 
 /**
@@ -111,19 +141,18 @@ async function fetchPosterImageUrl(username) {
     return URL.createObjectURL(blob);
   } catch (err) {
     // Fallback: imagem padrão
-    return "/assets/placeholder_poster.jpg";
+    return CONFIG.posterPlaceholder;
   }
 }
 
 // === Lógica Principal ==========================================================
-
 /**
  * Monta a URL da API com base nos filtros ativos.
  * @param {object} filters - O objeto de filtros atual.
  * @param {number} limit - O número máximo de resultados a serem pedidos para a API.
  * @returns {string} A URL completa para a chamada da API.
  */
-function buildApiUrl(filters, limit = 20) {
+function buildApiUrl(filters, limit = CONFIG.apiFetchLimit) {
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
@@ -138,7 +167,7 @@ function buildApiUrl(filters, limit = 20) {
     params.set("minViewers", filters.minViewers);
   if (Array.isArray(filters.tags) && filters.tags.filter(Boolean).length > 0)
     params.set("tags", filters.tags.filter(Boolean).join(","));
-  return `https://api.xcam.gay/?${params.toString()}`;
+  return `${CONFIG.apiBaseUrl}?${params.toString()}`;
 }
 
 /**
@@ -146,9 +175,9 @@ function buildApiUrl(filters, limit = 20) {
  * @param {number} limit - O limite de transmissões a serem buscadas.
  * @returns {Promise<Array>} Uma promessa que resolve para um array de transmissões.
  */
-async function fetchBroadcasts(limit) {
+async function fetchBroadcasts(limit = CONFIG.apiFetchLimit) {
   try {
-    const url = `https://api.xcam.gay/?limit=${limit}`;
+    const url = buildApiUrl(filters, limit);
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
@@ -173,7 +202,7 @@ function ensureGridElement() {
 
 /**
  * Cria e renderiza um único card de transmissão.
- * Usa graphData.preview.poster se existir, senão usa getPosterUrl.
+ * Usa preview.poster se existir, senão preview como string, senão getPosterUrl.
  * @param {object} data - O objeto de dados para uma única transmissão.
  */
 function renderBroadcastCard(data) {
@@ -276,7 +305,7 @@ function renderNextBatch() {
 
   const nextItems = allItems.slice(
     renderedItemsCount,
-    renderedItemsCount + itemsPerPage
+    renderedItemsCount + CONFIG.itemsPerPage
   );
   nextItems.forEach((item) => renderBroadcastCard(item));
   renderedItemsCount += nextItems.length;
@@ -339,13 +368,13 @@ async function loadFilteredBroadcasts() {
   allItems = [];
   ensureGridElement();
   grid.innerHTML = "";
-  loader.remove();
-  loadMoreBtn.remove();
+  if (loader.parentElement) loader.remove();
+  if (loadMoreBtn.parentElement) loadMoreBtn.remove();
   grid.appendChild(loader);
 
   try {
     // 2. Busca um lote grande de transmissões para trabalhar localmente.
-    const result = await fetchBroadcasts(20); // Ajuste o limite conforme necessário
+    const result = await fetchBroadcasts(CONFIG.apiFetchLimit);
     loader.remove();
 
     if (!result.length) {
