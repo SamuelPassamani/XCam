@@ -263,14 +263,20 @@ async function renderBroadcastCard(data) {
   const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Obtém o posterSrc seguindo o fluxo de prioridades
-  const posterSrc = await resolvePosterSrc(data);
-
+  // Cria o elemento do poster com o loading.gif como src inicial
   const posterImg = createEl("img", {
     class: "poster-img",
-    src: posterSrc,
+    src: "https://xcam.gay/src/loading.gif",
     alt: `Poster da transmissão de ${username}`,
-    loading: "lazy"
+    loading: "lazy",
+    style: {
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      aspectRatio: "16/9",
+      borderRadius: "8px",
+      background: "#000"
+    }
   });
 
   const card = createEl(
@@ -332,6 +338,67 @@ async function renderBroadcastCard(data) {
     ]
   );
   grid.appendChild(card);
+
+  // Após renderizar, busca o poster definitivo e atualiza o src
+  let posterSrc = null;
+  // 1. preview.poster
+  if (
+    typeof data.preview === "object" &&
+    data.preview !== null &&
+    typeof data.preview.poster === "string" &&
+    data.preview.poster.trim() !== ""
+  ) {
+    posterSrc = data.preview.poster;
+  }
+
+  // 2. fileUrl via API ?poster={username}
+  if (!posterSrc) {
+    try {
+      const resp = await fetch(`https://api.xcam.gay/?poster=${encodeURIComponent(username)}`, {
+        headers: { accept: "application/json" }
+      });
+      if (resp.ok) {
+        const json = await resp.json();
+        if (
+          json &&
+          typeof json === "object" &&
+          json[username] &&
+          typeof json[username].fileUrl === "string" &&
+          json[username].fileUrl.trim() !== ""
+        ) {
+          posterSrc = json[username].fileUrl;
+        }
+      }
+    } catch (err) {
+      // Silencia erro, segue para fallback
+    }
+  }
+
+  // 3. Se não conseguiu, usa <iframe> como fallback
+  if (posterSrc) {
+    posterImg.src = posterSrc;
+  } else {
+    // Substitui o <img> por um <iframe>
+    const iframe = createEl("iframe", {
+      class: "poster-iframe",
+      src: `https://live.xcam.gay/?user=${username}&mode=preview`,
+      title: `Prévia de @${username}`,
+      loading: "lazy",
+      allow: "autoplay; encrypted-media",
+      frameborder: "0",
+      tabindex: "-1",
+      "aria-hidden": "true",
+      style: {
+        width: "100%",
+        height: "100%",
+        aspectRatio: "16/9",
+        display: "block",
+        background: "#000",
+        borderRadius: "8px"
+      }
+    });
+    posterImg.replaceWith(iframe);
+  }
 }
 
 /**
