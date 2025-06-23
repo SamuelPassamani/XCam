@@ -445,43 +445,124 @@ async function loadFilteredBroadcasts() {
   }
 }
 
-// === Funções Públicas (API do Módulo) ========================================
+// === CACHE ROBUSTO PARA POSTERS ==============================================
 
 /**
- * Inicializa a grade de transmissões e adiciona os event listeners.
+ * Cache robusto usando IndexedDB (persistente) + memória (rápido).
+ * - Sempre tenta salvar e ler do IndexedDB (persistência entre sessões).
+ * - Mantém um cache em memória para acesso rápido durante a sessão.
+ * - Fallback para localStorage se IndexedDB não estiver disponível.
  */
-export function setupBroadcasts() {
-  loadMoreBtn.addEventListener("click", renderNextBatch);
-  loadFilteredBroadcasts();
+
+const posterCacheMemory = {}; // Cache em memória
+
+// IndexedDB helpers
+const DB_NAME = "xcamPosterCache";
+const STORE_NAME = "posters";
+let dbPromise = null;
+
+// Abre (ou cria) o banco IndexedDB
+function openPosterDB() {
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+    req.onupgradeneeded = () => {
+      req.result.createObjectStore(STORE_NAME);
+    };
+  });
+  return dbPromise;
 }
 
-/**
- * Força a recarga completa da grade, útil para um botão de "Atualizar".
- */
-export function refreshBroadcasts() {
-  loadFilteredBroadcasts();
+// Salva poster no IndexedDB e no cache em memória
+async function setPosterInCache(username, url) {
+  posterCacheMemory[username] = url;
+  // IndexedDB
+  try {
+    const db = await openPosterDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).put(url, username);
+    tx.oncomplete = () => db.close && db.close();
+  } catch (e) {
+    // Fallback para localStorage se IndexedDB falhar
+    try {
+      localStorage.setItem(`poster_${username}`, url);
+    } catch {}
+  }
 }
 
-/**
- * Aplica um novo conjunto de filtros e recarrega a grade.
- * @param {object} newFilters - O novo objeto de filtros a ser aplicado.
- */
-export function applyBroadcastFilters(newFilters) {
-  filters = {
-    ...filters,
-    ...Object.fromEntries(
-      Object.entries(newFilters).filter(
-        ([_, v]) => v !== undefined && v !== null && v !== "" && v !== "all"
-      )
-    )
-  };
-  loadFilteredBroadcasts();
+// Busca poster do cache (memória > IndexedDB > localStorage)
+async function getPosterFromCache(username) {
+  if (posterCacheMemory[username]) return posterCacheMemory[username];
+  // IndexedDB
+  try {
+    const db = await openPosterDB();
+    return await new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const req = tx.objectStore(STORE_NAME).get(username);
+      req.onsuccess = () => {
+        if (req.result) posterCacheMemory[username] = req.result;
+        resolve(req.result || null);
+        db.close && db.close();
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch (e) {
+    // Fallback para localStorage
+    try {
+      const url = localStorage.getItem(`poster_${username}`);
+      if (url) posterCacheMemory[username] = url;
+      return url || null;
+    } catch {
+      return null;
+    }
+  }
 }
-// ==============================================================================
+
+// Limpa todo o cache (útil para debug ou atualização massiva)
+async function clearPosterCache() {
+  for (const k in posterCacheMemory) delete posterCacheMemory[k];
+  try {
+    const db = await openPosterDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).clear();
+    tx.oncomplete = () => db.close && db.close();
+  } catch {
+    // Fallback localStorage
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith("poster_"))
+      .forEach((k) => localStorage.removeItem(k));
+  }
+}
+
+// Pré-carrega todos os posters do endpoint ?poster=0 e alimenta o cache
+async function preloadAllPostersToCache() {
+  try {
+    const resp = await fetch("https://api.xcam.gay/?poster=0", {
+      headers: { accept: "application/json" }
+    });
+    if (resp.ok) {
+      const posters = await resp.json();
+      window._xcamAllPosters = posters;
+      // Salva todos no IndexedDB e memória
+      for (const [username, obj] of Object.entries(posters)) {
+        if (obj && typeof obj.fileUrl === "string" && obj.fileUrl.trim() !== "") {
+          await setPosterInCache(username, obj.fileUrl);
+        }
+      }
+    } else {
+      window._xcamAllPosters = {};
+    }
+  } catch (err) {
+    window._xcamAllPosters = {};
+  }
+}
 
 // === Inicialização do Script ==================================================
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
+  preloadAllPostersToCache(); // Chama o pré-carregamento ao iniciar a página
 });
 
 /**
