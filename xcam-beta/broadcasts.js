@@ -147,13 +147,13 @@ function buildApiUrl(filters, limit = CONFIG.itemsPerPage) {
 }
 
 /**
- * Busca as transmissões da API principal usando o novo endpoint stream=0.
+ * Busca as transmissões da API principal.
  * @param {number} [limit] - O limite de transmissões a serem buscadas.
  * @returns {Promise<Array>} Uma promessa que resolve para um array de transmissões.
  */
 async function fetchBroadcasts(limit = CONFIG.itemsPerPage) {
   try {
-    const url = `${CONFIG.apiBaseUrl}?stream=0&limit=${limit}`;
+    const url = `${CONFIG.apiBaseUrl}?&limit=${limit}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
@@ -272,7 +272,7 @@ async function renderBroadcastCard(data) {
   // --- Atualiza o poster assim que possível ---
   let posterSrc = null;
 
-  // 1. Tenta usar preview.poster da API principal
+  // 1. Primeira tentativa: poster retornado pela API principal (se existir)
   if (
     typeof data.preview === "object" &&
     data.preview !== null &&
@@ -283,36 +283,39 @@ async function renderBroadcastCard(data) {
     setPosterInCache(username, posterSrc);
   }
 
-  // 2. Se não conseguiu, tenta IndexedDB
+  // 2. Segunda tentativa: cache global de posters (?poster=0)
+  if (!posterSrc) {
+    if (!window._xcamAllPosters) {
+      try {
+        const resp = await fetch("https://api.xcam.gay/?poster=0", {
+          headers: { accept: "application/json" }
+        });
+        if (resp.ok) {
+          window._xcamAllPosters = await resp.json();
+        } else {
+          window._xcamAllPosters = {};
+        }
+      } catch (err) {
+        window._xcamAllPosters = {};
+      }
+    }
+    if (
+      window._xcamAllPosters &&
+      window._xcamAllPosters[username] &&
+      typeof window._xcamAllPosters[username].fileUrl === "string" &&
+      window._xcamAllPosters[username].fileUrl.trim() !== ""
+    ) {
+      posterSrc = window._xcamAllPosters[username].fileUrl;
+      setPosterInCache(username, posterSrc);
+    }
+  }
+
+  // 3. Terceira tentativa: IndexedDB/local
   if (!posterSrc) {
     posterSrc = await getPosterFromCache(username);
   }
 
-  // 3. Se ainda não conseguiu, tenta via API ?poster=
-  if (!posterSrc) {
-    try {
-      const resp = await fetch(`${CONFIG.apiBaseUrl}?poster=${encodeURIComponent(username)}`, {
-        headers: { accept: "application/json" }
-      });
-      if (resp.ok) {
-        const json = await resp.json();
-        if (
-          json &&
-          typeof json === "object" &&
-          json[username] &&
-          typeof json[username].fileUrl === "string" &&
-          json[username].fileUrl.trim() !== ""
-        ) {
-          posterSrc = json[username].fileUrl;
-          setPosterInCache(username, posterSrc);
-        }
-      }
-    } catch (err) {
-      // Silencia erro, segue para fallback
-    }
-  }
-
-  // 4. Se não conseguiu, usa <iframe> como fallback
+  // 4. Fallback: <iframe>
   if (posterSrc) {
     posterElement.src = posterSrc;
   } else {
