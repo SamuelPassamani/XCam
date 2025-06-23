@@ -67,14 +67,35 @@ import { countryNames } from "./translations.js"; // Mapeia códigos de país pa
  */
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
+
   Object.entries(props).forEach(([key, value]) => {
-    if (key === "text") el.textContent = value;
-    else if (key === "html") el.innerHTML = value;
-    else if (key.startsWith("on") && typeof value === "function")
-      el.addEventListener(key.slice(2).toLowerCase(), value, false);
-    else el.setAttribute(key, value);
+    if (key === "text") {
+      el.textContent = value;
+    } else if (key === "html") {
+      el.innerHTML = value;
+    } else if (key.startsWith("on") && typeof value === "function") {
+      // Exemplo: onClick, onMouseOver
+      // Converte para minúsculo e adiciona como ouvinte de evento
+      const eventName = key.slice(2).toLowerCase();
+      el.addEventListener(eventName, value, false);
+    } else if (key === "class") {
+      el.className = value;
+    } else if (key === "style" && typeof value === "object") {
+      // Permite passar um objeto de estilos
+      Object.assign(el.style, value);
+    } else if (key in el) {
+      // Para propriedades DOM conhecidas (ex: id, value, tabindex)
+      el[key] = value;
+    } else {
+      // Fallback para setAttribute (ex: data-*, aria-*)
+      el.setAttribute(key, value);
+    }
   });
-  (children || []).forEach((child) => child && el.appendChild(child));
+
+  (children || []).forEach((child) => {
+    if (child) el.appendChild(child);
+  });
+
   return el;
 }
 
@@ -167,15 +188,13 @@ async function setPosterInCache(username, url) {
 // === Lógica Principal ==========================================================
 /**
  * Monta a URL da API com base nos filtros ativos.
- * Sempre usa o valor global CONFIG.apiFetchLimit como padrão de limite.
  * @param {object} filters - O objeto de filtros atual.
- * @param {number} [limit] - O número máximo de resultados a serem pedidos para a API.
+ * @param {number} limit - O número máximo de resultados a serem pedidos para a API.
  * @returns {string} A URL completa para a chamada da API.
  */
-function buildApiUrl(filters, limit) {
-  const finalLimit = typeof limit === "number" ? limit : CONFIG.apiFetchLimit;
+function buildApiUrl(filters, limit = CONFIG.apiFetchLimit) {
   const params = new URLSearchParams({
-    limit: String(finalLimit),
+    limit: String(limit),
     format: "json"
   });
   if (filters.gender && filters.gender !== "all")
@@ -202,6 +221,7 @@ async function fetchBroadcasts(limit = CONFIG.apiFetchLimit) {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
+    // Garante que sempre retorna um array, mesmo se não houver items
     if (data?.broadcasts && Array.isArray(data.broadcasts.items)) {
       return data.broadcasts.items;
     }
@@ -316,10 +336,7 @@ async function renderBroadcastCard(data) {
             {
               class: "play-button",
               "aria-label": `${t("play")} @${username}`,
-              tabindex: "0",
-              onclick: () => {
-                window.open(`https://live.xcam.gay/?user=${username}`, "_blank");
-              }
+              tabindex: "0"
             },
             [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
           )
