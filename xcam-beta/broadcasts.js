@@ -145,6 +145,46 @@ async function fetchPosterImageUrl(username) {
   }
 }
 
+// --- IndexedDB poster cache ---
+let posterDB;
+function openPosterDB() {
+  return new Promise((resolve, reject) => {
+    if (posterDB) return resolve(posterDB);
+    const request = indexedDB.open("xcam-poster-cache", 1);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("posters")) {
+        db.createObjectStore("posters");
+      }
+    };
+    request.onsuccess = (event) => {
+      posterDB = event.target.result;
+      resolve(posterDB);
+    };
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
+async function getPosterFromCache(username) {
+  const db = await openPosterDB();
+  return new Promise((resolve) => {
+    const tx = db.transaction("posters", "readonly");
+    const store = tx.objectStore("posters");
+    const req = store.get(username);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => resolve(null);
+  });
+}
+async function setPosterInCache(username, url) {
+  const db = await openPosterDB();
+  return new Promise((resolve) => {
+    const tx = db.transaction("posters", "readwrite");
+    const store = tx.objectStore("posters");
+    store.put(url, username);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
 // === Lógica Principal ==========================================================
 /**
  * Monta a URL da API com base nos filtros ativos.
@@ -263,7 +303,7 @@ async function renderBroadcastCard(data) {
   const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Cria o elemento do poster com o loading.gif como src inicial
+  // Renderiza imediatamente com loading.gif
   const posterImg = createEl("img", {
     class: "poster-img",
     src: "https://xcam.gay/src/loading.gif",
@@ -339,12 +379,11 @@ async function renderBroadcastCard(data) {
   );
   grid.appendChild(card);
 
-  // Após renderizar, busca o poster definitivo e atualiza o src
-  // 1. Tenta obter do IndexedDB
-  let posterSrc = await getPosterFromCache(username);
+  // --- Atualiza o poster assim que possível ---
+  let posterSrc = null;
 
-  // 2. preview.poster da API principal
-  if (!posterSrc &&
+  // 1. Tenta usar preview.poster da API principal
+  if (
     typeof data.preview === "object" &&
     data.preview !== null &&
     typeof data.preview.poster === "string" &&
@@ -354,7 +393,12 @@ async function renderBroadcastCard(data) {
     setPosterInCache(username, posterSrc);
   }
 
-  // 3. fileUrl via API ?poster={username}
+  // 2. Se não conseguiu, tenta IndexedDB
+  if (!posterSrc) {
+    posterSrc = await getPosterFromCache(username);
+  }
+
+  // 3. Se ainda não conseguiu, tenta via API ?poster=
   if (!posterSrc) {
     try {
       const resp = await fetch(`https://api.xcam.gay/?poster=${encodeURIComponent(username)}`, {
