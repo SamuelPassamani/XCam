@@ -181,8 +181,9 @@ async function fetchBroadcasts(limit = CONFIG.apiFetchLimit) {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
-    if (data?.items) {
-      return data.items;
+    // Corrigido para buscar em data.broadcasts.items
+    if (data?.broadcasts?.items) {
+      return data.broadcasts.items;
     }
     console.warn("Formato inesperado da resposta:", data);
     return [];
