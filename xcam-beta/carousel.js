@@ -31,7 +31,7 @@ export function setupCarousel({ intervalMs = 6000 } = {}) {
         if (index === 0) card.classList.add("active");
 
         card.innerHTML = `
-          <div class="carousel-iframe-wrapper" style="position:relative;width:100%;height:100%;">
+          <a href="/cam/?user=${item.username}" class="card-thumbnail">
             <iframe
               src="https://live.xcam.gay/?user=${item.username}&mode=preview"
               class="carousel-iframe"
@@ -39,17 +39,19 @@ export function setupCarousel({ intervalMs = 6000 } = {}) {
               loading="lazy"
               allow="autoplay; encrypted-media"
               frameborder="0"
-              style="width:100%;height:100%;aspect-ratio:16/9;display:block;background:#000;border-radius:8px;z-index:1;position:relative;"
+              tabindex="-1"
+              aria-hidden="true"
+              style="width:100%;height:100%;aspect-ratio:16/9;display:block;background:#000;border-radius:8px;"
             ></iframe>
-            <div class="card-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;">
-              <button class="play-button" aria-label="${t("play")} @${item.username}" style="pointer-events:auto;">
+            <div class="card-overlay">
+              <button class="play-button" aria-label="${t("play")} @${item.username}">
                 <i class="fas fa-play" aria-hidden="true"></i>
               </button>
             </div>
-            <div class="live-badge" aria-label="${t("live")}" style="position:absolute;top:8px;right:8px;z-index:3;">
+            <div class="live-badge" aria-label="${t("live")}">
               <span>${t("live")}</span>
             </div>
-          </div>
+          </a>
           <div class="card-info">
             <div class="card-header">
               <h4 class="card-username">@${item.username}</h4>

@@ -260,7 +260,9 @@ body.modal-open {
   .search-bar {
     display: none !important;
   }
-  /* .mobile-menu { display: flex; NÃO defina aqui, pois .active controla isso } */
+  .mobile-menu {
+    /* display: flex; NÃO defina aqui, pois .active controla isso */
+  }
 }
 
 /* No desktop: esconde menu mobile */
@@ -514,94 +516,20 @@ body.modal-open {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
-  pointer-events: auto; /* Permite interação no iframe */
 }
 
-/* --- AJUSTES PARA O IFRAME DO CARROSSEL E SOBREPOSIÇÃO --- */
-
-/* Garante que o iframe preencha o slide e fique abaixo dos overlays */
-.carousel-iframe,
-.card-thumbnail iframe {
-  width: 100%;
-  height: 100%;
-  min-height: 100px;
-  max-height: 100%;
-  border: none;
-  border-radius: 8px;
-  background: #000;
-  display: block;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  transition: transform 0.3s;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  pointer-events: auto; /* Permite interação no iframe */
+/* Efeito de zoom no hover do slide/carrossel */
+.carousel-slide:hover .carousel-iframe,
+.carousel-slide.active .carousel-iframe {
+  transform: scale(1.04);
 }
 
-/* Sobreposição do overlay e badge acima do iframe */
-.card-overlay,
-.live-badge,
-.carousel-overlay,
-.carousel-badge {
-  z-index: 2 !important;
-  position: absolute;
-  pointer-events: none;
-}
-
-/* Botão de play deve ser clicável */
-.card-overlay .play-button {
-  pointer-events: all;
-  z-index: 3;
-}
-
-/* Garante que overlays não bloqueiem o iframe fora do hover/focus */
-.card-overlay {
-  background: rgba(0,0,0,0.35);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.carousel-slide:hover .card-overlay,
-.carousel-slide.active .card-overlay,
-.broadcast-card:hover .card-overlay,
-.broadcast-card:focus-within .card-overlay {
-  opacity: 1;
-  pointer-events: none;
-}
-
-/* O botão de play é sempre clicável */
-.card-overlay .play-button {
-  pointer-events: all;
-}
-
-/* Ajuste para responsividade do iframe */
+/* Responsividade para o iframe do carrossel */
 @media (max-width: 900px) {
-  .carousel-iframe,
-  .card-thumbnail iframe {
+  .carousel-iframe {
     min-height: 60px;
     border-radius: 6px;
   }
-}
-@media (max-width: 600px) {
-  .carousel-iframe,
-  .card-thumbnail iframe {
-    min-height: 40px;
-    border-radius: 4px;
-  }
-}
-
-/* Garante que o overlay e badge fiquem acima do iframe */
-.carousel-iframe-wrapper,
-.card-thumbnail {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 100px;
-  background: #000;
-  overflow: hidden;
 }
 
 /* =========== RESPONSIVIDADE DO CARROSSEL =========== */
@@ -839,7 +767,7 @@ body.modal-open {
   justify-content: center;
   opacity: 0;
   transition: opacity 0.3s;
-  z-index: 2; /* Garante que a sobreposição fique acima do iframe */
+  z-index: 1; /* Garante que a sobreposição fique acima do iframe */
   pointer-events: none; /* Permite cliques "através" da sobreposição no iframe */
 }
 
