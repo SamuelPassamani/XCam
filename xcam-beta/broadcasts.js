@@ -203,11 +203,58 @@ function ensureGridElement() {
 }
 
 /**
+ * Obtém a melhor URL de poster para o usuário seguindo o fluxo de prioridades:
+ * 1. preview.poster da API principal
+ * 2. fileUrl da API ?poster={username}
+ * 3. getPosterUrl(username) como fallback
+ * @param {object} data - Objeto de transmissão (item)
+ * @returns {Promise<string>} - URL do poster
+ */
+async function resolvePosterSrc(data) {
+  const username = data.username;
+
+  // 1. Tenta usar preview.poster da API principal
+  if (
+    typeof data.preview === "object" &&
+    data.preview !== null &&
+    typeof data.preview.poster === "string" &&
+    data.preview.poster.trim() !== ""
+  ) {
+    return data.preview.poster;
+  }
+
+  // 2. Tenta buscar fileUrl via API ?poster={username}
+  try {
+    const resp = await fetch(`https://api.xcam.gay/?poster=${encodeURIComponent(username)}`, {
+      headers: { accept: "application/json" }
+    });
+    if (resp.ok) {
+      const json = await resp.json();
+      // O formato esperado é { "USERNAME": { fileUrl: "..." } }
+      if (
+        json &&
+        typeof json === "object" &&
+        json[username] &&
+        typeof json[username].fileUrl === "string" &&
+        json[username].fileUrl.trim() !== ""
+      ) {
+        return json[username].fileUrl;
+      }
+    }
+  } catch (err) {
+    // Silencia erro, segue para fallback
+  }
+
+  // 3. Fallback: getPosterUrl
+  return getPosterUrl(username);
+}
+
+/**
  * Cria e renderiza um único card de transmissão.
- * Usa preview.poster se existir, senão preview como string, senão getPosterUrl.
+ * Usa o fluxo de prioridades para obter o poster.
  * @param {object} data - O objeto de dados para uma única transmissão.
  */
-function renderBroadcastCard(data) {
+async function renderBroadcastCard(data) {
   ensureGridElement();
 
   const username = data.username;
@@ -216,20 +263,8 @@ function renderBroadcastCard(data) {
   const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Usa preview.poster se existir, senão preview como string, senão getPosterUrl
-  let posterSrc = "";
-  if (
-    typeof data.preview === "object" &&
-    data.preview !== null &&
-    typeof data.preview.poster === "string" &&
-    data.preview.poster.trim() !== ""
-  ) {
-    posterSrc = data.preview.poster;
-  } else if (typeof data.preview === "string" && data.preview.trim() !== "") {
-    posterSrc = data.preview;
-  } else {
-    posterSrc = getPosterUrl(username);
-  }
+  // Obtém o posterSrc seguindo o fluxo de prioridades
+  const posterSrc = await resolvePosterSrc(data);
 
   const posterImg = createEl("img", {
     class: "poster-img",
@@ -301,15 +336,19 @@ function renderBroadcastCard(data) {
 
 /**
  * Renderiza o próximo lote de cards com base na paginação local.
+ * Agora suporta cards assíncronos.
  */
-function renderNextBatch() {
+async function renderNextBatch() {
   ensureGridElement();
 
   const nextItems = allItems.slice(
     renderedItemsCount,
     renderedItemsCount + CONFIG.itemsPerPage
   );
-  nextItems.forEach((item) => renderBroadcastCard(item));
+  // Renderiza cards de forma assíncrona (aguarda cada poster)
+  for (const item of nextItems) {
+    await renderBroadcastCard(item);
+  }
   renderedItemsCount += nextItems.length;
 
   // Mostra ou esconde o botão "Carregar mais" se chegamos ao fim da lista.
