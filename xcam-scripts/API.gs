@@ -43,7 +43,13 @@ function doGet(e) {
   // Processa ?poster
   if (e.parameter.poster) {
     const username = String(e.parameter.poster);
-    response.poster = handlePosterQueryRaw(username);
+    // NOVA REGRA: Se poster=0, retorna o processed.json inteiro
+    if (username === "0") {
+      const processedData = readProcessedJsonFromDrive();
+      response.poster = processedData || { error: "Arquivo processed.json não encontrado ou inválido." };
+    } else {
+      response.poster = handlePosterQueryRaw(username);
+    }
   }
 
   // Processa ?rec

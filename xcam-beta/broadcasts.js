@@ -24,25 +24,26 @@
  * =====================================================================================
  */
 
-// === CONFIGURAÇÕES GLOBAIS E VARIÁVEIS DE CONTROLE ==============================
-const CONFIG = {
-  // Quantos cards exibir por página/clique em "Carregar Mais"
-  itemsPerPage: 30,
-  // Quantos itens buscar por requisição à API
-  apiFetchLimit: 60,
-  // URL base da API
-  apiBaseUrl: "https://api.xcam.gay/",
-  // URL base para posters seguros
-  posterBaseUrl: "https://api.xcam.gay/v1/media/poster/",
-  // Placeholder para poster
-  posterPlaceholder: "/assets/placeholder_poster.jpg"
-};
+// === Importações necessárias ===
+import { t } from "./i18n.js"; // Módulo de tradução para internacionalização (i18n).
+import { countryNames } from "./translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
 
+// === BLOCO DE CONFIGURAÇÃO GLOBAL =============================================
+const CONFIG = {
+  apiBaseUrl: "https://api.xcam.gay/",
+  apiPosterUrl: "https://api.xcam.gay/v1/media/poster/",
+  itemsPerPage: 20,
+  defaultPoster: "/assets/placeholder_poster.jpg",
+  loadingGif: "https://xcam.gay/src/loading.gif"
+};
+// ==============================================================================
+
+// === Variáveis de Controle e Configurações Globais ============================
 let allItems = []; // Todas as transmissões buscadas da API
 let renderedItemsCount = 0; // Contador para paginação local
 let grid; // Referência ao elemento DOM principal da grade
 
-// Estado atual dos filtros aplicados
+// [CONFIGURÁVEL] Estado atual dos filtros aplicados
 let filters = {
   gender: "",
   country: "",
@@ -50,16 +51,11 @@ let filters = {
   minViewers: null,
   tags: []
 };
-// =================================================================================
+// ==============================================================================
 
-// === Importações necessárias ===
-import { t } from "./i18n.js"; // Módulo de tradução para internacionalização (i18n).
-import { countryNames } from "./translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
-
-// === Função utilitária: Criação de elementos DOM com atributos e filhos ===
+// === Função utilitária: Criação de elementos DOM com atributos e filhos =======
 /**
  * Cria elementos DOM de forma declarativa com atributos e filhos.
- * Compatível com navegadores modernos e antigos.
  * @param {string} type - Tipo do elemento (ex: "div", "img")
  * @param {object} props - Atributos do elemento
  * @param {Array} children - Elementos filhos
@@ -67,39 +63,18 @@ import { countryNames } from "./translations.js"; // Mapeia códigos de país pa
  */
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
-
   Object.entries(props).forEach(([key, value]) => {
-    if (key === "text") {
-      el.textContent = value;
-    } else if (key === "html") {
-      el.innerHTML = value;
-    } else if (key.startsWith("on") && typeof value === "function") {
-      // Exemplo: onClick, onMouseOver
-      // Converte para minúsculo e adiciona como ouvinte de evento
-      const eventName = key.slice(2).toLowerCase();
-      el.addEventListener(eventName, value, false);
-    } else if (key === "class") {
-      el.className = value;
-    } else if (key === "style" && typeof value === "object") {
-      // Permite passar um objeto de estilos
-      Object.assign(el.style, value);
-    } else if (key in el) {
-      // Para propriedades DOM conhecidas (ex: id, value, tabindex)
+    if (key === "text") el.textContent = value;
+    else if (key === "html") el.innerHTML = value;
+    else if (key.startsWith("on") && typeof value === "function")
       el[key] = value;
-    } else {
-      // Fallback para setAttribute (ex: data-*, aria-*)
-      el.setAttribute(key, value);
-    }
+    else el.setAttribute(key, value);
   });
-
-  (children || []).forEach((child) => {
-    if (child) el.appendChild(child);
-  });
-
+  children.forEach((child) => child && el.appendChild(child));
   return el;
 }
 
-// === Elementos de UI reutilizáveis ===
+// === Elementos de UI reutilizáveis ============================================
 const loader = createEl("div", { class: "loading-state" }, [
   createEl("div", { class: "loader" }),
   createEl("p", { text: t("loading") })
@@ -116,14 +91,14 @@ const loadMoreBtn = createEl(
 );
 loadMoreBtn.style.display = "none";
 
-// === Função utilitária para buscar o poster seguro do usuário =================
+// === Função utilitária para buscar o poster seguro do usuário ================
 /**
  * Retorna uma URL segura para o poster do usuário XCam.
  * @param {string} username - Nome do usuário
  * @returns {string} URL do poster seguro (.ts, mas usável como src de <img>)
  */
 function getPosterUrl(username) {
-  return `${CONFIG.posterBaseUrl}${username}`;
+  return `${CONFIG.apiPosterUrl}${username}`;
 }
 
 /**
@@ -141,18 +116,19 @@ async function fetchPosterImageUrl(username) {
     return URL.createObjectURL(blob);
   } catch (err) {
     // Fallback: imagem padrão
-    return CONFIG.posterPlaceholder;
+    return CONFIG.defaultPoster;
   }
 }
 
-// === Lógica Principal ==========================================================
+// === Lógica Principal ========================================================
+
 /**
  * Monta a URL da API com base nos filtros ativos.
  * @param {object} filters - O objeto de filtros atual.
- * @param {number} limit - O número máximo de resultados a serem pedidos para a API.
+ * @param {number} [limit] - O número máximo de resultados a serem pedidos para a API.
  * @returns {string} A URL completa para a chamada da API.
  */
-function buildApiUrl(filters, limit = CONFIG.apiFetchLimit) {
+function buildApiUrl(filters, limit = CONFIG.itemsPerPage) {
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
@@ -172,20 +148,18 @@ function buildApiUrl(filters, limit = CONFIG.apiFetchLimit) {
 
 /**
  * Busca as transmissões da API principal usando o novo endpoint stream=0.
- * @param {number} limit - O limite de transmissões a serem buscadas.
+ * @param {number} [limit] - O limite de transmissões a serem buscadas.
  * @returns {Promise<Array>} Uma promessa que resolve para um array de transmissões.
  */
-async function fetchBroadcasts(limit = CONFIG.apiFetchLimit) {
+async function fetchBroadcasts(limit = CONFIG.itemsPerPage) {
   try {
-    const url = buildApiUrl(filters, limit);
+    const url = `${CONFIG.apiBaseUrl}?stream=0&limit=${limit}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Falha na requisição");
     const data = await response.json();
-    // Garante que sempre retorna um array, mesmo se não houver items
-    if (data?.broadcasts && Array.isArray(data.broadcasts.items)) {
-      return data.broadcasts.items;
+    if (data?.items) {
+      return data.items;
     }
-    // Se não houver items, retorna array vazio e loga o caminho real
     console.warn("Formato inesperado da resposta:", data);
     return [];
   } catch (error) {
@@ -203,55 +177,8 @@ function ensureGridElement() {
 }
 
 /**
- * Obtém a melhor URL de poster para o usuário seguindo o fluxo de prioridades:
- * 1. preview.poster da API principal
- * 2. fileUrl da API ?poster={username}
- * 3. getPosterUrl(username) como fallback
- * @param {object} data - Objeto de transmissão (item)
- * @returns {Promise<string>} - URL do poster
- */
-async function resolvePosterSrc(data) {
-  const username = data.username;
-
-  // 1. Tenta usar preview.poster da API principal
-  if (
-    typeof data.preview === "object" &&
-    data.preview !== null &&
-    typeof data.preview.poster === "string" &&
-    data.preview.poster.trim() !== ""
-  ) {
-    return data.preview.poster;
-  }
-
-  // 2. Tenta buscar fileUrl via API ?poster={username}
-  try {
-    const resp = await fetch(`https://api.xcam.gay/?poster=${encodeURIComponent(username)}`, {
-      headers: { accept: "application/json" }
-    });
-    if (resp.ok) {
-      const json = await resp.json();
-      // O formato esperado é { "USERNAME": { fileUrl: "..." } }
-      if (
-        json &&
-        typeof json === "object" &&
-        json[username] &&
-        typeof json[username].fileUrl === "string" &&
-        json[username].fileUrl.trim() !== ""
-      ) {
-        return json[username].fileUrl;
-      }
-    }
-  } catch (err) {
-    // Silencia erro, segue para fallback
-  }
-
-  // 3. Fallback: getPosterUrl
-  return getPosterUrl(username);
-}
-
-/**
  * Cria e renderiza um único card de transmissão.
- * Usa o fluxo de prioridades para obter o poster.
+ * Usa graphData.preview.poster se existir, senão usa getPosterUrl.
  * @param {object} data - O objeto de dados para uma única transmissão.
  */
 async function renderBroadcastCard(data) {
@@ -263,14 +190,20 @@ async function renderBroadcastCard(data) {
   const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Obtém o posterSrc seguindo o fluxo de prioridades
-  const posterSrc = await resolvePosterSrc(data);
-
-  const posterImg = createEl("img", {
+  // Renderiza imediatamente com loading.gif
+  let posterElement = createEl("img", {
     class: "poster-img",
-    src: posterSrc,
+    src: CONFIG.loadingGif,
     alt: `Poster da transmissão de ${username}`,
-    loading: "lazy"
+    loading: "lazy",
+    style: {
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      aspectRatio: "16/9",
+      borderRadius: "8px",
+      background: "#000"
+    }
   });
 
   const card = createEl(
@@ -283,14 +216,17 @@ async function renderBroadcastCard(data) {
     },
     [
       createEl("div", { class: "card-thumbnail" }, [
-        posterImg,
+        posterElement,
         createEl("div", { class: "card-overlay" }, [
           createEl(
             "button",
             {
               class: "play-button",
               "aria-label": `${t("play")} @${username}`,
-              tabindex: "0"
+              tabindex: "0",
+              onclick: () => {
+                window.open(`https://live.xcam.gay/?user=${username}`, "_blank");
+              }
             },
             [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
           )
@@ -332,23 +268,87 @@ async function renderBroadcastCard(data) {
     ]
   );
   grid.appendChild(card);
+
+  // --- Atualiza o poster assim que possível ---
+  let posterSrc = null;
+
+  // 1. Tenta usar preview.poster da API principal
+  if (
+    typeof data.preview === "object" &&
+    data.preview !== null &&
+    typeof data.preview.poster === "string" &&
+    data.preview.poster.trim() !== ""
+  ) {
+    posterSrc = data.preview.poster;
+    setPosterInCache(username, posterSrc);
+  }
+
+  // 2. Se não conseguiu, tenta IndexedDB
+  if (!posterSrc) {
+    posterSrc = await getPosterFromCache(username);
+  }
+
+  // 3. Se ainda não conseguiu, tenta via API ?poster=
+  if (!posterSrc) {
+    try {
+      const resp = await fetch(`${CONFIG.apiBaseUrl}?poster=${encodeURIComponent(username)}`, {
+        headers: { accept: "application/json" }
+      });
+      if (resp.ok) {
+        const json = await resp.json();
+        if (
+          json &&
+          typeof json === "object" &&
+          json[username] &&
+          typeof json[username].fileUrl === "string" &&
+          json[username].fileUrl.trim() !== ""
+        ) {
+          posterSrc = json[username].fileUrl;
+          setPosterInCache(username, posterSrc);
+        }
+      }
+    } catch (err) {
+      // Silencia erro, segue para fallback
+    }
+  }
+
+  // 4. Se não conseguiu, usa <iframe> como fallback
+  if (posterSrc) {
+    posterElement.src = posterSrc;
+  } else {
+    const iframe = createEl("iframe", {
+      class: "poster-iframe",
+      src: `https://live.xcam.gay/?user=${username}&mode=preview`,
+      title: `Prévia de @${username}`,
+      loading: "lazy",
+      allow: "autoplay; encrypted-media",
+      frameborder: "0",
+      tabindex: "-1",
+      "aria-hidden": "true",
+      style: {
+        width: "100%",
+        height: "100%",
+        aspectRatio: "16/9",
+        display: "block",
+        background: "#000",
+        borderRadius: "8px"
+      }
+    });
+    posterElement.replaceWith(iframe);
+  }
 }
 
 /**
  * Renderiza o próximo lote de cards com base na paginação local.
- * Agora suporta cards assíncronos.
  */
-async function renderNextBatch() {
+function renderNextBatch() {
   ensureGridElement();
 
   const nextItems = allItems.slice(
     renderedItemsCount,
     renderedItemsCount + CONFIG.itemsPerPage
   );
-  // Renderiza cards de forma assíncrona (aguarda cada poster)
-  for (const item of nextItems) {
-    await renderBroadcastCard(item);
-  }
+  nextItems.forEach((item) => renderBroadcastCard(item));
   renderedItemsCount += nextItems.length;
 
   // Mostra ou esconde o botão "Carregar mais" se chegamos ao fim da lista.
@@ -356,7 +356,7 @@ async function renderNextBatch() {
     renderedItemsCount >= allItems.length ? "none" : "block";
 }
 
-// === Funções de Estado da UI (Vazio, Erro) ===
+// === Funções de Estado da UI (Vazio, Erro) ===================================
 
 /**
  * Exibe mensagem amigável para lista vazia.
@@ -409,13 +409,13 @@ async function loadFilteredBroadcasts() {
   allItems = [];
   ensureGridElement();
   grid.innerHTML = "";
-  if (loader.parentElement) loader.remove();
-  if (loadMoreBtn.parentElement) loadMoreBtn.remove();
+  loader.remove();
+  loadMoreBtn.remove();
   grid.appendChild(loader);
 
   try {
     // 2. Busca um lote grande de transmissões para trabalhar localmente.
-    const result = await fetchBroadcasts(CONFIG.apiFetchLimit);
+    const result = await fetchBroadcasts(CONFIG.itemsPerPage * 5);
     loader.remove();
 
     if (!result.length) {
@@ -439,7 +439,7 @@ async function loadFilteredBroadcasts() {
   }
 }
 
-// === Funções Públicas (API do Módulo) =========================================
+// === Funções Públicas (API do Módulo) ========================================
 
 /**
  * Inicializa a grade de transmissões e adiciona os event listeners.
@@ -471,9 +471,9 @@ export function applyBroadcastFilters(newFilters) {
   };
   loadFilteredBroadcasts();
 }
-// =================================================================================
+// ==============================================================================
 
-// === Inicialização do Script ===
+// === Inicialização do Script ==================================================
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
 });
