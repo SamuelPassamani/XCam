@@ -53,6 +53,121 @@ let filters = {
 };
 // ==============================================================================
 
+// === CACHE ROBUSTO PARA POSTERS ==============================================
+
+/**
+ * Cache robusto usando IndexedDB (persistente) + memória (rápido).
+ * - Sempre tenta salvar e ler do IndexedDB (persistência entre sessões).
+ * - Mantém um cache em memória para acesso rápido durante a sessão.
+ * - Fallback para localStorage se IndexedDB não estiver disponível.
+ */
+
+const posterCacheMemory = {}; // Cache em memória
+
+// IndexedDB helpers
+const DB_NAME = "xcamPosterCache";
+const STORE_NAME = "posters";
+let dbPromise = null;
+
+// Abre (ou cria) o banco IndexedDB
+function openPosterDB() {
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+    req.onupgradeneeded = () => {
+      req.result.createObjectStore(STORE_NAME);
+    };
+  });
+  return dbPromise;
+}
+
+// Salva poster no IndexedDB e no cache em memória
+async function setPosterInCache(username, url) {
+  posterCacheMemory[username] = url;
+  // IndexedDB
+  try {
+    const db = await openPosterDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).put(url, username);
+    tx.oncomplete = () => db.close && db.close();
+  } catch (e) {
+    // Fallback para localStorage se IndexedDB falhar
+    try {
+      localStorage.setItem(`poster_${username}`, url);
+    } catch {}
+  }
+}
+
+// Busca poster do cache (memória > IndexedDB > localStorage)
+async function getPosterFromCache(username) {
+  if (posterCacheMemory[username]) return posterCacheMemory[username];
+  // IndexedDB
+  try {
+    const db = await openPosterDB();
+    return await new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const req = tx.objectStore(STORE_NAME).get(username);
+      req.onsuccess = () => {
+        if (req.result) posterCacheMemory[username] = req.result;
+        resolve(req.result || null);
+        db.close && db.close();
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch (e) {
+    // Fallback para localStorage
+    try {
+      const url = localStorage.getItem(`poster_${username}`);
+      if (url) posterCacheMemory[username] = url;
+      return url || null;
+    } catch {
+      return null;
+    }
+  }
+}
+
+// Limpa todo o cache (útil para debug ou atualização massiva)
+async function clearPosterCache() {
+  for (const k in posterCacheMemory) delete posterCacheMemory[k];
+  try {
+    const db = await openPosterDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).clear();
+    tx.oncomplete = () => db.close && db.close();
+  } catch {
+    // Fallback localStorage
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith("poster_"))
+      .forEach((k) => localStorage.removeItem(k));
+  }
+}
+
+// Pré-carrega todos os posters do endpoint ?poster=0 e alimenta o cache
+async function preloadAllPostersToCache() {
+  try {
+    const resp = await fetch("https://api.xcam.gay/?poster=0", {
+      headers: { accept: "application/json" }
+    });
+    if (resp.ok) {
+      const posters = await resp.json();
+      window._xcamAllPosters = posters;
+      // Salva todos no IndexedDB e memória
+      for (const [username, obj] of Object.entries(posters)) {
+        if (obj && typeof obj.fileUrl === "string" && obj.fileUrl.trim() !== "") {
+          await setPosterInCache(username, obj.fileUrl);
+        }
+      }
+    } else {
+      window._xcamAllPosters = {};
+    }
+  } catch (err) {
+    window._xcamAllPosters = {};
+  }
+}
+// ==============================================================================
+
 // === Função utilitária: Criação de elementos DOM com atributos e filhos =======
 /**
  * Cria elementos DOM de forma declarativa com atributos e filhos.
@@ -74,6 +189,14 @@ function createEl(type, props = {}, children = []) {
   return el;
 }
 
+// Garante que a variável `grid` tenha uma referência ao elemento DOM.
+function ensureGridElement() {
+  if (!grid) {
+    grid = document.getElementById("broadcasts-grid");
+  }
+}
+// ==============================================================================
+
 // === Elementos de UI reutilizáveis ============================================
 const loader = createEl("div", { class: "loading-state" }, [
   createEl("div", { class: "loader" }),
@@ -90,6 +213,7 @@ const loadMoreBtn = createEl(
   [createEl("span", { text: t("loadMore") })]
 );
 loadMoreBtn.style.display = "none";
+// ==============================================================================
 
 // === Função utilitária para buscar o poster seguro do usuário ================
 /**
@@ -119,6 +243,52 @@ async function fetchPosterImageUrl(username) {
     return CONFIG.defaultPoster;
   }
 }
+// ==============================================================================
+
+// === Funções de Estado da UI (Vazio, Erro) ===================================
+
+/**
+ * Exibe mensagem amigável para lista vazia.
+ */
+function showEmptyMessage() {
+  ensureGridElement();
+  grid.innerHTML = "";
+  const empty = createEl(
+    "div",
+    { class: "empty-state", "aria-live": "polite" },
+    [
+      createEl("i", {
+        class: "fas fa-info-circle empty-icon",
+        "aria-hidden": "true"
+      }),
+      createEl("h3", { text: t("noBroadcasts.title") }),
+      createEl("p", { text: t("noBroadcasts.description") })
+    ]
+  );
+  grid.appendChild(empty);
+}
+
+/**
+ * Exibe mensagem de erro caso a API falhe.
+ */
+function showErrorMessage() {
+  ensureGridElement();
+  grid.innerHTML = "";
+  const errorDiv = createEl(
+    "div",
+    { class: "error-state", "aria-live": "assertive" },
+    [
+      createEl("i", {
+        class: "fas fa-exclamation-triangle",
+        "aria-hidden": "true"
+      }),
+      createEl("h3", { text: t("error.title") }),
+      createEl("p", { text: t("error.description") })
+    ]
+  );
+  grid.appendChild(errorDiv);
+}
+// ==============================================================================
 
 // === Lógica Principal ========================================================
 
@@ -169,13 +339,6 @@ async function fetchBroadcasts(limit = CONFIG.itemsPerPage) {
     console.error("Erro ao carregar transmissões:", error);
     showErrorMessage();
     return [];
-  }
-}
-
-// Garante que a variável `grid` tenha uma referência ao elemento DOM.
-function ensureGridElement() {
-  if (!grid) {
-    grid = document.getElementById("broadcasts-grid");
   }
 }
 
@@ -362,50 +525,6 @@ function renderNextBatch() {
     renderedItemsCount >= allItems.length ? "none" : "block";
 }
 
-// === Funções de Estado da UI (Vazio, Erro) ===================================
-
-/**
- * Exibe mensagem amigável para lista vazia.
- */
-function showEmptyMessage() {
-  ensureGridElement();
-  grid.innerHTML = "";
-  const empty = createEl(
-    "div",
-    { class: "empty-state", "aria-live": "polite" },
-    [
-      createEl("i", {
-        class: "fas fa-info-circle empty-icon",
-        "aria-hidden": "true"
-      }),
-      createEl("h3", { text: t("noBroadcasts.title") }),
-      createEl("p", { text: t("noBroadcasts.description") })
-    ]
-  );
-  grid.appendChild(empty);
-}
-
-/**
- * Exibe mensagem de erro caso a API falhe.
- */
-function showErrorMessage() {
-  ensureGridElement();
-  grid.innerHTML = "";
-  const errorDiv = createEl(
-    "div",
-    { class: "error-state", "aria-live": "assertive" },
-    [
-      createEl("i", {
-        class: "fas fa-exclamation-triangle",
-        "aria-hidden": "true"
-      }),
-      createEl("h3", { text: t("error.title") }),
-      createEl("p", { text: t("error.description") })
-    ]
-  );
-  grid.appendChild(errorDiv);
-}
-
 /**
  * Orquestra o carregamento inicial ou a recarga da grade com base nos filtros.
  */
@@ -444,126 +563,32 @@ async function loadFilteredBroadcasts() {
     showErrorMessage();
   }
 }
+// ==============================================================================
 
-// === CACHE ROBUSTO PARA POSTERS ==============================================
-
+// === EXPORTS (API DO MÓDULO) =================================================
 /**
- * Cache robusto usando IndexedDB (persistente) + memória (rápido).
- * - Sempre tenta salvar e ler do IndexedDB (persistência entre sessões).
- * - Mantém um cache em memória para acesso rápido durante a sessão.
- * - Fallback para localStorage se IndexedDB não estiver disponível.
+ * Aplica um novo conjunto de filtros e recarrega a grade.
+ * @param {object} newFilters - O novo objeto de filtros a ser aplicado.
  */
-
-const posterCacheMemory = {}; // Cache em memória
-
-// IndexedDB helpers
-const DB_NAME = "xcamPosterCache";
-const STORE_NAME = "posters";
-let dbPromise = null;
-
-// Abre (ou cria) o banco IndexedDB
-function openPosterDB() {
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-    req.onupgradeneeded = () => {
-      req.result.createObjectStore(STORE_NAME);
-    };
-  });
-  return dbPromise;
+export function applyBroadcastFilters(newFilters) {
+  filters = {
+    ...filters,
+    ...Object.fromEntries(
+      Object.entries(newFilters).filter(
+        ([_, v]) => v !== undefined && v !== null && v !== "" && v !== "all"
+      )
+    )
+  };
+  loadFilteredBroadcasts();
 }
-
-// Salva poster no IndexedDB e no cache em memória
-async function setPosterInCache(username, url) {
-  posterCacheMemory[username] = url;
-  // IndexedDB
-  try {
-    const db = await openPosterDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).put(url, username);
-    tx.oncomplete = () => db.close && db.close();
-  } catch (e) {
-    // Fallback para localStorage se IndexedDB falhar
-    try {
-      localStorage.setItem(`poster_${username}`, url);
-    } catch {}
-  }
-}
-
-// Busca poster do cache (memória > IndexedDB > localStorage)
-async function getPosterFromCache(username) {
-  if (posterCacheMemory[username]) return posterCacheMemory[username];
-  // IndexedDB
-  try {
-    const db = await openPosterDB();
-    return await new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      const req = tx.objectStore(STORE_NAME).get(username);
-      req.onsuccess = () => {
-        if (req.result) posterCacheMemory[username] = req.result;
-        resolve(req.result || null);
-        db.close && db.close();
-      };
-      req.onerror = () => resolve(null);
-    });
-  } catch (e) {
-    // Fallback para localStorage
-    try {
-      const url = localStorage.getItem(`poster_${username}`);
-      if (url) posterCacheMemory[username] = url;
-      return url || null;
-    } catch {
-      return null;
-    }
-  }
-}
-
-// Limpa todo o cache (útil para debug ou atualização massiva)
-async function clearPosterCache() {
-  for (const k in posterCacheMemory) delete posterCacheMemory[k];
-  try {
-    const db = await openPosterDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).clear();
-    tx.oncomplete = () => db.close && db.close();
-  } catch {
-    // Fallback localStorage
-    Object.keys(localStorage)
-      .filter((k) => k.startsWith("poster_"))
-      .forEach((k) => localStorage.removeItem(k));
-  }
-}
-
-// Pré-carrega todos os posters do endpoint ?poster=0 e alimenta o cache
-async function preloadAllPostersToCache() {
-  try {
-    const resp = await fetch("https://api.xcam.gay/?poster=0", {
-      headers: { accept: "application/json" }
-    });
-    if (resp.ok) {
-      const posters = await resp.json();
-      window._xcamAllPosters = posters;
-      // Salva todos no IndexedDB e memória
-      for (const [username, obj] of Object.entries(posters)) {
-        if (obj && typeof obj.fileUrl === "string" && obj.fileUrl.trim() !== "") {
-          await setPosterInCache(username, obj.fileUrl);
-        }
-      }
-    } else {
-      window._xcamAllPosters = {};
-    }
-  } catch (err) {
-    window._xcamAllPosters = {};
-  }
-}
+// ==============================================================================
 
 // === Inicialização do Script ==================================================
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
   preloadAllPostersToCache(); // Chama o pré-carregamento ao iniciar a página
 });
+// ==============================================================================
 
 /**
  * =====================================================================================
