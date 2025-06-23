@@ -252,6 +252,31 @@ async function handleRecProxy(username, corsHeaders) {
   }
 }
 
+// ===============================================================================
+// == Handler: Proxy Google Apps Script para dados de poster do usuário (processed.json)
+// ===============================================================================
+// Faz requisição ao GAS com ?poster={username} e retorna o JSON.
+async function handlePosterProxy(username, corsHeaders) {
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?poster=" + encodeURIComponent(username);
+  try {
+    const response = await fetch(GAS_URL, {
+      redirect: 'follow',
+      headers: { 'accept': 'application/json' }
+    });
+    const contentType = response.headers.get('content-type') || 'text/plain';
+    const body = await response.text();
+    return new Response(body, {
+      status: response.status,
+      headers: { ...corsHeaders, "Content-Type": contentType, "Cache-Control": "no-store" }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Falha ao consultar poster via GAS", details: String(err) }), {
+      status: 502,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+  }
+}
+
 // ===========================================================================
 // == Handler: Proxy de redirecionamento para Streams HLS (302 Location)    ==
 // ===========================================================================
@@ -472,6 +497,12 @@ export default {
       const recParam = url.searchParams.get("rec");
       if (recParam) {
         return await handleRecProxy(recParam, corsHeaders);
+      }
+
+      // === 3.1. NOVO: PROXY PARA POSTER (processed.json via GAS) ===
+      const posterParam = url.searchParams.get("poster");
+      if (posterParam) {
+        return await handlePosterProxy(posterParam, corsHeaders);
       }
 
       // === 3.1. LISTAGEM DE TRANSMISSÕES COM STREAM=0 E LIMIT ===
