@@ -567,6 +567,21 @@ async function loadFilteredBroadcasts() {
 
 // === EXPORTS (API DO MÓDULO) =================================================
 /**
+ * Inicializa a grade de transmissões e adiciona os event listeners.
+ */
+export function setupBroadcasts() {
+  loadMoreBtn.addEventListener("click", renderNextBatch);
+  loadFilteredBroadcasts();
+}
+
+/**
+ * Força a recarga completa da grade, útil para um botão de "Atualizar".
+ */
+export function refreshBroadcasts() {
+  loadFilteredBroadcasts();
+}
+
+/**
  * Aplica um novo conjunto de filtros e recarrega a grade.
  * @param {object} newFilters - O novo objeto de filtros a ser aplicado.
  */
