@@ -160,6 +160,9 @@ async function fetchBroadcasts(limit = CONFIG.itemsPerPage) {
     if (data?.items) {
       return data.items;
     }
+    if (data?.broadcasts?.items) {
+      return data.broadcasts.items;
+    }
     console.warn("Formato inesperado da resposta:", data);
     return [];
   } catch (error) {
