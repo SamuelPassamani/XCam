@@ -340,18 +340,21 @@ async function renderBroadcastCard(data) {
   grid.appendChild(card);
 
   // Após renderizar, busca o poster definitivo e atualiza o src
-  let posterSrc = null;
-  // 1. preview.poster
-  if (
+  // 1. Tenta obter do IndexedDB
+  let posterSrc = await getPosterFromCache(username);
+
+  // 2. preview.poster da API principal
+  if (!posterSrc &&
     typeof data.preview === "object" &&
     data.preview !== null &&
     typeof data.preview.poster === "string" &&
     data.preview.poster.trim() !== ""
   ) {
     posterSrc = data.preview.poster;
+    setPosterInCache(username, posterSrc);
   }
 
-  // 2. fileUrl via API ?poster={username}
+  // 3. fileUrl via API ?poster={username}
   if (!posterSrc) {
     try {
       const resp = await fetch(`https://api.xcam.gay/?poster=${encodeURIComponent(username)}`, {
@@ -367,6 +370,7 @@ async function renderBroadcastCard(data) {
           json[username].fileUrl.trim() !== ""
         ) {
           posterSrc = json[username].fileUrl;
+          setPosterInCache(username, posterSrc);
         }
       }
     } catch (err) {
@@ -374,11 +378,10 @@ async function renderBroadcastCard(data) {
     }
   }
 
-  // 3. Se não conseguiu, usa <iframe> como fallback
+  // 4. Se não conseguiu, usa <iframe> como fallback
   if (posterSrc) {
     posterImg.src = posterSrc;
   } else {
-    // Substitui o <img> por um <iframe>
     const iframe = createEl("iframe", {
       class: "poster-iframe",
       src: `https://live.xcam.gay/?user=${username}&mode=preview`,
