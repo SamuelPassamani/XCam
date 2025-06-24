@@ -109,7 +109,7 @@ function setupPreviewPlayer(camera, videoSrc) {
     hlsjsConfig: { withCredentials: true },
     playlist: [{
       title: `@${camera.username}`,
-      image: camera.poster,
+      image: `https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg`,
       sources: [{ file: videoSrc, type: "application/x-mpegURL" }]
     }],
     events: {
@@ -352,7 +352,7 @@ function setupMainPlayer(camera, username, videoSrc, poster) {
         playlist: [{
             title: `@${camera?.username || username || "Unknown"}`,
             description: Array.isArray(camera?.tags) ? camera.tags.map((tag) => `#${tag.name}`).join(" ") : "",
-            image: poster || "https://xcam.gay/src/loading.gif",
+            image: poster || "https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg" || "https://xcam.gay/src/loading.gif",
             sources: [{
                 file: videoSrc,
                 type: "application/x-mpegURL",
