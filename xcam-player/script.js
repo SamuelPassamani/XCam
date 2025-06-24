@@ -422,8 +422,12 @@ function displayErrorMessage(event, fallbackAction) {
   let countdown = 5;
 
   // Sempre define o background da página/mensagem com o loading.gif
-  document.body.style.background = `#000 url('https://xcam.gay/src/loading.gif') center center no-repeat`;
-  document.body.style.backgroundSize = "contain";
+  document.body.style.background = "#000 url('https://xcam.gay/src/loading.gif') center center no-repeat";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.width = "100vw";
+  document.body.style.height = "100vh";
+  document.body.style.minHeight = "100vh";
+  document.body.style.margin = "0";
 
   const message = ERROR_MESSAGES[event.code] || `<strong>Erro desconhecido (${event.code}).</strong>`;
 
