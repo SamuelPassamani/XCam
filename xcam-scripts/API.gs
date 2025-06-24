@@ -591,9 +591,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
   // Função auxiliar para log duplo (console e processedRun.json incremental)
   function log(msg) {
     Logger.log(msg);
-    try {
-      processedRunLog(msg, false);
-    } catch (e) {}
+    processedRunLog(msg, false);
   }
 
   try {
