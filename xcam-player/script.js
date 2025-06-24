@@ -432,13 +432,26 @@ function displayErrorMessage(event, fallbackAction) {
   const message = ERROR_MESSAGES[event.code] || `<strong>Erro desconhecido (${event.code}).</strong>`;
 
   const display = () => {
-    if(playerContainer) {
-        playerContainer.innerHTML = `
-          <div style="color: #FFF; background: rgba(51,51,51,0.95); text-align: center; padding: 20px; font-family: sans-serif; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:120px;height:120px;object-fit:contain;margin-bottom:16px;" />
-            <p style="margin: 0; font-size: 14px;">${message}</p>
-            <p style="margin: 10px 0 0 0; font-size: 12px;">A tentar novamente em <span id="countdown">${countdown}</span>s...</p>
-          </div>`;
+    if (playerContainer) {
+      playerContainer.innerHTML = `
+        <div style="
+          position: fixed;
+          top: 0; left: 0;
+          width: 100vw; height: 100vh;
+          background: rgba(51,51,51,0.95);
+          color: #FFF;
+          text-align: center;
+          font-family: sans-serif;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+        ">
+          <img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:120px;height:120px;object-fit:contain;margin-bottom:16px;" />
+          <p style="margin: 0; font-size: 14px;">${message}</p>
+          <p style="margin: 10px 0 0 0; font-size: 12px;">A tentar novamente em <span id="countdown">${countdown}</span>s...</p>
+        </div>`;
     }
     const interval = setInterval(() => {
         countdown--;
