@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>XCam Dashboard</title>
+  <style>
+    body { background: #181818; color: #fff; font-family: sans-serif; padding: 30px; }
+    h1 { color: #ff007f; }
+    button { margin: 10px 0; padding: 10px 20px; border: none; border-radius: 5px; background: #ff007f; color: #fff; font-size: 16px; cursor: pointer; }
+    button:disabled { opacity: 0.5; }
+    #log { background: #111; color: #0f0; padding: 10px; border-radius: 6px; font-family: monospace; height: 350px; overflow-y: auto; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>XCam Dashboard</h1>
+  <button id="runBtn">Executar fetchAndSaveAllPosters</button>
+  <button id="clearLogBtn">Limpar Log</button>
+  <div id="log">Aguardando ação...</div>
+
+  <script>
+    const logDiv = document.getElementById('log');
+    const runBtn = document.getElementById('runBtn');
+    const clearLogBtn = document.getElementById('clearLogBtn');
+    let polling = null;
+    let lastLogLength = 0;
+
+    function renderLog(logs) {
+      logDiv.innerHTML = logs.map(l =>
+        `<span style="color:#888">${l.ts}</span>\t${l.level}\t${l.msg}`
+      ).join('<br>');
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function pollLog() {
+      fetch('https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?autorun=log')
+        .then(r => r.json())
+        .then(renderLog)
+        .catch(() => { logDiv.innerHTML = "Erro ao buscar log."; });
+    }
+
+    runBtn.onclick = function() {
+      runBtn.disabled = true;
+      clearLogBtn.disabled = true;
+      logDiv.innerHTML = "⏳ Executando...";
+      google.script.run.withSuccessHandler(function(result) {
+        runBtn.disabled = false;
+        clearLogBtn.disabled = false;
+        pollLog(); // força atualização final
+      }).withFailureHandler(function(err) {
+        runBtn.disabled = false;
+        clearLogBtn.disabled = false;
+        logDiv.innerHTML += "<br>❌ Erro: " + err.message;
+      }).dashboardFetchAndSaveAllPosters();
+      if (polling) clearInterval(polling);
+      polling = setInterval(pollLog, 2000); // polling a cada 2s
+    };
+
+    clearLogBtn.onclick = function() {
+      google.script.run.withSuccessHandler(function() {
+        logDiv.innerHTML = "";
+        lastLogLength = 0;
+      }).dashboardLog("", true);
+    };
+
+    // Polling inicial para mostrar log se já existir
+    polling = setInterval(pollLog, 5000); // Atualiza a cada 5 segundos
+    pollLog();
+  </script>
+</body>
+</html>
