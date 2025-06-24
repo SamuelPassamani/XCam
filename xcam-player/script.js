@@ -107,6 +107,7 @@ function setupPreviewPlayer(camera, videoSrc) {
     autostart: true,
     mute: true,
     hlsjsConfig: { withCredentials: true },
+    pipIcon: false, // Desativa o botão PiP do JWPlayer
     playlist: [{
       title: `@${camera.username}`,
       image: `https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg`,
@@ -206,6 +207,7 @@ function setupCarouselPlayer(camera, videoSrc) {
     autostart: true,
     mute: true,
     hlsjsConfig: { withCredentials: true },
+    pipIcon: false, // Desativa o botão PiP do JWPlayer
     playlist: [{
       title: `@${camera.username}`,
       image: `https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg`,
