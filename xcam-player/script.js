@@ -421,50 +421,44 @@ function displayErrorMessage(event, fallbackAction) {
   const playerContainer = document.getElementById("player");
   let countdown = 5;
 
-  // Sempre define o background da página/mensagem com o loading.gif
-  document.body.style.background = "#000 url('https://xcam.gay/src/loading.gif') center center no-repeat";
-  document.body.style.backgroundSize = "cover";
-  document.body.style.width = "100vw";
-  document.body.style.height = "100vh";
-  document.body.style.minHeight = "100vh";
-  document.body.style.margin = "0";
+  // Oculta o player (para não sobrepor a mensagem)
+  if (playerContainer) playerContainer.style.display = "none";
+
+  // Cria/quadro de mensagem fullscreen (se não existir)
+  let errorOverlay = document.getElementById("xcam-error-overlay");
+  if (!errorOverlay) {
+    errorOverlay = document.createElement("div");
+    errorOverlay.id = "xcam-error-overlay";
+    errorOverlay.style.position = "fixed";
+    errorOverlay.style.top = "0";
+    errorOverlay.style.left = "0";
+    errorOverlay.style.width = "100vw";
+    errorOverlay.style.height = "100vh";
+    errorOverlay.style.display = "flex";
+    errorOverlay.style.flexDirection = "column";
+    errorOverlay.style.justifyContent = "center";
+    errorOverlay.style.alignItems = "center";
+    errorOverlay.style.background = "rgba(51,51,51,0.85)";
+    errorOverlay.style.color = "#FFF";
+    errorOverlay.style.fontFamily = "sans-serif";
+    errorOverlay.style.zIndex = "9999";
+    document.body.appendChild(errorOverlay);
+  }
 
   const message = ERROR_MESSAGES[event.code] || `<strong>Erro desconhecido (${event.code}).</strong>`;
 
-  const display = () => {
-    if (playerContainer) {
-      playerContainer.innerHTML = `
-        <div style="
-          position: fixed;
-          top: 0; left: 0;
-          width: 100vw; height: 100vh;
-          background: rgba(51,51,51,0.95);
-          color: #FFF;
-          text-align: center;
-          font-family: sans-serif;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          z-index: 9999;
-        ">
-          <img src="https://xcam.gay/src/loading.gif" alt="Carregando..." style="width:120px;height:120px;object-fit:contain;margin-bottom:16px;" />
-          <p style="margin: 0; font-size: 14px;">${message}</p>
-          <p style="margin: 10px 0 0 0; font-size: 12px;">A tentar novamente em <span id="countdown">${countdown}</span>s...</p>
-        </div>`;
+  const interval = setInterval(() => {
+    countdown--;
+    const countdownSpan = document.getElementById("countdown");
+    if (countdownSpan) countdownSpan.textContent = countdown;
+    if (countdown <= 0) {
+      clearInterval(interval);
+      // Remove overlay e mostra o player novamente
+      if (errorOverlay) errorOverlay.remove();
+      if (playerContainer) playerContainer.style.display = "";
+      fallbackAction();
     }
-    const interval = setInterval(() => {
-        countdown--;
-        const countdownSpan = document.getElementById("countdown");
-        if(countdownSpan) countdownSpan.textContent = countdown;
-        if (countdown <= 0) {
-            clearInterval(interval);
-            fallbackAction();
-        }
-    }, 1000);
-  };
-  
-  display();
+  }, 1000);
 }
 
 function handleMainPlayerError(event) {
