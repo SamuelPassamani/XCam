@@ -119,6 +119,13 @@ function setupPreviewPlayer(camera, videoSrc) {
   });
 
   jwplayer("player").on("ready", () => {
+    // Desabilita PiP no elemento <video> nativo
+    const video = document.querySelector("#player video");
+    if (video) {
+      video.setAttribute("disablepictureinpicture", "");
+      video.setAttribute("controlsList", "nodownload nofullscreen noremoteplayback nopictureinpicture");
+    }
+
     setTimeout(() => {
       if (jwplayer("player")?.getState() !== 'paused') {
         jwplayer("player").pause(true);
@@ -215,6 +222,15 @@ function setupCarouselPlayer(camera, videoSrc) {
     }],
     events: {
       error: handleCarouselPlayerError
+    }
+  });
+
+  // Desabilita PiP no elemento <video> nativo
+  jwplayer("player").on("ready", () => {
+    const video = document.querySelector("#player video");
+    if (video) {
+      video.setAttribute("disablepictureinpicture", "");
+      video.setAttribute("controlsList", "nodownload nofullscreen noremoteplayback nopictureinpicture");
     }
   });
 
