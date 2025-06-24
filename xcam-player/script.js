@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const PREVIEW_CONFIG = {
   MAX_RETRIES: 3,
   RETRY_DELAY: 5000,
-  PREVIEW_DURATION: 1500,
+  PREVIEW_DURATION: 3000,
   API_ENDPOINT: "https://api.xcam.gay/user/",
   FALLBACK_VIDEO: "https://xcam-drive.aserio.workers.dev/0:/files/loading.webm",
   LOADING_GIF: "https://xcam.gay/src/loading.gif"

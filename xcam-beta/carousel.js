@@ -33,7 +33,7 @@ export function setupCarousel({ intervalMs = 6000 } = {}) {
         card.innerHTML = `
           <a href="/cam/?user=${item.username}" class="card-thumbnail">
             <iframe
-              src="https://live.xcam.gay/?user=${item.username}&mode=preview"
+              src="https://live.xcam.gay/?user=${item.username}&mode=carousel"
               class="carousel-iframe"
               title="Prévia de @${item.username}"
               loading="lazy"
