@@ -30,10 +30,12 @@
 // Ponto de entrada que decide qual modo do player inicializar.
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
-  const isPreviewMode = params.get("mode") === "preview";
+  const mode = params.get("mode");
 
-  if (isPreviewMode) {
+  if (mode === "preview") {
     initializePreviewPlayer();
+  } else if (mode === "carousel") {
+    initializeCarouselPlayer();
   } else {
     // A lógica do modal de anúncio pertence apenas ao player principal.
     initializeAdModal();
@@ -42,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
 // =====================================================================================
 // === MODO PREVIEW (Poster Animado) ===================================================
 // =====================================================================================
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const PREVIEW_CONFIG = {
   MAX_RETRIES: 3,
   RETRY_DELAY: 5000,
-  PREVIEW_DURATION: 500,
+  PREVIEW_DURATION: 1500,
   API_ENDPOINT: "https://api.xcam.gay/user/",
   FALLBACK_VIDEO: "https://xcam-drive.aserio.workers.dev/0:/files/loading.webm",
   LOADING_GIF: "https://xcam.gay/src/loading.gif"
@@ -181,6 +182,78 @@ async function initializePreviewPlayer() {
   }
 }
 
+// =====================================================================================
+// === MODO CAROUSEL (Preview Automático, sem hover) ===================================
+// =====================================================================================
+
+function injectCarouselCSS() {
+  injectPreviewCSS();
+}
+
+function showCarouselFallback() {
+  showPreviewFallback();
+}
+
+function setupCarouselPlayer(camera, videoSrc) {
+  const playerContainer = document.getElementById("player");
+  if (!playerContainer) return;
+
+  playerContainer.innerHTML = "";
+  previewRetryCount = 0;
+
+  jwplayer("player").setup({
+    controls: false,
+    autostart: true,
+    mute: true,
+    hlsjsConfig: { withCredentials: true },
+    playlist: [{
+      title: `@${camera.username}`,
+      image: `https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg`,
+      sources: [{ file: videoSrc, type: "application/x-mpegURL" }]
+    }],
+    events: {
+      error: handleCarouselPlayerError
+    }
+  });
+
+  // Não adiciona eventos de hover, nunca pausa o vídeo
+}
+
+function handleCarouselPlayerError(event) {
+  displayErrorMessage(event, handleCarouselRetry);
+}
+
+function handleCarouselRetry() {
+  previewRetryCount++;
+  if (previewRetryCount <= PREVIEW_CONFIG.MAX_RETRIES) {
+    setTimeout(initializeCarouselPlayer, PREVIEW_CONFIG.RETRY_DELAY);
+  } else {
+    showCarouselFallback();
+  }
+}
+
+async function initializeCarouselPlayer() {
+  injectCarouselCSS();
+  showPreviewLoading();
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("user");
+    if (!username) throw new Error("Parâmetro 'user' não encontrado.");
+
+    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}${encodeURIComponent(username)}/liveInfo`);
+    if (!response.ok) throw new Error(`API retornou status ${response.status}`);
+    
+    const data = await response.json();
+    const videoSrc = data.cdnURL || data.edgeURL;
+    if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
+
+    const camera = { username: username, poster: "" };
+    setupCarouselPlayer(camera, videoSrc);
+  } catch (err) {
+    console.warn(`Falha ao inicializar o carousel player: ${err.message}`);
+    handleCarouselRetry();
+  }
+}
 
 // =====================================================================================
 // === MODO PADRÃO (Player Completo - LÓGICA ORIGINAL PRESERVADA) ======================
@@ -422,7 +495,6 @@ function initializeAdModal() {
         }
     });
 }
-
 
 // =====================================================================================
 // === Funções Auxiliares Preservadas do Script Original ===============================
