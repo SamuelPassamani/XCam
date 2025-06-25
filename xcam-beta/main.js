@@ -9,23 +9,23 @@
 // =====================
 
 // Carrossel de destaques (topo)
-import { setupCarousel } from "./carousel.js";
+import { setupCarousel } from "https://xcam.gay/carousel.js";
 
 // Menu responsivo (desktop/mobile)
-import { setupMenu } from "./menu.js";
+import { setupMenu } from "https://xcam.gay/menu.js";
 
 // Modal universal para transmissões ao clicar em um card
-import { setupModal } from "./modal.js";
+import { setupModal } from "https://xcam.gay/modal.js";
 
 // Lógica e eventos de filtro (gênero, país, orientação, etc)
-import { setupFilters } from "./filters.js";
+import { setupFilters } from "https://xcam.gay/filters.js";
 
 // Inicialização da grade de transmissões (grid principal)
 // Agora utiliza fluxo de placeholders, atualização incremental e fetch único da API principal
-import { setupBroadcasts } from "./broadcasts.js";
+import { setupBroadcasts } from "https://xcam.gay/broadcasts.js";
 
 // População dinâmica dos selects dos filtros (valores em inglês/código)
-import { populateFilterOptions } from "./filters-populate.js";
+import { populateFilterOptions } from "https://xcam.gay/filters-populate.js";
 
 // =====================
 // FUNÇÃO PÚBLICA PARA REINICIALIZAR O APP
