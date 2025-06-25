@@ -25,15 +25,15 @@
  */
 
 // === Importações necessárias ===
-import { t } from "./i18n.js"; // Módulo de tradução para internacionalização (i18n).
-import { countryNames } from "./translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
+import { t } from "https://xcam.gay/i18n.js"; // Módulo de tradução para internacionalização (i18n).
+import { countryNames } from "https://xcam.gay/translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
 
 // === BLOCO DE CONFIGURAÇÃO GLOBAL =============================================
 const CONFIG = {
   apiBaseUrl: "https://api.xcam.gay/",
   apiPosterUrl: "https://api.xcam.gay/v1/media/poster/",
   itemsPerPage: 20,
-  defaultPoster: "/assets/placeholder_poster.jpg",
+  defaultPoster: "https://xcam.gay/assets/placeholder_poster.jpg",
   loadingGif: "https://xcam.gay/src/loading.gif"
 };
 // ==============================================================================
