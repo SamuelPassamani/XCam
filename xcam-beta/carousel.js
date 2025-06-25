@@ -1,4 +1,4 @@
-import { t } from "./i18n.js";
+import { t } from "https://xcam.gay/i18n.js";
 
 export function setupCarousel({ intervalMs = 6000 } = {}) {
   const carouselContainer = document.querySelector(".carousel-container");
