@@ -19,7 +19,7 @@ const ORIENTATION_OPTIONS = {
 };
 // countryNames já está no formato {codigo: "Nome do País"}
 
-import { countryNames } from "./translations.js";
+import { countryNames } from "https://xcam.gay/translations.js";
 
 /**
  * Popula todos os selects de filtro da interface.
