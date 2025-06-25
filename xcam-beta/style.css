@@ -1038,7 +1038,7 @@ body.modal-open {
 
 .modal-overlay {
   position: fixed;
-  inset: 0; /* top, right, bottom, left: 0 */
+  inset: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.92);
@@ -1048,12 +1048,13 @@ body.modal-open {
   z-index: 2000;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.3s, visibility 0.3s;
 }
-.modal-overlay[style*="display:flex"],
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 /* Conteúdo central do modal */
