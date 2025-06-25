@@ -1,4 +1,4 @@
-import { messages } from "./messages.js";
+import { messages } from "https://xcam.gay/messages.js";
 
 // Função para obter mensagem no idioma ativo
 export function t(key, lang = "pt") {
