@@ -489,7 +489,6 @@ function dashboardFetchAndSaveAllPosters() {
 function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
   const folderId = postersFolderId || POSTERS_FOLDER_ID;
   limit = limit || 300;
-  maxPages = maxPages || 30;
   retryCount = retryCount || 0;
   const MAX_RETRIES = 1;
 
@@ -536,8 +535,10 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
 
     let processedAdded = 0;
     let processedUpdated = 0;
+    let page = 0;
 
-    for (let page = pageStart; page < maxPages; page++) {
+    // Loop até percorrer todos os usuários (offset >= total)
+    while (true) {
       if (Date.now() - startTime > MAX_TIME - 5000) {
         log("⏰ Tempo limite de execução atingido. Encerrando processamento para evitar timeout.");
         processedInfo.lastOffset = offset;
@@ -690,10 +691,13 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
       }
 
       offset += limit;
+      page++;
+
+      // Condição de parada: percorreu todos os usuários ou não há mais itens
       if (offset >= total || items.length === 0) {
         log("✅ Fim da paginação: todos os usuários processados.");
         processedInfo.lastOffset = offset;
-        processedInfo.lastPage = page + 1;
+        processedInfo.lastPage = page;
         break;
       }
     }
@@ -701,7 +705,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
     processedInfo.users = usersInfo;
     processedInfo.lastRun = new Date().toISOString();
     processedInfo.lastOffset = offset;
-    processedInfo.lastPage = maxPages;
+    processedInfo.lastPage = page;
     saveProcessedInfo(postersRoot, processedInfo);
 
     log(`📊 Resumo da execução:`);
@@ -728,7 +732,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
     log(`❗ Erro geral ao buscar/salvar posters: ${e.message}`);
     if (totalCreated === 0 && totalUpdated === 0 && retryCount < MAX_RETRIES) {
       log("⚠️ Nenhum dado/poster processado por erro. Tentando executar novamente automaticamente...");
-      return fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount + 1);
+      return fetchAndSaveAllPosters(postersFolderId, limit, undefined, retryCount + 1);
     }
     return { error: "Erro geral ao buscar/salvar posters: " + e.message, report };
   }
@@ -979,5 +983,25 @@ function tempShowProcessedRunLog() {
     return ContentService
       .createTextOutput(JSON.stringify([{ts: "", level: "Erro", msg: "processedRun.json não encontrado"}]))
       .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Executa uma requisição GET para o endpoint remoto de autorun=run.
+ * Retorna o resultado da requisição já convertido em objeto JS.
+ */
+function callRemoteAutorunRun() {
+  const url = "https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?autorun=run";
+  try {
+    const response = UrlFetchApp.fetch(url, {
+      method: "get",
+      muteHttpExceptions: true,
+      followRedirects: true,
+      validateHttpsCertificates: true
+    });
+    const content = response.getContentText();
+    return safeParseJSON(content, { error: "Resposta inválida do endpoint remoto." });
+  } catch (e) {
+    return { error: "Erro ao chamar endpoint remoto: " + e.message };
   }
 }
