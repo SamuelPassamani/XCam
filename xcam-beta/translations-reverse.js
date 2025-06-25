@@ -1,7 +1,7 @@
 // translations-reverse.js
 // Utilitário para tradução reversa dos valores exibidos na UI para os formatos esperados pela API XCam
 
-import { translations, countryNames } from "./translations.js";
+import { translations, countryNames } from "https://xcam.gay/translations.js";
 
 /**
  * Gera um mapa reverso de nomes de países para códigos ISO 3166-1 alpha-2.
