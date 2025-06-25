@@ -27,49 +27,18 @@
 const ROOT_FOLDER_ID = '1R8q38lLoeS1PjASq7GhbtnJG_oo2NcoB';
 const POSTERS_FOLDER_ID = '1p1VyLW6mtOn6RAjazl9zR0QWsrQbZBCj'; // <-- Defina aqui o ID da pasta dos posters
 const PROCESSED_JSON_FILE_ID = '11etUAeC5JYPjp5abVAvQWYNj3Dw2632P';
-const PROCESSED_RUN_FILE_ID = "1KmCE5o3_W_y9kkAHxrx4H_R2844QHfZz";
 
 /**
  * Função principal de entrada para requisições GET.
- * Agora inclui endpoint para retornar o log incremental do processedRun.json via ?autorun=log
+ * Cada parâmetro é tratado de forma independente, sem prioridade.
+ * Se mais de um parâmetro for enviado, todos são processados e retornados juntos.
+ * 
+ * @param {Object} e - Objeto de evento da requisição, contém parâmetros de query.
+ * @returns {TextOutput} - Resposta JSON conforme parâmetros recebidos.
  */
 function doGet(e) {
-  // NOVO: Endpoint para retornar o log incremental do processedRun.json
-  if (e.parameter.autorun && e.parameter.autorun === "log") {
-    try {
-      const file = DriveApp.getFileById(PROCESSED_RUN_FILE_ID);
-      const logs = JSON.parse(file.getBlob().getDataAsString());
-      return ContentService
-        .createTextOutput(JSON.stringify(logs, null, 2))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify([{ts: "", level: "Erro", msg: "processedRun.json não encontrado"}]))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-
-  // Se NÃO houver nenhum parâmetro relevante, exibe o dashboard.html
-  if (
-    !e.parameter.poster &&
-    !e.parameter.rec &&
-    !e.parameter.user &&
-    !e.parameter.autorun
-  ) {
-    return HtmlService.createHtmlOutputFromFile('dashboard')
-      .setTitle('XCam Dashboard')
-      .setWidth(900)
-      .setHeight(700);
-  }
-
-  // --- RESTANTE DO SEU CÓDIGO (API JSON) ---
   // Objeto de resposta agregada
   let response = {};
-
-  // Executa fetchAndSaveAllPosters se autorun=run
-  if (e.parameter.autorun && e.parameter.autorun === "run") {
-    response.autorun = fetchAndSaveAllPosters();
-  }
 
   // Processa ?poster
   if (e.parameter.poster) {
@@ -99,8 +68,7 @@ function doGet(e) {
   if (
     !e.parameter.poster &&
     !e.parameter.rec &&
-    !e.parameter.user &&
-    !e.parameter.autorun
+    !e.parameter.user
   ) {
     return respondWithError("Parâmetro obrigatório ausente: use 'poster', 'user' ou 'rec'.");
   }
@@ -464,37 +432,18 @@ function saveProcessedInfo(postersRoot, processedInfo) {
 }
 
 /**
- * Função chamada pelo dashboard para executar o processo e logar incrementalmente
- * Agora reseta o log no início e garante atualização incremental em tempo real.
- */
-function dashboardFetchAndSaveAllPosters() {
-  processedRunLog("🚀 Iniciando fetchAndSaveAllPosters...", true); // reseta log
-  try {
-    const result = fetchAndSaveAllPosters();
-    processedRunLog("✅ Execução concluída!", false);
-    processedRunLog("<pre>" + JSON.stringify(result, null, 2) + "</pre>", false);
-    return result;
-  } catch (e) {
-    processedRunLog("❌ Erro: " + e.message, false);
-    throw e;
-  }
-}
-
-/**
  * Busca todos os usuários públicos do CAM4 (paginando) e salva o poster de cada um na raiz da pasta de posters.
  * Usa processed.json detalhado para registrar e continuar de onde parou.
- * Agora loga tanto no Logger (console do Apps Script) quanto no processedRun.json para dashboard.
- * Todos os logs são incrementais (reset só no início da execução).
  */
 function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
   const folderId = postersFolderId || POSTERS_FOLDER_ID;
   limit = limit || 300;
   maxPages = maxPages || 30;
   retryCount = retryCount || 0;
-  const MAX_RETRIES = 1;
+  const MAX_RETRIES = 1; // Só tenta mais uma vez automaticamente
 
   const report = [];
-  let offset = 0; // Sempre inicia zerado
+  let offset = 0;
   let total = 0;
   let totalUsers = 0;
   let totalWithPoster = 0;
@@ -506,13 +455,8 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
   const MAX_TIME = (typeof MAX_EXECUTION_TIME_MS !== 'undefined') ? MAX_EXECUTION_TIME_MS : 270000;
   const startTime = Date.now();
 
-  function log(msg) {
-    Logger.log(msg);
-    try { processedRunLog(msg, false); } catch (e) {}
-  }
-
   try {
-    log(`🌐 Iniciando busca paginada de usuários no CAM4...`);
+    Logger.log(`🌐 Iniciando busca paginada de usuários no CAM4...`);
     const postersRoot = DriveApp.getFolderById(folderId);
 
     // Carrega todos os nomes de arquivos existentes na pasta de posters
@@ -522,30 +466,72 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
       const file = files.next();
       existingFiles[file.getName()] = file.getLastUpdated();
     }
-    log(`📂 Arquivos já existentes na pasta de posters: ${Object.keys(existingFiles).length}`);
+    Logger.log(`📂 Arquivos já existentes na pasta de posters: ${Object.keys(existingFiles).length}`);
 
     // Carrega processed.json detalhado
     let processedInfo = readProcessedInfo(postersRoot);
     let usersInfo = processedInfo.users || {};
+    let lastOffset = processedInfo.lastOffset || 0;
+    let lastPage = processedInfo.lastPage || 0;
 
-    // Sempre zera offset e página ao iniciar
-    processedInfo.lastOffset = 0;
-    processedInfo.lastPage = 0;
-    offset = 0;
-    let pageStart = 0;
+    offset = lastOffset;
+    let pageStart = lastPage;
 
+    // Resetar offset/página se o offset salvo for maior que o total global
+    if (offset > 0) {
+      // Faz uma requisição rápida só para pegar o total global
+      const url = "https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false";
+      const payload = {
+        operationName: "getGenderPreferencePageData",
+        variables: {
+          input: {
+            orderBy: "trending",
+            filters: [],
+            gender: "male",
+            cursor: { first: 1, offset: 0 }
+          }
+        },
+        query: `
+          query getGenderPreferencePageData($input: BroadcastsInput) {
+            broadcasts(input: $input) {
+              total
+            }
+          }
+        `
+      };
+      const options = {
+        method: "post",
+        contentType: "application/json",
+        payload: JSON.stringify(payload),
+        muteHttpExceptions: true
+      };
+      const response = UrlFetchApp.fetch(url, options);
+      const json = safeParseJSON(response.getContentText(), {});
+      const totalGlobal = json?.data?.broadcasts?.total || 0;
+
+      if (offset >= totalGlobal) {
+        Logger.log(`ℹ️ Offset salvo (${offset}) maior que o total global (${totalGlobal}). Resetando offset e página.`);
+        offset = 0;
+        pageStart = 0;
+        processedInfo.lastOffset = 0;
+        processedInfo.lastPage = 0;
+        saveProcessedInfo(postersRoot, processedInfo);
+      }
+    }
+
+    // Dentro da função fetchAndSaveAllPosters, localize o início dos contadores:
     let processedAdded = 0;
     let processedUpdated = 0;
 
     for (let page = pageStart; page < maxPages; page++) {
       if (Date.now() - startTime > MAX_TIME - 5000) {
-        log("⏰ Tempo limite de execução atingido. Encerrando processamento para evitar timeout.");
+        Logger.log("⏰ Tempo limite de execução atingido. Encerrando processamento para evitar timeout.");
         processedInfo.lastOffset = offset;
         processedInfo.lastPage = page;
         break;
       }
 
-      log(`📄 Página ${page + 1} | Offset: ${offset} | Limit: ${limit}`);
+      Logger.log(`📄 Página ${page + 1} | Offset: ${offset} | Limit: ${limit}`);
 
       const payload = {
         operationName: "getGenderPreferencePageData",
@@ -588,12 +574,12 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
       const items = broadcasts?.items || [];
       total = broadcasts?.total || 0;
 
-      log(`🔢 ${items.length} usuários encontrados nesta página (total global: ${total}).`);
+      Logger.log(`🔢 ${items.length} usuários encontrados nesta página (total global: ${total}).`);
       totalUsers += items.length;
 
       for (let i = 0; i < items.length; i++) {
         if (Date.now() - startTime > MAX_TIME - 2000) {
-          log("⏰ Tempo limite de execução atingido durante o processamento dos usuários. Encerrando.");
+          Logger.log("⏰ Tempo limite de execução atingido durante o processamento dos usuários. Encerrando.");
           processedInfo.lastOffset = offset;
           processedInfo.lastPage = page;
           break;
@@ -605,7 +591,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
         const fileName = `${username}.jpg`;
 
         if (!username || !posterUrl) {
-          log(`⚠️ Usuário sem username ou poster na posição ${i + offset}. Pulando...`);
+          Logger.log(`⚠️ Usuário sem username ou poster na posição ${i + offset}. Pulando...`);
           report.push({ username, status: "skipped", reason: "Sem username ou poster" });
           totalSkipped++;
           continue;
@@ -622,7 +608,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
           const lastUpdate = userInfo.lastProcessed ? new Date(userInfo.lastProcessed) : null;
           const now = new Date();
           if (lastUpdate && ((now - lastUpdate) < 60 * 60 * 1000)) {
-            log(`⏭️ Poster já existe para '${username}' e foi processado há menos de 1h (${userInfo.lastProcessed}), pulando.`);
+            Logger.log(`⏭️ Poster já existe para '${username}' e foi processado há menos de 1h (${userInfo.lastProcessed}), pulando.`);
             totalSkipped++;
             report.push({ username, status: "skipped", reason: "Poster recente (<1h)" });
             shouldProcess = false;
@@ -631,34 +617,35 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
 
         if (!shouldProcess) continue;
 
-        log(`👤 Processando usuário: ${username}`);
-        log(`🔗 Poster: ${posterUrl}`);
+        Logger.log(`👤 Processando usuário: ${username}`);
+        Logger.log(`🔗 Poster: ${posterUrl}`);
 
         try {
-          log(`⬇️ Baixando imagem do poster de '${username}'...`);
+          Logger.log(`⬇️ Baixando imagem do poster de '${username}'...`);
           const imageResponse = UrlFetchApp.fetch(posterUrl);
           const imageBlob = imageResponse.getBlob().setName(fileName);
 
           if (jaExiste) {
-            log(`♻️ Atualizando arquivo existente '${fileName}' para o usuário '${username}'.`);
+            Logger.log(`♻️ Atualizando arquivo existente '${fileName}' para o usuário '${username}'.`);
             const oldFile = findFileByName(postersRoot, fileName);
             if (oldFile) oldFile.setTrashed(true);
             totalUpdated++;
           } else {
-            log(`🆕 Criando novo arquivo '${fileName}' para o usuário '${username}'.`);
+            Logger.log(`🆕 Criando novo arquivo '${fileName}' para o usuário '${username}'.`);
             totalCreated++;
           }
 
-          log(`💾 Salvando arquivo '${fileName}' na raiz da pasta de posters...`);
+          Logger.log(`💾 Salvando arquivo '${fileName}' na raiz da pasta de posters...`);
           const file = postersRoot.createFile(imageBlob);
 
-          log(`🎉 Poster salvo com sucesso: ${file.getName()}`);
+          Logger.log(`🎉 Poster salvo com sucesso: ${file.getName()}`);
           report.push({ username, status: "ok", file: file.getName() });
 
+          // Atualização do processed.json
           usersInfo[username] = {
             lastProcessed: new Date().toISOString(),
             fileName: fileName,
-            fileUrl: `https://poster.xcam.gay/${username}.jpg`,
+            fileUrl: `https://poster.xcam.gay/${username}.jpg`, // <-- novo campo logo após fileName
             lastStatus: "ok",
             lastError: null,
             lastRunPage: page !== undefined ? page : null,
@@ -666,32 +653,36 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
             lastRunIndex: i !== undefined ? i : null
           };
 
+          // >>>>> INÍCIO DO PATCH <<<<<
           if (wasNew) {
             processedAdded++;
           } else {
             processedUpdated++;
           }
+          // >>>>> FIM DO PATCH <<<<<
+
         } catch (e) {
+          Logger.log(`❗ Erro ao baixar/salvar poster de '${username}': ${e.message}`);
+          report.push({ username, status: "error", error: e.message });
           totalErrors++;
-          const errorMessage = e.message || "Erro desconhecido";
-          report.push({ username, status: "error", error: errorMessage });
           usersInfo[username] = {
             lastProcessed: new Date().toISOString(),
             fileName: fileName,
-            fileUrl: null,
+            fileUrl: `https://poster.xcam.gay/${username}.jpg`, // novo campo
             lastStatus: "error",
-            lastError: errorMessage,
+            lastError: e.message,
             lastRunPage: page !== undefined ? page : null,
             lastRunOffset: offset !== undefined ? offset : null,
             lastRunIndex: i !== undefined ? i : null
           };
-          log(`❌ Erro ao processar usuário '${username}': ${errorMessage}`);
+          // Se quiser contar erros como atualização, pode adicionar aqui:
+          // if (wasNew) processedAdded++; else processedUpdated++;
         }
       }
 
       offset += limit;
       if (offset >= total || items.length === 0) {
-        log("✅ Fim da paginação: todos os usuários processados.");
+        Logger.log("✅ Fim da paginação: todos os usuários processados.");
         processedInfo.lastOffset = offset;
         processedInfo.lastPage = page + 1;
         break;
@@ -700,18 +691,92 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
 
     processedInfo.users = usersInfo;
     processedInfo.lastRun = new Date().toISOString();
-    processedInfo.lastOffset = offset;
-    processedInfo.lastPage = maxPages;
+    processedInfo.totalProcessed = Object.keys(usersInfo).length;
     saveProcessedInfo(postersRoot, processedInfo);
 
-    log(`📊 Resumo da execução:`);
-    log(`👥 Total de usuários processados: ${totalUsers}`);
-    log(`🖼️ Total de usuários com poster: ${totalWithPoster}`);
-    log(`🆕 Arquivos criados: ${totalCreated}`);
-    log(`🔄 Arquivos atualizados: ${totalUpdated}`);
-    log(`⏭️ Usuários pulados (poster recente ou sem poster): ${totalSkipped}`);
-    log(`❌ Erros ao salvar posters: ${totalErrors}`);
-    log(`📄 processed.json - Usuários adicionados: ${processedAdded}, Usuários atualizados: ${processedUpdated}, Total no processed: ${Object.keys(usersInfo).length}`);
+    // Se não processou nenhum dado/poster e não tentou ainda, tenta novamente automaticamente
+    if (totalCreated === 0 && totalUpdated === 0 && retryCount < MAX_RETRIES) {
+      Logger.log("⚠️ Nenhum dado/poster processado. Tentando executar novamente automaticamente...");
+      return fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount + 1);
+    }
+
+    // Se não processou nada, mas há arquivos na pasta, faz auditoria e atualização dos arquivos existentes
+    if ((totalCreated === 0 && totalUpdated === 0) && Object.keys(existingFiles).length > 0) {
+      Logger.log("🔎 Auditando e atualizando arquivos de posters já existentes na pasta...");
+
+      const now = new Date();
+      const postersRoot = DriveApp.getFolderById(folderId);
+      const files = postersRoot.getFiles();
+      let auditCount = 0;
+      while (files.hasNext()) {
+        // Respeita o tempo máximo de execução
+        if (Date.now() - startTime > MAX_TIME - 2000) {
+          Logger.log("⏰ Tempo limite de execução atingido durante auditoria dos arquivos existentes. Encerrando auditoria.");
+          break;
+        }
+
+        const file = files.next();
+        const fileName = file.getName();
+        if (!fileName.endsWith('.jpg')) continue;
+        const username = fileName.replace('.jpg', '');
+
+        // Verifica se está no processed.json
+        let userInfo = usersInfo[username];
+        if (!userInfo) {
+          Logger.log(`📝 Usuário '${username}' não estava no processed.json. Adicionando...`);
+          usersInfo[username] = {
+            lastProcessed: file.getLastUpdated().toISOString(),
+            fileName: fileName,
+            fileUrl: `https://poster.xcam.gay/${username}.jpg`,
+            lastStatus: "legacy",
+            lastError: null,
+            lastRunPage: null,
+            lastRunOffset: null,
+            lastRunIndex: null
+          };
+          processedInfo.totalProcessed = Object.keys(usersInfo).length;
+          saveProcessedInfo(postersRoot, processedInfo);
+          processedAdded++;
+        }
+
+        // Atualiza poster se tem mais de 1 hora
+        const lastUpdate = file.getLastUpdated();
+        if ((now - lastUpdate) > 60 * 60 * 1000) {
+          Logger.log(`♻️ Atualizando poster antigo para '${username}' (última atualização: ${lastUpdate.toISOString()})`);
+          // Buscar poster atualizado
+          const result = fetchAndSavePoster(username, folderId);
+          if (result.status === "ok") {
+            usersInfo[username] = {
+              lastProcessed: new Date().toISOString(),
+              fileName: fileName,
+              fileUrl: `https://poster.xcam.gay/${username}.jpg`,
+              lastStatus: "updated",
+              lastError: null,
+              lastRunPage: null,
+              lastRunOffset: null,
+              lastRunIndex: null
+            };
+            processedInfo.totalProcessed = Object.keys(usersInfo).length;
+            saveProcessedInfo(postersRoot, processedInfo);
+            processedUpdated++;
+          } else {
+            Logger.log(`❗ Erro ao atualizar poster de '${username}': ${result.error}`);
+          }
+        }
+        auditCount++;
+      }
+      Logger.log(`✅ Auditoria e atualização dos posters existentes concluída. Total auditados: ${auditCount}`);
+      saveProcessedInfo(postersRoot, processedInfo);
+    }
+
+    Logger.log(`📊 Resumo da execução:`);
+    Logger.log(`👥 Total de usuários processados: ${totalUsers}`);
+    Logger.log(`🖼️ Total de usuários com poster: ${totalWithPoster}`);
+    Logger.log(`🆕 Arquivos criados: ${totalCreated}`);
+    Logger.log(`🔄 Arquivos atualizados: ${totalUpdated}`);
+    Logger.log(`⏭️ Usuários pulados (poster recente ou sem poster): ${totalSkipped}`);
+    Logger.log(`❌ Erros ao salvar posters: ${totalErrors}`);
+    Logger.log(`📄 processed.json - Usuários adicionados: ${processedAdded}, Usuários atualizados: ${processedUpdated}, Total no processed: ${Object.keys(usersInfo).length}`);
 
     return {
       resumo: {
@@ -725,9 +790,10 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
       detalhes: report
     };
   } catch (e) {
-    log(`❗ Erro geral ao buscar/salvar posters: ${e.message}`);
+    Logger.log(`❗ Erro geral ao buscar/salvar posters: ${e.message}`);
+    // Se não processou nenhum dado/poster e não tentou ainda, tenta novamente automaticamente
     if (totalCreated === 0 && totalUpdated === 0 && retryCount < MAX_RETRIES) {
-      log("⚠️ Nenhum dado/poster processado por erro. Tentando executar novamente automaticamente...");
+      Logger.log("⚠️ Nenhum dado/poster processado por erro. Tentando executar novamente automaticamente...");
       return fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount + 1);
     }
     return { error: "Erro geral ao buscar/salvar posters: " + e.message, report };
@@ -836,148 +902,7 @@ function testePermissaoDrive() {
 }
 
 /**
- * Função para exibir o painel do dashboard.
+ * ================================================================
+ * === Fim do API.gs adaptado para XCam GAY API ================
+ * ================================================================
  */
-function showDashboard() {
-  var html = HtmlService.createHtmlOutputFromFile('dashboard')
-    .setWidth(800)
-    .setHeight(700);
-  SpreadsheetApp.getUi().showModalDialog(html, 'XCam Dashboard');
-}
-
-/**
- * Salva uma mensagem no log incremental do dashboard
- */
-function dashboardLog(msg, reset) {
-  const folder = DriveApp.getFolderById(POSTERS_FOLDER_ID);
-  let file = findFileByName(folder, 'dashboard-log.json');
-  let logs = [];
-  if (!reset && file) {
-    try {
-      logs = JSON.parse(file.getBlob().getDataAsString());
-    } catch (e) { logs = []; }
-  }
-  if (reset) logs = [];
-  logs.push({ ts: new Date().toISOString(), msg: msg });
-  const blob = Utilities.newBlob(JSON.stringify(logs, null, 2), 'application/json', 'dashboard-log.json');
-  if (file) file.setTrashed(true);
-  folder.createFile(blob);
-}
-
-/**
- * Retorna o log incremental para o dashboard
- */
-function dashboardGetLog() {
-  const folder = DriveApp.getFolderById(POSTERS_FOLDER_ID);
-  const file = findFileByName(folder, 'dashboard-log.json');
-  if (!file) return [];
-  try {
-    return JSON.parse(file.getBlob().getDataAsString());
-  } catch (e) {
-    return [];
-  }
-}
-
-/**
- * Função chamada pelo dashboard para executar o processo e logar incrementalmente
- */
-function dashboardFetchAndSaveAllPosters() {
-  processedRunLog("🚀 Iniciando fetchAndSaveAllPosters...", true); // reseta log
-  try {
-    const result = fetchAndSaveAllPosters();
-    processedRunLog("✅ Execução concluída!", false);
-    processedRunLog("<pre>" + JSON.stringify(result, null, 2) + "</pre>", false);
-    return result;
-  } catch (e) {
-    processedRunLog("❌ Erro: " + e.message, false);
-    throw e;
-  }
-}
-
-/**
- * Audita o processed.json e garante que todos os usuários tenham o campo "fileUrl"
- * seguindo o padrão "https://poster.xcam.gay/${username}.jpg", sempre logo após "fileName".
- * Respeita o tempo máximo de execução (MAX_EXECUTION_TIME_MS).
- * @param {string} [postersFolderId] - (Opcional) ID da pasta de posters.
- * @returns {Object} - Relatório da auditoria.
- */
-function auditProcessedJsonFileUrl(postersFolderId) {
-  const folderId = postersFolderId || POSTERS_FOLDER_ID;
-  const postersRoot = DriveApp.getFolderById(folderId);
-  let processedInfo = readProcessedInfo(postersRoot);
-  let usersInfo = processedInfo.users || {};
-  let updatedCount = 0;
-
-  // Apenas usa MAX_EXECUTION_TIME_MS, não define aqui!
-  const MAX_TIME = (typeof MAX_EXECUTION_TIME_MS !== 'undefined') ? MAX_EXECUTION_TIME_MS : 270000;
-  const startTime = Date.now();
-
-  const CDN_PREFIX = "https://cdn.xcam.gay/0:/src/poster/";
-
-  const usernames = Object.keys(usersInfo);
-  for (let idx = 0; idx < usernames.length; idx++) {
-    if (Date.now() - startTime > MAX_TIME - 2000) {
-      Logger.log("⏰ Tempo limite de execução atingido durante auditoria do processed.json. Encerrando auditoria.");
-      break;
-    }
-    const username = usernames[idx];
-    const userObj = usersInfo[username];
-    const fileUrlCorreto = `https://poster.xcam.gay/${username}.jpg`;
-
-    // Corrige se:
-    // - fileUrl ausente
-    // - fileUrl diferente do padrão correto
-    // - fileUrl começa com o prefixo antigo do CDN
-    const precisaCorrigir =
-      !userObj.fileUrl ||
-      userObj.fileUrl !== fileUrlCorreto ||
-      (typeof userObj.fileUrl === "string" && userObj.fileUrl.startsWith(CDN_PREFIX));
-
-    if (precisaCorrigir) {
-      // Cria novo objeto com fileUrl correto logo após fileName
-      const newUserObj = {};
-      Object.keys(userObj).forEach(key => {
-        newUserObj[key] = userObj[key];
-        if (key === "fileName") {
-          newUserObj.fileUrl = fileUrlCorreto;
-        }
-      });
-      // Só atualiza se realmente mudou
-      if (JSON.stringify(userObj) !== JSON.stringify(newUserObj)) {
-        usersInfo[username] = newUserObj;
-        updatedCount++;
-        Logger.log(`🔧 Corrigido fileUrl para '${username}' em processed.json.`);
-      }
-    }
-  }
-
-  if (updatedCount > 0) {
-    processedInfo.users = usersInfo;
-    saveProcessedInfo(postersRoot, processedInfo);
-    Logger.log(`✅ Auditoria concluída: ${updatedCount} usuários atualizados/corrigidos com fileUrl em processed.json.`);
-  } else {
-    Logger.log("✅ Auditoria concluída: todos os usuários já possuem fileUrl correto em processed.json.");
-  }
-
-  return {
-    totalUsuarios: Object.keys(usersInfo).length,
-    atualizados: updatedCount
-  };
-}
-
-/**
- * Função temporária para exibir o conteúdo do processedRun.json
- */
-function tempShowProcessedRunLog() {
-  try {
-    const file = DriveApp.getFileById(PROCESSED_RUN_FILE_ID);
-    const logs = JSON.parse(file.getBlob().getDataAsString());
-    return ContentService
-      .createTextOutput(JSON.stringify(logs, null, 2))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify([{ts: "", level: "Erro", msg: "processedRun.json não encontrado"}]))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
