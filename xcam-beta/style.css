@@ -1040,7 +1040,7 @@ body.modal-open {
 
 /* Overlay do modal: cobre toda a tela, centraliza o conteúdo, escurece o fundo */
 .modal-overlay {
-  position: fixed;
+  position: auto;
   inset: 0;
   width: 100vw;
   height: 100vh;
@@ -1066,17 +1066,17 @@ body.modal-open {
   background: #181818; /* Fundo escuro */
   border-radius: 16px; /* Cantos arredondados */
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65); /* Sombra para destaque */
-  width: 98vw; /* Quase toda a largura da viewport */
-  max-width: 1200px; /* Limite máximo de largura */
-  min-width: 320px; /* Largura mínima para mobile */
-  max-height: 96vh; /* Limite máximo de altura (viewport) */
+  width: 100vw; /* Quase toda a largura da viewport */
+  max-width: 1400px; /* Limite máximo de largura */
+  min-width: 480px; /* Largura mínima para mobile */
+  max-height: 100vh; /* Limite máximo de altura (viewport) */
   min-height: 180px; /* Altura mínima */
   padding: 0; /* Sem padding interno */
-  display: flex; /* Flex para layout interno */
+  display: auto; /* Flex para layout interno */
   flex-direction: column; /* Coluna para empilhar elementos */
   align-items: stretch; /* Estica filhos na largura */
   position: relative; /* Para posicionar botão de fechar */
-  overflow: visible; /* Permite overflow (pode ser ajustado para auto/hidden) */
+  overflow: hidden; /* Permite overflow (pode ser ajustado para auto/hidden) */
   animation: fadeIn 0.2s; /* Animação de entrada */
 }
 
