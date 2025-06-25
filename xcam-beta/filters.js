@@ -4,7 +4,7 @@
 // Garante sempre o envio de valores válidos à API conforme a estratégia de performance e UX planejada.
 
 // === Importações necessárias ===
-import { applyBroadcastFilters } from "./broadcasts.js";
+import { applyBroadcastFilters } from "https://xcam.gay/broadcasts.js";
 
 // Mapeamentos explícitos dos valores aceitos pela API
 const GENDER_API_VALUES = {
