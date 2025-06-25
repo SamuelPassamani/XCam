@@ -68,7 +68,6 @@ function ensureModalStructure() {
     modal.className = "modal-overlay";
     modal.setAttribute("aria-modal", "true");
     modal.setAttribute("role", "dialog");
-    modal.style.display = "none";
     modal.innerHTML = `
       <div id="modal-content" class="modal-content" tabindex="-1"></div>
     `;
@@ -82,7 +81,6 @@ function openModal(username) {
   const modal = document.getElementById("broadcast-modal");
   const modalContent = document.getElementById("modal-content");
 
-  // Renderiza botão X e iframe centralizado e responsivo (apenas classes CSS)
   modalContent.innerHTML = `
     <button class="modal-close" title="Fechar (ESC)" aria-label="Fechar modal">
       <span aria-hidden="true">&times;</span>
@@ -99,13 +97,10 @@ function openModal(username) {
   `;
 
   // Ativa o modal e impede scroll do fundo
-  modal.style.display = "flex";
-  setTimeout(() => {
-    modal.classList.add("active");
-    document.body.classList.add("modal-open");
-    modalContent.focus();
-    document.dispatchEvent(new CustomEvent("modal:opened"));
-  }, 10);
+  modal.classList.add("active");
+  document.body.classList.add("modal-open");
+  modalContent.focus();
+  document.dispatchEvent(new CustomEvent("modal:opened"));
   modalContent.scrollTop = 0;
 }
 
@@ -118,7 +113,6 @@ function closeModal() {
   setTimeout(() => {
     modalContent.innerHTML = "";
     currentUsername = null;
-    modal.style.display = "none";
   }, 300);
 }
 
