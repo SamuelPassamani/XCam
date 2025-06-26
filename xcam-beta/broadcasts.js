@@ -368,10 +368,66 @@ async function renderBroadcastCard(data) {
       objectFit: "cover",
       aspectRatio: "16/9",
       borderRadius: "8px",
-      background: "#000"
+      background: "#000",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      zIndex: 1,
+      transition: "opacity 0.2s"
     }
   });
 
+  // Cria o iframe já oculto
+  const previewIframe = createEl("iframe", {
+    class: "poster-iframe",
+    src: `https://live.xcam.gay/?user=${username}&mode=carousel`,
+    title: `Prévia de @${username}`,
+    loading: "lazy",
+    allow: "autoplay; encrypted-media",
+    frameborder: "0",
+    tabindex: "-1",
+    "aria-hidden": "true",
+    style: {
+      width: "100%",
+      height: "100%",
+      aspectRatio: "16/9",
+      display: "block",
+      background: "#000",
+      borderRadius: "8px",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      zIndex: 2,
+      opacity: 0,
+      pointerEvents: "none",
+      transition: "opacity 0.2s"
+    }
+  });
+
+  // Container para thumbnail (posição relativa para z-index funcionar)
+  const thumbnailContainer = createEl("div", { class: "card-thumbnail", style: { position: "relative", width: "100%", height: "0", paddingBottom: "56.25%" } }, [
+    posterElement,
+    previewIframe,
+    createEl("div", { class: "card-overlay" }, [
+      createEl(
+        "button",
+        {
+          class: "play-button",
+          "aria-label": `${t("play")} @${username}`,
+          tabindex: "0",
+          onclick: () => {
+            window.open(`https://live.xcam.gay/?user=${username}`, "_blank");
+          }
+        },
+        [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
+      )
+    ]),
+    createEl("div", { class: "live-badge", "aria-label": t("live") }, [
+      createEl("span", { text: t("live") })
+    ])
+  ]);
+
+  // Card principal
   const card = createEl(
     "div",
     {
@@ -381,26 +437,7 @@ async function renderBroadcastCard(data) {
       "data-username": username
     },
     [
-      createEl("div", { class: "card-thumbnail" }, [
-        posterElement,
-        createEl("div", { class: "card-overlay" }, [
-          createEl(
-            "button",
-            {
-              class: "play-button",
-              "aria-label": `${t("play")} @${username}`,
-              tabindex: "0",
-              onclick: () => {
-                window.open(`https://live.xcam.gay/?user=${username}`, "_blank");
-              }
-            },
-            [createEl("i", { class: "fas fa-play", "aria-hidden": "true" })]
-          )
-        ]),
-        createEl("div", { class: "live-badge", "aria-label": t("live") }, [
-          createEl("span", { text: t("live") })
-        ])
-      ]),
+      thumbnailContainer,
       createEl("div", { class: "card-info" }, [
         createEl("div", { class: "card-header" }, [
           createEl("h4", {
@@ -434,6 +471,18 @@ async function renderBroadcastCard(data) {
     ]
   );
   grid.appendChild(card);
+
+  // Eventos de hover para mostrar/ocultar o iframe
+  card.addEventListener("mouseenter", () => {
+    previewIframe.style.opacity = "1";
+    previewIframe.style.pointerEvents = "auto";
+    posterElement.style.opacity = "0";
+  });
+  card.addEventListener("mouseleave", () => {
+    previewIframe.style.opacity = "0";
+    previewIframe.style.pointerEvents = "none";
+    posterElement.style.opacity = "1";
+  });
 
   // --- Atualiza o poster assim que possível ---
   let posterSrc = null;
