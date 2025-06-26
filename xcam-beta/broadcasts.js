@@ -33,8 +33,8 @@ const CONFIG = {
   apiBaseUrl: "https://api.xcam.gay/",
   apiPosterUrl: "https://api.xcam.gay/v1/media/poster/",
   itemsPerPage: 20,
-  defaultPoster: "https://xcam.gay/assets/placeholder_poster.jpg",
-  loadingGif: "https://xcam.gay/src/loading.gif"
+  defaultPoster: "https://poster.xcam.gay/${username}",
+  loadingGif: "https://xcam.gay/src/loading.gif",
 };
 // ==============================================================================
 
