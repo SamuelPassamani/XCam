@@ -49,6 +49,20 @@ function doGet(e) {
     }
   }
 
+  // NOVO: Executa remoção de duplicatas na pasta de posters
+  if (e.parameter.autorun && e.parameter.autorun === "removeDuplicates") {
+    try {
+      removePosterDuplicates();
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: "ok", message: "Execução de remoção de duplicatas iniciada." }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (err) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: "error", message: "Erro ao iniciar remoção de duplicatas: " + err.message }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
   // Se NÃO houver nenhum parâmetro relevante, exibe o dashboard.html
   if (
     !e.parameter.poster &&
@@ -493,7 +507,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
   const MAX_RETRIES = 1;
 
   const report = [];
-  let offset = 0; // Sempre inicia zerado
+  let offset = 0;
   let total = 0;
   let totalUsers = 0;
   let totalWithPoster = 0;
@@ -502,12 +516,30 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
   let totalSkipped = 0;
   let totalErrors = 0;
 
-  const MAX_TIME = (typeof MAX_EXECUTION_TIME_MS !== 'undefined') ? MAX_EXECUTION_TIME_MS : 270000;
+  const MAX_TIME = MAX_EXECUTION_TIME_MS;
   const startTime = Date.now();
+
+  // Função para registrar log incremental no arquivo PROCESSED_RUN_FILE_ID
+  function processedRunLog(msg, reset) {
+    const file = DriveApp.getFileById(PROCESSED_RUN_FILE_ID);
+    let logs = [];
+    if (!reset) {
+      try {
+        logs = JSON.parse(file.getBlob().getDataAsString());
+      } catch (e) { logs = []; }
+    }
+    if (reset) logs = [];
+    logs.push({ ts: new Date().toISOString(), msg: msg });
+    const blob = Utilities.newBlob(JSON.stringify(logs, null, 2), 'application/json', 'processedRun.json');
+    file.setContent(blob.getDataAsString());
+  }
+
+  // Limpa o arquivo de log no início da execução
+  processedRunLog("🚀 Iniciando fetchAndSaveAllPosters...", true);
 
   function log(msg) {
     Logger.log(msg);
-    try { processedRunLog(msg, false); } catch (e) {}
+    processedRunLog(msg, false);
   }
 
   try {
@@ -717,6 +749,7 @@ function fetchAndSaveAllPosters(postersFolderId, limit, maxPages, retryCount) {
     log(`❌ Erros ao salvar posters: ${totalErrors}`);
     log(`📄 processed.json - Usuários adicionados: ${processedAdded}, Usuários atualizados: ${processedUpdated}, Total no processed: ${Object.keys(usersInfo).length}`);
 
+    log("✅ Execução concluída!");
     return {
       resumo: {
         totalUsuarios: totalUsers,
@@ -752,8 +785,8 @@ function auditProcessedJsonFileUrl(postersFolderId) {
   let usersInfo = processedInfo.users || {};
   let updatedCount = 0;
 
-  // Apenas usa MAX_EXECUTION_TIME_MS, não define aqui!
-  const MAX_TIME = (typeof MAX_EXECUTION_TIME_MS !== 'undefined') ? MAX_EXECUTION_TIME_MS : 270000;
+  // Use apenas o valor já definido de MAX_EXECUTION_TIME_MS
+  const MAX_TIME = MAX_EXECUTION_TIME_MS;
   const startTime = Date.now();
 
   const CDN_PREFIX = "https://cdn.xcam.gay/0:/src/poster/";
@@ -912,8 +945,8 @@ function auditProcessedJsonFileUrl(postersFolderId) {
   let usersInfo = processedInfo.users || {};
   let updatedCount = 0;
 
-  // Apenas usa MAX_EXECUTION_TIME_MS, não define aqui!
-  const MAX_TIME = (typeof MAX_EXECUTION_TIME_MS !== 'undefined') ? MAX_EXECUTION_TIME_MS : 270000;
+  // Use apenas o valor já definido de MAX_EXECUTION_TIME_MS
+  const MAX_TIME = MAX_EXECUTION_TIME_MS;
   const startTime = Date.now();
 
   const CDN_PREFIX = "https://cdn.xcam.gay/0:/src/poster/";
@@ -1004,4 +1037,109 @@ function callRemoteAutorunRun() {
   } catch (e) {
     return { error: "Erro ao chamar endpoint remoto: " + e.message };
   }
+}
+
+/**
+ * Executa uma requisição GET para o endpoint remoto de autorun=removeDuplicates.
+ * Não retorna o resultado, apenas executa a chamada.
+ */
+function callRemoteAutorunRemoveDuplicates() {
+  const url = "https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?autorun=removeDuplicates";
+  try {
+    UrlFetchApp.fetch(url, {
+      method: "get",
+      muteHttpExceptions: true,
+      followRedirects: true,
+      validateHttpsCertificates: true
+    });
+    Logger.log("✅ Chamada para remoção de duplicatas enviada com sucesso.");
+  } catch (e) {
+    Logger.log("❌ Erro ao chamar endpoint remoto de remoção de duplicatas: " + e.message);
+  }
+}
+
+/**
+ * Remove arquivos duplicados na pasta de posters, mantendo apenas o mais recente por nome.
+ * Exibe logs detalhados sobre o processo, arquivos encontrados, duplicatas e exclusões.
+ * Respeita o tempo máximo de execução (MAX_EXECUTION_TIME_MS) já definido no projeto.
+ * 
+ * @param {string} [postersFolderId] - (Opcional) ID da pasta de posters. Usa POSTERS_FOLDER_ID se não informado.
+ * @returns {Object} - Relatório do processo.
+ */
+function removePosterDuplicates(postersFolderId) {
+  const folderId = postersFolderId || POSTERS_FOLDER_ID;
+  const postersRoot = DriveApp.getFolderById(folderId);
+  const files = postersRoot.getFiles();
+
+  const fileMap = {};
+  let totalArquivos = 0;
+  let totalDuplicados = 0;
+  let totalRemovidos = 0;
+  const detalhesRemovidos = [];
+
+  Logger.log("🔎 Iniciando varredura de arquivos na pasta de posters para remoção de duplicatas...");
+
+  const startTime = Date.now();
+  const MAX_TIME = MAX_EXECUTION_TIME_MS; // Apenas usa o valor já definido
+
+  // Mapeia arquivos por nome
+  while (files.hasNext()) {
+    if (Date.now() - startTime > MAX_TIME - 3000) {
+      Logger.log("⏰ Tempo limite de execução atingido durante varredura. Encerrando.");
+      break;
+    }
+    const file = files.next();
+    const name = file.getName();
+    const lastUpdated = file.getLastUpdated();
+    const id = file.getId();
+    if (!fileMap[name]) fileMap[name] = [];
+    fileMap[name].push({ file, lastUpdated, id });
+    totalArquivos++;
+  }
+
+  Logger.log(`📂 Total de arquivos encontrados: ${totalArquivos}`);
+
+  // Processa duplicatas
+  Object.keys(fileMap).forEach(name => {
+    const fileList = fileMap[name];
+    if (fileList.length > 1) {
+      Logger.log(`⚠️ Arquivo duplicado encontrado: '${name}' (${fileList.length} cópias)`);
+      totalDuplicados++;
+      // Ordena por data de modificação (mais recente primeiro)
+      fileList.sort((a, b) => b.lastUpdated - a.lastUpdated);
+      // Mantém o mais recente, remove os outros
+      for (let i = 1; i < fileList.length; i++) {
+        if (Date.now() - startTime > MAX_TIME - 2000) {
+          Logger.log("⏰ Tempo limite de execução atingido durante exclusão. Encerrando.");
+          return;
+        }
+        try {
+          fileList[i].file.setTrashed(true);
+          Logger.log(`🗑️ Arquivo duplicado removido: '${name}' (ID: ${fileList[i].id}) | Data: ${fileList[i].lastUpdated}`);
+          detalhesRemovidos.push({
+            nome: name,
+            removidoId: fileList[i].id,
+            mantidoId: fileList[0].id,
+            removidoData: fileList[i].lastUpdated,
+            mantidoData: fileList[0].lastUpdated
+          });
+          totalRemovidos++;
+        } catch (e) {
+          Logger.log(`❌ Erro ao remover duplicado '${name}' (ID: ${fileList[i].id}): ${e.message}`);
+        }
+      }
+    }
+  });
+
+  Logger.log(`✅ Processo concluído! Duplicatas encontradas: ${totalDuplicados}, arquivos removidos: ${totalRemovidos}`);
+  if (totalRemovidos === 0) {
+    Logger.log("Nenhum arquivo duplicado foi removido.");
+  }
+
+  return {
+    totalArquivos,
+    duplicatasEncontradas: totalDuplicados,
+    arquivosRemovidos: totalRemovidos,
+    detalhes: detalhesRemovidos
+  };
 }
