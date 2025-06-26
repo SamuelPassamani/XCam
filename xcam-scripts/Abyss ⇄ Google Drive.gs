@@ -217,18 +217,28 @@ function syncHydraxToDriveLote() {
     logInfo('⏩ Pulando etapa de correção de rec.json (já processada em lote anterior)...');
   }
 
-  // 2. Consulta todos os vídeos da API Abyss (paginado, com checkpoint de página)
-  logStage('🌐 2/4: Consultando API Abyss (todas as páginas)...');
+  // 2. Lê todos os vídeos do arquivo records.json (mais rápido que consultar a API)
+  logStage('🌐 2/4: Lendo vídeos de records.json...');
   auditLog({
     etapa: 'API',
     status: 'START',
-    mensagem: 'Iniciando consulta à API Abyss'
+    mensagem: 'Lendo vídeos de records.json'
   });
-  const allVideos = fetchAllHydraxVideos(startTime);
+  const FILE_ID = '1Qr_hs5uIFn5YkVCge65juKsyJxLOcBq_';
+  let allVideos = [];
+  try {
+    const file = DriveApp.getFileById(FILE_ID);
+    const content = file.getBlob().getDataAsString();
+    allVideos = JSON.parse(content);
+    logInfo(`📦 Encontrados ${allVideos.length} vídeos em records.json.`);
+  } catch (e) {
+    logError('❌ Erro ao ler records.json: ' + e);
+    throw e;
+  }
   auditLog({
     etapa: 'API',
     status: 'END',
-    mensagem: `Consulta à API Abyss finalizada. Vídeos: ${allVideos.length}`
+    mensagem: `Leitura de records.json finalizada. Vídeos: ${allVideos.length}`
   });
 
   // 3. Agrupa vídeos por usuário (extração e parse)
@@ -499,11 +509,8 @@ function groupVideosByUsername(videos) {
 /* ===================== 4. SINCRONIZAÇÃO DE CADA USUÁRIO ===================== */
 /**
  * Sincroniza vídeos de um usuário: cria/atualiza rec.json e contabiliza posters (.jpg) disponíveis/faltando.
- * Chama checkTimeoutLote para garantir processamento seguro em lotes.
- * @param {string} username
- * @param {Array<Object>} userVideos
- * @param {Object} stats - objeto de estatísticas globais (referência)
- * @param {number} startTime
+ * Remove duplicatas de rec.json.
+ * Usa poster padrão se não encontrar o .jpg.
  */
 function syncUserVideos(username, userVideos, stats, startTime) {
   checkTimeoutLote(startTime, username);
@@ -599,13 +606,27 @@ function getOrCreateUserFolder(username) {
 
 /**
  * Garante a existência do arquivo rec.json na pasta do usuário.
+ * Remove duplicatas, mantém apenas um arquivo.
  * Cria o arquivo caso não exista.
  */
 function getOrCreateRecJsonFile(userFolder, username, onCreate) {
   const files = userFolder.getFilesByName('rec.json');
-  if (files.hasNext()) {
-    logInfo('📄 rec.json já existe.');
-    return files.next();
+  let recJsonFile = null;
+  let count = 0;
+  while (files.hasNext()) {
+    const file = files.next();
+    count++;
+    if (!recJsonFile) {
+      recJsonFile = file;
+    } else {
+      // Remove duplicata
+      file.setTrashed(true);
+      logWarn(`🗑️ rec.json duplicado removido na pasta "${username}"`);
+    }
+  }
+  if (recJsonFile) {
+    logInfo('📄 rec.json já existe (apenas 1 mantido).');
+    return recJsonFile;
   }
   logInfo('📄 rec.json não encontrado, criando novo arquivo.');
   if (onCreate) onCreate();
@@ -615,46 +636,6 @@ function getOrCreateRecJsonFile(userFolder, username, onCreate) {
     'rec.json'
   );
   return userFolder.createFile(blob);
-}
-
-/**
- * Lê e faz parse de um arquivo JSON do Drive.
- * Retorna null em caso de erro.
- */
-function readJsonFile(file) {
-  try {
-    const content = file.getBlob().getDataAsString();
-    return JSON.parse(content);
-  } catch (e) {
-    logError(`❌ Erro ao ler JSON do arquivo: ${e}`);
-    auditLog({
-      etapa: 'Erro',
-      status: 'ERRO',
-      arquivo: file.getName(),
-      mensagem: 'Erro ao ler arquivo JSON',
-      extra: JSON.stringify(e)
-    });
-    return null;
-  }
-}
-
-/**
- * Sobrescreve o conteúdo de um arquivo JSON no Drive.
- */
-function writeJsonFile(file, data) {
-  try {
-    file.setContent(JSON.stringify(data, null, 2));
-    logInfo('💾 JSON salvo com sucesso!');
-  } catch (e) {
-    logError(`❌ Falha ao salvar JSON: ${e}`);
-    auditLog({
-      etapa: 'Erro',
-      status: 'ERRO',
-      arquivo: file.getName(),
-      mensagem: 'Falha ao salvar JSON',
-      extra: JSON.stringify(e)
-    });
-  }
 }
 
 /**
@@ -670,28 +651,8 @@ function findPosterFileId(userFolder, slug) {
 }
 
 /**
- * Faz parse do nome do arquivo de vídeo para extrair username, data, horário e tempo.
- * Retorna null se o formato não for válido.
- */
-function parseVideoName(filename) {
-  const pattern = /^(.+?)_(\d{2}-\d{2}-\d{4})_(\d{2}-\d{2})_([0-9hm]+s)\.mp4$/i;
-  const match = filename.match(pattern);
-  if (!match) return null;
-  return {
-    username: match[1],
-    data_str: match[2],
-    horario_str: match[3],
-    tempo_formatado: match[4]
-  };
-}
-
-/**
  * Cria a entrada padronizada de vídeo para o rec.json do usuário XCam.
- * Garante:
- * - slug puro em "video"
- * - URLs formatadas corretamente (SEM encode excessivo)
- * - urlIframe com parâmetro thumbnail SEM encode dos caracteres ":" e "/"
- * - campos obrigatórios sempre preenchidos
+ * Se não encontrar o poster, usa a URL padrão do usuário.
  */
 function buildVideoEntry(username, video, posterId) {
   const slug = video.slug || video.video || '';
@@ -700,8 +661,14 @@ function buildVideoEntry(username, video, posterId) {
   const tempo = video.tempo_formatado || video.tempo || '';
   const title = `${username}_${data}_${horario}_${tempo}`;
   const file = `${title}.mp4`;
-  const posterUrl = `https://db.xcam.gay/user/${username}/${slug}.jpg`;
-  const urlIframe = `https://short.icu/${slug}?thumbnail=${posterUrl}`;
+  let posterUrl, urlIframe;
+  if (posterId) {
+    posterUrl = `https://db.xcam.gay/user/${username}/${slug}.jpg`;
+    urlIframe = `https://short.icu/${slug}?thumbnail=${posterUrl}`;
+  } else {
+    posterUrl = `https://poster.xcam.gay/${username}.jpg`;
+    urlIframe = `https://short.icu/${slug}?thumbnail=${posterUrl}`;
+  }
   return {
     video: slug,
     title: title,
@@ -871,3 +838,246 @@ function runSyncHydraxBatch() {
  */
 
 /* ===================== FIM DO SCRIPT ===================== */
+
+/**
+ * Percorre todas as páginas da HYDRAX_API_URL_BASE, obtém todos os "items"
+ * e salva o array completo no arquivo "records.json" (ID: 1Qr_hs5uIFn5YkVCge65juKsyJxLOcBq_).
+ * Respeita o tempo máximo de execução (MAX_EXECUTION_TIME_MS) e exibe logs detalhados com emojis.
+ */
+function fetchAndSaveAllHydraxRecords() {
+  const FILE_ID = '1Qr_hs5uIFn5YkVCge65juKsyJxLOcBq_';
+  let allItems = [];
+  let page = 1;
+  let hasNext = true;
+  const startTime = Date.now();
+
+  Logger.log('🚀 Iniciando coleta de todos os registros da API Hydrax...');
+
+  while (hasNext) {
+    // Respeita o tempo máximo de execução
+    if (Date.now() - startTime > MAX_EXECUTION_TIME_MS - 5000) {
+      Logger.log('⏰ Tempo limite de execução atingido. Encerrando coleta.');
+      break;
+    }
+
+    const url = `${HYDRAX_API_URL_BASE}?page=${page}`;
+    Logger.log(`🌍 Buscando página ${page}: ${url}`);
+    try {
+      const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true });
+      const json = JSON.parse(response.getContentText());
+      if (Array.isArray(json.items)) {
+        allItems = allItems.concat(json.items);
+        Logger.log(`📦 Página ${page}: ${json.items.length} itens coletados (total acumulado: ${allItems.length}).`);
+      } else {
+        Logger.log(`⚠️ Página ${page}: "items" não é um array. Encerrando.`);
+        break;
+      }
+
+      // Controle de paginação
+      const currentPage = parseInt(json.pagination && json.pagination.current, 10);
+      let nextPage = parseInt(json.pagination && json.pagination.next, 10);
+
+      if (!nextPage || nextPage === currentPage) {
+        Logger.log(`🏁 Paginação encerrada na página ${currentPage}.`);
+        hasNext = false;
+      } else {
+        page = nextPage;
+      }
+    } catch (e) {
+      Logger.log(`❌ Erro ao buscar página ${page}: ${e}`);
+      break;
+    }
+  }
+
+  // Salva todos os itens no arquivo records.json
+  try {
+    const file = DriveApp.getFileById(FILE_ID);
+    file.setContent(JSON.stringify(allItems, null, 2));
+    Logger.log(`💾 Todos os itens salvos em records.json. Total: ${allItems.length}`);
+  } catch (e) {
+    Logger.log(`❌ Erro ao salvar arquivo records.json: ${e}`);
+  }
+}
+
+/**
+ * Varre todos os "slug" em records.json (ID: 1Qr_hs5uIFn5YkVCge65juKsyJxLOcBq_)
+ * e restaura da lixeira qualquer arquivo "{slug}.jpg" encontrado, movendo-o para a pasta de origem.
+ * Respeita MAX_EXECUTION_TIME_MS e exibe logs detalhados com emojis.
+ */
+function restaurarPostersDaLixeiraPorSlug() {
+  const FILE_ID = '1Qr_hs5uIFn5YkVCge65juKsyJxLOcBq_';
+  const startTime = Date.now();
+  let slugs = [];
+  let restaurados = 0;
+  let verificados = 0;
+
+  Logger.log('🔎 Lendo slugs de records.json...');
+  try {
+    const file = DriveApp.getFileById(FILE_ID);
+    const content = file.getBlob().getDataAsString();
+    const records = JSON.parse(content);
+    slugs = records.map(r => r.slug).filter(Boolean);
+    Logger.log(`📋 Total de slugs encontrados: ${slugs.length}`);
+  } catch (e) {
+    Logger.log(`❌ Erro ao ler records.json: ${e}`);
+    return;
+  }
+
+  if (slugs.length === 0) {
+    Logger.log('⚠️ Nenhum slug encontrado em records.json.');
+    return;
+  }
+
+  Logger.log('🗑️ Iniciando varredura na lixeira do Google Drive...');
+  const trashFiles = DriveApp.getTrashedFiles();
+
+  while (trashFiles.hasNext()) {
+    if (Date.now() - startTime > MAX_EXECUTION_TIME_MS - 5000) {
+      Logger.log('⏰ Tempo limite de execução atingido. Encerrando varredura.');
+      break;
+    }
+    const file = trashFiles.next();
+    const name = file.getName();
+    verificados++;
+    if (name.endsWith('.jpg')) {
+      const slug = name.replace(/\.jpg$/, '');
+      if (slugs.includes(slug)) {
+        try {
+          file.setTrashed(false);
+          Logger.log(`♻️ Arquivo restaurado: ${name}`);
+
+          // Tenta restaurar para a pasta de origem (se possível)
+          const parents = file.getParents();
+          if (!parents.hasNext()) {
+            Logger.log(`⚠️ Não foi possível determinar a pasta de origem para ${name}. O arquivo foi restaurado, mas está na raiz do Drive.`);
+          } else {
+            while (parents.hasNext()) {
+              const parent = parents.next();
+              Logger.log(`📂 Arquivo ${name} restaurado para a pasta: ${parent.getName()} (${parent.getId()})`);
+            }
+          }
+          restaurados++;
+        } catch (e) {
+          Logger.log(`❌ Erro ao restaurar ${name}: ${e}`);
+        }
+      }
+    }
+  }
+
+  Logger.log(`✅ Processo concluído. Arquivos verificados: ${verificados}, arquivos restaurados: ${restaurados}`);
+}
+
+/**
+ * Faz parse do nome do arquivo de vídeo para extrair username, data, horário e tempo.
+ * Aceita username com underlines, inclusive terminando com "_".
+ * Exemplo válido: "Tio0Legal__06-06-2025_08-55_17m.mp4"
+ */
+function parseVideoName(filename) {
+  const pattern = /^(.+)_((\d{2}-\d{2}-\d{4}))_(\d{2}-\d{2})_([0-9hm]+s?|[0-9hm]+)\.mp4$/i;
+  const match = filename.match(pattern);
+  if (!match) return null;
+  return {
+    username: match[1],
+    data_str: match[2],
+    horario_str: match[4],
+    tempo_formatado: match[5]
+  };
+}
+
+/**
+ * Lê e faz o parse do conteúdo JSON de um arquivo do Drive.
+ * Retorna null em caso de erro.
+ */
+function readJsonFile(file) {
+  try {
+    return JSON.parse(file.getBlob().getDataAsString());
+  } catch (e) {
+    logWarn('⚠️ Erro ao ler/parsing JSON: ' + e);
+    return null;
+  }
+}
+
+/**
+ * Salva um objeto como JSON em um arquivo do Drive.
+ */
+function writeJsonFile(file, obj) {
+  file.setContent(JSON.stringify(obj, null, 2));
+}
+
+function resetSyncHydraxToDriveLote() {
+  Logger.log('Iniciando o reset do syncHydraxToDriveLote.');
+
+  // Limpa os checkpoints principais usados pelo lote
+  const props = PropertiesService.getScriptProperties();
+  props.deleteProperty('xcam_lote_ultimo_usuario');
+  props.deleteProperty('xcam_lote_ultima_pagina_abyss');
+
+  Logger.log('Checkpoints resetados com sucesso.');
+
+  // Executar a função syncHydraxToDriveLote com tratamento especial para timeout
+  Logger.log('Executando syncHydraxToDriveLote.');
+  try {
+    syncHydraxToDriveLote();
+  } catch (e) {
+    if (
+      typeof e.message === 'string' &&
+      e.message.indexOf('Tempo máximo de execução atingido. Lote interrompido e continuará automaticamente.') !== -1
+    ) {
+      Logger.log('ℹ️ [INFO] Execução interrompida por timeout controlado. O lote continuará automaticamente.');
+    } else {
+      Logger.log('🛑 [ERRO] Erro inesperado: ' + e);
+      throw e; // Propaga outros erros
+    }
+  }
+
+  Logger.log('Execução do syncHydraxToDriveLote finalizada.');
+}
+
+/**
+ * Restaura arquivos da lixeira do Google Drive que foram excluídos nas últimas 2 horas.
+ */
+function restaurarArquivosRecentesDaLixeira() {
+  const duasHorasEmMs = 2 * 60 * 60 * 1000; // 2 horas em milissegundos
+  const agora = new Date().getTime(); // Timestamp atual em milissegundos
+
+  Logger.log('Iniciando busca por arquivos excluídos recentemente na lixeira...');
+
+  try {
+    // Obtém todos os arquivos na lixeira
+    // Nota: DriveApp.getTrash() só retorna arquivos do usuário logado.
+    // Para lixeiras compartilhadas, pode ser necessário usar a Advanced Drive Service.
+    const arquivosNaLixeira = DriveApp.getTrash();
+    let arquivosRestaurados = 0;
+
+    while (arquivosNaLixeira.hasNext()) {
+      const arquivo = arquivosNaLixeira.next();
+
+      try {
+        // Obtém a data da última atualização do arquivo.
+        // Nota: DriveApp não expõe diretamente a "data de exclusão".
+        // A data de última atualização (getLastUpdated) é a melhor aproximação disponível
+        // via DriveApp para inferir a data de exclusão na lixeira.
+        const dataUltimaAtualizacao = arquivo.getLastUpdated().getTime();
+
+        // Calcula a diferença de tempo desde a última atualização
+        const diferencaTempo = agora - dataUltimaAtualizacao;
+
+        // Verifica se a última atualização foi nas últimas 2 horas
+        if (diferencaTempo <= duasHorasEmMs) {
+          Logger.log(`Restaurando arquivo: ${arquivo.getName()} (ID: ${arquivo.getId()})`);
+          arquivo.restore(); // Restaura o arquivo
+          arquivosRestaurados++;
+        } else {
+          // Logger.log(`Arquivo muito antigo na lixeira para restaurar: ${arquivo.getName()} (Última Atualização: ${new Date(dataUltimaAtualizacao)})`);
+        }
+      } catch (e) {
+        Logger.log(`Erro ao processar arquivo na lixeira (possivelmente sem permissão ou metadados inválidos): ${e}`);
+      }
+    }
+
+    Logger.log(`Busca concluída. Total de arquivos restaurados: ${arquivosRestaurados}`);
+
+  } catch (e) {
+    Logger.log(`Erro geral ao acessar a lixeira do Drive: ${e}`);
+  }
+}
