@@ -713,44 +713,42 @@ body.modal-open {
 .card-thumbnail {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* Proporção 16:9 */
+  aspect-ratio: 16/9;
   overflow: hidden;
-  background-color: #000; /* Fundo preto para o caso de o iframe demorar a carregar */
 }
 
-/* Regra para a imagem original (mantida para referência ou fallback) */
-.card-thumbnail img {
+.card-thumbnail .poster-img,
+.card-thumbnail .poster-iframe {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 8px;
+  transition: opacity 0.2s;
   object-fit: cover;
-  transition: transform 0.3s;
+  background: #000;
 }
 
-/**
- * =======================================================
- * AJUSTE PARA O IFRAME DE PREVIEW
- * =======================================================
- * Este bloco garante que o iframe preencha completamente
- * a área do thumbnail, comportando-se como a imagem
- * original e preservando o layout dos cards.
- */
-.card-thumbnail iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none; /* Remove a borda padrão do iframe */
-  transition: transform 0.3s; /* Adiciona transição para o efeito de hover */
+.card-thumbnail .poster-img {
+  z-index: 1;
+  opacity: 1;
 }
 
-/* Aplica o mesmo efeito de zoom no hover tanto na imagem quanto no iframe */
-.broadcast-card:hover .card-thumbnail img,
-.broadcast-card:hover .card-thumbnail iframe {
-  transform: scale(1.05);
+.card-thumbnail .poster-iframe {
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hover: mostra o iframe e esconde a imagem */
+.broadcast-card:hover .poster-iframe,
+.broadcast-card:focus-within .poster-iframe {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.broadcast-card:hover .poster-img,
+.broadcast-card:focus-within .poster-img {
+  opacity: 0;
 }
 
 .card-overlay {
