@@ -3,9 +3,10 @@
  * XCam - Grade de Transmissões (broadcasts.js)
  * =====================================================================================
  *
- * @author      [Seu Nome/Empresa]
+ * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company] 
+ * @info        https://aserio.work/
  * @version     2.1.0
- * @lastupdate  20/06/2025
+ * @lastupdate  28/06/2025
  *
  * @description
  * Este script é responsável por construir e gerenciar a grade principal de transmissões ao vivo do XCam.
@@ -37,10 +38,13 @@ import { countryNames } from "https://xcam.gay/translations.js";
 const CONFIG = {
   apiBaseUrl: "https://api.xcam.gay/",
   apiPosterUrl: "https://api.xcam.gay/v1/media/poster/",
-  itemsPerPage: 20,
+  itemsPerPage: 20, // Quantidade de cards exibidos por lote na UI
   defaultPoster: "https://poster.xcam.gay/${username}",
   loadingGif: "https://xcam.gay/src/loading.gif",
 };
+
+// Novo parâmetro global para controlar o limite de transmissões requisitadas na API
+const API_LIMIT = 100; // Quantidade máxima de transmissões buscadas por requisição
 
 // Variáveis de controle global
 let allItems = []; // Todas as transmissões buscadas da API
@@ -260,7 +264,7 @@ function showErrorMessage() {
 // ---------- LÓGICA PRINCIPAL ----------
 
 // Monta a URL da API conforme filtros ativos
-function buildApiUrl(filters, limit = CONFIG.itemsPerPage) {
+function buildApiUrl(filters, limit = API_LIMIT) {
   const params = new URLSearchParams({
     limit: String(limit),
     format: "json"
@@ -279,7 +283,7 @@ function buildApiUrl(filters, limit = CONFIG.itemsPerPage) {
 }
 
 // Busca transmissões da API
-async function fetchBroadcasts(limit = CONFIG.itemsPerPage) {
+async function fetchBroadcasts(limit = API_LIMIT) {
   try {
     const url = `${CONFIG.apiBaseUrl}?&limit=${limit}`;
     const response = await fetch(url);
@@ -526,7 +530,8 @@ async function loadFilteredBroadcasts() {
   grid.appendChild(loader);
 
   try {
-    const result = await fetchBroadcasts(CONFIG.itemsPerPage * 5);
+    // Busca até API_LIMIT transmissões da API
+    const result = await fetchBroadcasts(API_LIMIT);
     loader.remove();
 
     if (!result.length) {
@@ -547,7 +552,6 @@ async function loadFilteredBroadcasts() {
     showErrorMessage();
   }
 }
-
 // ---------- EXPORTS (API DO MÓDULO) ----------
 
 // Inicializa a grade e listeners
