@@ -44,7 +44,7 @@ const CONFIG = {
 };
 
 // Novo parâmetro global para controlar o limite de transmissões requisitadas na API
-const API_LIMIT = 100; // Quantidade máxima de transmissões buscadas por requisição
+const API_LIMIT = 25; // Quantidade máxima de transmissões buscadas por requisição
 
 // Variáveis de controle global
 let allItems = []; // Todas as transmissões buscadas da API
