@@ -8,27 +8,32 @@
  * @lastupdate  20/06/2025
  *
  * @description
- * Este script constrói a grade principal de transmissões ao vivo do XCam.
- * Ele busca e renderiza os cards de transmissões utilizando como poster seguro
- * (imagem de preview) um frame dinâmico, extraído do endpoint seguro:
+ * Este script é responsável por construir e gerenciar a grade principal de transmissões ao vivo do XCam.
+ * Ele realiza a busca eficiente de transmissões, renderiza os cards de forma reativa e utiliza como poster seguro
+ * (imagem de preview) um frame dinâmico extraído do endpoint seguro:
  *   https://api.xcam.gay/v1/media/poster/{username}
- * Isso garante compatibilidade máxima com CORS e Same-Origin Policy para uso
- * direto em <img> ou <canvas>, otimizando performance e experiência.
+ * Isso garante compatibilidade máxima com CORS e Same-Origin Policy para uso direto em <img> ou <canvas>,
+ * otimizando performance e experiência do usuário.
  * 
- * Estratégias implementadas:
- * - Busca robusta de transmissões (100+ de uma vez) com paginação local.
- * - Renderização reativa de cards, cada um com poster dinâmico e seguro.
- * - Filtros e paginação totalmente controlados no frontend.
- * - UI responsiva para estados de carregamento, erro e vazio.
+ * Principais estratégias implementadas:
+ * - Busca robusta de transmissões (100+ de uma vez) com paginação local no frontend.
+ * - Renderização dinâmica e segura dos posters de cada transmissão.
+ * - Filtros e paginação totalmente controlados no frontend, sem recarregar a página.
+ * - UI responsiva para estados de carregamento, erro e lista vazia.
+ * - Cache persistente e inteligente de posters, acelerando o carregamento e reduzindo requisições.
  * 
  * =====================================================================================
  */
 
-// === Importações necessárias ===
-import { t } from "https://xcam.gay/i18n.js"; // Módulo de tradução para internacionalização (i18n).
-import { countryNames } from "https://xcam.gay/translations.js"; // Mapeia códigos de país para nomes completos (ex: "br" -> "Brasil").
+/* ============================================================================
+ * 2. CONFIGURAÇÕES & VARIÁVEIS GLOBAIS
+ * ========================================================================== */
 
-// === BLOCO DE CONFIGURAÇÃO GLOBAL =============================================
+// Importações necessárias
+import { t } from "https://xcam.gay/i18n.js";
+import { countryNames } from "https://xcam.gay/translations.js";
+
+// Configurações editáveis e regras de comportamento
 const CONFIG = {
   apiBaseUrl: "https://api.xcam.gay/",
   apiPosterUrl: "https://api.xcam.gay/v1/media/poster/",
@@ -36,14 +41,12 @@ const CONFIG = {
   defaultPoster: "https://poster.xcam.gay/${username}",
   loadingGif: "https://xcam.gay/src/loading.gif",
 };
-// ==============================================================================
 
-// === Variáveis de Controle e Configurações Globais ============================
+// Variáveis de controle global
 let allItems = []; // Todas as transmissões buscadas da API
-let renderedItemsCount = 0; // Contador para paginação local
-let grid; // Referência ao elemento DOM principal da grade
+let renderedItemsCount = 0; // Quantos cards já foram renderizados
+let grid; // Elemento DOM da grade principal
 
-// [CONFIGURÁVEL] Estado atual dos filtros aplicados
 let filters = {
   gender: "",
   country: "",
@@ -51,25 +54,20 @@ let filters = {
   minViewers: null,
   tags: []
 };
-// ==============================================================================
 
-// === CACHE ROBUSTO PARA POSTERS ==============================================
-
-/**
- * Cache robusto usando IndexedDB (persistente) + memória (rápido).
- * - Sempre tenta salvar e ler do IndexedDB (persistência entre sessões).
- * - Mantém um cache em memória para acesso rápido durante a sessão.
- * - Fallback para localStorage se IndexedDB não estiver disponível.
- */
-
-const posterCacheMemory = {}; // Cache em memória
-
-// IndexedDB helpers
+// Cache robusto para posters (memória + IndexedDB + fallback localStorage)
+const posterCacheMemory = {};
 const DB_NAME = "xcamPosterCache";
 const STORE_NAME = "posters";
 let dbPromise = null;
 
-// Abre (ou cria) o banco IndexedDB
+/* ============================================================================
+ * 3. CORPO: FUNÇÕES E EXECUÇÃO PRINCIPAL
+ * ========================================================================== */
+
+// ---------- CACHE DE POSTERS ----------
+
+// Abre/cria o banco IndexedDB para cache de posters
 function openPosterDB() {
   if (dbPromise) return dbPromise;
   dbPromise = new Promise((resolve, reject) => {
@@ -83,27 +81,24 @@ function openPosterDB() {
   return dbPromise;
 }
 
-// Salva poster no IndexedDB e no cache em memória
+// Salva poster no cache (memória + IndexedDB + fallback localStorage)
 async function setPosterInCache(username, url) {
   posterCacheMemory[username] = url;
-  // IndexedDB
   try {
     const db = await openPosterDB();
     const tx = db.transaction(STORE_NAME, "readwrite");
     tx.objectStore(STORE_NAME).put(url, username);
     tx.oncomplete = () => db.close && db.close();
   } catch (e) {
-    // Fallback para localStorage se IndexedDB falhar
     try {
       localStorage.setItem(`poster_${username}`, url);
     } catch {}
   }
 }
 
-// Busca poster do cache (memória > IndexedDB > localStorage)
+// Busca poster do cache (ordem: memória > IndexedDB > localStorage)
 async function getPosterFromCache(username) {
   if (posterCacheMemory[username]) return posterCacheMemory[username];
-  // IndexedDB
   try {
     const db = await openPosterDB();
     return await new Promise((resolve) => {
@@ -117,7 +112,6 @@ async function getPosterFromCache(username) {
       req.onerror = () => resolve(null);
     });
   } catch (e) {
-    // Fallback para localStorage
     try {
       const url = localStorage.getItem(`poster_${username}`);
       if (url) posterCacheMemory[username] = url;
@@ -128,7 +122,7 @@ async function getPosterFromCache(username) {
   }
 }
 
-// Limpa todo o cache (útil para debug ou atualização massiva)
+// Limpa todo o cache de posters
 async function clearPosterCache() {
   for (const k in posterCacheMemory) delete posterCacheMemory[k];
   try {
@@ -137,7 +131,6 @@ async function clearPosterCache() {
     tx.objectStore(STORE_NAME).clear();
     tx.oncomplete = () => db.close && db.close();
   } catch {
-    // Fallback localStorage
     Object.keys(localStorage)
       .filter((k) => k.startsWith("poster_"))
       .forEach((k) => localStorage.removeItem(k));
@@ -153,7 +146,6 @@ async function preloadAllPostersToCache() {
     if (resp.ok) {
       const posters = await resp.json();
       window._xcamAllPosters = posters;
-      // Salva todos no IndexedDB e memória
       for (const [username, obj] of Object.entries(posters)) {
         if (obj && typeof obj.fileUrl === "string" && obj.fileUrl.trim() !== "") {
           await setPosterInCache(username, obj.fileUrl);
@@ -166,16 +158,10 @@ async function preloadAllPostersToCache() {
     window._xcamAllPosters = {};
   }
 }
-// ==============================================================================
 
-// === Função utilitária: Criação de elementos DOM com atributos e filhos =======
-/**
- * Cria elementos DOM de forma declarativa com atributos e filhos.
- * @param {string} type - Tipo do elemento (ex: "div", "img")
- * @param {object} props - Atributos do elemento
- * @param {Array} children - Elementos filhos
- * @returns {HTMLElement}
- */
+// ---------- UTILITÁRIOS DOM ----------
+
+// Cria elementos DOM de forma declarativa
 function createEl(type, props = {}, children = []) {
   const el = document.createElement(type);
   Object.entries(props).forEach(([key, value]) => {
@@ -189,15 +175,15 @@ function createEl(type, props = {}, children = []) {
   return el;
 }
 
-// Garante que a variável `grid` tenha uma referência ao elemento DOM.
+// Garante referência ao elemento da grade
 function ensureGridElement() {
   if (!grid) {
     grid = document.getElementById("broadcasts-grid");
   }
 }
-// ==============================================================================
 
-// === Elementos de UI reutilizáveis ============================================
+// ---------- ELEMENTOS DE UI REUTILIZÁVEIS ----------
+
 const loader = createEl("div", { class: "loading-state" }, [
   createEl("div", { class: "loader" }),
   createEl("p", { text: t("loading") })
@@ -213,43 +199,28 @@ const loadMoreBtn = createEl(
   [createEl("span", { text: t("loadMore") })]
 );
 loadMoreBtn.style.display = "none";
-// ==============================================================================
 
-// === Função utilitária para buscar o poster seguro do usuário ================
-/**
- * Retorna uma URL segura para o poster do usuário XCam.
- * @param {string} username - Nome do usuário
- * @returns {string} URL do poster seguro (.ts, mas usável como src de <img>)
- */
+// ---------- POSTER ----------
+
+// Retorna a URL segura do poster do usuário
 function getPosterUrl(username) {
   return `${CONFIG.apiPosterUrl}${username}`;
 }
 
-/**
- * Cria uma URL de objeto Blob a partir do segmento de vídeo retornado pelo endpoint,
- * para ser usada em <img src>. Faz fallback para placeholder em caso de erro.
- * @param {string} username - Nome do usuário
- * @returns {Promise<string>} - URL para ser usado em <img src>
- */
+// Busca poster como blob para uso em <img src>
 async function fetchPosterImageUrl(username) {
   try {
     const resp = await fetch(getPosterUrl(username), { mode: "cors" });
     if (!resp.ok) throw new Error("Poster não disponível");
     const blob = await resp.blob();
-    // Cria uma URL de objeto para uso temporário em <img>
     return URL.createObjectURL(blob);
   } catch (err) {
-    // Fallback: imagem padrão
     return CONFIG.defaultPoster;
   }
 }
-// ==============================================================================
 
-// === Funções de Estado da UI (Vazio, Erro) ===================================
+// ---------- ESTADOS DE UI (VAZIO/ERRO) ----------
 
-/**
- * Exibe mensagem amigável para lista vazia.
- */
 function showEmptyMessage() {
   ensureGridElement();
   grid.innerHTML = "";
@@ -268,9 +239,6 @@ function showEmptyMessage() {
   grid.appendChild(empty);
 }
 
-/**
- * Exibe mensagem de erro caso a API falhe.
- */
 function showErrorMessage() {
   ensureGridElement();
   grid.innerHTML = "";
@@ -288,16 +256,10 @@ function showErrorMessage() {
   );
   grid.appendChild(errorDiv);
 }
-// ==============================================================================
 
-// === Lógica Principal ========================================================
+// ---------- LÓGICA PRINCIPAL ----------
 
-/**
- * Monta a URL da API com base nos filtros ativos.
- * @param {object} filters - O objeto de filtros atual.
- * @param {number} [limit] - O número máximo de resultados a serem pedidos para a API.
- * @returns {string} A URL completa para a chamada da API.
- */
+// Monta a URL da API conforme filtros ativos
 function buildApiUrl(filters, limit = CONFIG.itemsPerPage) {
   const params = new URLSearchParams({
     limit: String(limit),
@@ -316,11 +278,7 @@ function buildApiUrl(filters, limit = CONFIG.itemsPerPage) {
   return `${CONFIG.apiBaseUrl}?${params.toString()}`;
 }
 
-/**
- * Busca as transmissões da API principal.
- * @param {number} [limit] - O limite de transmissões a serem buscadas.
- * @returns {Promise<Array>} Uma promessa que resolve para um array de transmissões.
- */
+// Busca transmissões da API
 async function fetchBroadcasts(limit = CONFIG.itemsPerPage) {
   try {
     const url = `${CONFIG.apiBaseUrl}?&limit=${limit}`;
@@ -342,11 +300,7 @@ async function fetchBroadcasts(limit = CONFIG.itemsPerPage) {
   }
 }
 
-/**
- * Cria e renderiza um único card de transmissão.
- * Usa graphData.preview.poster se existir, senão usa getPosterUrl.
- * @param {object} data - O objeto de dados para uma única transmissão.
- */
+// Cria e renderiza um card de transmissão
 async function renderBroadcastCard(data) {
   ensureGridElement();
 
@@ -356,7 +310,7 @@ async function renderBroadcastCard(data) {
   const tags = Array.isArray(data.tags) ? data.tags : [];
   const countryName = countryNames[country.toLowerCase()] || "Desconhecido";
 
-  // Renderiza imediatamente com loading.gif
+  // Poster inicial (loading)
   let posterElement = createEl("img", {
     class: "poster-img",
     src: CONFIG.loadingGif,
@@ -377,7 +331,7 @@ async function renderBroadcastCard(data) {
     }
   });
 
-  // Cria o iframe já oculto
+  // Iframe de preview (hover)
   const previewIframe = createEl("iframe", {
     class: "poster-iframe",
     src: `https://live.xcam.gay/?user=${username}&mode=carousel`,
@@ -404,7 +358,7 @@ async function renderBroadcastCard(data) {
     }
   });
 
-  // Container para thumbnail (posição relativa para z-index funcionar)
+  // Container thumbnail
   const thumbnailContainer = createEl("div", { class: "card-thumbnail", style: { position: "relative", width: "100%", height: "0", paddingBottom: "56.25%" } }, [
     posterElement,
     previewIframe,
@@ -472,7 +426,7 @@ async function renderBroadcastCard(data) {
   );
   grid.appendChild(card);
 
-  // Eventos de hover para mostrar/ocultar o iframe
+  // Hover: mostra/oculta preview ao vivo
   card.addEventListener("mouseenter", () => {
     previewIframe.style.opacity = "1";
     previewIframe.style.pointerEvents = "auto";
@@ -484,10 +438,8 @@ async function renderBroadcastCard(data) {
     posterElement.style.opacity = "1";
   });
 
-  // --- Atualiza o poster assim que possível ---
+  // Atualiza o poster assim que possível (ordem de prioridade)
   let posterSrc = null;
-
-  // 1. Primeira tentativa: poster retornado pela API principal (se existir)
   if (
     typeof data.preview === "object" &&
     data.preview !== null &&
@@ -497,8 +449,6 @@ async function renderBroadcastCard(data) {
     posterSrc = data.preview.poster;
     setPosterInCache(username, posterSrc);
   }
-
-  // 2. Segunda tentativa: cache global de posters (?poster=0)
   if (!posterSrc) {
     if (!window._xcamAllPosters) {
       try {
@@ -524,13 +474,9 @@ async function renderBroadcastCard(data) {
       setPosterInCache(username, posterSrc);
     }
   }
-
-  // 3. Terceira tentativa: IndexedDB/local
   if (!posterSrc) {
     posterSrc = await getPosterFromCache(username);
   }
-
-  // 4. Fallback: <iframe>
   if (posterSrc) {
     posterElement.src = posterSrc;
   } else {
@@ -556,29 +502,21 @@ async function renderBroadcastCard(data) {
   }
 }
 
-/**
- * Renderiza o próximo lote de cards com base na paginação local.
- */
+// Renderiza o próximo lote de cards (paginado localmente)
 function renderNextBatch() {
   ensureGridElement();
-
   const nextItems = allItems.slice(
     renderedItemsCount,
     renderedItemsCount + CONFIG.itemsPerPage
   );
   nextItems.forEach((item) => renderBroadcastCard(item));
   renderedItemsCount += nextItems.length;
-
-  // Mostra ou esconde o botão "Carregar mais" se chegamos ao fim da lista.
   loadMoreBtn.style.display =
     renderedItemsCount >= allItems.length ? "none" : "block";
 }
 
-/**
- * Orquestra o carregamento inicial ou a recarga da grade com base nos filtros.
- */
+// Carrega e renderiza a grade com base nos filtros
 async function loadFilteredBroadcasts() {
-  // 1. Reseta o estado atual para uma nova busca.
   renderedItemsCount = 0;
   allItems = [];
   ensureGridElement();
@@ -588,7 +526,6 @@ async function loadFilteredBroadcasts() {
   grid.appendChild(loader);
 
   try {
-    // 2. Busca um lote grande de transmissões para trabalhar localmente.
     const result = await fetchBroadcasts(CONFIG.itemsPerPage * 5);
     loader.remove();
 
@@ -597,11 +534,9 @@ async function loadFilteredBroadcasts() {
       return;
     }
 
-    // 3. Renderiza a primeira página e prepara as próximas.
     allItems = result;
-    renderNextBatch(); // Renderiza a primeira página de 'itemsPerPage' cards.
+    renderNextBatch();
 
-    // 4. Adiciona o botão "Carregar Mais" se houver mais itens para mostrar.
     if (allItems.length > renderedItemsCount) {
       grid.parentElement.appendChild(loadMoreBtn);
       loadMoreBtn.style.display = "block";
@@ -612,28 +547,21 @@ async function loadFilteredBroadcasts() {
     showErrorMessage();
   }
 }
-// ==============================================================================
 
-// === EXPORTS (API DO MÓDULO) =================================================
-/**
- * Inicializa a grade de transmissões e adiciona os event listeners.
- */
+// ---------- EXPORTS (API DO MÓDULO) ----------
+
+// Inicializa a grade e listeners
 export function setupBroadcasts() {
   loadMoreBtn.addEventListener("click", renderNextBatch);
   loadFilteredBroadcasts();
 }
 
-/**
- * Força a recarga completa da grade, útil para um botão de "Atualizar".
- */
+// Força recarga da grade
 export function refreshBroadcasts() {
   loadFilteredBroadcasts();
 }
 
-/**
- * Aplica um novo conjunto de filtros e recarrega a grade.
- * @param {object} newFilters - O novo objeto de filtros a ser aplicado.
- */
+// Aplica filtros e recarrega a grade
 export function applyBroadcastFilters(newFilters) {
   filters = {
     ...filters,
@@ -645,14 +573,13 @@ export function applyBroadcastFilters(newFilters) {
   };
   loadFilteredBroadcasts();
 }
-// ==============================================================================
 
-// === Inicialização do Script ==================================================
+// ---------- INICIALIZAÇÃO ----------
+
 document.addEventListener("DOMContentLoaded", () => {
   grid = document.getElementById("broadcasts-grid");
-  preloadAllPostersToCache(); // Chama o pré-carregamento ao iniciar a página
+  preloadAllPostersToCache();
 });
-// ==============================================================================
 
 /**
  * =====================================================================================
@@ -661,8 +588,8 @@ document.addEventListener("DOMContentLoaded", () => {
  *
  * @log de mudanças:
  * - v2.1.0 (20/06/2025): Substituído preview dinâmico via <iframe> por <img> seguro
- * consumindo o endpoint de poster seguro. Agora todos os posters são carregados
- * dinamicamente do backend seguro, prevenindo problemas de CORS e melhorando a UX.
+ *   consumindo o endpoint de poster seguro. Agora todos os posters são carregados
+ *   dinamicamente do backend seguro, prevenindo problemas de CORS e melhorando a UX.
  * - v2.0.0 (17/06/2025): Versão anterior com preview por <iframe>.
  * - v1.0.0: Versão inicial com placeholders e atualização incremental.
  *
