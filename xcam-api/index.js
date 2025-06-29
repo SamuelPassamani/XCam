@@ -1,18 +1,16 @@
 /**
  * =========================================================================================
- * XCam API Worker - index.js
+ * XCam API Worker - index.js (com posterInfo em ?stream={username})
  * =========================================================================================
  * 
  * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
  * @info        https://aserio.work/
- * @version     1.0.0
+ * @version     1.0.1
  * @lastupdate  2025-06-29
  * 
  * @description
  *   Worker principal da XCam API para Cloudflare Workers.
- *   Fornece roteamento RESTful, proxy seguro de mídia HLS (poster seguro), geração de poster seguro (frame de vídeo HLS),
- *   integração com Google Apps Script, agregação de dados públicos multi-origem e filtragem dinâmica.
- *   Estrutura modular, segura, documentada e pronta para expansão.
+ *   Agora, a rota ?stream={username} retorna também o campo posterInfo.
  * 
  * @mode        production
  * =========================================================================================
@@ -186,24 +184,23 @@ async function handleLiveInfo(username) {
 }
 
 /**
- * Busca dados GraphQL, liveInfo e profileInfo do usuário e retorna tudo junto.
- * Usado para ?user={username}
+ * Busca informações de poster do usuário via GAS (?poster={username}).
+ * Retorna null se não conseguir obter.
  */
-async function handleUserFullInfo(user, corsHeaders) {
-  const limit = 300;
-  const graphData = await findUserGraphData(user, limit, 25);
-  const [streamInfo, profileInfo] = await Promise.all([
-    handleLiveInfo(user),
-    handleUserProfile(user)
-  ]);
-  return new Response(JSON.stringify({
-    user,
-    graphData,
-    streamInfo,
-    profileInfo
-  }, null, 2), {
-    headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
-  });
+async function fetchPosterInfo(username) {
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?poster=" + encodeURIComponent(username);
+  try {
+    const response = await fetch(GAS_URL, {
+      redirect: 'follow',
+      headers: { 'accept': 'application/json' }
+    });
+    if (!response.ok) return null;
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) return null;
+    return await response.json();
+  } catch (err) {
+    return null;
+  }
 }
 
 /**
@@ -693,15 +690,11 @@ export default {
  * =========================================================================================
  * 
  * @log de mudanças:
- * - 2025-06-29: Refatoração completa do arquivo seguindo padrão XCam/Estudio A.Sério.
- * - 2025-06-29: Adicionado proxy reverso universal para HLS (/hls-proxy).
- * - 2025-06-20: Modularização e comentários detalhados.
+ * - 2025-06-29: Adicionado campo posterInfo à resposta de ?stream={username}.
  * 
  * @roadmap futuro:
- * - Adicionar autenticação JWT para rotas privadas.
- * - Implementar cache distribuído para dados de transmissões.
- * - Suporte a WebSocket para notificações em tempo real.
- * - Integração com outros provedores de streaming.
+ * - Expandir agregação de dados para outros endpoints.
+ * - Implementar cache distribuído para posterInfo.
  * 
  * =========================================================================================
  * Fim do arquivo: xcam-api/index.js
