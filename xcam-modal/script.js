@@ -200,7 +200,7 @@ function getUrlParam(param) {
  */
 async function fetchUserData(username) {
   const [userRes, broadcastsRes] = await Promise.all([
-    fetch(`https://api.xcam.gay/user/${encodeURIComponent(username)}`),
+    fetch(`https://api.xcam.gay/user/${encodeURIComponent(username)}/info`),
     fetch(`https://api.xcam.gay/?limit=3333`)
   ]);
   if (!userRes.ok) throw new Error("Usuário não encontrado");
