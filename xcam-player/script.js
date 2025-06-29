@@ -366,7 +366,7 @@ async function initializeCarouselPlayer() {
 
 /**
  * Inicializa o player principal completo, com busca por user/id, modal de anúncio e fallback.
- * Agora utiliza o proxy reverso HLS para resolver CORS.
+ * Lógica original preservada: utiliza diretamente as URLs HLS retornadas pela API, sem proxy.
  */
 function initializeMainPlayer() {
   const playerContainer = document.getElementById("player");
@@ -388,11 +388,8 @@ function initializeMainPlayer() {
       .then((data) => {
         const graphData = data.graphData || {};
         const streamInfo = data.streamInfo || {};
-        // Usa o proxy reverso HLS para resolver CORS
-        const originalSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
-        const videoSrc = originalSrc
-          ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
-          : null;
+        // Usa diretamente a URL HLS original, sem proxy reverso
+        const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
 
         if (!videoSrc) {
           console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
@@ -428,11 +425,8 @@ function initializeMainPlayer() {
           reloadWithFallback();
           return;
         }
-        // Usa o proxy reverso HLS para resolver CORS
-        const originalSrc = camera.preview?.src;
-        const videoSrc = originalSrc
-          ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
-          : null;
+        // Usa diretamente a URL HLS original, sem proxy reverso
+        const videoSrc = camera.preview?.src;
         const poster = camera.preview?.poster || camera.profileImageURL || "https://xcam.gay/src/loading.gif";
         setupMainPlayer(camera, camera.username, videoSrc, poster);
       })

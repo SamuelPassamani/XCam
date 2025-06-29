@@ -425,41 +425,6 @@ async function handlePosterSegmentProxy(username) {
 }
 
 /**
- * Proxy reverso universal para HLS (playlist/fragmento).
- * Endpoint: /hls-proxy?url={URL_ENCODED}
- * Permite proxy de qualquer arquivo HLS (.m3u8, .ts, etc) com CORS universal.
- */
-async function handleHlsProxy(request, url) {
-  const targetUrl = url.searchParams.get("url");
-  if (!/^https?:\/\/.+/.test(targetUrl)) {
-    return new Response(JSON.stringify({ error: "URL inválida para proxy HLS." }), {
-      status: 400,
-      headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" }
-    });
-  }
-  try {
-    const proxied = await fetch(targetUrl, {
-      headers: { referer: "https://pt.cam4.com/" }
-    });
-    // Copia todos os headers relevantes, mas sobrescreve CORS
-    const headers = new Headers(proxied.headers);
-    headers.set("Access-Control-Allow-Origin", "*");
-    // Remove headers que podem causar problemas
-    headers.delete("content-security-policy");
-    headers.delete("x-frame-options");
-    return new Response(proxied.body, {
-      status: proxied.status,
-      headers
-    });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Falha ao fazer proxy HLS", details: String(err) }), {
-      status: 502,
-      headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" }
-    });
-  }
-}
-
-/**
  * Função principal do Worker: roteia requisições, executa filtros, trata erros.
  * Ordem de prioridade das rotas:
  * 1. Poster seguro (proxy mídia HLS)
