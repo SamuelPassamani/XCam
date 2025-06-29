@@ -505,6 +505,37 @@ export default {
         return await handlePosterProxy(posterParam, corsHeaders);
       }
 
+      // === 3.2. PROXY UNIVERSAL PARA HLS (playlist/fragmento) ===
+      if (pathname === "/hls-proxy" && url.searchParams.has("url")) {
+        const targetUrl = url.searchParams.get("url");
+        if (!/^https?:\/\/.+/.test(targetUrl)) {
+          return new Response(JSON.stringify({ error: "URL inválida para proxy HLS." }), {
+            status: 400,
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" }
+          });
+        }
+        try {
+          const proxied = await fetch(targetUrl, {
+            headers: { referer: "https://pt.cam4.com/" }
+          });
+          // Copia todos os headers relevantes, mas sobrescreve CORS
+          const headers = new Headers(proxied.headers);
+          headers.set("Access-Control-Allow-Origin", "*");
+          // Remove headers que podem causar problemas
+          headers.delete("content-security-policy");
+          headers.delete("x-frame-options");
+          return new Response(proxied.body, {
+            status: proxied.status,
+            headers
+          });
+        } catch (err) {
+          return new Response(JSON.stringify({ error: "Falha ao fazer proxy HLS", details: String(err) }), {
+            status: 502,
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" }
+          });
+        }
+      }
+
       // === 3.1. LISTAGEM DE TRANSMISSÕES COM STREAM=0 E LIMIT ===
       if (url.searchParams.get("stream") === "0") {
         const cacheKey = new Request(request.url, request);
