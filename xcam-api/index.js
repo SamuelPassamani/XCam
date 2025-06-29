@@ -546,14 +546,18 @@ export default {
       if (streamParam) {
         const user = streamParam;
         const limit = 300;
-        // Busca paginada para garantir consistência!
-        const graphData = await findUserGraphData(user, limit, 25); 
-        const streamInfo = await handleLiveInfo(user);
+        // Busca graphData, streamInfo e posterInfo em paralelo
+        const [graphData, streamInfo, posterInfo] = await Promise.all([
+          findUserGraphData(user, limit, 25),
+          handleLiveInfo(user),
+          fetchPosterInfo(user)
+        ]);
 
         return new Response(JSON.stringify({
           user,
           graphData,
-          streamInfo
+          streamInfo,
+          posterInfo: posterInfo || null
         }, null, 2), {
           headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
         });
