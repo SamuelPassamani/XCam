@@ -234,6 +234,7 @@ async function initializePreviewPlayer() {
     if (!response.ok) throw new Error(`API retornou status ${response.status}`);
 
     const data = await response.json();
+    // Usa a URL exatamente como vem da API, seja /playlist.m3u8 ou /index.m3u8
     const videoSrc = data.cdnURL || data.edgeURL;
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
