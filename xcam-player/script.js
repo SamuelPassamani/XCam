@@ -53,8 +53,8 @@ const PREVIEW_CONFIG = {
   RETRY_DELAY: 5000,
   PREVIEW_DURATION: 3000,
   API_ENDPOINT: "https://api.xcam.gay/user/",
-  FALLBACK_VIDEO: "https://xcam-drive.aserio.workers.dev/0:/files/loading.webm",
-  LOADING_GIF: "https://xcam.gay/src/loading.gif"
+  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4",
+  LOADING_GIF: "https://cdn.xcam.gay/0:/src/files/loading.gif"
 };
 
 let previewRetryCount = 0;
