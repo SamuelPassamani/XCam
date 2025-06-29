@@ -332,9 +332,15 @@ async function initializeCarouselPlayer() {
     if (!username) throw new Error("Parâmetro 'user' não encontrado.");
 
     const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}${encodeURIComponent(username)}/liveInfo`);
-    if (!response.ok) throw new Error(`API retornou status ${response.status}`);
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error("Resposta da API não é JSON válido: " + text);
+    }
+    console.log("Resposta da API liveInfo:", data);
 
-    const data = await response.json();
     const videoSrc = data.cdnURL || data.edgeURL;
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 

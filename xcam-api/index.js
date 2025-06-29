@@ -594,16 +594,26 @@ export default {
       if (pathname.startsWith("/user/")) {
         const parts = pathname.split("/").filter(Boolean);
         const username = parts[1];
+        // Corrige: trata explicitamente liveInfo e info
         if (parts[2] === "liveInfo") {
+          // Sempre retorna streamInfo
           const data = await handleLiveInfo(username);
           return new Response(JSON.stringify(data, null, 2), {
             headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
           });
+        } else if (parts[2] === "info") {
+          // Retorna profile info
+          const data = await handleUserProfile(username);
+          return new Response(JSON.stringify(data, null, 2), {
+            headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
+          });
+        } else {
+          // Se não for liveInfo nem info, retorna erro explícito
+          return new Response(JSON.stringify({ error: "Endpoint não suportado em /user/" }), {
+            status: 404,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
         }
-        const data = await handleUserProfile(username);
-        return new Response(JSON.stringify(data, null, 2), {
-          headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
-        });
       }
 
       // === 7. LISTAGEM DE TRANSMISSÕES PÚBLICAS (com filtros avançados) ===
