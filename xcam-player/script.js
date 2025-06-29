@@ -221,6 +221,7 @@ function handlePreviewRetry() {
 
 /**
  * Inicializa o modo preview: injeta CSS, mostra loading, busca dados e monta o player.
+ * Agora utiliza o proxy reverso HLS para resolver CORS.
  */
 async function initializePreviewPlayer() {
   injectPreviewCSS();
@@ -234,8 +235,11 @@ async function initializePreviewPlayer() {
     if (!response.ok) throw new Error(`API retornou status ${response.status}`);
 
     const data = await response.json();
-    // Usa a URL exatamente como vem da API, seja /playlist.m3u8 ou /index.m3u8
-    const videoSrc = data.cdnURL || data.edgeURL;
+    // Usa o proxy reverso HLS para resolver CORS
+    const originalSrc = data.cdnURL || data.edgeURL;
+    const videoSrc = originalSrc
+      ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
+      : null;
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
     const camera = { username: username, poster: "" };
@@ -323,6 +327,7 @@ function handleCarouselRetry() {
 
 /**
  * Inicializa o modo carousel: injeta CSS, mostra loading, busca dados e monta o player.
+ * Agora utiliza o proxy reverso HLS para resolver CORS.
  */
 async function initializeCarouselPlayer() {
   injectCarouselCSS();
@@ -342,7 +347,11 @@ async function initializeCarouselPlayer() {
     }
     console.log("Resposta da API liveInfo:", data);
 
-    const videoSrc = data.cdnURL || data.edgeURL;
+    // Usa o proxy reverso HLS para resolver CORS
+    const originalSrc = data.cdnURL || data.edgeURL;
+    const videoSrc = originalSrc
+      ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
+      : null;
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
     const camera = { username: username, poster: "" };
@@ -357,6 +366,7 @@ async function initializeCarouselPlayer() {
 
 /**
  * Inicializa o player principal completo, com busca por user/id, modal de anúncio e fallback.
+ * Agora utiliza o proxy reverso HLS para resolver CORS.
  */
 function initializeMainPlayer() {
   const playerContainer = document.getElementById("player");
@@ -378,7 +388,11 @@ function initializeMainPlayer() {
       .then((data) => {
         const graphData = data.graphData || {};
         const streamInfo = data.streamInfo || {};
-        const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
+        // Usa o proxy reverso HLS para resolver CORS
+        const originalSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
+        const videoSrc = originalSrc
+          ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
+          : null;
 
         if (!videoSrc) {
           console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
@@ -414,8 +428,13 @@ function initializeMainPlayer() {
           reloadWithFallback();
           return;
         }
+        // Usa o proxy reverso HLS para resolver CORS
+        const originalSrc = camera.preview?.src;
+        const videoSrc = originalSrc
+          ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
+          : null;
         const poster = camera.preview?.poster || camera.profileImageURL || "https://xcam.gay/src/loading.gif";
-        setupMainPlayer(camera, camera.username, camera.preview.src, poster);
+        setupMainPlayer(camera, camera.username, videoSrc, poster);
       })
       .catch((err) => {
         console.error("Erro ao carregar a lista geral:", err);
