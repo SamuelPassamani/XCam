@@ -3,13 +3,14 @@
 // =====================================================================================
 // @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 // @info        https://aserio.work/
-// @version     6.2.0
-// @lastupdate  19/06/2025
-// @mode        1. Modo Padrão (Player Completo): Executado quando nenhum parâmetro `mode` é fornecido. Preserva toda a funcionalidade original e estável, incluindo busca por `user` e `id`, modal de anúncio e tratamento de erros detalhado.
-// @mode        2. Modo Preview (Poster Animado): Ativado com `?mode=preview`. Ideal para uso em iframes numa grelha. Oculta toda a interface do player via CSS e executa lógica de preview animado.
-// @mode        3. Modo Carousel (Preview Automático): Ativado com `?mode=carousel`. Sem hover, preview automático para carrosséis de câmeras.
+// @version     6.2.1
+// @lastupdate  29/06/2025
+// @mode        1. Modo Padrão (Player Completo): Executado quando nenhum parâmetro `mode` é fornecido.
+// @mode        2. Modo Preview (Poster Animado): Ativado com `?mode=preview`.
+// @mode        3. Modo Carousel (Preview Automático): Ativado com `?mode=carousel`.
 // @description
-// Este script é o cérebro por trás do player de vídeo do XCam. Ele é projetado para ser altamente modular e operar em múltiplos modos, controlados pelo parâmetro de URL `?mode`. Cada modo adapta a experiência do player para diferentes contextos de uso, mantendo robustez, modularidade e tratamento detalhado de erros.
+// Script modular para o player XCam, com múltiplos modos de operação controlados por URL.
+// Todos os modos agora usam a endpoint unificada ?stream={username} para máxima eficiência.
 // =====================================================================================
 
 "use strict";
@@ -18,14 +19,14 @@
  * 2. CONFIGURAÇÕES & VARIÁVEIS GLOBAIS
  * ========================================================================== */
 
-// Configurações globais para o modo preview/carousel
+// Configurações globais para o player e modos especiais
 const PREVIEW_CONFIG = {
-  MAX_RETRIES: 3, // Número máximo de tentativas de retry em caso de erro
+  MAX_RETRIES: 3, // Máximo de tentativas de retry em caso de erro
   RETRY_DELAY: 5000, // Delay entre tentativas de retry (ms)
   PREVIEW_DURATION: 3000, // Duração do preview antes de pausar (ms)
-  API_ENDPOINT: "https://api.xcam.gay/user/", // Endpoint da API para buscar info do usuário
-  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4", // Vídeo de fallback em caso de erro
-  LOADING_GIF: "https://cdn.xcam.gay/0:/src/files/loading.gif" // GIF de loading para o preview
+  API_ENDPOINT: "https://api.xcam.gay/", // Endpoint base da API
+  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4", // Vídeo de fallback
+  LOADING_GIF: "https://cdn.xcam.gay/0:/src/files/loading.gif" // GIF de loading
 };
 
 // Variável de controle para tentativas de retry no preview/carousel
@@ -74,11 +75,9 @@ const ERROR_MESSAGES = {
  * Executa ao carregar o DOM.
  */
 document.addEventListener("DOMContentLoaded", () => {
-  // Lê os parâmetros da URL
   const params = new URLSearchParams(window.location.search);
   const mode = params.get("mode");
 
-  // Inicializa o modo correspondente
   if (mode === "preview") {
     initializePreviewPlayer(); // Modo preview animado
   } else if (mode === "carousel") {
@@ -153,7 +152,7 @@ function setupPreviewPlayer(camera, videoSrc) {
     autostart: true,
     mute: true,
     hlsjsConfig: { withCredentials: true },
-    pipIcon: false, // Desativa o botão PiP do JWPlayer
+    pipIcon: false,
     playlist: [{
       title: `@${camera.username}`,
       image: `https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg`,
@@ -192,7 +191,6 @@ function addPreviewHoverEvents() {
 
   playerContainer.addEventListener("mouseenter", () => {
     clearTimeout(playTimeout);
-    // Garante que o play seja chamado na primeira entrada do mouse
     if (!hasPlayedOnHover) {
       jw.play(true);
       hasPlayedOnHover = true;
@@ -221,7 +219,7 @@ function handlePreviewRetry() {
 
 /**
  * Inicializa o modo preview: injeta CSS, mostra loading, busca dados e monta o player.
- * Agora utiliza o proxy reverso HLS para resolver CORS.
+ * Agora utiliza a endpoint unificada ?stream={username}.
  */
 async function initializePreviewPlayer() {
   injectPreviewCSS();
@@ -231,18 +229,23 @@ async function initializePreviewPlayer() {
     const username = params.get("user");
     if (!username) throw new Error("Parâmetro 'user' não encontrado.");
 
-    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}${encodeURIComponent(username)}/liveInfo`);
+    // Busca dados completos do usuário/transmissão
+    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}?stream=${encodeURIComponent(username)}`);
     if (!response.ok) throw new Error(`API retornou status ${response.status}`);
 
     const data = await response.json();
-    // Usa o proxy reverso HLS para resolver CORS
-    const originalSrc = data.cdnURL || data.edgeURL;
-    const videoSrc = originalSrc
-      ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
-      : null;
+    const graphData = data.graphData || {};
+    const streamInfo = data.streamInfo || {};
+
+    // Seleciona a melhor URL disponível
+    const videoSrc =
+      streamInfo.cdnURL ||
+      streamInfo.edgeURL ||
+      (graphData.preview && graphData.preview.src);
+
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
-    const camera = { username: username, poster: "" };
+    const camera = { username: username, poster: graphData.preview?.poster || "" };
     setupPreviewPlayer(camera, videoSrc);
   } catch (err) {
     console.warn(`Falha ao inicializar o preview player: ${err.message}`);
@@ -294,7 +297,6 @@ function setupCarouselPlayer(camera, videoSrc) {
     }
   });
 
-  // Desabilita PiP no elemento <video> nativo
   jwplayer("player").on("ready", () => {
     const video = document.querySelector("#player video");
     if (video) {
@@ -327,7 +329,7 @@ function handleCarouselRetry() {
 
 /**
  * Inicializa o modo carousel: injeta CSS, mostra loading, busca dados e monta o player.
- * Agora utiliza o proxy reverso HLS para resolver CORS.
+ * Agora utiliza a endpoint unificada ?stream={username}.
  */
 async function initializeCarouselPlayer() {
   injectCarouselCSS();
@@ -337,24 +339,23 @@ async function initializeCarouselPlayer() {
     const username = params.get("user");
     if (!username) throw new Error("Parâmetro 'user' não encontrado.");
 
-    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}${encodeURIComponent(username)}/liveInfo`);
-    const text = await response.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      throw new Error("Resposta da API não é JSON válido: " + text);
-    }
-    console.log("Resposta da API liveInfo:", data);
+    // Busca dados completos do usuário/transmissão
+    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}?stream=${encodeURIComponent(username)}`);
+    if (!response.ok) throw new Error(`API retornou status ${response.status}`);
 
-    // Usa o proxy reverso HLS para resolver CORS
-    const originalSrc = data.cdnURL || data.edgeURL;
-    const videoSrc = originalSrc
-      ? `https://api.xcam.gay/hls-proxy?url=${encodeURIComponent(originalSrc)}`
-      : null;
+    const data = await response.json();
+    const graphData = data.graphData || {};
+    const streamInfo = data.streamInfo || {};
+
+    // Seleciona a melhor URL disponível
+    const videoSrc =
+      streamInfo.cdnURL ||
+      streamInfo.edgeURL ||
+      (graphData.preview && graphData.preview.src);
+
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
-    const camera = { username: username, poster: "" };
+    const camera = { username: username, poster: graphData.preview?.poster || "" };
     setupCarouselPlayer(camera, videoSrc);
   } catch (err) {
     console.warn(`Falha ao inicializar o carousel player: ${err.message}`);
@@ -366,7 +367,7 @@ async function initializeCarouselPlayer() {
 
 /**
  * Inicializa o player principal completo, com busca por user/id, modal de anúncio e fallback.
- * Lógica original preservada: utiliza diretamente as URLs HLS retornadas pela API, sem proxy.
+ * Agora utiliza a endpoint unificada ?stream={username} para busca por usuário.
  */
 function initializeMainPlayer() {
   const playerContainer = document.getElementById("player");
@@ -380,7 +381,7 @@ function initializeMainPlayer() {
   // Busca por usuário
   if (params.has("user")) {
     const username = params.get("user");
-    fetch(`https://api.xcam.gay/?user=${encodeURIComponent(username)}`)
+    fetch(`https://api.xcam.gay/?stream=${encodeURIComponent(username)}`)
       .then((response) => {
         if (!response.ok) throw new Error("Erro ao carregar dados do usuário.");
         return response.json();
@@ -388,8 +389,11 @@ function initializeMainPlayer() {
       .then((data) => {
         const graphData = data.graphData || {};
         const streamInfo = data.streamInfo || {};
-        // Usa diretamente a URL HLS original, sem proxy reverso
-        const videoSrc = streamInfo.cdnURL || streamInfo.edgeURL || (graphData.preview && graphData.preview.src);
+        // Seleciona a melhor URL disponível
+        const videoSrc =
+          streamInfo.cdnURL ||
+          streamInfo.edgeURL ||
+          (graphData.preview && graphData.preview.src);
 
         if (!videoSrc) {
           console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
@@ -409,7 +413,7 @@ function initializeMainPlayer() {
         reloadWithFallback();
       });
 
-  // Busca por ID de transmissão
+  // Busca por ID de transmissão (mantém lógica original)
   } else if (params.has("id")) {
     const searchValue = params.get("id");
     fetch("https://api.xcam.gay/?limit=3333&format=json")
@@ -452,7 +456,7 @@ function setupMainPlayer(camera, username, videoSrc, poster) {
   const playerContainer = document.getElementById("player");
   if (playerContainer) playerContainer.innerHTML = "";
 
-  const playerInstance = jwplayer("player").setup({
+  jwplayer("player").setup({
     controls: true,
     sharing: true,
     autostart: false,
@@ -473,213 +477,4 @@ function setupMainPlayer(camera, username, videoSrc, poster) {
     },
     playlist: [{
       title: `@${camera?.username || username || "Unknown"}`,
-      description: Array.isArray(camera?.tags) ? camera.tags.map((tag) => `#${tag.name}`).join(" ") : "",
-      image: poster || "https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg" || "https://xcam.gay/src/loading.gif",
-      sources: [{
-        file: videoSrc,
-        type: "application/x-mpegURL",
-        label: "Source"
-      }]
-    }],
-    events: {
-      error: handleMainPlayerError
-    }
-  });
-}
-
-/**
- * Exibe vídeo de fallback local caso não seja possível carregar o stream.
- */
-function reloadWithFallback() {
-  const player = document.getElementById("player");
-  if (player) {
-    player.innerHTML = "";
-    jwplayer("player").setup({
-      file: "https://xcam.gay/src/error.mp4",
-      autostart: true,
-      repeat: true,
-      controls: false
-    });
-  }
-}
-
-/* === BLOCO: TRATAMENTO DE ERROS (Lógica original preservada e expandida) =========== */
-
-/**
- * Exibe mensagem de erro detalhada e executa ação de fallback após contagem regressiva.
- * @param {Object} event - Evento de erro do JW Player.
- * @param {Function} fallbackAction - Função a ser chamada após o erro.
- */
-function displayErrorMessage(event, fallbackAction) {
-  console.error("Erro no JW Player:", event.message);
-
-  const playerContainer = document.getElementById("player");
-  let countdown = 5;
-
-  // Oculta o player para não sobrepor a mensagem
-  if (playerContainer) playerContainer.style.display = "none";
-
-  // Cria overlay de erro fullscreen se não existir
-  let errorOverlay = document.getElementById("xcam-error-overlay");
-  if (!errorOverlay) {
-    errorOverlay = document.createElement("div");
-    errorOverlay.id = "xcam-error-overlay";
-    errorOverlay.style.position = "fixed";
-    errorOverlay.style.top = "0";
-    errorOverlay.style.left = "0";
-    errorOverlay.style.width = "100vw";
-    errorOverlay.style.height = "100vh";
-    errorOverlay.style.display = "flex";
-    errorOverlay.style.flexDirection = "column";
-    errorOverlay.style.justifyContent = "center";
-    errorOverlay.style.alignItems = "center";
-    errorOverlay.style.background = "rgba(51,51,51,0.85)";
-    errorOverlay.style.color = "#FFF";
-    errorOverlay.style.fontFamily = "sans-serif";
-    errorOverlay.style.zIndex = "9999";
-    document.body.appendChild(errorOverlay);
-  }
-
-  // Mensagem de erro detalhada
-  const message = ERROR_MESSAGES[event.code] || `<strong>Erro desconhecido (${event.code}).</strong>`;
-
-  // Exibe mensagem e inicia contagem regressiva para fallback
-  errorOverlay.innerHTML = `
-    <div style="font-size:1.4em;margin-bottom:1em;">${message}</div>
-    <div>Recarregando em <span id="countdown">${countdown}</span> segundos...</div>
-  `;
-
-  const interval = setInterval(() => {
-    countdown--;
-    const countdownSpan = document.getElementById("countdown");
-    if (countdownSpan) countdownSpan.textContent = countdown;
-    if (countdown <= 0) {
-      clearInterval(interval);
-      // Remove overlay e mostra o player novamente
-      if (errorOverlay) errorOverlay.remove();
-      if (playerContainer) playerContainer.style.display = "";
-      fallbackAction();
-    }
-  }, 1000);
-}
-
-/**
- * Handler de erro do player principal.
- * @param {Object} event - Evento de erro do JW Player.
- */
-function handleMainPlayerError(event) {
-  displayErrorMessage(event, reloadWithFallback);
-}
-
-/**
- * Handler de erro do player preview.
- * @param {Object} event - Evento de erro do JW Player.
- */
-function handlePreviewPlayerError(event) {
-  displayErrorMessage(event, handlePreviewRetry);
-}
-
-/* === BLOCO: MODAL DE ANÚNCIO (Apenas para Modo Padrão) ============================= */
-
-/**
- * Inicializa o modal de anúncio exibido antes do player principal.
- */
-function initializeAdModal() {
-  const adModal = document.getElementById("ad-modal");
-  const closeAdButton = document.getElementById("close-ad-btn");
-  const countdownElement = document.getElementById("ad-countdown");
-  const player = document.getElementById("player");
-
-  if (!adModal || !closeAdButton || !countdownElement || !player) return;
-
-  // Remove a imagem de fundo do body e mostra o modal.
-  document.body.style.backgroundImage = 'none';
-  adModal.style.display = "flex";
-  player.style.display = "none";
-
-  let countdown = 10;
-  countdownElement.textContent = countdown;
-  const interval = setInterval(() => {
-    countdown--;
-    countdownElement.textContent = countdown;
-    if (countdown <= 0) {
-      clearInterval(interval);
-      closeAdButton.textContent = "Fechar";
-      closeAdButton.removeAttribute("disabled");
-      closeAdButton.style.cursor = "pointer";
-    }
-  }, 1000);
-
-  closeAdButton.addEventListener("click", () => {
-    if (countdown <= 0) {
-      adModal.style.display = "none";
-      player.style.display = "block";
-    }
-  });
-}
-
-/* === BLOCO: FUNÇÕES AUXILIARES PRESERVADAS DO SCRIPT ORIGINAL ====================== */
-
-/**
- * Adiciona botão de download ao player JWPlayer.
- * @param {Object} playerInstance - Instância do JWPlayer.
- */
-function addDownloadButton(playerInstance) {
-  const buttonId = "download-video-button";
-  const iconPath = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL[...]";
-  const tooltipText = "Download Video";
-
-  playerInstance.addButton(
-    iconPath,
-    tooltipText,
-    () => {
-      const playlistItem = playerInstance.getPlaylistItem();
-      const anchor = document.createElement("a");
-      anchor.setAttribute("href", playlistItem.file);
-      anchor.setAttribute("download", playlistItem.file.split("/").pop());
-      anchor.style.display = "none";
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-    },
-    buttonId
-  );
-}
-
-/**
- * Realinha o time slider do player para melhor UX.
- * @param {Object} playerInstance - Instância do JWPlayer.
- */
-function alignTimeSlider(playerInstance) {
-  const playerContainer = playerInstance.getContainer();
-  const buttonContainer = playerContainer.querySelector(".jw-button-container");
-  const spacer = buttonContainer.querySelector(".jw-spacer");
-  const timeSlider = playerContainer.querySelector(".jw-slider-time");
-  if (spacer && timeSlider) {
-    buttonContainer.replaceChild(timeSlider, spacer);
-  }
-}
-
-/* ============================================================================
- * 4. RODAPÉ / FIM DO CÓDIGO
- * ========================================================================== */
-/**
- * =====================================================================================
- * FIM DO SCRIPT
- * =====================================================================================
- *
- * @log de mudanças:
- * - v5.8: Restaurada a lógica completa do player principal (busca por ID, erros, etc.)
- *         e corrigida a inicialização para evitar "race conditions".
- * - v5.7: Melhorada a lógica de hover no modo preview com debounce.
- * - v5.6: Integrado tratamento de erros detalhado para ambos os modos.
- * - v5.5: Restaurada a lógica completa do player principal (busca por ID, erros, etc.).
- * - v5.4: Implementação da arquitetura de modo duplo (padrão vs. preview).
- *
- * @roadmap futuro:
- * - Considerar a implementação de um sistema de cache no lado do servidor (com
- *   Cloudflare Workers e KV) para diminuir a carga na API principal.
- * - Adicionar funcionalidade de "Favoritos" com persistência em localStorage.
- *
- * =====================================================================================
- */
+      description: Array.is
