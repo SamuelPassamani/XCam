@@ -594,7 +594,7 @@ export default {
       if (pathname.startsWith("/user/")) {
         const parts = pathname.split("/").filter(Boolean);
         const username = parts[1];
-        const endpoint = (parts[2] || "").toLowerCase(); // <-- Torna minúsculo para comparar
+        const endpoint = (parts[2] || "").toLowerCase();
 
         if (endpoint === "liveinfo") {
           // Sempre retorna streamInfo
@@ -608,6 +608,20 @@ export default {
           return new Response(JSON.stringify(data, null, 2), {
             headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
           });
+        } else if (!endpoint) {
+          // Se não houver endpoint (apenas /user/{username}), tenta liveInfo primeiro
+          const liveInfo = await handleLiveInfo(username);
+          // Se liveInfo não retornar dados válidos (ex: usuário offline), retorna profile
+          if (liveInfo && !liveInfo.error && (liveInfo.cdnURL || liveInfo.edgeURL)) {
+            return new Response(JSON.stringify(liveInfo, null, 2), {
+              headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
+            });
+          } else {
+            const profile = await handleUserProfile(username);
+            return new Response(JSON.stringify(profile, null, 2), {
+              headers: { "Cache-Control": "no-store", ...corsHeaders, "Content-Type": "application/json" }
+            });
+          }
         } else {
           // Se não for liveinfo nem info, retorna erro explícito
           return new Response(JSON.stringify({ error: "Endpoint não suportado em /user/" }), {
