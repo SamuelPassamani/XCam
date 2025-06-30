@@ -25,7 +25,7 @@ const PREVIEW_CONFIG = {
   RETRY_DELAY: 5000, // Delay entre tentativas de retry (ms)
   PREVIEW_DURATION: 3000, // Duração do preview antes de pausar (ms)
   API_ENDPOINT: "https://api.xcam.gay/", // Endpoint base da API
-  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files
+  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4",
   LOADING_GIF: "https://cdn.xcam.gay/0:/src/files/loading.gif" // GIF de loading
 };
 
