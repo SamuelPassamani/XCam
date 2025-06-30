@@ -25,7 +25,7 @@ const PREVIEW_CONFIG = {
   RETRY_DELAY: 5000, // Delay entre tentativas de retry (ms)
   PREVIEW_DURATION: 3000, // Duração do preview antes de pausar (ms)
   API_ENDPOINT: "https://api.xcam.gay/", // Endpoint base da API
-  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4", // Vídeo de fallback
+  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files
   LOADING_GIF: "https://cdn.xcam.gay/0:/src/files/loading.gif" // GIF de loading
 };
 
@@ -128,6 +128,35 @@ function getBestPlaylistImage(graphData, posterInfo, username) {
   return PREVIEW_CONFIG.LOADING_GIF;
 }
 
+/**
+ * Função utilitária para determinar a melhor URL de vídeo (videoSrc) para todos os modos.
+ * Ordem de prioridade: cdnURL > edgeURL > preview.src
+ * Se a URL selecionada for do domínio stackvaults-hls.xcdnpro.com, tenta a próxima da ordem.
+ * @param {object} streamInfo - Dados de streamInfo retornado pela API
+ * @param {object} graphData - Dados de graphData retornado pela API
+ * @returns {string|null} URL do vídeo HLS ideal ou null se nenhuma válida
+ */
+function getBestVideoSrc(streamInfo, graphData) {
+  // Lista de candidatos na ordem de prioridade
+  const candidates = [
+    streamInfo?.cdnURL,
+    streamInfo?.edgeURL,
+    graphData?.preview?.src
+  ];
+  // Função para verificar se é stackvaults-hls.xcdnpro.com
+  const isStackVaults = url => typeof url === "string" && url.includes("stackvaults-hls.xcdnpro.com");
+  // Percorre os candidatos, pulando stackvaults-hls.xcdnpro.com até o fim
+  for (let i = 0; i < candidates.length; i++) {
+    const url = candidates[i];
+    if (url && !isStackVaults(url)) {
+      return url;
+    }
+  }
+  // Se só houver stackvaults-hls.xcdnpro.com, retorna o primeiro encontrado
+  const fallback = candidates.find(isStackVaults);
+  return fallback || null;
+}
+
 /* === BLOCO: MODO PREVIEW (Poster Animado) ========================================= */
 
 /**
@@ -196,11 +225,8 @@ async function initializePreviewPlayer() {
     const streamInfo = data.streamInfo || {};
     const posterInfo = data.posterInfo || {};
 
-    // Seleciona a melhor URL disponível para o vídeo
-    const videoSrc =
-      streamInfo.cdnURL ||
-      streamInfo.edgeURL ||
-      (graphData.preview && graphData.preview.src);
+    // Usa a função utilitária para determinar a melhor URL de vídeo
+    const videoSrc = getBestVideoSrc(streamInfo, graphData);
 
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
@@ -364,11 +390,8 @@ async function initializeCarouselPlayer() {
     const streamInfo = data.streamInfo || {};
     const posterInfo = data.posterInfo || {};
 
-    // Seleciona a melhor URL disponível para o vídeo
-    const videoSrc =
-      streamInfo.cdnURL ||
-      streamInfo.edgeURL ||
-      (graphData.preview && graphData.preview.src);
+    // Usa a função utilitária para determinar a melhor URL de vídeo
+    const videoSrc = getBestVideoSrc(streamInfo, graphData);
 
     if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
 
@@ -450,11 +473,8 @@ function initializeMainPlayer() {
         const streamInfo = data.streamInfo || {};
         const posterInfo = data.posterInfo || {};
 
-        // Seleciona a melhor URL disponível para o vídeo
-        const videoSrc =
-          streamInfo.cdnURL ||
-          streamInfo.edgeURL ||
-          (graphData.preview && graphData.preview.src);
+        // Usa a função utilitária para determinar a melhor URL de vídeo
+        const videoSrc = getBestVideoSrc(streamInfo, graphData);
 
         if (!videoSrc) {
           console.warn("Nenhum stream válido encontrado para o usuário. Aplicando fallback local.");
