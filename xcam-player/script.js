@@ -264,7 +264,7 @@ function setupPreviewPlayer(camera, videoSrc, image) {
       xhrSetup: function(xhr, url) {
         xhr.withCredentials = false;
       }
-    },
+    }, 
     pipIcon: false,
     playlist: [{
       title: `@${camera.username}`,

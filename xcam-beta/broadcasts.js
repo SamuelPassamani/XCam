@@ -538,7 +538,7 @@ async function loadFilteredBroadcasts() {
       showEmptyMessage();
       return;
     }
-
+ 
     allItems = result;
     renderNextBatch();
 

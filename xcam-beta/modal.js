@@ -96,7 +96,7 @@ function openModal(username) {
       </iframe>
     </div>
   `;
-
+ 
   // Ativa o modal e impede scroll do fundo
   modal.classList.add("active");
   document.body.classList.add("modal-open");
