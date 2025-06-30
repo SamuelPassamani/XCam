@@ -263,30 +263,55 @@ function setupPreviewPlayer(camera, videoSrc, image) {
 
 /**
  * Adiciona eventos de hover para pausar e retomar o preview animado.
- * Usa requestAnimationFrame e só executa jw.play(true) se o player não estiver tocando.
- * Corrigido: autoplay já no primeiro mouseenter.
+ * Refinado: inclui debounce no play, delay no pause, só executa play se o player estiver pronto,
+ * e evita múltiplos plays/pauses rápidos.
  */
 function addPreviewHoverEvents() {
   const playerContainer = document.getElementById("player");
   const jw = jwplayer("player");
-  let playTimeout;
+  let playTimeout = null;
+  let pauseTimeout = null;
+  const DEBOUNCE_PLAY = 100; // ms: tempo mínimo de hover antes de dar play
+  const DELAY_PAUSE = 100;   // ms: tempo de espera antes de pausar ao sair do hover
 
   playerContainer.addEventListener("mouseenter", () => {
+    // Cancela qualquer tentativa de pause pendente
+    if (pauseTimeout) {
+      clearTimeout(pauseTimeout);
+      pauseTimeout = null;
+    }
+    // Cancela play agendado anterior, se houver
     if (playTimeout) {
       cancelAnimationFrame(playTimeout);
       playTimeout = null;
     }
-    if (jw.getState() !== "playing") {
-      playTimeout = requestAnimationFrame(() => jw.play(true));
-    }
+    // Debounce: só executa play se o mouse ficar sobre o player por tempo suficiente
+    playTimeout = requestAnimationFrame(() => {
+      setTimeout(() => {
+        // Só executa play se o player estiver pronto (idle ou paused)
+        const state = jw.getState();
+        if (state === "idle" || state === "paused") {
+          jw.play(true);
+          // Feedback visual opcional: animação leve ao iniciar preview
+          playerContainer.classList.add("xcam-preview-active");
+          setTimeout(() => playerContainer.classList.remove("xcam-preview-active"), 200);
+        }
+      }, DEBOUNCE_PLAY);
+    });
   });
 
   playerContainer.addEventListener("mouseleave", () => {
+    // Cancela play agendado, se houver
     if (playTimeout) {
       cancelAnimationFrame(playTimeout);
       playTimeout = null;
     }
-    jw.pause(true);
+    // Delay para pause: evita pausas acidentais em movimentos rápidos
+    pauseTimeout = setTimeout(() => {
+      jw.pause(true);
+      // Feedback visual opcional: remove classe de preview ativo
+      playerContainer.classList.remove("xcam-preview-active");
+    }, DELAY_PAUSE);
   });
 }
 
