@@ -81,6 +81,7 @@ function openModal(username) {
   const modal = document.getElementById("broadcast-modal");
   const modalContent = document.getElementById("modal-content");
 
+  // Popula o conteúdo ANTES de ativar o modal
   modalContent.innerHTML = `
     <button class="modal-close" title="Fechar (ESC)" aria-label="Fechar modal">
       <span aria-hidden="true">&times;</span>
@@ -99,9 +100,14 @@ function openModal(username) {
   // Ativa o modal e impede scroll do fundo
   modal.classList.add("active");
   document.body.classList.add("modal-open");
-  modalContent.focus();
-  document.dispatchEvent(new CustomEvent("modal:opened"));
-  modalContent.scrollTop = 0;
+
+  // Foca o modal após exibir
+  setTimeout(() => {
+    modalContent.setAttribute("tabindex", "-1");
+    modalContent.focus();
+    document.dispatchEvent(new CustomEvent("modal:opened"));
+    modalContent.scrollTop = 0;
+  }, 10);
 }
 
 // ========== FECHA MODAL ==========

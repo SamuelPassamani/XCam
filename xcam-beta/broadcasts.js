@@ -542,9 +542,13 @@ async function loadFilteredBroadcasts() {
     allItems = result;
     renderNextBatch();
 
+    // Adiciona o botão 'Carregar Mais' ao container correto, não ao parent do grid
+    const loadMoreContainer = document.getElementById("load-more-container");
     if (allItems.length > renderedItemsCount) {
-      grid.parentElement.appendChild(loadMoreBtn);
+      loadMoreContainer.appendChild(loadMoreBtn);
       loadMoreBtn.style.display = "block";
+    } else {
+      loadMoreBtn.style.display = "none";
     }
   } catch (err) {
     console.error("Erro ao processar transmissões:", err);
