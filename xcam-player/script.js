@@ -34,36 +34,36 @@ let previewRetryCount = 0;
 
 // Mensagens de erro detalhadas para o JW Player
 const ERROR_MESSAGES = {
-  100000: "<strong>Erro desconhecido.</strong> O player falhou ao carregar.",
-  100001: "<strong>Tempo limite.</strong> A configuração do player demorou muito.",
-  100011: "<strong>Licença ausente.</strong> Chave de licença não fornecida.",
-  100012: "<strong>Licença inválida.</strong> Chave de licença inválida.",
-  100013: "<strong>Licença expirada.</strong> A chave de licença expirou.",
-  101100: "<strong>Componente ausente.</strong> Falha ao carregar um componente necessário do player.",
-  224002: "<strong>Formato não suportado.</strong> O formato do vídeo não é suportado.",
-  224003: "<strong>Vídeo corrompido.</strong> O vídeo está em formato inválido ou danificado.",
-  230000: "<strong>Erro de decodificação.</strong> O player não conseguiu decodificar o vídeo.",
-  232001: "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo.",
-  232002: "<strong>Erro de rede.</strong> Falha na solicitação de mídia.",
-  232003: "<strong>Erro de mídia.</strong> O arquivo de vídeo pode estar corrompido.",
-  232004: "<strong>Erro de DRM.</strong> Conteúdo protegido não pôde ser reproduzido.",
-  232005: "<strong>Erro de acesso (CORS).</strong> O recurso solicitado não está acessível a partir desta página.",
-  232006: "<strong>Erro de autenticação.</strong> Acesso não autorizado ao conteúdo.",
-  232007: "<strong>Erro de licença.</strong> Falha ao validar a licença do conteúdo.",
-  232008: "<strong>Token inválido.</strong> Token de acesso expirado ou corrompido.",
-  232009: "<strong>Erro de assinatura.</strong> Verificação de integridade do conteúdo falhou.",
-  232010: "<strong>Restrição geográfica.</strong> O conteúdo não está disponível na sua região.",
-  232011: "<strong>Erro de conexão.</strong> Problemas de rede ou configurações do navegador.",
-  232012: "<strong>Erro de tempo limite.</strong> O conteúdo demorou muito para carregar.",
-  232013: "<strong>Formato incompatível.</strong> O formato do vídeo não é compatível.",
-  232014: "<strong>Erro de codec.</strong> Codec necessário não está disponível.",
-  232015: "<strong>Erro de resolução.</strong> Resolução de vídeo não suportada.",
-  232016: "<strong>Erro de bitrate.</strong> A taxa de bits é muito alta para o dispositivo.",
-  232017: "<strong>Erro de buffer.</strong> O vídeo não pode ser carregado corretamente.",
-  232018: "<strong>Erro de sincronização.</strong> Falha ao sincronizar áudio e vídeo.",
-  232019: "<strong>Erro de renderização.</strong> O vídeo não pôde ser renderizado.",
-  232020: "<strong>Erro desconhecido na reprodução.</strong> Um erro não identificado ocorreu.",
-  232600: "<strong>Erro no stream.</strong> O arquivo está indisponível ou corrompido."
+  "100000": "<strong>Erro desconhecido.</strong> O player falhou ao carregar.",
+  "100001": "<strong>Tempo limite.</strong> A configuração do player demorou muito.",
+  "100011": "<strong>Licença ausente.</strong> Chave de licença não fornecida.",
+  "100012": "<strong>Licença inválida.</strong> Chave de licença inválida.",
+  "100013": "<strong>Licença expirada.</strong> A chave de licença expirou.",
+  "101100": "<strong>Componente ausente.</strong> Falha ao carregar um componente necessário do player.",
+  "224002": "<strong>Formato não suportado.</strong> O formato do vídeo não é suportado.",
+  "224003": "<strong>Vídeo corrompido.</strong> O vídeo está em formato inválido ou danificado.",
+  "230000": "<strong>Erro de decodificação.</strong> O player não conseguiu decodificar o vídeo.",
+  "232001": "<strong>Erro de conexão com o servidor.</strong> Não foi possível se conectar ao servidor do vídeo.",
+  "232002": "<strong>Erro de rede.</strong> Falha na solicitação de mídia.",
+  "232003": "<strong>Erro de mídia.</strong> O arquivo de vídeo pode estar corrompido.",
+  "232004": "<strong>Erro de DRM.</strong> Conteúdo protegido não pôde ser reproduzido.",
+  "232005": "<strong>Erro de acesso (CORS).</strong> O recurso solicitado não está acessível a partir desta página.",
+  "232006": "<strong>Erro de autenticação.</strong> Acesso não autorizado ao conteúdo.",
+  "232007": "<strong>Erro de licença.</strong> Falha ao validar a licença do conteúdo.",
+  "232008": "<strong>Token inválido.</strong> Token de acesso expirado ou corrompido.",
+  "232009": "<strong>Erro de assinatura.</strong> Verificação de integridade do conteúdo falhou.",
+  "232010": "<strong>Restrição geográfica.</strong> O conteúdo não está disponível na sua região.",
+  "232011": "<strong>Erro de conexão.</strong> Problemas de rede ou configurações do navegador.",
+  "232012": "<strong>Erro de tempo limite.</strong> O conteúdo demorou muito para carregar.",
+  "232013": "<strong>Formato incompatível.</strong> O formato do vídeo não é compatível.",
+  "232014": "<strong>Erro de codec.</strong> Codec necessário não está disponível.",
+  "232015": "<strong>Erro de resolução.</strong> Resolução de vídeo não suportada.",
+  "232016": "<strong>Erro de bitrate.</strong> A taxa de bits é muito alta para o dispositivo.",
+  "232017": "<strong>Erro de buffer.</strong> O vídeo não pode ser carregado corretamente.",
+  "232018": "<strong>Erro de sincronização.</strong> Falha ao sincronizar áudio e vídeo.",
+  "232019": "<strong>Erro de renderização.</strong> O vídeo não pôde ser renderizado.",
+  "232020": "<strong>Erro desconhecido na reprodução.</strong> Um erro não identificado ocorreu.",
+  "232600": "<strong>Erro no stream.</strong> O arquivo está indisponível ou corrompido."
 };
 
 /* ============================================================================
@@ -800,7 +800,7 @@ function alignTimeSlider(playerInstance) {
  *
  * @roadmap futuro:
  * - Considerar a implementação de um sistema de cache no lado do servidor (com
- *   Cloudflare Workers e KV) para diminuir a carga na API principal.
+ * Cloudflare Workers e KV) para diminuir a carga na API principal.
  * - Adicionar funcionalidade de "Favoritos" com persistência em localStorage.
  *
  * =====================================================================================
