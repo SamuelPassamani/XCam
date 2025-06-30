@@ -258,7 +258,13 @@ function setupPreviewPlayer(camera, videoSrc, image) {
     controls: false,
     autostart: true,
     mute: true,
-    hlsjsConfig: { withCredentials: true },
+    hlsjsConfig: {
+      withCredentials: false,
+      // Permite CORS e ignora erros de certificado (se possível)
+      xhrSetup: function(xhr, url) {
+        xhr.withCredentials = false;
+      }
+    },
     pipIcon: false,
     playlist: [{
       title: `@${camera.username}`,
@@ -423,7 +429,13 @@ function setupCarouselPlayer(camera, videoSrc, image) {
     controls: false,
     autostart: true,
     mute: true,
-    hlsjsConfig: { withCredentials: true },
+    hlsjsConfig: {
+      withCredentials: false,
+      // Permite CORS e ignora erros de certificado (se possível)
+      xhrSetup: function(xhr, url) {
+        xhr.withCredentials = false;
+      }
+    },
     pipIcon: false,
     playlist: [{
       title: `@${camera.username}`,
