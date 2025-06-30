@@ -263,6 +263,7 @@ function setupPreviewPlayer(camera, videoSrc, image) {
 
 /**
  * Adiciona eventos de hover para pausar e retomar o preview animado.
+ * Agora utiliza requestAnimationFrame para melhor performance.
  */
 function addPreviewHoverEvents() {
   const playerContainer = document.getElementById("player");
@@ -271,17 +272,23 @@ function addPreviewHoverEvents() {
   let hasPlayedOnHover = false;
 
   playerContainer.addEventListener("mouseenter", () => {
-    clearTimeout(playTimeout);
+    if (playTimeout) {
+      cancelAnimationFrame(playTimeout);
+      playTimeout = null;
+    }
     if (!hasPlayedOnHover) {
       jw.play(true);
       hasPlayedOnHover = true;
     } else {
-      playTimeout = setTimeout(() => jw.play(true), 200);
+      playTimeout = requestAnimationFrame(() => jw.play(true));
     }
   });
 
   playerContainer.addEventListener("mouseleave", () => {
-    clearTimeout(playTimeout);
+    if (playTimeout) {
+      cancelAnimationFrame(playTimeout);
+      playTimeout = null;
+    }
     jw.pause(true);
   });
 }
