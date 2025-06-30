@@ -26,7 +26,118 @@ const PREVIEW_CONFIG = {
   PREVIEW_DURATION: 3000, // Duração do preview antes de pausar (ms)
   API_ENDPOINT: "https://api.xcam.gay/", // Endpoint base da API
   FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4",
-  LOADING_GIF: "https://cdn.xcam.gay/0:/src/files/loading.gif" // GIF de loading
+    // ...existing code...
+  
+  /**
+   * Inicializa o player de preview animado, configurando poster, vídeo e eventos de hover.
+   * Exibe o LOADING_GIF até o vídeo realmente iniciar (firstFrame).
+   * @param {Object} camera - Objeto com dados da câmera (username, poster).
+   * @param {string} videoSrc - URL do vídeo HLS.
+   * @param {string} image - URL da imagem ideal para o player.
+   */
+  function setupPreviewPlayer(camera, videoSrc, image) {
+    const playerContainer = document.getElementById("player");
+    if (!playerContainer) return;
+  
+    // Exibe o LOADING_GIF antes de iniciar o player
+    playerContainer.innerHTML = `<img id="xcam-loading-gif" src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;position:absolute;top:0;left:0;z-index:10;" />`;
+    previewRetryCount = 0;
+  
+    jwplayer("player").setup({
+      controls: false,
+      autostart: true,
+      mute: true,
+      hlsjsConfig: {
+        withCredentials: false,
+        xhrSetup: function(xhr, url) {
+          xhr.withCredentials = false;
+        }
+      },
+      pipIcon: false,
+      playlist: [{
+        title: `@${camera.username}`,
+        image: image,
+        sources: [{ file: videoSrc, type: "application/x-mpegURL" }]
+      }],
+      events: {
+        error: handlePreviewPlayerError
+      }
+    });
+  
+    // Remove o LOADING_GIF só quando o vídeo realmente começar a exibir frames
+    jwplayer("player").on("firstFrame", () => {
+      const loadingGif = document.getElementById("xcam-loading-gif");
+      if (loadingGif) loadingGif.remove();
+    });
+  
+    jwplayer("player").on("ready", () => {
+      const video = document.querySelector("#player video");
+      if (video) {
+        video.setAttribute("disablepictureinpicture", "");
+        video.setAttribute("controlsList", "nodownload nofullscreen noremoteplayback nopictureinpicture");
+      }
+      setTimeout(() => {
+        if (jwplayer("player")?.getState() !== 'paused') {
+          jwplayer("player").pause(true);
+        }
+      }, PREVIEW_CONFIG.PREVIEW_DURATION);
+      addPreviewHoverEvents();
+    });
+  }
+  
+  /**
+   * Inicializa o player do modo carousel, sem eventos de hover.
+   * Exibe o LOADING_GIF até o vídeo realmente iniciar (firstFrame).
+   * @param {Object} camera - Objeto com dados da câmera (username, poster).
+   * @param {string} videoSrc - URL do vídeo HLS.
+   * @param {string} image - URL da imagem ideal para o player.
+   */
+  function setupCarouselPlayer(camera, videoSrc, image) {
+    const playerContainer = document.getElementById("player");
+    if (!playerContainer) return;
+  
+    // Exibe o LOADING_GIF antes de iniciar o player
+    playerContainer.innerHTML = `<img id="xcam-loading-gif" src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;position:absolute;top:0;left:0;z-index:10;" />`;
+    previewRetryCount = 0;
+  
+    jwplayer("player").setup({
+      controls: false,
+      autostart: true,
+      mute: true,
+      hlsjsConfig: {
+        withCredentials: false,
+        xhrSetup: function(xhr, url) {
+          xhr.withCredentials = false;
+        }
+      },
+      pipIcon: false,
+      playlist: [{
+        title: `@${camera.username}`,
+        image: image,
+        sources: [{ file: videoSrc, type: "application/x-mpegURL" }]
+      }],
+      events: {
+        error: handleCarouselPlayerError
+      }
+    });
+  
+    // Remove o LOADING_GIF só quando o vídeo realmente começar a exibir frames
+    jwplayer("player").on("firstFrame", () => {
+      const loadingGif = document.getElementById("xcam-loading-gif");
+      if (loadingGif) loadingGif.remove();
+    });
+  
+    jwplayer("player").on("ready", () => {
+      const video = document.querySelector("#player video");
+      if (video) {
+        video.setAttribute("disablepictureinpicture", "");
+        video.setAttribute("controlsList", "nodownload nofullscreen noremoteplayback nopictureinpicture");
+      }
+    });
+    // Não adiciona eventos de hover, nunca pausa o vídeo
+  }
+  
+  // ...existing code...: "https://cdn.xcam.gay/0:/src/files/loading.gif" // GIF de loading
 };
 
 // Variável de controle para tentativas de retry no preview/carousel
@@ -243,6 +354,7 @@ async function initializePreviewPlayer() {
 
 /**
  * Inicializa o player de preview animado, configurando poster, vídeo e eventos de hover.
+ * Exibe o LOADING_GIF até o vídeo realmente iniciar (firstFrame).
  * @param {Object} camera - Objeto com dados da câmera (username, poster).
  * @param {string} videoSrc - URL do vídeo HLS.
  * @param {string} image - URL da imagem ideal para o player.
@@ -251,7 +363,8 @@ function setupPreviewPlayer(camera, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (!playerContainer) return;
 
-  playerContainer.innerHTML = "";
+  // Exibe o LOADING_GIF antes de iniciar o player
+  playerContainer.innerHTML = `<img id="xcam-loading-gif" src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;position:absolute;top:0;left:0;z-index:10;" />`;
   previewRetryCount = 0;
 
   jwplayer("player").setup({
@@ -260,11 +373,10 @@ function setupPreviewPlayer(camera, videoSrc, image) {
     mute: true,
     hlsjsConfig: {
       withCredentials: false,
-      // Permite CORS e ignora erros de certificado (se possível)
       xhrSetup: function(xhr, url) {
         xhr.withCredentials = false;
       }
-    }, 
+    },
     pipIcon: false,
     playlist: [{
       title: `@${camera.username}`,
@@ -276,14 +388,18 @@ function setupPreviewPlayer(camera, videoSrc, image) {
     }
   });
 
+  // Remove o LOADING_GIF só quando o vídeo realmente começar a exibir frames
+  jwplayer("player").on("firstFrame", () => {
+    const loadingGif = document.getElementById("xcam-loading-gif");
+    if (loadingGif) loadingGif.remove();
+  });
+
   jwplayer("player").on("ready", () => {
-    // Desabilita PiP no elemento <video> nativo
     const video = document.querySelector("#player video");
     if (video) {
       video.setAttribute("disablepictureinpicture", "");
       video.setAttribute("controlsList", "nodownload nofullscreen noremoteplayback nopictureinpicture");
     }
-    // Pausa o vídeo após o tempo de preview
     setTimeout(() => {
       if (jwplayer("player")?.getState() !== 'paused') {
         jwplayer("player").pause(true);
@@ -414,6 +530,7 @@ async function initializeCarouselPlayer() {
 
 /**
  * Inicializa o player do modo carousel, sem eventos de hover.
+ * Exibe o LOADING_GIF até o vídeo realmente iniciar (firstFrame).
  * @param {Object} camera - Objeto com dados da câmera (username, poster).
  * @param {string} videoSrc - URL do vídeo HLS.
  * @param {string} image - URL da imagem ideal para o player.
@@ -422,7 +539,8 @@ function setupCarouselPlayer(camera, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (!playerContainer) return;
 
-  playerContainer.innerHTML = "";
+  // Exibe o LOADING_GIF antes de iniciar o player
+  playerContainer.innerHTML = `<img id="xcam-loading-gif" src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100%;height:100%;object-fit:contain;background:#000;position:absolute;top:0;left:0;z-index:10;" />`;
   previewRetryCount = 0;
 
   jwplayer("player").setup({
@@ -431,7 +549,6 @@ function setupCarouselPlayer(camera, videoSrc, image) {
     mute: true,
     hlsjsConfig: {
       withCredentials: false,
-      // Permite CORS e ignora erros de certificado (se possível)
       xhrSetup: function(xhr, url) {
         xhr.withCredentials = false;
       }
@@ -445,6 +562,12 @@ function setupCarouselPlayer(camera, videoSrc, image) {
     events: {
       error: handleCarouselPlayerError
     }
+  });
+
+  // Remove o LOADING_GIF só quando o vídeo realmente começar a exibir frames
+  jwplayer("player").on("firstFrame", () => {
+    const loadingGif = document.getElementById("xcam-loading-gif");
+    if (loadingGif) loadingGif.remove();
   });
 
   jwplayer("player").on("ready", () => {
@@ -545,6 +668,7 @@ function initializeMainPlayer() {
 
 /**
  * Monta e inicializa o player principal do JWPlayer com todos os controles e informações.
+ * Exibe o LOADING_GIF até o vídeo realmente iniciar (firstFrame).
  * @param {Object} camera - Objeto da câmera (username, tags, preview).
  * @param {string} username - Nome do usuário.
  * @param {string} videoSrc - URL do vídeo HLS.
@@ -552,7 +676,9 @@ function initializeMainPlayer() {
  */
 function setupMainPlayer(camera, username, videoSrc, image) {
   const playerContainer = document.getElementById("player");
-  if (playerContainer) playerContainer.innerHTML = "";
+  if (playerContainer) {
+    playerContainer.innerHTML = `<img id="xcam-loading-gif" src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;display:block;position:absolute;top:0;left:0;z-index:10;" />`;
+  }
 
   jwplayer("player").setup({
     controls: true,
@@ -587,20 +713,31 @@ function setupMainPlayer(camera, username, videoSrc, image) {
       error: handleMainPlayerError
     }
   });
+
+  // Remove o LOADING_GIF só quando o vídeo realmente começar a exibir frames
+  jwplayer("player").on("firstFrame", () => {
+    const loadingGif = document.getElementById("xcam-loading-gif");
+    if (loadingGif) loadingGif.remove();
+  });
 }
 
 /**
  * Exibe vídeo de fallback local caso não seja possível carregar o stream.
+ * Exibe o LOADING_GIF até o vídeo de fallback realmente iniciar (firstFrame).
  */
 function reloadWithFallback() {
   const player = document.getElementById("player");
   if (player) {
-    player.innerHTML = "";
+    player.innerHTML = `<img id="xcam-loading-gif" src="${PREVIEW_CONFIG.LOADING_GIF}" alt="Carregando..." style="width:100vw;height:100vh;object-fit:contain;background:#000;display:block;position:absolute;top:0;left:0;z-index:10;" />`;
     jwplayer("player").setup({
       file: "https://xcam.gay/src/error.mp4",
       autostart: true,
       repeat: true,
       controls: false
+    });
+    jwplayer("player").on("firstFrame", () => {
+      const loadingGif = document.getElementById("xcam-loading-gif");
+      if (loadingGif) loadingGif.remove();
     });
   }
 }
