@@ -649,6 +649,26 @@ function handlePreviewPlayerError(event) {
   displayErrorMessage(event, handlePreviewRetry);
 }
 
+/**
+ * Lida com erros no modo carousel, exibindo mensagem e tentando retry.
+ * @param {Object} event - Evento de erro do JW Player.
+ */
+function handleCarouselPlayerError(event) {
+  displayErrorMessage(event, handleCarouselRetry);
+}
+
+/**
+ * Lógica de retry para o modo carousel.
+ */
+function handleCarouselRetry() {
+  previewRetryCount++;
+  if (previewRetryCount <= PREVIEW_CONFIG.MAX_RETRIES) {
+    setTimeout(initializeCarouselPlayer, PREVIEW_CONFIG.RETRY_DELAY);
+  } else {
+    showCarouselFallback();
+  }
+}
+
 /* === BLOCO: MODAL DE ANÚNCIO (Apenas para Modo Padrão) ============================= */
 
 /**
