@@ -264,29 +264,20 @@ function setupPreviewPlayer(camera, videoSrc, image) {
 /**
  * Adiciona eventos de hover para pausar e retomar o preview animado.
  * Usa requestAnimationFrame e só executa jw.play(true) se o player não estiver tocando.
+ * Corrigido: autoplay já no primeiro mouseenter.
  */
 function addPreviewHoverEvents() {
   const playerContainer = document.getElementById("player");
   const jw = jwplayer("player");
   let playTimeout;
-  let hasPlayedOnHover = false;
 
   playerContainer.addEventListener("mouseenter", () => {
     if (playTimeout) {
       cancelAnimationFrame(playTimeout);
       playTimeout = null;
     }
-    if (!hasPlayedOnHover) {
-      if (jw.getState() !== "playing") {
-        jw.play(true);
-        hasPlayedOnHover = true;
-      }
-    } else {
-      playTimeout = requestAnimationFrame(() => {
-        if (jw.getState() !== "playing") {
-          jw.play(true);
-        }
-      });
+    if (jw.getState() !== "playing") {
+      playTimeout = requestAnimationFrame(() => jw.play(true));
     }
   });
 
