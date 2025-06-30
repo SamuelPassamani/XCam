@@ -88,6 +88,46 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+/**
+ * Função utilitária para determinar a imagem ideal do player (playlist.image) para todos os modos.
+ * Segue a ordem de prioridade:
+ * 1. graphData.preview.poster
+ * 2. posterInfo.poster[username].fileUrl
+ * 3. graphData.profileImageURL (se não for default)
+ * 4. PREVIEW_CONFIG.LOADING_GIF
+ * @param {object} graphData - Dados do usuário (graphData)
+ * @param {object} posterInfo - Dados do posterInfo retornado pela API
+ * @param {string} username - Nome do usuário
+ * @returns {string} URL da imagem ideal para o player
+ */
+function getBestPlaylistImage(graphData, posterInfo, username) {
+  // 1. Tenta usar o poster do preview (mais atualizado)
+  if (graphData?.preview?.poster && typeof graphData.preview.poster === "string" && graphData.preview.poster.trim() !== "") {
+    return graphData.preview.poster;
+  }
+  // 2. Tenta usar o fileUrl do posterInfo (se existir)
+  if (
+    posterInfo &&
+    posterInfo.poster &&
+    posterInfo.poster[username] &&
+    typeof posterInfo.poster[username].fileUrl === "string" &&
+    posterInfo.poster[username].fileUrl.trim() !== ""
+  ) {
+    return posterInfo.poster[username].fileUrl;
+  }
+  // 3. Usa profileImageURL se não for a imagem default
+  if (
+    graphData?.profileImageURL &&
+    typeof graphData.profileImageURL === "string" &&
+    graphData.profileImageURL.trim() !== "" &&
+    !graphData.profileImageURL.includes("default_Male.png")
+  ) {
+    return graphData.profileImageURL;
+  }
+  // 4. Se nada encontrado, retorna o GIF de loading
+  return PREVIEW_CONFIG.LOADING_GIF;
+}
+
 /* === BLOCO: MODO PREVIEW (Poster Animado) ========================================= */
 
 /**
@@ -136,11 +176,52 @@ function showPreviewFallback() {
 }
 
 /**
- * Inicializa o player de preview animado, configurando poster, vídeo e eventos de hover.
- * @param {Object} camera - Objeto com dados da câmera (username).
- * @param {string} videoSrc - URL do vídeo HLS.
+ * Inicializa o modo preview: injeta CSS, mostra loading, busca dados e monta o player.
+ * Agora utiliza a endpoint unificada ?stream={username} e aplica a regra global de imagem.
  */
-function setupPreviewPlayer(camera, videoSrc) {
+async function initializePreviewPlayer() {
+  injectPreviewCSS();
+  showPreviewLoading();
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("user");
+    if (!username) throw new Error("Parâmetro 'user' não encontrado.");
+
+    // Busca dados completos do usuário/transmissão
+    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}?stream=${encodeURIComponent(username)}`);
+    if (!response.ok) throw new Error(`API retornou status ${response.status}`);
+
+    const data = await response.json();
+    const graphData = data.graphData || {};
+    const streamInfo = data.streamInfo || {};
+    const posterInfo = data.posterInfo || {};
+
+    // Seleciona a melhor URL disponível para o vídeo
+    const videoSrc =
+      streamInfo.cdnURL ||
+      streamInfo.edgeURL ||
+      (graphData.preview && graphData.preview.src);
+
+    if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
+
+    // Usa a função utilitária para determinar a imagem ideal
+    const image = getBestPlaylistImage(graphData, posterInfo, username);
+
+    const camera = { username: username, poster: image };
+    setupPreviewPlayer(camera, videoSrc, image);
+  } catch (err) {
+    console.warn(`Falha ao inicializar o preview player: ${err.message}`);
+    handlePreviewRetry();
+  }
+}
+
+/**
+ * Inicializa o player de preview animado, configurando poster, vídeo e eventos de hover.
+ * @param {Object} camera - Objeto com dados da câmera (username, poster).
+ * @param {string} videoSrc - URL do vídeo HLS.
+ * @param {string} image - URL da imagem ideal para o player.
+ */
+function setupPreviewPlayer(camera, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (!playerContainer) return;
 
@@ -155,7 +236,7 @@ function setupPreviewPlayer(camera, videoSrc) {
     pipIcon: false,
     playlist: [{
       title: `@${camera.username}`,
-      image: `https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg`,
+      image: image,
       sources: [{ file: videoSrc, type: "application/x-mpegURL" }]
     }],
     events: {
@@ -217,42 +298,6 @@ function handlePreviewRetry() {
   }
 }
 
-/**
- * Inicializa o modo preview: injeta CSS, mostra loading, busca dados e monta o player.
- * Agora utiliza a endpoint unificada ?stream={username}.
- */
-async function initializePreviewPlayer() {
-  injectPreviewCSS();
-  showPreviewLoading();
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const username = params.get("user");
-    if (!username) throw new Error("Parâmetro 'user' não encontrado.");
-
-    // Busca dados completos do usuário/transmissão
-    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}?stream=${encodeURIComponent(username)}`);
-    if (!response.ok) throw new Error(`API retornou status ${response.status}`);
-
-    const data = await response.json();
-    const graphData = data.graphData || {};
-    const streamInfo = data.streamInfo || {};
-
-    // Seleciona a melhor URL disponível
-    const videoSrc =
-      streamInfo.cdnURL ||
-      streamInfo.edgeURL ||
-      (graphData.preview && graphData.preview.src);
-
-    if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
-
-    const camera = { username: username, poster: graphData.preview?.poster || "" };
-    setupPreviewPlayer(camera, videoSrc);
-  } catch (err) {
-    console.warn(`Falha ao inicializar o preview player: ${err.message}`);
-    handlePreviewRetry();
-  }
-}
-
 /* === BLOCO: MODO CAROUSEL (Preview Automático, sem hover) ========================== */
 
 /**
@@ -270,11 +315,52 @@ function showCarouselFallback() {
 }
 
 /**
- * Inicializa o player do modo carousel, sem eventos de hover.
- * @param {Object} camera - Objeto com dados da câmera (username).
- * @param {string} videoSrc - URL do vídeo HLS.
+ * Inicializa o modo carousel: injeta CSS, mostra loading, busca dados e monta o player.
+ * Agora utiliza a endpoint unificada ?stream={username} e aplica a regra global de imagem.
  */
-function setupCarouselPlayer(camera, videoSrc) {
+async function initializeCarouselPlayer() {
+  injectCarouselCSS();
+  showPreviewLoading();
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("user");
+    if (!username) throw new Error("Parâmetro 'user' não encontrado.");
+
+    // Busca dados completos do usuário/transmissão
+    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}?stream=${encodeURIComponent(username)}`);
+    if (!response.ok) throw new Error(`API retornou status ${response.status}`);
+
+    const data = await response.json();
+    const graphData = data.graphData || {};
+    const streamInfo = data.streamInfo || {};
+    const posterInfo = data.posterInfo || {};
+
+    // Seleciona a melhor URL disponível para o vídeo
+    const videoSrc =
+      streamInfo.cdnURL ||
+      streamInfo.edgeURL ||
+      (graphData.preview && graphData.preview.src);
+
+    if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
+
+    // Usa a função utilitária para determinar a imagem ideal
+    const image = getBestPlaylistImage(graphData, posterInfo, username);
+
+    const camera = { username: username, poster: image };
+    setupCarouselPlayer(camera, videoSrc, image);
+  } catch (err) {
+    console.warn(`Falha ao inicializar o carousel player: ${err.message}`);
+    handleCarouselRetry();
+  }
+}
+
+/**
+ * Inicializa o player do modo carousel, sem eventos de hover.
+ * @param {Object} camera - Objeto com dados da câmera (username, poster).
+ * @param {string} videoSrc - URL do vídeo HLS.
+ * @param {string} image - URL da imagem ideal para o player.
+ */
+function setupCarouselPlayer(camera, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (!playerContainer) return;
 
@@ -289,7 +375,7 @@ function setupCarouselPlayer(camera, videoSrc) {
     pipIcon: false,
     playlist: [{
       title: `@${camera.username}`,
-      image: `https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg`,
+      image: image,
       sources: [{ file: videoSrc, type: "application/x-mpegURL" }]
     }],
     events: {
@@ -307,67 +393,11 @@ function setupCarouselPlayer(camera, videoSrc) {
   // Não adiciona eventos de hover, nunca pausa o vídeo
 }
 
-/**
- * Lida com erros no modo carousel, exibindo mensagem e tentando retry.
- * @param {Object} event - Evento de erro do JW Player.
- */
-function handleCarouselPlayerError(event) {
-  displayErrorMessage(event, handleCarouselRetry);
-}
-
-/**
- * Lógica de retry para o modo carousel.
- */
-function handleCarouselRetry() {
-  previewRetryCount++;
-  if (previewRetryCount <= PREVIEW_CONFIG.MAX_RETRIES) {
-    setTimeout(initializeCarouselPlayer, PREVIEW_CONFIG.RETRY_DELAY);
-  } else {
-    showCarouselFallback();
-  }
-}
-
-/**
- * Inicializa o modo carousel: injeta CSS, mostra loading, busca dados e monta o player.
- * Agora utiliza a endpoint unificada ?stream={username}.
- */
-async function initializeCarouselPlayer() {
-  injectCarouselCSS();
-  showPreviewLoading();
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const username = params.get("user");
-    if (!username) throw new Error("Parâmetro 'user' não encontrado.");
-
-    // Busca dados completos do usuário/transmissão
-    const response = await fetch(`${PREVIEW_CONFIG.API_ENDPOINT}?stream=${encodeURIComponent(username)}`);
-    if (!response.ok) throw new Error(`API retornou status ${response.status}`);
-
-    const data = await response.json();
-    const graphData = data.graphData || {};
-    const streamInfo = data.streamInfo || {};
-
-    // Seleciona a melhor URL disponível
-    const videoSrc =
-      streamInfo.cdnURL ||
-      streamInfo.edgeURL ||
-      (graphData.preview && graphData.preview.src);
-
-    if (!videoSrc) throw new Error("Nenhuma fonte de vídeo encontrada.");
-
-    const camera = { username: username, poster: graphData.preview?.poster || "" };
-    setupCarouselPlayer(camera, videoSrc);
-  } catch (err) {
-    console.warn(`Falha ao inicializar o carousel player: ${err.message}`);
-    handleCarouselRetry();
-  }
-}
-
 /* === BLOCO: MODO PADRÃO (Player Completo - Lógica Original) ======================== */
 
 /**
  * Inicializa o player principal completo, com busca por user/id, modal de anúncio e fallback.
- * Agora utiliza a endpoint unificada ?stream={username} para busca por usuário.
+ * Agora utiliza a endpoint unificada ?stream={username} para busca por usuário e aplica a regra global de imagem.
  */
 function initializeMainPlayer() {
   const playerContainer = document.getElementById("player");
@@ -389,7 +419,9 @@ function initializeMainPlayer() {
       .then((data) => {
         const graphData = data.graphData || {};
         const streamInfo = data.streamInfo || {};
-        // Seleciona a melhor URL disponível
+        const posterInfo = data.posterInfo || {};
+
+        // Seleciona a melhor URL disponível para o vídeo
         const videoSrc =
           streamInfo.cdnURL ||
           streamInfo.edgeURL ||
@@ -400,13 +432,15 @@ function initializeMainPlayer() {
           reloadWithFallback();
           return;
         }
-        const poster = graphData.preview?.poster || graphData.profileImageURL || "https://xcam.gay/src/loading.gif";
+        // Usa a função utilitária para determinar a imagem ideal
+        const image = getBestPlaylistImage(graphData, posterInfo, username);
+
         const camera = {
           username: graphData.username || username,
           tags: graphData.tags || [],
-          preview: { poster }
+          preview: { poster: image }
         };
-        setupMainPlayer(camera, username, videoSrc, poster);
+        setupMainPlayer(camera, username, videoSrc, image);
       })
       .catch((err) => {
         console.error("Erro ao buscar dados do usuário:", err);
@@ -431,8 +465,11 @@ function initializeMainPlayer() {
         }
         // Usa diretamente a URL HLS original, sem proxy reverso
         const videoSrc = camera.preview?.src;
-        const poster = camera.preview?.poster || camera.profileImageURL || "https://xcam.gay/src/loading.gif";
-        setupMainPlayer(camera, camera.username, videoSrc, poster);
+        // Para busca por ID, mantém o fluxo antigo para imagem
+        const image = camera.preview?.poster ||
+          (camera.profileImageURL && !camera.profileImageURL.includes("default_Male.png") ? camera.profileImageURL : PREVIEW_CONFIG.LOADING_GIF);
+
+        setupMainPlayer(camera, camera.username, videoSrc, image);
       })
       .catch((err) => {
         console.error("Erro ao carregar a lista geral:", err);
@@ -450,9 +487,9 @@ function initializeMainPlayer() {
  * @param {Object} camera - Objeto da câmera (username, tags, preview).
  * @param {string} username - Nome do usuário.
  * @param {string} videoSrc - URL do vídeo HLS.
- * @param {string} poster - URL do poster.
+ * @param {string} image - URL da imagem ideal para o player.
  */
-function setupMainPlayer(camera, username, videoSrc, poster) {
+function setupMainPlayer(camera, username, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (playerContainer) playerContainer.innerHTML = "";
 
@@ -478,7 +515,7 @@ function setupMainPlayer(camera, username, videoSrc, poster) {
     playlist: [{
       title: `@${camera?.username || username || "Unknown"}`,
       description: Array.isArray(camera?.tags) ? camera.tags.map((tag) => `#${tag.name}`).join(" ") : "",
-      image: poster || "https://poster.xcam.gay/${camera.username.toLowerCase().trim()}.jpg" || "https://xcam.gay/src/loading.gif",
+      image: image,
       sources: [{
         file: videoSrc,
         type: "application/x-mpegURL",
