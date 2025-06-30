@@ -338,7 +338,7 @@ async function renderBroadcastCard(data) {
   // Iframe de preview (hover)
   const previewIframe = createEl("iframe", {
     class: "poster-iframe",
-    src: `https://live.xcam.gay/?user=${username}&mode=carousel`,
+    src: `https://live.xcam.gay/?user=${username}&mode=preview`,
     title: `Prévia de @${username}`,
     loading: "lazy",
     allow: "autoplay; encrypted-media",
