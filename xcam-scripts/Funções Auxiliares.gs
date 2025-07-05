@@ -72,3 +72,124 @@ function renomearEVincularVideosXCam() {
 
   Logger.log(`🏁 Processo concluído.\n📊 Total analisados: ${total}\n✏️ Renomeados: ${renomeados}\n✅ Enviados: ${enviados}\n❌ Erros: ${erros}`);
 }
+
+/**
+ * Unifica pastas duplicadas de usuários em ROOT_FOLDER_ID, consolidando rec.json e arquivos .jpg.
+ * Mantém apenas uma pasta por usuário, com todos os arquivos unificados.
+ * Exibe logs detalhados e informativos com emojis em todas as etapas.
+ */
+function unificarPastasDuplicadasUsuarios() {
+  Logger.log('🔍 Iniciando verificação de pastas duplicadas em ROOT_FOLDER_ID...');
+  const rootFolder = DriveApp.getFolderById(ROOT_FOLDER_ID);
+  const allFolders = rootFolder.getFolders();
+  const userFoldersMap = {};
+
+  // 1. Mapeia todas as pastas por nome
+  Logger.log('📁 Mapeando todas as pastas de usuários...');
+  while (allFolders.hasNext()) {
+    const folder = allFolders.next();
+    const name = folder.getName();
+    if (!userFoldersMap[name]) userFoldersMap[name] = [];
+    userFoldersMap[name].push(folder);
+    Logger.log(`🔸 Pasta encontrada: ${name} (ID: ${folder.getId()})`);
+  }
+
+  // 2. Procura nomes duplicados
+  let totalDuplicados = 0;
+  for (const username in userFoldersMap) {
+    const folders = userFoldersMap[username];
+    if (folders.length < 2) continue; // Só processa duplicados
+
+    totalDuplicados++;
+    Logger.log(`⚠️ Encontrado duplicidade para usuário: ${username} (${folders.length} pastas)`);
+
+    // 3. Coleta arquivos de cada pasta
+    let recJsons = [];
+    let jpgFiles = [];
+    let allFiles = [];
+    folders.forEach(folder => {
+      Logger.log(`📂 Lendo arquivos da pasta: ${folder.getName()} (ID: ${folder.getId()})`);
+      const files = folder.getFiles();
+      while (files.hasNext()) {
+        const file = files.next();
+        allFiles.push({file, folder});
+        if (file.getName() === 'rec.json') {
+          recJsons.push({file, folder});
+          Logger.log(`📝 rec.json encontrado em ${folder.getName()}`);
+        } else if (file.getName().endsWith('.jpg')) {
+          jpgFiles.push({file, folder});
+          Logger.log(`🖼️ .jpg encontrado: ${file.getName()} em ${folder.getName()}`);
+        } else {
+          Logger.log(`📄 Outro arquivo encontrado: ${file.getName()} em ${folder.getName()}`);
+        }
+      }
+    });
+
+    // 4. Unifica rec.json se houver mais de um
+    let recJsonUnificado = {};
+    if (recJsons.length > 0) {
+      Logger.log(`🔗 Unificando conteúdos dos rec.json (${recJsons.length})...`);
+      recJsons.forEach(({file, folder}, idx) => {
+        try {
+          const content = JSON.parse(file.getBlob().getDataAsString());
+          recJsonUnificado = Object.assign(recJsonUnificado, content);
+          Logger.log(`✅ rec.json da pasta ${folder.getName()} unificado (${idx + 1}/${recJsons.length})`);
+        } catch (e) {
+          Logger.log(`❌ Erro ao ler rec.json em ${folder.getName()}: ${e}`);
+        }
+      });
+    } else {
+      Logger.log('⚠️ Nenhum rec.json encontrado para unificar.');
+    }
+
+    // 5. Escolhe a pasta que será mantida (a primeira)
+    const pastaFinal = folders[0];
+    Logger.log(`📦 Pasta escolhida para manter: ${pastaFinal.getName()} (ID: ${pastaFinal.getId()})`);
+
+    // 6. Move todos os arquivos .jpg e rec.json para a pasta final (se não estiverem nela)
+    jpgFiles.forEach(({file, folder}) => {
+      if (folder.getId() !== pastaFinal.getId()) {
+        pastaFinal.createFile(file.getBlob()).setName(file.getName());
+        file.setTrashed(true);
+        Logger.log(`➡️ .jpg movido para pasta final: ${file.getName()}`);
+      }
+    });
+
+    // Remove todos os rec.json das pastas duplicadas (inclusive da final, para evitar duplicidade)
+    recJsons.forEach(({file, folder}) => {
+      file.setTrashed(true);
+      Logger.log(`🗑️ rec.json removido de ${folder.getName()}`);
+    });
+
+    // Cria o rec.json unificado na pasta final
+    if (Object.keys(recJsonUnificado).length > 0) {
+      pastaFinal.createFile('rec.json', JSON.stringify(recJsonUnificado, null, 2), 'application/json');
+      Logger.log(`🆕 rec.json unificado criado em: ${pastaFinal.getName()}`);
+    }
+
+    // 7. Move outros arquivos (exceto .jpg e rec.json) para a pasta final
+    allFiles.forEach(({file, folder}) => {
+      if (
+        folder.getId() !== pastaFinal.getId() &&
+        file.getName() !== 'rec.json' &&
+        !file.getName().endsWith('.jpg')
+      ) {
+        pastaFinal.createFile(file.getBlob()).setName(file.getName());
+        file.setTrashed(true);
+        Logger.log(`📤 Arquivo movido para pasta final: ${file.getName()}`);
+      }
+    });
+
+    // 8. Exclui permanentemente as pastas duplicadas (exceto a final)
+    for (let i = 1; i < folders.length; i++) {
+      try {
+        folders[i].setTrashed(true);
+        Logger.log(`🗑️ Pasta duplicada enviada para lixeira: ${folders[i].getName()} (ID: ${folders[i].getId()})`);
+      } catch (e) {
+        Logger.log(`❌ Erro ao excluir pasta duplicada: ${e}`);
+      }
+    }
+    Logger.log(`🎉 Unificação concluída para usuário: ${username}\n-----------------------------`);
+  }
+  Logger.log(`🏁 Processo de unificação finalizado. Total de usuários com duplicidade: ${totalDuplicados}`);
+}
