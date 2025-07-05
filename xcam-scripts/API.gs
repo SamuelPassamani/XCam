@@ -1016,6 +1016,28 @@ function removePosterDuplicates(postersFolderId) {
   };
 }
 
+/**
+ * Busca o arquivo rec.json do usuário na pasta ROOT_FOLDER_ID/{username}/rec.json.
+ * Retorna o conteúdo parseado ou lança erro se não encontrar.
+ * @param {string} username
+ * @returns {Object} Conteúdo do rec.json
+ */
+function getDriveRecJson(username) {
+  if (!username) throw new Error("Username não informado.");
+  const rootFolder = DriveApp.getFolderById(ROOT_FOLDER_ID);
+  const userFolders = rootFolder.getFoldersByName(username);
+  if (!userFolders.hasNext()) throw new Error(`Pasta do usuário '${username}' não encontrada.`);
+  const userFolder = userFolders.next();
+  const files = userFolder.getFilesByName('rec.json');
+  if (!files.hasNext()) throw new Error(`Arquivo rec.json não encontrado para o usuário '${username}'.`);
+  const file = files.next();
+  try {
+    return JSON.parse(file.getBlob().getDataAsString());
+  } catch (e) {
+    throw new Error(`Erro ao ler rec.json: ${e.message}`);
+  }
+}
+
 /* ============================================================================
  * 4. RODAPÉ / FIM DO CÓDIGO
  * ========================================================================== */
