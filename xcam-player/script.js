@@ -90,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = params.get("title") || "";
     const playerContainer = document.getElementById("player");
     if (playerContainer) playerContainer.innerHTML = "";
+    // Detecta o type correto pela extensão da URL
+    const videoType = getVideoTypeFromURL(videoURL);
     // Inicializa o JWPlayer com as configurações básicas para embed
     jwplayer("player").setup({
       controls: true,
@@ -116,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         image: image,
         sources: [{
           file: videoURL,
-          type: "application/x-mpegURL",
+          type: videoType,
           label: "Source"
         }]
       }],
@@ -199,6 +201,27 @@ function getBestVideoSrc(streamInfo, graphData) {
   // Se só houver stackvaults-hls.xcdnpro.com, retorna o primeiro encontrado
   const fallback = candidates.find(isStackVaults);
   return fallback || null;
+}
+
+// -------------------------------------------------------------------------------------
+// Função utilitária para detectar o type do arquivo de vídeo pela extensão da URL
+// Suporta: mp4, m3u8, webm, mkv
+// -------------------------------------------------------------------------------------
+function getVideoTypeFromURL(url) {
+  if (typeof url !== "string") return "";
+  const ext = url.split('?')[0].split('.').pop().toLowerCase();
+  switch (ext) {
+    case "mp4":
+      return "video/mp4";
+    case "m3u8":
+      return "application/x-mpegURL";
+    case "webm":
+      return "video/webm";
+    case "mkv":
+      return "video/x-matroska";
+    default:
+      return "application/octet-stream";
+  }
 }
 
 // -------------------------------------------------------------------------------------
