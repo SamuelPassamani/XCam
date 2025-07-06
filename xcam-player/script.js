@@ -1,16 +1,20 @@
 // =====================================================================================
-// XCam Player - Script Unificado (v6.2)
+// XCam Player - Script Unificado (v6.3.0)
 // =====================================================================================
 // @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 // @info        https://aserio.work/
-// @version     6.2.1
-// @lastupdate  06/07/2025
-// @mode        1. Modo Padrão (Player Completo): Executado quando nenhum parâmetro `mode` é fornecido.
-// @mode        2. Modo Preview (Poster Animado): Ativado com `?mode=preview`.
-// @mode        3. Modo Carousel (Preview Automático): Ativado com `?mode=carousel`.
+// @version     6.3.0
+// @lastupdate  06/07/2024
+//
 // @description
-// Script modular para o player XCam, com múltiplos modos de operação controlados por URL.
-// Todos os modos agora usam a endpoint unificada ?stream={username} para máxima eficiência.
+// Script principal do XCam Player, responsável por inicializar e controlar todos os modos de execução do player (Padrão, Preview, Carousel),
+// realizando a busca de dados, tratamento de erros, exibição de modal de anúncio e fallback, além de prover utilitários para manipulação do player.
+// O código é modular, organizado e documentado para facilitar manutenção e evolução.
+//
+// @modes
+// 1. Modo Padrão (Player Completo): Executado quando nenhum parâmetro `mode` é fornecido.
+// 2. Modo Preview (Poster Animado): Ativado com `?mode=preview`.
+// 3. Modo Carousel (Preview Automático): Ativado com `?mode=carousel`.
 // =====================================================================================
 
 "use strict";
@@ -25,7 +29,7 @@ const PREVIEW_CONFIG = {
   RETRY_DELAY: 5000, // Delay entre tentativas de retry (ms)
   PREVIEW_DURATION: 3000, // Duração do preview antes de pausar (ms)
   API_ENDPOINT: "https://api.xcam.gay/", // Endpoint base da API
-  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4",
+  FALLBACK_VIDEO: "https://cdn.xcam.gay/0:/src/files/error.mp4", // Vídeo de fallback
   LOADING_GIF: "https://cdn.xcam.gay/0:/src/files/loading.gif" // GIF de loading
 };
 
@@ -70,22 +74,23 @@ const ERROR_MESSAGES = {
  * 3. CORPO: FUNÇÕES E EXECUÇÃO PRINCIPAL
  * ========================================================================== */
 
-/**
- * Roteador principal: decide qual modo do player inicializar com base no parâmetro ?mode.
- * Executa ao carregar o DOM.
- */
+// -------------------------------------------------------------------------------------
+// Roteador principal: decide qual modo do player inicializar com base no parâmetro ?mode
+// Executa ao carregar o DOM
+// -------------------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
+  // Obtém os parâmetros da URL
   const params = new URLSearchParams(window.location.search);
 
-  // NOVA LÓGICA PARA videoURL, image e title
+  // Lógica para inicialização direta via videoURL (modo embed customizado)
   const videoURL = params.get("videoURL");
   if (videoURL) {
     // Se videoURL está presente, monta o player diretamente
-    const image = params.get("image") || "https://cdn.xcam.gay/0:/src/files/loading.gif";
+    const image = params.get("image") || PREVIEW_CONFIG.LOADING_GIF;
     const title = params.get("title") || "";
     const playerContainer = document.getElementById("player");
     if (playerContainer) playerContainer.innerHTML = "";
-
+    // Inicializa o JWPlayer com as configurações básicas para embed
     jwplayer("player").setup({
       controls: true,
       sharing: true,
@@ -122,29 +127,26 @@ document.addEventListener("DOMContentLoaded", () => {
     return; // Não executa o restante do carregamento padrão
   }
 
+  // Seleciona o modo de execução do player
   const mode = params.get("mode");
   if (mode === "preview") {
-    initializePreviewPlayer();
+    initializePreviewPlayer(); // Modo preview animado
   } else if (mode === "carousel") {
-    initializeCarouselPlayer();
+    initializeCarouselPlayer(); // Modo carousel automático
   } else {
-    initializeAdModal();
-    initializeMainPlayer();
+    initializeAdModal(); // Exibe modal de anúncio antes do player principal
+    initializeMainPlayer(); // Player completo padrão
   }
 });
 
-/**
- * Função utilitária para determinar a imagem ideal do player (playlist.image) para todos os modos.
- * Segue a ordem de prioridade:
- * 1. graphData.preview.poster
- * 2. posterInfo.poster[username].fileUrl
- * 3. graphData.profileImageURL (se não for default)
- * 4. PREVIEW_CONFIG.LOADING_GIF
- * @param {object} graphData - Dados do usuário (graphData)
- * @param {object} posterInfo - Dados do posterInfo retornado pela API
- * @param {string} username - Nome do usuário
- * @returns {string} URL da imagem ideal para o player
- */
+// -------------------------------------------------------------------------------------
+// Função utilitária para determinar a imagem ideal do player (playlist.image) para todos os modos
+// Segue a ordem de prioridade:
+// 1. graphData.preview.poster
+// 2. posterInfo.poster[username].fileUrl
+// 3. graphData.profileImageURL (se não for default)
+// 4. PREVIEW_CONFIG.LOADING_GIF
+// -------------------------------------------------------------------------------------
 function getBestPlaylistImage(graphData, posterInfo, username) {
   // 1. Tenta usar o poster do preview (mais atualizado)
   if (graphData?.preview?.poster && typeof graphData.preview.poster === "string" && graphData.preview.poster.trim() !== "") {
@@ -173,14 +175,11 @@ function getBestPlaylistImage(graphData, posterInfo, username) {
   return PREVIEW_CONFIG.LOADING_GIF;
 }
 
-/**
- * Função utilitária para determinar a melhor URL de vídeo (videoSrc) para todos os modos.
- * Ordem de prioridade: cdnURL > edgeURL > preview.src
- * Se a URL selecionada for do domínio stackvaults-hls.xcdnpro.com, tenta a próxima da ordem.
- * @param {object} streamInfo - Dados de streamInfo retornado pela API
- * @param {object} graphData - Dados de graphData retornado pela API
- * @returns {string|null} URL do vídeo HLS ideal ou null se nenhuma válida
- */
+// -------------------------------------------------------------------------------------
+// Função utilitária para determinar a melhor URL de vídeo (videoSrc) para todos os modos
+// Ordem de prioridade: cdnURL > edgeURL > preview.src
+// Se a URL selecionada for do domínio stackvaults-hls.xcdnpro.com, tenta a próxima da ordem
+// -------------------------------------------------------------------------------------
 function getBestVideoSrc(streamInfo, graphData) {
   // Lista de candidatos na ordem de prioridade
   const candidates = [
@@ -202,11 +201,11 @@ function getBestVideoSrc(streamInfo, graphData) {
   return fallback || null;
 }
 
-/* === BLOCO: MODO PREVIEW (Poster Animado) ========================================= */
+// -------------------------------------------------------------------------------------
+// BLOCO: MODO PREVIEW (Poster Animado)
+// -------------------------------------------------------------------------------------
 
-/**
- * Injeta CSS para ocultar toda a interface do player no modo preview/carousel.
- */
+// Injeta CSS para ocultar toda a interface do player no modo preview/carousel
 function injectPreviewCSS() {
   const style = document.createElement("style");
   style.innerHTML = `
@@ -222,9 +221,7 @@ function injectPreviewCSS() {
   document.head.appendChild(style);
 }
 
-/**
- * Exibe o GIF de loading enquanto o preview é carregado.
- */
+// Exibe o GIF de loading enquanto o preview é carregado
 function showPreviewLoading() {
   const playerContainer = document.getElementById("player");
   if (playerContainer) {
@@ -232,9 +229,7 @@ function showPreviewLoading() {
   }
 }
 
-/**
- * Exibe o vídeo de fallback caso o preview falhe.
- */
+// Exibe o vídeo de fallback caso o preview falhe
 function showPreviewFallback() {
   const player = document.getElementById("player");
   if (player) {
@@ -249,10 +244,7 @@ function showPreviewFallback() {
   }
 }
 
-/**
- * Inicializa o modo preview: injeta CSS, mostra loading, busca dados e monta o player.
- * Agora utiliza a endpoint unificada ?stream={username} e aplica a regra global de imagem.
- */
+// Inicializa o modo preview: injeta CSS, mostra loading, busca dados e monta o player
 async function initializePreviewPlayer() {
   injectPreviewCSS();
   showPreviewLoading();
@@ -286,12 +278,7 @@ async function initializePreviewPlayer() {
   }
 }
 
-/**
- * Inicializa o player de preview animado, configurando poster, vídeo e eventos de hover.
- * @param {Object} camera - Objeto com dados da câmera (username, poster).
- * @param {string} videoSrc - URL do vídeo HLS.
- * @param {string} image - URL da imagem ideal para o player.
- */
+// Inicializa o player de preview animado, configurando poster, vídeo e eventos de hover
 function setupPreviewPlayer(camera, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (!playerContainer) return;
@@ -338,11 +325,7 @@ function setupPreviewPlayer(camera, videoSrc, image) {
   });
 }
 
-/**
- * Adiciona eventos de hover para pausar e retomar o preview animado.
- * Refinado: inclui debounce no play, delay no pause, só executa play se o player estiver pronto,
- * e evita múltiplos plays/pauses rápidos.
- */
+// Adiciona eventos de hover para pausar e retomar o preview animado
 function addPreviewHoverEvents() {
   const playerContainer = document.getElementById("player");
   const jw = jwplayer("player");
@@ -392,9 +375,7 @@ function addPreviewHoverEvents() {
   });
 }
 
-/**
- * Lida com tentativas de retry no preview animado.
- */
+// Lida com tentativas de retry no preview animado
 function handlePreviewRetry() {
   previewRetryCount++;
   if (previewRetryCount <= PREVIEW_CONFIG.MAX_RETRIES) {
@@ -404,26 +385,21 @@ function handlePreviewRetry() {
   }
 }
 
-/* === BLOCO: MODO CAROUSEL (Preview Automático, sem hover) ========================== */
+// -------------------------------------------------------------------------------------
+// BLOCO: MODO CAROUSEL (Preview Automático, sem hover)
+// -------------------------------------------------------------------------------------
 
-/**
- * Injeta CSS do preview para o modo carousel.
- */
+// Injeta CSS do preview para o modo carousel
 function injectCarouselCSS() {
   injectPreviewCSS();
 }
 
-/**
- * Exibe fallback no modo carousel.
- */
+// Exibe fallback no modo carousel
 function showCarouselFallback() {
   showPreviewFallback();
 }
 
-/**
- * Inicializa o modo carousel: injeta CSS, mostra loading, busca dados e monta o player.
- * Agora utiliza a endpoint unificada ?stream={username} e aplica a regra global de imagem.
- */
+// Inicializa o modo carousel: injeta CSS, mostra loading, busca dados e monta o player
 async function initializeCarouselPlayer() {
   injectCarouselCSS();
   showPreviewLoading();
@@ -457,12 +433,7 @@ async function initializeCarouselPlayer() {
   }
 }
 
-/**
- * Inicializa o player do modo carousel, sem eventos de hover.
- * @param {Object} camera - Objeto com dados da câmera (username, poster).
- * @param {string} videoSrc - URL do vídeo HLS.
- * @param {string} image - URL da imagem ideal para o player.
- */
+// Inicializa o player do modo carousel, sem eventos de hover
 function setupCarouselPlayer(camera, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (!playerContainer) return;
@@ -499,15 +470,13 @@ function setupCarouselPlayer(camera, videoSrc, image) {
       video.setAttribute("controlsList", "nodownload nofullscreen noremoteplayback nopictureinpicture");
     }
   });
-  // Não adiciona eventos de hover, nunca pausa o vídeo
 }
 
-/* === BLOCO: MODO PADRÃO (Player Completo - Lógica Original) ======================== */
+// -------------------------------------------------------------------------------------
+// BLOCO: MODO PADRÃO (Player Completo - Lógica Original)
+// -------------------------------------------------------------------------------------
 
-/**
- * Inicializa o player principal completo, com busca por user/id, modal de anúncio e fallback.
- * Agora utiliza a endpoint unificada ?stream={username} para busca por usuário e aplica a regra global de imagem.
- */
+// Inicializa o player principal completo, com busca por user/id, modal de anúncio e fallback
 function initializeMainPlayer() {
   const playerContainer = document.getElementById("player");
   if (playerContainer) {
@@ -588,13 +557,7 @@ function initializeMainPlayer() {
   }
 }
 
-/**
- * Monta e inicializa o player principal do JWPlayer com todos os controles e informações.
- * @param {Object} camera - Objeto da câmera (username, tags, preview).
- * @param {string} username - Nome do usuário.
- * @param {string} videoSrc - URL do vídeo HLS.
- * @param {string} image - URL da imagem ideal para o player.
- */
+// Monta e inicializa o player principal do JWPlayer com todos os controles e informações
 function setupMainPlayer(camera, username, videoSrc, image) {
   const playerContainer = document.getElementById("player");
   if (playerContainer) playerContainer.innerHTML = "";
@@ -634,9 +597,7 @@ function setupMainPlayer(camera, username, videoSrc, image) {
   });
 }
 
-/**
- * Exibe vídeo de fallback local caso não seja possível carregar o stream.
- */
+// Exibe vídeo de fallback local caso não seja possível carregar o stream
 function reloadWithFallback() {
   const player = document.getElementById("player");
   if (player) {
@@ -650,13 +611,11 @@ function reloadWithFallback() {
   }
 }
 
-/* === BLOCO: TRATAMENTO DE ERROS (Lógica original preservada e expandida) =========== */
+// -------------------------------------------------------------------------------------
+// BLOCO: TRATAMENTO DE ERROS (Lógica original preservada e expandida)
+// -------------------------------------------------------------------------------------
 
-/**
- * Exibe mensagem de erro detalhada e executa ação de fallback após contagem regressiva.
- * @param {Object} event - Evento de erro do JW Player.
- * @param {Function} fallbackAction - Função a ser chamada após o erro.
- */
+// Exibe mensagem de erro detalhada e executa ação de fallback após contagem regressiva
 function displayErrorMessage(event, fallbackAction) {
   console.error("Erro no JW Player:", event.message);
 
@@ -710,33 +669,22 @@ function displayErrorMessage(event, fallbackAction) {
   }, 1000);
 }
 
-/**
- * Handler de erro do player principal.
- * @param {Object} event - Evento de erro do JW Player.
- */
+// Handler de erro do player principal
 function handleMainPlayerError(event) {
   displayErrorMessage(event, reloadWithFallback);
 }
 
-/**
- * Handler de erro do player preview.
- * @param {Object} event - Evento de erro do JW Player.
- */
+// Handler de erro do player preview
 function handlePreviewPlayerError(event) {
   displayErrorMessage(event, handlePreviewRetry);
 }
 
-/**
- * Lida com erros no modo carousel, exibindo mensagem e tentando retry.
- * @param {Object} event - Evento de erro do JW Player.
- */
+// Lida com erros no modo carousel, exibindo mensagem e tentando retry
 function handleCarouselPlayerError(event) {
   displayErrorMessage(event, handleCarouselRetry);
 }
 
-/**
- * Lógica de retry para o modo carousel.
- */
+// Lógica de retry para o modo carousel
 function handleCarouselRetry() {
   previewRetryCount++;
   if (previewRetryCount <= PREVIEW_CONFIG.MAX_RETRIES) {
@@ -746,11 +694,11 @@ function handleCarouselRetry() {
   }
 }
 
-/* === BLOCO: MODAL DE ANÚNCIO (Apenas para Modo Padrão) ============================= */
+// -------------------------------------------------------------------------------------
+// BLOCO: MODAL DE ANÚNCIO (Apenas para Modo Padrão)
+// -------------------------------------------------------------------------------------
 
-/**
- * Inicializa o modal de anúncio exibido antes do player principal.
- */
+// Inicializa o modal de anúncio exibido antes do player principal
 function initializeAdModal() {
   const adModal = document.getElementById("ad-modal");
   const closeAdButton = document.getElementById("close-ad-btn");
@@ -785,12 +733,11 @@ function initializeAdModal() {
   });
 }
 
-/* === BLOCO: FUNÇÕES AUXILIARES PRESERVADAS DO SCRIPT ORIGINAL ====================== */
+// -------------------------------------------------------------------------------------
+// BLOCO: FUNÇÕES AUXILIARES PRESERVADAS DO SCRIPT ORIGINAL
+// -------------------------------------------------------------------------------------
 
-/**
- * Adiciona botão de download ao player JWPlayer.
- * @param {Object} playerInstance - Instância do JWPlayer.
- */
+// Adiciona botão de download ao player JWPlayer
 function addDownloadButton(playerInstance) {
   const buttonId = "download-video-button";
   const iconPath = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL[...]";
@@ -813,10 +760,7 @@ function addDownloadButton(playerInstance) {
   );
 }
 
-/**
- * Realinha o time slider do player para melhor UX.
- * @param {Object} playerInstance - Instância do JWPlayer.
- */
+// Realinha o time slider do player para melhor UX
 function alignTimeSlider(playerInstance) {
   const playerContainer = playerInstance.getContainer();
   const buttonContainer = playerContainer.querySelector(".jw-button-container");
@@ -836,6 +780,7 @@ function alignTimeSlider(playerInstance) {
  * =====================================================================================
  *
  * @log de mudanças:
+ * - v6.3.0: Refatoração completa do arquivo seguindo padrão XCam, organização modular, comentários detalhados, atualização de cabeçalho, logs e roadmap.
  * - v6.2.1: Todos os modos agora usam a endpoint unificada ?stream={username}.
  * - v5.8: Restaurada a lógica completa do player principal (busca por ID, erros, etc.)
  * - v5.7: Melhorada a lógica de hover no modo preview com debounce.
@@ -844,9 +789,9 @@ function alignTimeSlider(playerInstance) {
  * - v5.4: Implementação da arquitetura de modo duplo (padrão vs. preview).
  *
  * @roadmap futuro:
- * - Considerar a implementação de um sistema de cache no lado do servidor (com
- * Cloudflare Workers e KV) para diminuir a carga na API principal.
+ * - Implementar sistema de cache no lado do servidor (Cloudflare Workers/KV) para aliviar a API principal.
  * - Adicionar funcionalidade de "Favoritos" com persistência em localStorage.
- *
+ * - Modularizar ainda mais o código separando utilitários e modos em arquivos distintos.
+ * - Adicionar testes automatizados para funções críticas do player.
  * =====================================================================================
  */
