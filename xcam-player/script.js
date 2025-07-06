@@ -218,7 +218,7 @@ function getVideoTypeFromURL(url) {
     case "webm":
       return "video/webm";
     case "mkv":
-      return "video/x-matroska";
+      return "video/webm";
     default:
       return "application/octet-stream";
   }
