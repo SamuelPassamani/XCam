@@ -4,7 +4,7 @@
 // @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 // @info        https://aserio.work/
 // @version     6.2.1
-// @lastupdate  29/06/2025
+// @lastupdate  06/07/2025
 // @mode        1. Modo Padrão (Player Completo): Executado quando nenhum parâmetro `mode` é fornecido.
 // @mode        2. Modo Preview (Poster Animado): Ativado com `?mode=preview`.
 // @mode        3. Modo Carousel (Preview Automático): Ativado com `?mode=carousel`.
