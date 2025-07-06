@@ -193,3 +193,86 @@ function unificarPastasDuplicadasUsuarios() {
   }
   Logger.log(`🏁 Processo de unificação finalizado. Total de usuários com duplicidade: ${totalDuplicados}`);
 }
+
+/**
+ * Audita e ajusta todos os arquivos rec.json em ROOT_FOLDER_ID/{username}/rec.json,
+ * garantindo que estejam bem formatados como JSON válido e identado.
+ * Se encontrar JSON inválido, tenta corrigir ou registra o erro.
+ * Exibe logs detalhados com emojis em todas as etapas.
+ */
+function auditarEAjustarRecJsonUsuarios() {
+  Logger.log('🔍 Iniciando auditoria dos arquivos rec.json em todas as pastas de usuários...');
+  const rootFolder = DriveApp.getFolderById(ROOT_FOLDER_ID);
+  const allFolders = rootFolder.getFolders();
+  let totalPastas = 0, totalRecJson = 0, totalCorrigidos = 0, totalErros = 0;
+
+  while (allFolders.hasNext()) {
+    const userFolder = allFolders.next();
+    totalPastas++;
+    const username = userFolder.getName();
+    Logger.log(`👤 Verificando pasta do usuário: ${username} (ID: ${userFolder.getId()})`);
+
+    const files = userFolder.getFilesByName('rec.json');
+    if (!files.hasNext()) {
+      Logger.log(`⚠️ rec.json não encontrado para ${username}`);
+      continue;
+    }
+
+    while (files.hasNext()) {
+      const file = files.next();
+      totalRecJson++;
+      Logger.log(`📝 Auditando rec.json em ${username} (ID: ${file.getId()})...`);
+
+      let contentStr = '';
+      let jsonObj = null;
+      let precisaCorrigir = false;
+
+      // Tenta ler e parsear o JSON
+      try {
+        contentStr = file.getBlob().getDataAsString();
+        Logger.log(`📄 Conteúdo original de rec.json (${username}):\n${contentStr}`);
+        jsonObj = JSON.parse(contentStr);
+        // Reescreve para garantir identação e formato
+        precisaCorrigir = (contentStr.trim() !== JSON.stringify(jsonObj, null, 2));
+        if (!precisaCorrigir) {
+          Logger.log(`✔️ rec.json já está bem formatado para ${username}`);
+        } else {
+          Logger.log(`✏️ rec.json de ${username} será reformatado para identação e padronização.`);
+        }
+      } catch (e) {
+        Logger.log(`❌ JSON inválido em ${username}: ${e}. Tentando corrigir automaticamente...`);
+        precisaCorrigir = true;
+        // Tenta corrigir problemas comuns de aspas simples/dobras ou vírgulas finais
+        try {
+          let corrigido = contentStr
+            .replace(/,\s*}/g, '}')
+            .replace(/,\s*]/g, ']')
+            .replace(/'/g, '"');
+          Logger.log(`🔧 Tentando parsear conteúdo corrigido:\n${corrigido}`);
+          jsonObj = JSON.parse(corrigido);
+          Logger.log(`✅ Correção automática aplicada em ${username}`);
+        } catch (e2) {
+          Logger.log(`🚫 Não foi possível corrigir o rec.json de ${username}: ${e2}`);
+          totalErros++;
+          continue;
+        }
+      }
+
+      // Se necessário, reescreve o arquivo com JSON identado e válido
+      if (precisaCorrigir && jsonObj) {
+        try {
+          Logger.log(`💾 Regravando rec.json ajustado para ${username}...`);
+          file.setTrashed(true);
+          userFolder.createFile('rec.json', JSON.stringify(jsonObj, null, 2), 'application/json');
+          Logger.log(`🆗 rec.json ajustado e regravado para ${username}`);
+          totalCorrigidos++;
+        } catch (e) {
+          Logger.log(`❌ Erro ao regravar rec.json para ${username}: ${e}`);
+          totalErros++;
+        }
+      }
+    }
+  }
+
+  Logger.log(`🏁 Auditoria concluída.\n📦 Pastas verificadas: ${totalPastas}\n📝 rec.json encontrados: ${totalRecJson}\n🆗 Corrigidos: ${totalCorrigidos}\n❌ Erros: ${totalErros}`);
+}
