@@ -76,15 +76,60 @@ const ERROR_MESSAGES = {
  */
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
-  const mode = params.get("mode");
 
+  // NOVA LÓGICA PARA videoURL, image e title
+  const videoURL = params.get("videoURL");
+  if (videoURL) {
+    // Se videoURL está presente, monta o player diretamente
+    const image = params.get("image") || "https://cdn.xcam.gay/0:/src/files/loading.gif";
+    const title = params.get("title") || "";
+    const playerContainer = document.getElementById("player");
+    if (playerContainer) playerContainer.innerHTML = "";
+
+    jwplayer("player").setup({
+      controls: true,
+      sharing: true,
+      autostart: false,
+      displaytitle: true,
+      displaydescription: true,
+      abouttext: "Buy me a coffee ☕",
+      aboutlink: "https://xcam.gay/",
+      skin: { name: "netflix" },
+      logo: {
+        file: "https://xcam.gay/src/logo.png",
+        link: "https://xcam.gay"
+      },
+      captions: {
+        color: "#efcc00",
+        fontSize: 16,
+        backgroundOpacity: 0,
+        edgeStyle: "raised"
+      },
+      playlist: [{
+        title: title,
+        description: "",
+        image: image,
+        sources: [{
+          file: videoURL,
+          type: "application/x-mpegURL",
+          label: "Source"
+        }]
+      }],
+      events: {
+        error: handleMainPlayerError
+      }
+    });
+    return; // Não executa o restante do carregamento padrão
+  }
+
+  const mode = params.get("mode");
   if (mode === "preview") {
-    initializePreviewPlayer(); // Modo preview animado
+    initializePreviewPlayer();
   } else if (mode === "carousel") {
-    initializeCarouselPlayer(); // Modo carousel automático
+    initializeCarouselPlayer();
   } else {
-    initializeAdModal();        // Modal de anúncio (apenas modo padrão)
-    initializeMainPlayer();     // Player completo padrão
+    initializeAdModal();
+    initializeMainPlayer();
   }
 });
 
