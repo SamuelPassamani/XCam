@@ -1043,10 +1043,11 @@ body.modal-open {
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.92);
-  display: flex;
+  display: none;
+  position: fixed; /* Fixo para cobrir toda a tela */
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 1000; /* Acima de outros elementos */
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1056,6 +1057,7 @@ body.modal-open {
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
+  display: flex; /* Flex para centralizar o conteúdo */
   pointer-events: auto;
 }
 
