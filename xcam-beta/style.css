@@ -1038,99 +1038,97 @@ body.modal-open {
 
 /* Overlay do modal: cobre toda a tela, centraliza o conteúdo, escurece o fundo */
 .modal-overlay {
-  position: auto;
+  position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.92);
-  display: none;
-  position: fixed; /* Fixo para cobrir toda a tela */
+  display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* Acima de outros elementos */
+  z-index: 1000;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.3s, visibility 0.3s;
 }
-/* Quando o modal está ativo, torna visível e interativo */
+
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
-  display: flex; /* Flex para centralizar o conteúdo */
   pointer-events: auto;
 }
 
 /* Conteúdo central do modal */
 .modal-content {
-  background: #181818; /* Fundo escuro */
-  border-radius: 16px; /* Cantos arredondados */
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65); /* Sombra para destaque */
-  width: 100vw; /* Quase toda a largura da viewport */
-  max-width: 1400px; /* Limite máximo de largura */
-  min-width: 480px; /* Largura mínima para mobile */
-  max-height: 100vh; /* Limite máximo de altura (viewport) */
-  min-height: 180px; /* Altura mínima */
-  padding: 0; /* Sem padding interno */
-  display: auto; /* Flex para layout interno */
-  flex-direction: column; /* Coluna para empilhar elementos */
-  align-items: stretch; /* Estica filhos na largura */
-  position: relative; /* Para posicionar botão de fechar */
-  overflow: hidden; /* Permite overflow (pode ser ajustado para auto/hidden) */
-  animation: fadeIn 0.2s; /* Animação de entrada */
+  background: #181818;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65);
+  width: 90vw;
+  max-width: 1100px;
+  min-width: 320px;
+  max-height: 92vh;
+  min-height: 180px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.25s;
 }
 
-/* Botão de fechar do modal, sempre visível e adaptativo */
+/* Botão de fechar do modal */
 .modal-close {
-  position: absolute; /* Posiciona em relação ao modal-content */
-  top: 14px; /* Distância do topo */
-  right: 16px; /* Distância da direita */
-  z-index: 10; /* Fica acima do conteúdo do modal */
-  background: rgba(0, 0, 0, 0.55); /* Fundo escuro semi-transparente */
-  border: none; /* Sem borda */
-  color: #fff; /* Ícone branco */
-  font-size: 2rem; /* Tamanho grande do ícone */
-  border-radius: 50%; /* Botão circular */
-  width: 40px; /* Largura do botão */
-  height: 40px; /* Altura do botão */
-  display: flex; /* Centraliza o ícone */
-  align-items: center; /* Centraliza verticalmente */
-  justify-content: center; /* Centraliza horizontalmente */
-  cursor: pointer; /* Cursor de clique */
-  transition: background 0.2s; /* Transição suave no hover/focus */
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
-/* Efeito visual ao passar o mouse ou focar no botão de fechar */
 .modal-close:hover,
 .modal-close:focus {
-  background: rgba(255, 0, 127, 0.85); /* Fundo rosa mais forte */
-  color: #fff; /* Mantém ícone branco */
-  outline: none; /* Remove contorno padrão */
+  background: rgba(255, 0, 127, 0.85);
+  color: #fff;
+  outline: none;
 }
 
-/* Container do player (iframe): ocupa toda área útil do modal */
+/* Container do player (iframe) */
 .modal-iframe-container {
-  flex: 1 1 0; /* Cresce para ocupar espaço disponível */
-  display: flex; /* Flex para alinhar o iframe */
-  align-items: stretch; /* Estica verticalmente */
-  justify-content: stretch; /* Estica horizontalmente */
-  min-height: 120px; /* Altura mínima */
-  max-height: 80vh; /* Altura máxima (viewport) */
-  height: 100%; /* Ocupa toda a altura possível */
-  position: relative; /* Para posicionar elementos internos se necessário */
+  flex: 1 1 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  min-height: 120px;
+  max-height: 80vh;
+  height: 100%;
+  position: relative;
 }
 
-/* Player (iframe) responsivo, sem overflow, proporção preservada */
+/* Player (iframe) responsivo, proporção preservada */
 .modal-iframe {
-  width: 100%; /* Ocupa toda a largura do container */
-  height: 65vh; /* Altura relativa à viewport */
-  min-height: 120px; /* Altura mínima */
-  max-height: 80vh; /* Altura máxima */
-  border: none; /* Sem borda */
-  background: #000; /* Fundo preto */
-  border-radius: 0 0 16px 16px; /* Cantos arredondados na base */
-  display: block; /* Exibe como bloco */
-  flex: 1 1 0; /* Cresce para ocupar espaço disponível */
-  aspect-ratio: 16/9; /* Mantém proporção widescreen */
+  width: 100%;
+  height: 65vh;
+  min-height: 120px;
+  max-height: 80vh;
+  border: none;
+  background: #000;
+  border-radius: 0 0 16px 16px;
+  display: block;
+  flex: 1 1 0;
+  aspect-ratio: 16/9;
+  object-fit: contain;
 }
 
 /* =================== RESPONSIVIDADE =================== */
@@ -1138,58 +1136,70 @@ body.modal-open {
 /* Tablets e telas médias */
 @media (max-width: 1000px) {
   .modal-content {
-    max-width: 99vw; /* Quase toda a largura da tela */
-    border-radius: 12px; /* Cantos menos arredondados */
-    min-width: 0; /* Remove largura mínima */
-    max-height: 98vh; /* Altura máxima maior */
+    max-width: 99vw;
+    border-radius: 12px;
+    min-width: 0;
+    max-height: 98vh;
   }
   .modal-iframe-container {
-    min-height: 100px; /* Altura mínima reduzida */
-    max-height: 72vh; /* Altura máxima reduzida */
+    min-height: 100px;
+    max-height: 72vh;
   }
   .modal-iframe {
-    height: 46vw; /* Altura proporcional à largura da tela */
-    min-height: 100px; /* Altura mínima */
-    max-height: 72vh; /* Altura máxima */
-    border-radius: 0 0 12px 12px; /* Cantos menos arredondados */
+    height: 46vw;
+    min-height: 100px;
+    max-height: 72vh;
+    border-radius: 0 0 12px 12px;
   }
 }
 
 /* Mobile: ocupa toda tela, sem borda, controles adaptados */
 @media (max-width: 600px) {
   .modal-content {
-    width: 100vw; /* Toda a largura da tela */
-    max-width: 100vw; /* Remove limite de largura */
-    border-radius: 0; /* Sem cantos arredondados */
-    min-width: 0; /* Remove largura mínima */
-    max-height: 100vh; /* Altura máxima igual à tela */
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 0;
+    min-width: 0;
+    max-height: 100vh;
   }
   .modal-close {
-    top: 8px; /* Botão mais próximo do topo */
-    right: 8px; /* Botão mais próximo da direita */
-    font-size: 1.6rem; /* Ícone menor */
-    width: 34px; /* Botão menor */
-    height: 34px; /* Botão menor */
+    top: 8px;
+    right: 8px;
+    font-size: 1.6rem;
+    width: 34px;
+    height: 34px;
   }
   .modal-iframe-container {
-    min-height: 60px; /* Altura mínima menor */
-    max-height: 72vh; /* Altura máxima reduzida */
+    min-height: 60px;
+    max-height: 72vh;
   }
   .modal-iframe {
-    height: 56vw; /* Altura proporcional à largura da tela */
-    min-height: 60px; /* Altura mínima menor */
-    max-height: 72vh; /* Altura máxima */
-    border-radius: 0; /* Sem cantos arredondados */
+    height: 56vw;
+    min-height: 60px;
+    max-height: 72vh;
+    border-radius: 0;
   }
 }
 
 /* Ultrawide/telas muito altas: previne modal "esticado" demais */
 @media (min-height: 900px) and (min-width: 1200px) {
   .modal-content {
-    max-height: 720px; /* Limita altura máxima do modal */
+    max-height: 720px;
   }
   .modal-iframe {
     max-height: 650px;
+  }
+}
+
+/* Animação de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
