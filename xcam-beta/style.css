@@ -1121,7 +1121,7 @@ body.modal-open {
 /* Iframe ocupa 100% do container e preenche todo espaço disponível */
 .modal-iframe {
   width: 100%;
-  height: 90vh;        /* Ajusta a altura do iframe para preencher mais o espaço */
+  height: 80vh;        /* Ajusta a altura do iframe para preencher mais o espaço */
   min-height: 220px;
   max-height: 92vh;
   border: none;
