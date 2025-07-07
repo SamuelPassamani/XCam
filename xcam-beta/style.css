@@ -1064,11 +1064,11 @@ body.modal-open {
   background: #181818;
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65);
-  width: 90vw;
-  max-width: 1100px;
-  min-width: 320px;
+  width: 92vw;
+  max-width: 1120px;
+  min-width: 300px;
   max-height: 92vh;
-  min-height: 180px;
+  min-height: 240px;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -1104,36 +1104,37 @@ body.modal-open {
   outline: none;
 }
 
-/* Container do player (iframe) */
+/* Container do iframe ocupa toda a área útil do modal */
 .modal-iframe-container {
-  flex: 1 1 0;
+  flex: 1 1 auto;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  min-height: 120px;
-  max-height: 80vh;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
   height: 100%;
   position: relative;
+  background: #000;
+  /* Remove qualquer padding/margin interno */
 }
 
-/* Player (iframe) responsivo, proporção preservada */
+/* Iframe ocupa 100% do container e preenche todo espaço disponível */
 .modal-iframe {
   width: 100%;
-  height: 65vh;
-  min-height: 120px;
-  max-height: 80vh;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   border: none;
   background: #000;
-  border-radius: 0 0 16px 16px;
   display: block;
-  flex: 1 1 0;
-  aspect-ratio: 16/9;
-  object-fit: contain;
+  flex: 1 1 auto;
+  border-radius: 0 0 16px 16px;
+  /* Remove aspect-ratio e object-fit, pois queremos ocupar 100% do espaço */
 }
 
-/* =================== RESPONSIVIDADE =================== */
+/* ================ RESPONSIVIDADE ================ */
 
-/* Tablets e telas médias */
 @media (max-width: 1000px) {
   .modal-content {
     max-width: 99vw;
@@ -1142,18 +1143,13 @@ body.modal-open {
     max-height: 98vh;
   }
   .modal-iframe-container {
-    min-height: 100px;
-    max-height: 72vh;
+    border-radius: 0 0 12px 12px;
   }
   .modal-iframe {
-    height: 46vw;
-    min-height: 100px;
-    max-height: 72vh;
     border-radius: 0 0 12px 12px;
   }
 }
 
-/* Mobile: ocupa toda tela, sem borda, controles adaptados */
 @media (max-width: 600px) {
   .modal-content {
     width: 100vw;
@@ -1170,24 +1166,16 @@ body.modal-open {
     height: 34px;
   }
   .modal-iframe-container {
-    min-height: 60px;
-    max-height: 72vh;
+    border-radius: 0;
   }
   .modal-iframe {
-    height: 56vw;
-    min-height: 60px;
-    max-height: 72vh;
     border-radius: 0;
   }
 }
 
-/* Ultrawide/telas muito altas: previne modal "esticado" demais */
 @media (min-height: 900px) and (min-width: 1200px) {
   .modal-content {
     max-height: 720px;
-  }
-  .modal-iframe {
-    max-height: 650px;
   }
 }
 
