@@ -1064,18 +1064,19 @@ body.modal-open {
 /* Conteúdo central do modal */
 .modal-content {
   background: #181818; /* Fundo escuro */
-  border-radius: 12px; /* Cantos arredondados */
+  border-radius: 16px; /* Cantos arredondados */
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65); /* Sombra para destaque */
-  width: 90vw; /* Quase toda a largura da viewport */
-  max-width: 900px; /* Limite máximo de largura */
-  max-height: 90vh; /* Limite máximo de altura (viewport) */
+  width: 100vw; /* Quase toda a largura da viewport */
+  max-width: 1400px; /* Limite máximo de largura */
+  min-width: 480px; /* Largura mínima para mobile */
+  max-height: 100vh; /* Limite máximo de altura (viewport) */
+  min-height: 180px; /* Altura mínima */
   padding: 0; /* Sem padding interno */
-  display: flex; /* Flex para layout interno */
+  display: auto; /* Flex para layout interno */
   flex-direction: column; /* Coluna para empilhar elementos */
   align-items: stretch; /* Estica filhos na largura */
   position: relative; /* Para posicionar botão de fechar */
-  overflow: auto; /* Permite overflow (pode ser ajustado para auto/hidden) */
-  overflow-y: auto; /* ADICIONADO: A CHAVE! Permite rolagem vertical se o conteúdo for grande */
+  overflow: hidden; /* Permite overflow (pode ser ajustado para auto/hidden) */
   animation: fadeIn 0.2s; /* Animação de entrada */
 }
 
@@ -1121,14 +1122,16 @@ body.modal-open {
 /* Player (iframe) responsivo, sem overflow, proporção preservada */
 .modal-iframe {
   width: 100%; /* Ocupa toda a largura do container */
-  height: 100%; /* Altura relativa à viewport */
+  height: 65vh; /* Altura relativa à viewport */
   min-height: 120px; /* Altura mínima */
+  max-height: 80vh; /* Altura máxima */
   border: none; /* Sem borda */
   background: #000; /* Fundo preto */
   border-radius: 0 0 16px 16px; /* Cantos arredondados na base */
   display: block; /* Exibe como bloco */
   flex: 1 1 0; /* Cresce para ocupar espaço disponível */
-
+  aspect-ratio: 16/9; /* Mantém proporção widescreen */
+}
 
 /* =================== RESPONSIVIDADE =================== */
 
