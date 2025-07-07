@@ -1064,7 +1064,7 @@ body.modal-open {
   background: #181818;
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65);
-  width: 92vw;
+  width: 95vw;
   max-width: 1120px;
   min-width: 300px;
   max-height: 96vh;   /* Aumenta a altura máxima do modal */
@@ -1121,7 +1121,7 @@ body.modal-open {
 /* Iframe ocupa 100% do container e preenche todo espaço disponível */
 .modal-iframe {
   width: 100%;
-  height: 80vh;        /* Ajusta a altura do iframe para preencher mais o espaço */
+  height: 85vh;        /* Ajusta a altura do iframe para preencher mais o espaço */
   min-height: 220px;
   max-height: 92vh;
   border: none;
