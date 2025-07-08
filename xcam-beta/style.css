@@ -1064,7 +1064,7 @@ body.modal-open {
   background: #181818;
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65);
-  width: 95vw;
+  width: 99vw;
   max-width: 1120px;
   min-width: 300px;
   max-height: 96vh;   /* Aumenta a altura máxima do modal */
