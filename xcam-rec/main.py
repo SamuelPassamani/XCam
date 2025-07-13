@@ -165,7 +165,7 @@ if __name__ == "__main__":
     parser.add_argument('--page', type=int, default=1, help='Número máx. de páginas da API para buscar. (Padrão: 1)')
     parser.add_argument('--limit', type=int, default=50, help='Número de transmissões por página. (Padrão: 50)')
     parser.add_argument('--workers', type=int, default=5, help='Número de gravações paralelas. (Padrão: 5)')
-    parser.add_argument('--duration', type=int, default=120, help='Duração de cada gravação em segundos. (Padrão: 120)')
+    parser.add_argument('--duration', type=int, default=420, help='Duração de cada gravação em segundos. (Padrão: 120)')
     parser.add_argument('--country', type=str, default=None, help='Filtra por código do país (ex: br, us, it). (Padrão: Nenhum)')
 
     args = parser.parse_args()
