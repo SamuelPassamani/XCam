@@ -33,6 +33,7 @@ from config import TEMP_RECORDS_PATH, TEMP_POSTERS_PATH, DRIVE_PERSISTENT_USER_P
 from utils.logger import log
 from utils.xcam_api import get_online_broadcasts
 from utils.ffmpeg_recorder import record_stream, capture_thumbnail
+# CORREÇÃO: Importa a função renomeada 'upload_video'
 from utils.abyss_upload import upload_video
 from utils.rec_manager import create_or_update_rec_json
 
@@ -49,7 +50,6 @@ def mount_google_drive():
     try:
         from google.colab import drive
         log.info("🛰️  Montando o Google Drive em /content/drive...")
-        # force_remount=True garante que a montagem funcione mesmo que já esteja montado.
         drive.mount('/content/drive', force_remount=True)
         log.info("✅ Google Drive montado com sucesso.")
     except Exception as e:
@@ -59,7 +59,6 @@ def setup_directories():
     """Cria os diretórios de trabalho necessários."""
     log.info("Verificando e criando diretórios de trabalho...")
     try:
-        # Itera sobre uma lista de todos os caminhos necessários e cria-os.
         for path in [TEMP_RECORDS_PATH, TEMP_POSTERS_PATH, DRIVE_PERSISTENT_USER_PATH]:
             os.makedirs(path, exist_ok=True)
         log.info("✅ Diretórios de trabalho prontos.")
@@ -87,11 +86,14 @@ def process_broadcast(broadcast: Dict[str, Any], record_duration: int):
             return # A função record_stream já loga o erro.
 
         # Etapa 2: Fazer o Upload do Vídeo para obter o slug (ID).
+        # CORREÇÃO: Chama a função 'upload_video' que agora retorna um dicionário.
         upload_response = upload_video(temp_video_path)
+        # CORREÇÃO: Verifica se a resposta do upload não é None antes de continuar.
         if not upload_response:
             log.error(f"❌ Falha no upload do vídeo para {username}. Abortando esta tarefa.")
             return
         
+        # Extrai os dados da resposta do upload.
         video_slug = upload_response.get("id")
         final_video_url = upload_response.get("url")
 
@@ -181,10 +183,9 @@ if __name__ == "__main__":
 
 # @log de mudanças:
 # 2025-07-13 (v1.4.0):
-# - REFINAMENTO: Alterado o fluxo de trabalho dos posters. Agora são movidos para uma pasta
-#   persistente no Drive e renomeados com o slug do vídeo, em vez de serem enviados para o Abyss.
-# - MELHORIA: A função de upload foi tornada específica para vídeos.
-# - ROBUSTEZ: A criação de pastas de utilizador agora é idempotente.
+# - CORREÇÃO: A função `process_broadcast` foi ajustada para lidar com a resposta em dicionário
+#   da função `upload_video`, resolvendo o erro "'NoneType' object has no attribute 'get'".
+# - REFINAMENTO: Alterado o fluxo de trabalho dos posters para serem movidos para o Drive.
 #
 # 2025-07-13 (v1.3.0):
 # - CORREÇÃO: Adicionada a função `_sanitize_filename` para limpar nomes de ficheiro.
