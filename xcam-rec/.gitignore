@@ -1,0 +1,28 @@
+# Ignorar os diretórios de cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar arquivos de log gerados pela aplicação
+*.log
+
+# Ignorar diretórios de ambientes virtuais
+venv/
+.venv/
+env/
+.env/
+
+# Ignorar arquivos de configuração de IDEs
+.vscode/
+.idea/
+
+# Ignorar arquivos temporários de mídia (vídeos e imagens)
+# É uma boa prática criar uma pasta para eles e adicioná-la aqui.
+/temp_media/
+*.mp4
+*.jpg
+
+# Ignorar arquivos de segredos ou configuração local (se houver)
+.env
+config.ini
