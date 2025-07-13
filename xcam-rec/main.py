@@ -7,7 +7,7 @@
 # @titulo:         main.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.1.0
+# @version:        1.2.0
 # @lastupdate:     2025-07-13
 # @description:    Este é o script principal e orquestrador do projeto XCam Rec. Ele é
 #                  responsável por montar o Google Drive, buscar a lista de transmissões
@@ -82,11 +82,15 @@ def process_broadcast(broadcast: Dict[str, Any], record_duration: int):
     Função de worker que processa uma única transmissão.
     Executa a sequência completa: gravar, capturar poster, fazer upload e atualizar metadados.
     """
+    # Extrai as informações essenciais da transmissão.
     username = broadcast.get("username")
-    stream_url = broadcast.get("hls_url")
+    # CORREÇÃO: Acessa a URL da stream a partir do caminho correto no JSON (`preview.src`).
+    # O uso de .get({}, {}).get('src') é uma forma segura de evitar erros se 'preview' não existir.
+    stream_url = broadcast.get("preview", {}).get("src")
 
+    # Validação inicial para garantir que temos os dados mínimos para prosseguir.
     if not all([username, stream_url]):
-        log.warning(f"Transmissão com dados incompletos, pulando: {broadcast.get('id')}")
+        log.warning(f"Transmissão com dados incompletos (username ou URL da stream), pulando: {broadcast.get('id')}")
         return
 
     log.info(f"▶️  Iniciando processamento para o streamer: {username}")
@@ -185,7 +189,7 @@ if __name__ == "__main__":
         description="XCam REC - Gravador Modular de Transmissões.",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument('--page', type=int, default=2, help='Número máximo de páginas da API para buscar. (Padrão: 2)')
+    parser.add_argument('--page', type=int, default=1, help='Número máximo de páginas da API para buscar. (Padrão: 1)')
     parser.add_argument('--limit', type=int, default=50, help='Número de transmissões por página. (Padrão: 50)')
     parser.add_argument('--workers', type=int, default=5, help='Número de gravações paralelas. (Padrão: 5)')
     parser.add_argument('--duration', type=int, default=120, help='Duração de cada gravação em segundos. (Padrão: 120)')
@@ -194,6 +198,11 @@ if __name__ == "__main__":
     main(args)
 
 # @log de mudanças:
+# 2025-07-13 (v1.2.0):
+# - CORREÇÃO: A função `process_broadcast` foi ajustada para extrair a URL da stream do
+#   caminho correto no JSON (`broadcast['preview']['src']`).
+# - CORREÇÃO: O argumento de linha de comando `--pages` foi corrigido para `--page` em (v1.2.0).
+#
 # 2025-07-13 (v1.1.0):
 # - REFINAMENTO: O script agora utiliza caminhos de pasta do Google Drive definidos em `config.py`.
 # - FEATURE: Adicionada a função `mount_google_drive` para integração com o ambiente Colab.
@@ -203,7 +212,6 @@ if __name__ == "__main__":
 #
 # 2025-07-13 (v1.0.0):
 # - Criação inicial do orquestrador `main.py`.
-# - Implementação de parsing de argumentos, processamento paralelo e integração dos módulos `utils`.
 
 # @roadmap futuro:
 # - Adicionar um mecanismo para evitar gravar o mesmo streamer múltiplas vezes na mesma execução.
