@@ -7,7 +7,7 @@
 # @titulo:         rec_manager.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.0.0
+# @version:        1.1.0
 # @lastupdate:     2025-07-13
 # @description:    Este módulo é responsável por gerenciar os arquivos de metadados `rec.json`.
 #                  Ele lida com a criação (a partir de um template) e a atualização desses
@@ -28,9 +28,10 @@ import pytz         # Para trabalhar com fusos horários específicos (neste cas
 # Importa a instância do nosso logger customizado.
 from utils.logger import log
 
-# Define os caminhos base para o diretório do banco de dados e para o template.
-# Centralizar isso facilita a manutenção caso a estrutura de pastas mude.
-DB_PATH = "xcam-db/user/"
+# Importa os caminhos do nosso arquivo de configuração central.
+from config import DB_PATH
+
+# Define o caminho para o template.
 TEMPLATE_PATH = "templates/rec.json"
 
 # ---------------------------------------------------------------------------------------------
@@ -73,7 +74,7 @@ def create_or_update_rec_json(username: str, video_id: str, upload_url: str, pos
         poster_url (str): A URL completa para a imagem do poster.
         duration_seconds (int): A duração da gravação em segundos.
     """
-    # Define o caminho completo para o diretório e o arquivo do usuário.
+    # Define o caminho completo para o diretório e o arquivo do usuário, usando a configuração central.
     user_dir = os.path.join(DB_PATH, username)
     user_rec_path = os.path.join(user_dir, "rec.json")
 
@@ -148,6 +149,9 @@ def create_or_update_rec_json(username: str, video_id: str, upload_url: str, pos
 # ---------------------------------------------------------------------------------------------
 
 # @log de mudanças:
+# 2025-07-13 (v1.1.0):
+# - REFINAMENTO: O módulo agora importa a variável `DB_PATH` do arquivo `config.py`, centralizando a configuração.
+#
 # 2025-07-13 (v1.0.0):
 # - Criação inicial do módulo `rec_manager.py`.
 # - Implementada a função `create_or_update_rec_json` para ler, modificar e salvar os metadados.
