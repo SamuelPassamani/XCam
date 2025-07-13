@@ -1,0 +1,7 @@
+# Dependências necessárias para a execução do projeto XCam Rec.
+
+# Usada no módulo xcam_api.py para realizar requisições HTTP.
+requests
+
+# Usada no módulo rec_manager.py para lidar com fusos horários (timezones).
+pytz
