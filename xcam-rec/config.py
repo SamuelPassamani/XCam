@@ -7,7 +7,7 @@
 # @titulo:         config.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.1.0
+# @version:        1.2.0
 # @lastupdate:     2025-07-13
 # @description:    Este arquivo centraliza todas as configurações de caminhos e variáveis
 #                  do projeto XCam Rec. Ao isolar as configurações aqui, facilitamos a
@@ -28,14 +28,19 @@ TEMP_RECORDS_PATH = f"{DRIVE_BASE_PATH}/temp/records"
 TEMP_POSTERS_PATH = f"{DRIVE_BASE_PATH}/temp/posters"
 LOGS_PATH = f"{DRIVE_BASE_PATH}/logs"
 
+# Define o caminho para o armazenamento persistente de dados de utilizador (posters).
+DRIVE_PERSISTENT_USER_PATH = "/content/drive/MyDrive/XCam.Drive/user"
+
+
 # --- Configuração da API do XCam ---
-# CORREÇÃO: Adicionada a variável API_BASE_URL que estava em falta.
 # URL base da API do XCam.
 API_BASE_URL = "https://api.xcam.gay"
 
+
 # --- Configuração do Banco de Dados (Git-as-a-Database) ---
-# Caminho para o diretório que armazena os arquivos rec.json.
+# Caminho para o diretório que armazena os arquivos rec.json, relativo à raiz do projeto.
 DB_PATH = "xcam-db/user/"
+
 
 # --- Configuração da API de Upload ---
 # URL de upload para o serviço Hydrax/Abyss.to.
@@ -53,13 +58,15 @@ ABYSS_UPLOAD_URL = "http://up.hydrax.net/0128263f78f0b426d617bb61c2a8ff43"
 # ---------------------------------------------------------------------------------------------
 
 # @log de mudanças:
+# 2025-07-13 (v1.2.0):
+# - FEATURE: Adicionada a variável `DRIVE_PERSISTENT_USER_PATH` para o armazenamento final dos posters,
+#   alinhando o config com a nova lógica do `main.py`.
+#
 # 2025-07-13 (v1.1.0):
 # - CORREÇÃO: Adicionada a variável `API_BASE_URL` que estava em falta.
 #
 # 2025-07-13 (v1.0.0):
 # - Criação inicial do arquivo `config.py`.
-# - Centralização de todos os caminhos de diretório (Google Drive, Logs, DB).
-# - Adicionada a URL de upload do Abyss para fácil acesso.
 
 # @roadmap futuro:
 # - Adicionar mais configurações, como chaves de API ou tokens, para serem carregadas a partir
