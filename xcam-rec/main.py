@@ -150,7 +150,7 @@ def main(args: argparse.Namespace):
     setup_directories()
 
     all_broadcasts = []
-    for page_num in range(1, args.pages + 1):
+    for page_num in range(1, args.page + 1):
         log.info(f"Buscando página {page_num} de transmissões...")
         broadcasts = get_online_broadcasts(page=page_num, limit=args.limit, country=args.country)
         if not broadcasts:
@@ -185,7 +185,7 @@ if __name__ == "__main__":
         description="XCam REC - Gravador Modular de Transmissões.",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument('--pages', type=int, default=2, help='Número máximo de páginas da API para buscar. (Padrão: 2)')
+    parser.add_argument('--page', type=int, default=2, help='Número máximo de páginas da API para buscar. (Padrão: 2)')
     parser.add_argument('--limit', type=int, default=50, help='Número de transmissões por página. (Padrão: 50)')
     parser.add_argument('--workers', type=int, default=5, help='Número de gravações paralelas. (Padrão: 5)')
     parser.add_argument('--duration', type=int, default=120, help='Duração de cada gravação em segundos. (Padrão: 120)')
