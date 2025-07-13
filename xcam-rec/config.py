@@ -7,7 +7,7 @@
 # @titulo:         config.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.0.0
+# @version:        1.1.0
 # @lastupdate:     2025-07-13
 # @description:    Este arquivo centraliza todas as configurações de caminhos e variáveis
 #                  do projeto XCam Rec. Ao isolar as configurações aqui, facilitamos a
@@ -24,19 +24,21 @@
 DRIVE_BASE_PATH = "/content/drive/MyDrive/XCam.Drive/src"
 
 # Define os caminhos específicos para os arquivos temporários e logs, baseados no caminho principal.
-# Usar f-strings torna a configuração mais legível e fácil de manter.
 TEMP_RECORDS_PATH = f"{DRIVE_BASE_PATH}/temp/records"
 TEMP_POSTERS_PATH = f"{DRIVE_BASE_PATH}/temp/posters"
 LOGS_PATH = f"{DRIVE_BASE_PATH}/logs"
 
+# --- Configuração da API do XCam ---
+# CORREÇÃO: Adicionada a variável API_BASE_URL que estava em falta.
+# URL base da API do XCam.
+API_BASE_URL = "https://api.xcam.gay"
+
 # --- Configuração do Banco de Dados (Git-as-a-Database) ---
 # Caminho para o diretório que armazena os arquivos rec.json.
-# Este caminho é relativo à raiz do projeto, pois será versionado no Git.
 DB_PATH = "xcam-db/user/"
 
 # --- Configuração da API de Upload ---
 # URL de upload para o serviço Hydrax/Abyss.to.
-# Mantida aqui para fácil acesso e modificação.
 ABYSS_UPLOAD_URL = "http://up.hydrax.net/0128263f78f0b426d617bb61c2a8ff43"
 
 # ---------------------------------------------------------------------------------------------
@@ -51,6 +53,9 @@ ABYSS_UPLOAD_URL = "http://up.hydrax.net/0128263f78f0b426d617bb61c2a8ff43"
 # ---------------------------------------------------------------------------------------------
 
 # @log de mudanças:
+# 2025-07-13 (v1.1.0):
+# - CORREÇÃO: Adicionada a variável `API_BASE_URL` que estava em falta.
+#
 # 2025-07-13 (v1.0.0):
 # - Criação inicial do arquivo `config.py`.
 # - Centralização de todos os caminhos de diretório (Google Drive, Logs, DB).
