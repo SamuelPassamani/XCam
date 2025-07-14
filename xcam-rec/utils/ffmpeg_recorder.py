@@ -7,118 +7,100 @@
 # @titulo:         ffmpeg_recorder.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.1.0
-# @lastupdate:     2025-07-12
-# @description:    Este módulo fornece uma interface de alto nível para interagir com o FFmpeg.
-#                  Ele encapsula a complexidade de executar o FFmpeg como um subprocesso,
-#                  oferecendo funções para gravar streams de vídeo com monitoramento de
-#                  progresso e para capturar thumbnails (imagens) de alta qualidade dos vídeos.
-# @modes:          - Wrapper de subprocesso para FFmpeg.
+# @version:        2.1.0
+# @lastupdate:     2025-07-14
+# @description:    Módulo unificado para interagir com o FFmpeg. Orquestra a gravação de
+#                  streams HLS, monitoriza o progresso em tempo real com uma barra de status
+#                  detalhada e, ao final, captura uma miniatura (thumbnail) do vídeo gravado.
+#                  Este módulo combina as funcionalidades de gravação e captura de imagem.
+# @modes:          - Gravação de Stream HLS com Monitorização de Progresso.
+#                  - Captura de Miniatura de Vídeo.
 
 # ---------------------------------------------------------------------------------------------
 # 2. CONFIGURAÇÕES & VARIÁVEIS GLOBAIS
 # ---------------------------------------------------------------------------------------------
 
-# Importações de bibliotecas necessárias.
-import os           # Usado para interações com o sistema operacional, como criar diretórios.
-import re           # Módulo de expressões regulares, para parsear a saída do FFmpeg.
-import subprocess   # Biblioteca principal para executar e gerenciar processos externos.
-from typing import Optional # Para anotações de tipo.
+import os               # Usado para interações com o sistema operacional, como criar diretórios.
+import re               # Módulo de expressões regulares, para analisar a saída do FFmpeg.
+import subprocess       # Biblioteca principal para executar e gerenciar processos externos.
+import logging          # Para registar eventos importantes de forma padronizada.
+import math             # Para cálculos matemáticos (arredondamento) no progresso.
+from typing import Optional # Para anotações de tipo, melhorando a clareza do código.
 
-# Importa a instância do nosso logger customizado.
-from utils.logger import log
+# Inicializa um logger específico para este módulo, permitindo um controlo granular dos logs.
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------------------------
 # 3. CORPO
 # ---------------------------------------------------------------------------------------------
 
-def record_stream(stream_url: str, output_path: str, duration: int, progress_interval: int = 10) -> bool:
+def _format_seconds(seconds: float) -> str:
     """
-    Grava uma stream de vídeo usando FFmpeg, monitorando o progresso em tempo real.
+    Formata um total de segundos para o formato de tempo legível HH:MM:SS.
+    Função auxiliar interna para a barra de progresso.
 
     Args:
-        stream_url (str): A URL da stream de vídeo a ser gravada (ex: .m3u8).
-        output_path (str): O caminho completo onde o arquivo de vídeo será salvo.
-        duration (int): A duração total da gravação em segundos.
-        progress_interval (int, optional): O intervalo em segundos para logar o progresso. Padrão é 10.
+        seconds (float): O número total de segundos a ser formatado.
 
     Returns:
-        bool: True se a gravação foi concluída com sucesso, False caso contrário.
+        str: A string de tempo formatada (ex: "01:23:45").
     """
-    # Garante que o diretório de destino para o arquivo de vídeo exista.
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    # Converte os segundos para inteiros para os cálculos.
+    seconds = int(seconds)
+    # Calcula as horas.
+    h = seconds // 3600
+    # Calcula os minutos restantes.
+    m = (seconds % 3600) // 60
+    # Calcula os segundos restantes.
+    s = seconds % 60
+    # Retorna a string formatada com zeros à esquerda para garantir dois dígitos.
+    return f"{h:02d}:{m:02d}:{s:02d}"
 
-    # Constrói a lista de argumentos para o comando FFmpeg.
-    command = [
-        'ffmpeg', '-i', stream_url, '-t', str(duration),
-        '-c', 'copy', '-bsf:a', 'aac_adtstoasc', '-y', output_path
-    ]
-
-    log.info(f"🎥 Iniciando gravação de '{stream_url}' para '{output_path}' por {duration}s.")
-
-    try:
-        # Inicia o processo FFmpeg usando subprocess.Popen.
-        process = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            universal_newlines=True, encoding='utf-8'
-        )
-
-        last_progress_log_time = 0
-
-        # Itera sobre a saída de erro (stderr) do FFmpeg em tempo real.
-        for line in iter(process.stderr.readline, ''):
-            if 'frame=' in line and 'time=' in line:
-                time_match = re.search(r"time=(\d{2}:\d{2}:\d{2})", line)
-                if time_match:
-                    current_time_str = time_match.group(1)
-                    h, m, s = map(int, current_time_str.split(':'))
-                    current_seconds = h * 3600 + m * 60 + s
-
-                    if current_seconds >= last_progress_log_time + progress_interval:
-                        percent = (current_seconds / duration) * 100
-                        log.info(f"   [Progresso] Gravando... {current_seconds}s de {duration}s ({percent:.1f}%)")
-                        last_progress_log_time = current_seconds
-        
-        process.wait()
-        
-        if process.returncode == 0:
-            log.info(f"✅ Gravação concluída com sucesso: {output_path}")
-            return True
-        else:
-            log.error(f"FFmpeg finalizou com erro (código: {process.returncode}).")
-            stderr_output = process.stderr.read()
-            log.error(f"   [FFmpeg Output]: {stderr_output.strip()}")
-            return False
-
-    except FileNotFoundError:
-        log.critical("Comando 'ffmpeg' não encontrado. O FFmpeg é necessário para a gravação.")
-        log.critical("   Por favor, instale-o e garanta que esteja no PATH do sistema.")
-        return False
-    except Exception as e:
-        log.error(f"Ocorreu uma exceção inesperada durante a gravação: {e}")
-        return False
-
-def capture_thumbnail(video_path: str, thumbnail_path: str, timestamp: str = "00:00:05") -> Optional[str]:
+def _log_progress(username: str, elapsed_seconds: float, total_seconds: int):
     """
-    Captura um único frame (thumbnail) de um arquivo de vídeo em um ponto específico.
+    Exibe o progresso da gravação de cada transmissão em tempo real no console.
+    Função auxiliar interna para a gravação.
+
+    Args:
+        username (str): O nome do utilizador para identificação no log.
+        elapsed_seconds (float): O tempo de gravação já decorrido.
+        total_seconds (int): A duração total esperada da gravação.
+    """
+    # Calcula a percentagem concluída, garantindo que não ultrapasse 100%.
+    percent = min((elapsed_seconds / total_seconds) * 100, 100)
+    # Formata o tempo decorrido para um formato legível.
+    tempo_decorrido = _format_seconds(elapsed_seconds)
+    # Calcula os minutos totais gravados.
+    minutos_gravados = math.floor(elapsed_seconds / 60)
+    # Calcula os minutos restantes, garantindo que não seja negativo.
+    minutos_restantes = max(0, math.ceil((total_seconds - elapsed_seconds) / 60))
+    
+    # Imprime a linha de progresso formatada.
+    # O `end='\r'` faz com que o cursor volte ao início da linha, permitindo que a
+    # próxima impressão sobrescreva a atual, criando o efeito de atualização em tempo real.
+    print(f"⏱️  [{username}] Gravados: {minutos_gravados} min | Restantes: {minutos_restantes} min | Tempo total: {tempo_decorrido} — 📊 {percent:.1f}% concluído", end='\r')
+
+def capture_thumbnail(video_path: str, thumbnail_path: str, timestamp: str = "00:00:07") -> bool:
+    """
+    Captura um único frame (thumbnail) de um arquivo de vídeo num ponto específico.
 
     Args:
         video_path (str): O caminho para o arquivo de vídeo de entrada.
-        thumbnail_path (str): O caminho onde a imagem do thumbnail será salva (ex: /path/to/thumb.jpg).
-        timestamp (str, optional): O ponto no vídeo para capturar o frame (formato HH:MM:SS). Padrão é "00:00:05".
+        thumbnail_path (str): O caminho onde a imagem do thumbnail será salva.
+        timestamp (str, optional): O ponto no vídeo para capturar o frame (HH:MM:SS). Padrão é "00:00:07".
 
     Returns:
-        Optional[str]: O caminho para o thumbnail criado em caso de sucesso, ou None em caso de falha.
+        bool: True se o thumbnail foi criado com sucesso, False caso contrário.
     """
-    # Verifica se o arquivo de vídeo de entrada realmente existe antes de prosseguir.
+    # Verifica se o vídeo de origem existe antes de tentar criar o thumbnail.
     if not os.path.exists(video_path):
-        log.error(f"Arquivo de vídeo não encontrado para captura de thumbnail: {video_path}")
-        return None
+        logger.error(f"🖼️❌ Erro: Vídeo não encontrado em '{video_path}' para captura de thumbnail.")
+        return False
 
     # Garante que o diretório de destino para o thumbnail exista.
     os.makedirs(os.path.dirname(thumbnail_path), exist_ok=True)
 
-    # Constrói o comando FFmpeg para extrair um frame.
+    # Constrói o comando FFmpeg para extrair um único frame de alta qualidade.
     command = [
         'ffmpeg',
         '-i', video_path,           # Arquivo de vídeo de entrada.
@@ -129,55 +111,102 @@ def capture_thumbnail(video_path: str, thumbnail_path: str, timestamp: str = "00
         thumbnail_path              # O caminho do arquivo de imagem de saída.
     ]
 
-    log.info(f"🖼️  Capturando thumbnail de '{video_path}' para '{thumbnail_path}'.")
+    logger.info(f"🖼️  Capturando thumbnail de '{os.path.basename(video_path)}' para '{os.path.basename(thumbnail_path)}'.")
 
     try:
-        # Executa o comando. Usamos `subprocess.run` aqui porque não precisamos monitorar a saída em tempo real.
-        # `check=True` fará com que uma exceção `CalledProcessError` seja levantada se o FFmpeg falhar.
+        # Executa o comando. `check=True` lança uma exceção se o FFmpeg falhar.
         # `capture_output=True` esconde a saída do FFmpeg do console, mantendo o log limpo.
-        subprocess.run(
-            command,
-            check=True,
-            capture_output=True
-        )
-        log.info(f"✅ Thumbnail capturado com sucesso: {thumbnail_path}")
-        # Retorna o caminho do thumbnail se o comando foi bem-sucedido.
-        return thumbnail_path
+        subprocess.run(command, check=True, capture_output=True, text=True, encoding='utf-8')
+        logger.info(f"🖼️✅ Thumbnail capturado com sucesso: {thumbnail_path}")
+        return True
         
     except FileNotFoundError:
-        # Este erro ocorre se o executável 'ffmpeg' não for encontrado.
-        log.critical("Comando 'ffmpeg' não encontrado. Não foi possível capturar o thumbnail.")
-        return None
+        logger.critical("❌ Erro Crítico: 'ffmpeg' não encontrado. Não foi possível capturar o thumbnail.")
+        return False
     except subprocess.CalledProcessError as e:
-        # Este erro ocorre se o FFmpeg retornar um código de erro (ex: vídeo corrompido, timestamp inválido).
-        log.error(f"FFmpeg finalizou com erro ao tentar capturar o thumbnail.")
-        # Loga a saída de erro do FFmpeg para ajudar na depuração.
-        log.error(f"   [FFmpeg Output]: {e.stderr.decode('utf-8').strip()}")
-        return None
+        logger.error(f"❌ FFmpeg falhou ao capturar thumbnail. Erro: {e.stderr.strip()}")
+        return False
     except Exception as e:
-        # Captura quaisquer outros erros inesperados.
-        log.error(f"Ocorreu uma exceção inesperada durante a captura do thumbnail: {e}")
-        return None
+        logger.error(f"❌ Ocorreu uma exceção inesperada durante a captura do thumbnail: {e}")
+        return False
+
+def record_stream_and_capture_thumbnail(username: str, stream_url: str, output_path: str, thumbnail_path: str, max_duration: int) -> bool:
+    """
+    Orquestra o processo completo: grava um stream e, se bem-sucedido, captura um thumbnail.
+    """
+    logger.info(f"🎥 Preparando para gravar '{username}' com duração máxima de {max_duration}s.")
+    
+    # Constrói o comando FFmpeg para a gravação do stream.
+    command = [
+        'ffmpeg',
+        '-i', stream_url,
+        '-t', str(max_duration),
+        '-c', 'copy',
+        '-bsf:a', 'aac_adtstoasc',
+        '-y',
+        output_path
+    ]
+
+    try:
+        # Inicia o processo FFmpeg, redirecionando stderr para um pipe para ler o progresso.
+        process = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True, encoding='utf-8')
+
+        # Expressão regular para encontrar a informação de tempo na saída do FFmpeg (ex: time=00:01:23.45).
+        time_pattern = re.compile(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})")
+
+        # Loop para ler a saída do FFmpeg em tempo real.
+        while True:
+            line = process.stderr.readline()
+            if not line and process.poll() is not None:
+                break  # O processo terminou e não há mais saída para ler.
+
+            match = time_pattern.search(line)
+            if match:
+                h, m, s, ms = map(int, match.groups())
+                elapsed_seconds = h * 3600 + m * 60 + s + ms / 100
+                _log_progress(username, elapsed_seconds, max_duration)
+
+        # Espera o processo terminar e obtém o código de retorno.
+        return_code = process.wait()
+        print() # Adiciona uma nova linha para não sobrescrever a última linha de progresso.
+
+        if return_code == 0:
+            logger.info(f"✅ Gravação para '{username}' concluída com sucesso (código {return_code}).")
+            # Após a gravação bem-sucedida, tenta capturar o thumbnail.
+            capture_thumbnail(output_path, thumbnail_path)
+            return True
+        else:
+            logger.error(f"❌ Gravação para '{username}' terminou com erro (código {return_code}).")
+            return False
+
+    except FileNotFoundError:
+        logger.critical("❌ Erro Crítico: O comando 'ffmpeg' não foi encontrado. Verifique se está instalado e no PATH.")
+        return False
+    except Exception as e:
+        logger.error(f"❌ Ocorreu uma exceção inesperada durante a gravação de '{username}': {e}")
+        return False
 
 # ---------------------------------------------------------------------------------------------
 # 4. RODAPÉ / FIM DO CÓDIGO
 # ---------------------------------------------------------------------------------------------
 
 # @log de mudanças:
-# 2025-07-12 (v1.1.0):
-# - FEATURE: Adicionada a função `capture_thumbnail` para extrair uma imagem de um vídeo.
-# - MELHORIA: A documentação e os comentários foram atualizados para refletir a nova funcionalidade.
+# 2025-07-14 (v2.1.0):
+# - REFACTOR: Unificação dos dois arquivos. A função `record_stream` foi renomeada para
+#   `record_stream_and_capture_thumbnail` para refletir a sua responsabilidade completa.
+# - FEATURE: Reintroduzida a função `capture_thumbnail` da v1.1.0, agora com logging melhorado.
+# - FEATURE: A função principal agora orquestra a captura do thumbnail após uma gravação bem-sucedida.
+# - REFACTOR: Padronizado o uso do logger nativo do Python (`logging.getLogger`).
+# - DOCS: Atualização completa dos comentários e da documentação para refletir a nova estrutura unificada.
 #
-# 2025-07-12 (v1.0.0):
-# - Criação inicial do módulo `ffmpeg_recorder.py`.
-# - Implementação da função `record_stream` como um wrapper para o FFmpeg.
-# - Adicionado o uso de `subprocess.Popen` para execução e monitoramento em tempo real.
-# - Implementada a lógica de parsing da saída do FFmpeg para exibir o progresso da gravação.
-# - Adicionado tratamento de erros para FFmpeg não encontrado e falhas durante a execução.
-# - Integração com o módulo de logging customizado.
+# 2025-07-14 (v2.0.0):
+# - FEATURE: Implementado o log de progresso em tempo real.
+#
+# 2025-07-12 (v1.1.0):
+# - FEATURE: Adicionada a função `capture_thumbnail` inicial.
 
 # @roadmap futuro:
-# - Adicionar uma função para verificar a validade de uma stream URL antes de iniciar a gravação.
-# - Permitir a passagem de parâmetros customizados do FFmpeg através das funções.
-# - Implementar uma classe `Recorder` se a complexidade aumentar, para gerenciar o estado da gravação.
-# - Permitir a personalização do timestamp e da resolução do thumbnail.
+# - Criar uma classe `Recorder` para gerir o estado do processo FFmpeg de forma mais robusta,
+#   permitindo pausar ou parar a gravação de forma mais limpa.
+# - Permitir a passagem de parâmetros customizados do FFmpeg (ex: `-vf` para filtros)
+#   através da função de gravação.
