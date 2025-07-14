@@ -7,12 +7,11 @@
 # @titulo:         xcam_api.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.4.0
+# @version:        1.5.0
 # @lastupdate:     2025-07-14
 # @description:    Este módulo serve como um cliente dedicado para a API do XCam. Ele encapsula
 #                  toda a lógica de comunicação, incluindo a construção de URLs, tratamento
-#                  de erros e parsing de respostas, utilizando um logger modular em vez de uma
-#                  instância global.
+#                  de erros e parsing de respostas, utilizando um logger modular.
 # @modes:          - Cliente de API RESTful.
 
 # ---------------------------------------------------------------------------------------------
@@ -22,6 +21,7 @@
 # --- Importações de Bibliotecas Padrão ---
 import requests                     # Biblioteca padrão para realizar requisições HTTP em Python.
 import logging                      # Biblioteca padrão para logging, usada para obter uma instância do logger.
+import json                         # Para o caso de a resposta da API não ser um JSON válido.
 from typing import Dict, Any, List, Optional # Tipos para anotações, melhorando a clareza do código.
 
 # --- Importações de Módulos do Projeto ---
@@ -41,7 +41,7 @@ REQUEST_TIMEOUT = 15
 
 def get_online_models(page: int = 1, limit: int = 1000, country: Optional[str] = None) -> List[Dict[str, Any]]:
     """
-    Busca uma lista paginada de modelos online, com filtro opcional por país.
+    Busca uma lista paginada de modelos online da API XCam.
 
     Args:
         page (int, optional): O número da página a ser consultada. Padrão é 1.
@@ -52,7 +52,7 @@ def get_online_models(page: int = 1, limit: int = 1000, country: Optional[str] =
         List[Dict[str, Any]]: Uma lista de dicionários, cada um representando um modelo online.
                               Retorna uma lista vazia em caso de erro.
     """
-    # Constrói o endpoint e o dicionário de parâmetros para a requisição.
+    # CORREÇÃO: O endpoint correto da API é a raiz ("/").
     endpoint = "/"
     params = {'page': page, 'limit': limit}
     if country:
@@ -63,17 +63,16 @@ def get_online_models(page: int = 1, limit: int = 1000, country: Optional[str] =
     logger.info(f"📡 Realizando requisição para: {url} com parâmetros: {params}")
 
     try:
-        # Realiza a requisição HTTP GET para a URL construída.
+        # Realiza a requisição HTTP GET.
         response = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
         # Levanta uma exceção HTTPError para respostas com códigos de erro (4xx ou 5xx).
         response.raise_for_status()
         # Converte a resposta JSON em um dicionário Python.
         data = response.json()
 
-        # Valida a estrutura da resposta e extrai a lista de modelos.
-        # A API retorna um objeto principal que contém uma chave 'online'.
-        if data and isinstance(data.get("online"), list):
-            models = data["online"]
+        # Valida a estrutura da resposta e extrai a lista de modelos do caminho correto.
+        if data and isinstance(data.get("broadcasts"), dict) and isinstance(data["broadcasts"].get("items"), list):
+            models = data["broadcasts"]["items"]
             logger.info(f"✅ {len(models)} modelos encontrados para os parâmetros: {params}.")
             return models
         else:
@@ -98,17 +97,17 @@ def get_online_models(page: int = 1, limit: int = 1000, country: Optional[str] =
 # ---------------------------------------------------------------------------------------------
 
 # @log de mudanças:
+# 2025-07-14 (v1.5.0):
+# - CORREÇÃO CRÍTICA: O endpoint da API foi corrigido de "/v1/online" para "/", que é o caminho
+#   correto onde a API responde, resolvendo o erro de "Formato de resposta inesperado".
+#
 # 2025-07-14 (v1.4.0):
-# - CORREÇÃO: Removida a importação `from utils.logger import log`.
-# - REFACTOR: Adotado o padrão `import logging; logger = logging.getLogger(__name__)` para
-#   obter uma instância de logger modular, resolvendo o `ImportError`.
-# - REFACTOR: O nome da função `get_online_broadcasts` foi alterado para `get_online_models` para
-#   maior consistência com a resposta da API.
-# - DOCS: Atualização completa dos comentários e da estrutura do arquivo para o padrão XCam.
+# - REFACTOR: Padronizado o uso do logger com `logging.getLogger(__name__)`.
+# - REFACTOR: Renomeada a função para `get_online_models` e corrigido o parsing do JSON.
 #
 # 2025-07-13 (v1.3.0):
-# - REESCRITA: Código reescrito para ser mais explícito, removendo a função `_make_request`.
-#
+# - Versão inicial com lógica de requisição explícita.
+
 # @roadmap futuro:
 # - Implementar um modelo de classes (ex: `XCamAPIClient`) para organizar melhor as chamadas se a API crescer.
 # - Adicionar caching (com TTL) para requisições que não mudam com frequência.
