@@ -7,12 +7,12 @@
 # @titulo:         main.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.6.0
+# @version:        1.7.0
 # @lastupdate:     2025-07-14
 # @description:    Script principal e orquestrador do módulo XCam Rec. Este script é responsável
-#                  por obter a lista de streamers online, iniciar processos de gravação paralelos,
-#                  validar a duração das gravações, fazer o upload do conteúdo e, finalmente,
-#                  atualizar os metadados no "Git-as-a-Database".
+#                  por obter a lista de streamers online, implementar uma lógica de fallback
+#                  para encontrar a URL do stream, iniciar processos de gravação paralelos,
+#                  validar a duração das gravações e atualizar os metadados.
 # @modes:          - Aplicação de Linha de Comando (CLI) para ser executada pelo Launcher.
 
 # ---------------------------------------------------------------------------------------------
@@ -20,26 +20,26 @@
 # ---------------------------------------------------------------------------------------------
 
 # --- Importações de Bibliotecas Padrão ---
-import argparse                     # Para criar uma interface de linha de comando amigável.
-import os                           # Para interações com o sistema de arquivos (caminhos, diretórios).
-import re                           # Para usar expressões regulares (neste caso, para limpar nomes de ficheiros).
-import shutil                       # Para operações de ficheiros de alto nível, como mover.
-import logging                      # Biblioteca padrão para logging.
-import time                         # Para adicionar pausas (sleep) e gerar timestamps.
-from concurrent.futures import ThreadPoolExecutor, as_completed # Para executar gravações em paralelo.
-from typing import Dict, Any, Set     # Para anotações de tipo, melhorando a clareza do código.
+import argparse
+import os
+import re
+import shutil
+import logging
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Dict, Any, Set, Optional
 
 # --- Importações de Módulos do Projeto ---
-import config                       # Importa as configurações de caminhos e os valores padrão.
+import config
 from utils.logger import setup_logging
-from utils.xcam_api import get_online_models
+from utils.xcam_api import get_online_models, get_user_live_info
 from utils.ffmpeg_recorder import record_stream_and_capture_thumbnail
 from utils.video_utils import manage_recorded_file, get_video_duration
 from utils.abyss_upload import upload_video
 from utils.rec_manager import create_or_update_rec_json
 
 # --- Variáveis Globais ---
-# Inicializa um logger específico para este módulo, que será o ponto de entrada.
+# Inicializa um logger específico para este módulo.
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------------------------
@@ -47,45 +47,59 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------------------------
 
 def _sanitize_filename(name: str) -> str:
-    """
-    Função auxiliar para remover caracteres inválidos de uma string.
-    Garante que nomes de utilizadores não criem nomes de ficheiro problemáticos.
-    """
-    # Substitui qualquer caracter que não seja letra, número, underscore, ou hífen por nada.
+    """Função auxiliar para remover caracteres inválidos de uma string."""
     return re.sub(r'[^\w\-]', '', name)
+
+def _get_stream_url(broadcast: Dict[str, Any]) -> Optional[str]:
+    """
+    Tenta obter a URL do stream, usando um fallback se necessário.
+    """
+    username = broadcast.get("username")
+    
+    # Tentativa 1: Obter a URL HLS (.m3u8) diretamente da lista de modelos.
+    # O caminho é broadcast -> preview -> src
+    primary_url = broadcast.get("preview", {}).get("src")
+    if primary_url:
+        logger.info(f"📹 URL de stream principal encontrada para '{username}'.")
+        return primary_url
+
+    # Tentativa 2 (Fallback): Se a URL principal estiver vazia, chama o endpoint /liveInfo.
+    logger.warning(f"⚠️ URL de stream principal em falta para '{username}'. A tentar obter URL de fallback...")
+    live_info = get_user_live_info(username)
+    
+    if live_info:
+        # Dá prioridade à cdnURL, que é geralmente mais estável.
+        fallback_url = live_info.get("cdnURL") or live_info.get("edgeURL")
+        if fallback_url:
+            logger.info(f"📹 URL de stream de fallback ('{ 'cdnURL' if live_info.get('cdnURL') else 'edgeURL' }') encontrada para '{username}'.")
+            return fallback_url
+
+    # Se ambas as tentativas falharem, regista o erro.
+    logger.error(f"❌ Não foi possível obter uma URL de stream válida para '{username}' após todas as tentativas.")
+    return None
 
 def process_broadcast_worker(broadcast: Dict[str, Any], min_duration: int, max_duration: int, recording_set: Set[str]):
     """
     Worker executado em uma thread. Orquestra o fluxo completo para uma única transmissão.
-    Grava, valida, faz upload e atualiza os metadados.
-
-    Args:
-        broadcast (Dict[str, Any]): O dicionário de dados do streamer, vindo da API.
-        min_duration (int): A duração mínima da gravação para que seja mantida.
-        max_duration (int): A duração máxima da gravação.
-        recording_set (Set[str]): O conjunto compartilhado de modelos em gravação, para gestão de estado.
     """
     username = broadcast.get("username")
-    # A URL do stream HLS é a mais estável para gravação com FFmpeg.
-    stream_url = broadcast.get("hls_url")
-
-    # Validação inicial para garantir que temos os dados mínimos para prosseguir.
-    if not all([username, stream_url]):
-        logger.warning(f"⚠️ Transmissão com dados incompletos, pulando: {broadcast}")
-        if username:
-            recording_set.remove(username) # Libera o username se ele foi adicionado.
+    if not username:
+        logger.warning("⚠️ Transmissão sem username encontrada. A pular.")
         return
 
-    logger.info(f"▶️  Iniciando processamento para o streamer: {username}")
-    
-    # Cria um nome de ficheiro base único usando o nome do utilizador e um timestamp Unix.
-    safe_filename_base = f"{_sanitize_filename(username)}_{int(time.time())}"
-    # Define os caminhos completos para os ficheiros temporários.
-    temp_video_path = os.path.join(config.TEMP_RECORDS_PATH, f"{safe_filename_base}.mp4")
-    temp_poster_path = os.path.join(config.TEMP_POSTERS_PATH, f"{safe_filename_base}.jpg")
-
     try:
-        # --- Etapa 1: Gravação e Captura do Thumbnail ---
+        # --- Etapa 1: Obter a URL do Stream com Lógica de Fallback ---
+        stream_url = _get_stream_url(broadcast)
+        if not stream_url:
+            return # Aborta se nenhuma URL válida for encontrada. O log de erro já foi emitido.
+
+        # --- Etapas subsequentes (gravação, validação, etc.) ---
+        logger.info(f"▶️  Iniciando processamento para o streamer: {username}")
+        
+        safe_filename_base = f"{_sanitize_filename(username)}_{int(time.time())}"
+        temp_video_path = os.path.join(config.TEMP_RECORDS_PATH, f"{safe_filename_base}.mp4")
+        temp_poster_path = os.path.join(config.TEMP_POSTERS_PATH, f"{safe_filename_base}.jpg")
+
         record_successful = record_stream_and_capture_thumbnail(
             username=username,
             stream_url=stream_url,
@@ -95,10 +109,9 @@ def process_broadcast_worker(broadcast: Dict[str, Any], min_duration: int, max_d
         )
 
         if not record_successful:
-            logger.error(f"❌ A gravação para {username} falhou. Abortando tarefa.")
-            return # Interrompe a execução para este streamer.
+            logger.error(f"❌ A gravação para {username} falhou.")
+            return
 
-        # --- Etapa 2: Validação da Duração Mínima ---
         file_is_valid = manage_recorded_file(
             video_path=temp_video_path,
             thumbnail_path=temp_poster_path,
@@ -106,20 +119,18 @@ def process_broadcast_worker(broadcast: Dict[str, Any], min_duration: int, max_d
         )
         
         if not file_is_valid:
-            return # Interrompe se o ficheiro foi descartado. O log já foi emitido.
+            return
 
-        # --- Etapa 3: Upload do Vídeo e Gestão do Poster ---
         logger.info(f"📤 Iniciando upload do vídeo para {username}...")
         upload_response = upload_video(temp_video_path)
         
         if not upload_response or "id" not in upload_response:
-            logger.error(f"❌ Falha no upload ou resposta inválida para {username}. Abortando.")
+            logger.error(f"❌ Falha no upload ou resposta inválida para {username}.")
             return
         
         video_slug = upload_response.get("id")
         final_video_url = upload_response.get("url")
         
-        # Move o poster para o diretório persistente, renomeando-o com o slug do vídeo.
         user_poster_dir = os.path.join(config.DRIVE_PERSISTENT_USER_PATH, username)
         os.makedirs(user_poster_dir, exist_ok=True)
         final_poster_path = os.path.join(user_poster_dir, f"{video_slug}.jpg")
@@ -127,7 +138,6 @@ def process_broadcast_worker(broadcast: Dict[str, Any], min_duration: int, max_d
         final_poster_public_url = f"https://db.xcam.gay/user/{username}/{video_slug}.jpg"
         logger.info(f"🖼️  Poster movido para o destino final: {final_poster_path}")
 
-        # --- Etapa 4: Atualizar Metadados (rec.json) ---
         create_or_update_rec_json(
             username=username,
             video_id=video_slug,
@@ -138,36 +148,31 @@ def process_broadcast_worker(broadcast: Dict[str, Any], min_duration: int, max_d
         logger.info(f"✅ Processo para {username} concluído com sucesso.")
 
     finally:
-        # --- Etapa 5: Limpeza Final e Gestão de Estado ---
-        # Garante que todos os ficheiros temporários sejam removidos.
+        # Garante que ficheiros temporários sejam limpos e que o estado de gravação seja libertado.
         if os.path.exists(temp_video_path):
             os.remove(temp_video_path)
         if os.path.exists(temp_poster_path):
             os.remove(temp_poster_path)
         
-        # Remove o utilizador do conjunto de gravações ativas para que possa ser gravado novamente.
         recording_set.remove(username)
         logger.info(f"🧹 Tarefa para {username} finalizada e estado de gravação limpo.")
 
 def main(args: argparse.Namespace):
     """
-    Função principal que orquestra a busca e o processamento de todas as transmissões.
+    Função principal que orquestra todo o processo de gravação.
     """
-    # Configura o sistema de logging uma única vez no início da aplicação.
+    # Configura o logger uma única vez no início da aplicação.
     setup_logging(log_level=config.LOG_LEVEL, log_file=os.path.join(config.LOGS_PATH, config.LOG_FILE))
     
     logger.info("🚀 Iniciando o XCam REC Engine...")
     logger.info(f"    - Duração Mínima: {args.min_duration}s | Duração Máxima: {args.max_duration}s")
     
-    # Cria os diretórios de trabalho necessários se eles não existirem.
     os.makedirs(config.TEMP_RECORDS_PATH, exist_ok=True)
     os.makedirs(config.TEMP_POSTERS_PATH, exist_ok=True)
     
     # Conjunto para manter o estado dos modelos que estão a ser gravados.
-    # Isto evita iniciar múltiplas gravações para o mesmo streamer.
     currently_recording = set()
 
-    # Loop principal que executa indefinidamente para monitorizar novos streams.
     while True:
         try:
             logger.info(f"📡 A procurar modelos online (Página: {args.page}, Limite: {args.limit})...")
@@ -178,21 +183,17 @@ def main(args: argparse.Namespace):
             else:
                 logger.info(f"🟢 Encontrados {len(online_models)} modelos online. A verificar tarefas...")
                 
-                # Usa um ThreadPoolExecutor para gerir as gravações paralelas.
                 with ThreadPoolExecutor(max_workers=args.workers) as executor:
                     for model in online_models:
                         username = model.get("username")
-                        # Inicia uma nova gravação apenas se o modelo tiver um username e não estiver já a ser gravado.
                         if username and username not in currently_recording:
                             currently_recording.add(username)
                             logger.info(f"➕ Adicionando {username} à fila de gravação.")
-                            # Submete a tarefa ao executor.
                             executor.submit(process_broadcast_worker, model, args.min_duration, args.max_duration, currently_recording)
         
         except Exception as e:
             logger.critical(f"🔥 Erro crítico no loop principal: {e}", exc_info=True)
 
-        # Aguarda o intervalo definido antes da próxima verificação.
         check_interval = config.DEFAULT_EXECUTION_SETTINGS['CHECK_INTERVAL_SECONDS']
         logger.info(f"⏳ A aguardar {check_interval} segundos para a próxima verificação.")
         time.sleep(check_interval)
@@ -203,9 +204,9 @@ def main(args: argparse.Namespace):
 
 if __name__ == "__main__":
     # Configura o parser para aceitar argumentos da linha de comando.
-    parser = argparse.ArgumentParser(description="XCam REC - Gravador Modular de Transmissões.", formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(description="XCam REC - Gravador Modular de Transmissões.")
     
-    # Define os argumentos que o script pode receber.
+    # Define os argumentos que o script pode receber, lidos do Launcher.
     parser.add_argument('--page', type=int, help='Número da página da API a ser consultada.')
     parser.add_argument('--limit', type=int, help='Número máximo de transmissões por página.')
     parser.add_argument('--workers', type=int, help='Número de gravações paralelas (threads).')
@@ -213,25 +214,24 @@ if __name__ == "__main__":
     parser.add_argument('--min-duration', type=int, help='Duração mínima para que uma gravação seja mantida.')
     parser.add_argument('--country', type=str, help='Filtra por código de país (ex: br, us).')
     
-    # Analisa os argumentos fornecidos na linha de comando.
     args = parser.parse_args()
-    
-    # Chama a função principal com os argumentos.
     main(args)
 
 # @log de mudanças:
+# 2025-07-14 (v1.7.0):
+# - FEATURE: Implementada a lógica de fallback na função `_get_stream_url`. O script agora tenta
+#   obter a `hls_url` do endpoint secundário `/liveInfo` se a URL principal estiver em falta.
+# - REFACTOR: Criada a função `_get_stream_url` para encapsular e limpar a lógica de obtenção de URL.
+# - REFACTOR: O nome da função do worker foi alterado para `process_broadcast_worker` para maior clareza.
+# - DOCS: Comentários atualizados para refletir a nova lógica de fallback.
+#
 # 2025-07-14 (v1.6.0):
-# - CORREÇÃO: Corrigido o `ImportError` final ao alinhar todas as chamadas de função e importações.
-# - REFACTOR: Substituída a classe `RecordingManager` por um `set` local para gestão de estado,
-#   simplificando a lógica e alinhando-se com a filosofia pragmática do XCam.
-# - REFACTOR: A função de worker agora aceita o `set` de estado para garantir que os modelos
-#   sejam removidos da lista de gravação ativa após a conclusão.
-# - DOCS: Comentários atualizados para refletir a nova arquitetura de estado e o fluxo final.
+# - CORREÇÃO: Corrigido o `ImportError` e a lógica de gestão de estado com a remoção do `RecordingManager`.
 #
 # 2025-07-14 (v1.5.0):
-# - Versão anterior com desalinhamento de importações e gestão de estado.
+# - Versão inicial com desalinhamento de importações e gestão de estado.
 
 # @roadmap futuro:
-# - Implementar um mecanismo de "graceful shutdown" para que, ao receber um sinal de interrupção (Ctrl+C),
-#   o script aguarde a conclusão das gravações atuais antes de terminar.
-# - Adicionar uma verificação de espaço em disco disponível antes de iniciar novas gravações.
+# - Adicionar uma verificação de tipo de stream (ex: 'public', 'private') para decidir se deve gravar.
+# - Implementar uma lógica de "retry" com backoff exponencial para as chamadas à API.
+# - Criar um mecanismo para limpar ficheiros temporários muito antigos que possam ter ficado para trás.
