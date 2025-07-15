@@ -515,6 +515,12 @@ function renderNextBatch() {
   );
   nextItems.forEach((item) => renderBroadcastCard(item));
   renderedItemsCount += nextItems.length;
+
+  // Sempre mantém o botão dentro do container, logo abaixo da grade
+  const loadMoreContainer = document.getElementById("load-more-container");
+  if (!loadMoreContainer.contains(loadMoreBtn)) {
+    loadMoreContainer.appendChild(loadMoreBtn);
+  }
   loadMoreBtn.style.display =
     renderedItemsCount >= allItems.length ? "none" : "block";
 }
@@ -525,8 +531,7 @@ async function loadFilteredBroadcasts() {
   allItems = [];
   ensureGridElement();
   grid.innerHTML = "";
-  loader.remove();
-  loadMoreBtn.remove();
+  // Não remova o botão nem o container!
   grid.appendChild(loader);
 
   try {
@@ -538,18 +543,9 @@ async function loadFilteredBroadcasts() {
       showEmptyMessage();
       return;
     }
- 
+
     allItems = result;
     renderNextBatch();
-
-    // Adiciona o botão 'Carregar Mais' ao container correto, não ao parent do grid
-    const loadMoreContainer = document.getElementById("load-more-container");
-    if (allItems.length > renderedItemsCount) {
-      loadMoreContainer.appendChild(loadMoreBtn);
-      loadMoreBtn.style.display = "block";
-    } else {
-      loadMoreBtn.style.display = "none";
-    }
   } catch (err) {
     console.error("Erro ao processar transmissões:", err);
     loader.remove();
