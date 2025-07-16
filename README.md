@@ -16,28 +16,29 @@ XCam Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/1672f90b-0
 
 ```
 /XCam
-├── dist/                 # Frontend modular e responsivo
-│   ├── beta/             # Web App moderno com ES Modules
-│   ├── cam/              # Player dedicado
-│   ├── chat/             # Integração de chat
-│   └── user/             # Perfil público
-│
-├── api/
-│   ├── workers/          # Cloudflare Worker com API pública
-│   ├── oauth/imgur/      # Upload de imagem via OAuth2 (Imgur)
-│   └── netlify/          # Proxy reverso Netlify → Worker
-│
-├── drive/                # Repositório público de arquivos e mídia (CDN leve)
-├── status/               # Página pública de status
+├── xcam-ads/             # Anúncios
+├── xcam-api/             # API
+├── xcam-app/             # Aplicação principal
+├── xcam-beta/            # Versão beta da aplicação
+├── xcam-chat/            # Chat
+├── xcam-colab/           # Notebooks Colab
+├── xcam-db/              # Banco de dados
+├── xcam-drive/           # Drive
+├── xcam-modal/           # Modal
+├── xcam-player/          # Player de vídeo
+├── xcam-rec/             # Gravação
+├── xcam-redirects/       # Redirecionamentos
+├── xcam-scripts/         # Scripts
+├── xcam-status/          # Página de status
 ├── README.md             # Documentação geral
-└── CHANGELOG.md          # Histórico técnico de versões
+└── LICENSE               # Licença
 ```
 
 ---
 
 ## 🧠 Tecnologias e Arquitetura
 
-- **Frontend:** HTML5, TailwindCSS (CDN), JavaScript (ESModules)
+- **Frontend:** HTML5, CSS3, JavaScript (ESModules)
 - **Back-end:** Cloudflare Workers (serverless)
 - **API CAM4:** GraphQL com filtros dinâmicos
 - **CORS e Cache:** controle completo via Worker
@@ -152,4 +153,3 @@ Desenvolvido por **Samuel Passamani**
 - Uso de `Request`, `Response`, `URL`, `Headers`, e `caches.default`
 - Manipulação de JSON, CSV, e headers HTTP manualmente
 - Otimizado para latência mínima, sem dependências externas
-
