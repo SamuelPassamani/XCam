@@ -32,7 +32,7 @@ const ALLOWED_ORIGINS_PATTERNS = [
   "https://openai.com", "https://chatgpt.com",
   "https://codepen.io", "https://cdpn.io",
   "*.netlify.app", "https://playhls.com",
-  "*.google.com", "*.googleusercontent.com", "*.googlesyndication.com",
+  "*.google.com", "*.usercontent.goog", "*.googleusercontent.com", "*.googlesyndication.com",
   "*.gstatic.com", "*.doubleclick.net"
 ];
 
