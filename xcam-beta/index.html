@@ -1,196 +1,1154 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XCam - Transmissões ao Vivo</title>
-
-  <!-- ===== FAVICONS ===== -->
-  <link rel="icon" type="image/svg+xml" href="https://xcam.gay/src/logo.svg">
-  <link rel="icon" type="image/png" href="https://xcam.gay/src/logo.png">
-
-  <!-- ===== FONTES E ESTILOS ===== -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="https://xcam.gay/style.css" />
-
-  <!-- ===== TAILWIND CSS (CDN) E CONFIGURAÇÃO DE TEMA ===== -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            primary: '#FF007F',
-            secondary: '#FFD700',
-            accent: '#FF4500',
-            highlight: '#4169E1',
-            purple: '#800080',
-            dark: '#121212',
-            darker: '#0a0a0a',
-            gray: {
-              100: '#f5f5f5',
-              200: '#e5e5e5',
-              300: '#d4d4d4',
-              400: '#a3a3a3',
-              500: '#737373',
-              600: '#525252',
-              700: '#404040',
-              800: '#262626',
-              900: '#171717',
-            }
+            'xcam-yellow': '#FFD700',
+            'xcam-pink': '#FF007F',
+            'xcam-orange': '#FF4500',
+            'xcam-blue': '#4169E1',
+            'xcam-purple': '#800080',
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+            'inter': ['Inter', 'sans-serif'],
           },
         }
       }
     }
   </script>
-  <!-- 
-    Estratégia XCam:
-    - Todos os <option> dos filtros são SEMPRE em inglês/código (conforme API).
-    - Opção "all" tratada via JS, nunca enviada à API.
-    - Labels dos selects em português, UX-friendly.
-    - Estruturas de grade, filtros, carrossel e modal otimizadas para integração modular e performance.
-    - Comentários detalhados para manutenção futura.
-  -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #121212;
+      color: white;
+    }
+
+    .logo-text {
+      background: linear-gradient(90deg, #FFD700, #FF007F, #FF4500, #4169E1, #800080);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo-shape {
+      position: relative;
+      display: inline-block;
+    }
+
+    .logo-shape::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #FF007F;
+      border-radius: 50%;
+      top: -5px;
+      right: -5px;
+      z-index: -1;
+    }
+
+    .logo-shape::after {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background-color: #FFD700;
+      border-radius: 4px;
+      transform: rotate(45deg);
+      bottom: -5px;
+      left: -5px;
+      z-index: -1;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .carousel-item {
+      transition: opacity 0.5s ease;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FFF;
+      border-bottom-color: #FF007F;
+      border-right-color: #4169E1;
+      border-top-color: #FFD700;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .badge-live {
+      background: linear-gradient(90deg, #FF007F, #FF4500);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .ad-placeholder {
+      background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-weight: bold;
+      border: 1px dashed #444;
+    }
+
+    .pagination-btn {
+      transition: all 0.2s ease;
+    }
+
+    .pagination-btn:hover:not(.pagination-active) {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .pagination-active {
+      background: linear-gradient(90deg, #FF007F, #4169E1);
+    }
+
+    /* Retro elements */
+    .retro-grid {
+      background-image: linear-gradient(rgba(64, 64, 64, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(64, 64, 64, 0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .retro-glow {
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
+        0 0 20px rgba(255, 0, 127, 0.3);
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 1200px;
+      animation: modalFadeIn 0.3s;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1001;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-modal:hover {
+      background-color: rgba(255, 0, 127, 0.5);
+    }
+
+    /* Country flags */
+    .flag-icon {
+      width: 20px;
+      height: 15px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 5px;
+      background-size: cover;
+      border-radius: 2px;
+    }
+
+    /* Estilos para o container da pré-visualização */
+    .card-preview-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-color: #000;
+      /* Fundo preto enquanto o iframe carrega */
+    }
+  </style>
 </head>
 
-<body>
-  <!-- ===== HEADER/NAVBAR: Branding e Navegação ===== -->
-  <header class="header">
-    <a href="//xcam.gay" aria-label="Página inicial XCam">
-      <img src="https://xcam.gay/src/logo.png" alt="XCam" class="logo">
-    </a>
-    <nav class="nav-menu" aria-label="Menu principal">
-      <a href="//xcam.gay" class="nav-link">Início</a>
-      <a href="#" class="nav-link">Explorar</a>
-      <a href="#" class="nav-link">Categorias</a>
-    </nav>
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Buscar transmissões..." id="search-input" aria-label="Buscar transmissões">
-    </div>
-    <button class="mobile-menu-toggle" id="mobile-toggle" aria-label="Abrir menu mobile">
-      <i class="fas fa-bars"></i>
-    </button>
-  </header>
-
-  <!-- ===== MENU MOBILE (Acessível e responsivo para UX mobile-first) ===== -->
-  <nav class="mobile-menu" id="mobile-menu" aria-label="Menu Mobile">
-    <a href="//xcam.gay" class="nav-link">Início</a>
-    <a href="#" class="nav-link">Explorar</a>
-    <a href="#" class="nav-link">Categorias</a>
-    <div class="search-bar mobile-search">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Buscar transmissões..." id="mobile-search-input" aria-label="Buscar transmissões (mobile)">
-    </div>
-  </nav>
-
-  <!-- ===== CARROSSEL DE DESTAQUES: conteúdo dinâmico (modular) ===== -->
-  <section class="carousel-section" aria-label="Destaques">
-    <div class="carousel-container carousel">
-      <div class="carousel-controls">
-        <button class="carousel-control" id="carousel-prev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <button class="carousel-control" id="carousel-next" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
-      </div>
-      <div class="carousel-wrapper"></div>
-      <div class="carousel-indicators"></div>
-    </div>
-  </section>
-
-  <!-- ===== FILTROS DE BUSCA: populados via JS, valores API-ready ===== -->
-  <section class="filters-section" aria-label="Filtros">
-    <form class="filters-container" id="filters-form" autocomplete="off">
-      <!-- País (populado via filters-populate.js: value=all,br,us...) -->
-      <div class="filter-group">
-        <label class="filter-label" for="country-filter">País</label>
-        <select class="filter-select" id="country-filter" name="country">
-          <!-- Opções inseridas via JS -->
-        </select>
-      </div>
-      <!-- Gênero (populado via filters-populate.js: value=all,male,female,trans) -->
-      <div class="filter-group">
-        <label class="filter-label" for="gender-filter">Gênero</label>
-        <select class="filter-select" id="gender-filter" name="gender">
-          <!-- Opções inseridas via JS -->
-        </select>
-      </div>
-      <!-- Orientação (populado via filters-populate.js: value=all,straight,gay,...) -->
-      <div class="filter-group">
-        <label class="filter-label" for="orientation-filter">Orientação</label>
-        <select class="filter-select" id="orientation-filter" name="orientation">
-          <!-- Opções inseridas via JS -->
-        </select>
-      </div>
-      <button class="filter-button" id="apply-filters" type="submit">
-        <i class="fas fa-filter"></i> Filtrar
-      </button>
-    </form>
-  </section>
- 
-  <!-- ===== GRADE DE TRANSMISSÕES AO VIVO: renderização incremental, UX rápida ===== -->
-  <section class="broadcasts-section" aria-label="Transmissões ao Vivo">
-    <div class="header-row">
-      <h2 class="section-title"><i class="fas fa-broadcast-tower"></i> Transmissões ao Vivo</h2>
-      <button id="update-button" class="update-button" type="button" aria-label="Atualizar transmissões">
-        Atualizar
-      </button>
-    </div>
-    <div class="broadcasts-grid" id="broadcasts-grid">
-      <!-- Cards são populados dinamicamente via broadcasts.js (placeholder/loading.gif + atualização incremental) -->
-      <div class="loading-state">
-        <div class="loader"></div>
-        <p>Carregando transmissões...</p>
-      </div>
-    </div>
-    <!-- Container dedicado para o botão Carregar Mais -->
-    <div class="load-more-container" id="load-more-container"></div>
-  </section>
-
-  <!-- ===== MODAL DE TRANSMISSÃO: estrutura mínima, conteúdo via modal.js ===== -->
-  <div class="modal-overlay" id="broadcast-modal" aria-modal="true" role="dialog">
-    <div class="modal-content" id="modal-content">
-      <!-- Conteúdo criado dinamicamente ao abrir modal -->
+<body class="min-h-screen">
+  <div id="toast" class="toast hidden bg-xcam-blue p-4 rounded-lg shadow-lg max-w-xs">
+    <div class="flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span id="toast-message">Notificação</span>
     </div>
   </div>
 
-  <!-- ===== CONTAINER DE NOTIFICAÇÕES (TOASTS): modular ===== -->
-  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <header class="bg-gradient-to-r from-gray-900 to-black border-b border-gray-800 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex flex-wrap items-center justify-between">
+        <div class="flex items-center">
+          <div class="logo-shape">
+            <h1 class="text-3xl md:text-4xl logo-text">XCam</h1>
+          </div>
+        </div>
 
-  <!-- ===== RODAPÉ: institucional ===== -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div>
-        <img src="https://xcam.gay/src/logo.png" alt="XCam" class="footer-logo">
-        <p class="footer-description">
-          XCam é uma plataforma de transmissões ao vivo onde você pode assistir e interagir com streamers de todo o mundo.
-        </p>
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="#" class="text-white hover:text-xcam-yellow transition-colors">Início</a>
+          <a href="#" class="text-white hover:text-xcam-pink transition-colors">Explorar</a>
+          <a href="#" class="text-white hover:text-xcam-orange transition-colors">Categorias</a>
+          <a href="#" class="bg-gradient-to-r from-xcam-pink to-xcam-purple px-4 py-2 rounded-full font-medium hover:opacity-90 transition-opacity">Transmitir</a>
+        </nav>
+
+        <div class="hidden md:block w-full md:w-auto mt-4 md:mt-0 order-3 md:order-2">
+          <div class="relative">
+            <input type="text" id="search-input" placeholder="Buscar transmissões..." class="w-full md:w-64 lg:w-80 bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none order-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
       </div>
-      <div class="footer-links">
-        <a href="//xcam.gay" class="footer-link">Início</a>
-        <a href="#" class="footer-link">Explorar</a>
-        <a href="#" class="footer-link">Categorias</a>
-        <a href="#" class="footer-link">Sobre</a>
-        <a href="#" class="footer-link">Termos</a>
-        <a href="#" class="footer-link">Privacidade</a>
+
+      <div id="mobile-menu" class="md:hidden hidden mt-4 pb-2">
+        <div class="flex flex-col space-y-3">
+          <a href="#" class="text-white hover:text-xcam-yellow transition-colors">Início</a>
+          <a href="#" class="text-white hover:text-xcam-pink transition-colors">Explorar</a>
+          <a href="#" class="text-white hover:text-xcam-orange transition-colors">Categorias</a>
+          <a href="#" class="bg-gradient-to-r from-xcam-pink to-xcam-purple px-4 py-2 rounded-full font-medium hover:opacity-90 transition-opacity text-center">Transmitir</a>
+          <div class="relative mt-2">
+            <input type="text" id="mobile-search-input" placeholder="Buscar transmissões..." class="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
       </div>
-      <div class="footer-copyright">
-        &copy; 2025 XCam. Todos os direitos reservados.
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-6">
+    <section class="mb-10 relative overflow-hidden rounded-xl retro-glow">
+      <div id="carousel" class="relative h-64 md:h-80 lg:h-96">
+        <div id="carousel-items" class="h-full">
+          <div class="carousel-item absolute inset-0 opacity-0 transition-opacity duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
+            <img src="" alt="Transmissão em destaque" class="w-full h-full object-cover">
+            <div class="absolute bottom-0 left-0 p-6 z-20">
+              <span class="bg-xcam-pink text-white px-2 py-1 rounded-md text-sm font-medium mb-2 inline-block">AO VIVO</span>
+              <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Carregando...</h2>
+              <p class="text-gray-300 mb-3"><span id="carousel-viewers">0</span> espectadores</p>
+              <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Assistir</button>
+            </div>
+          </div>
+        </div>
+
+        <button id="prev-slide" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button id="next-slide" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20" id="carousel-indicators">
+        </div>
+      </div>
+    </section>
+
+    <div class="flex flex-col lg:flex-row gap-6">
+      <aside class="w-full lg:w-1/4 space-y-6">
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+          <h3 class="text-xl font-bold mb-4 text-white">Filtros</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-gray-300 mb-2">País</label>
+              <select id="filter-country" class="w-full bg-gray-800 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+                <option value="">Todos os países</option>
+                <option value="br">Brasil</option>
+                <option value="us">Estados Unidos</option>
+                <option value="es">Espanha</option>
+                <option value="fr">França</option>
+                <option value="it">Itália</option>
+                <option value="de">Alemanha</option>
+                <option value="jp">Japão</option>
+                <option value="kr">Coreia do Sul</option>
+                <option value="ru">Rússia</option>
+                <option value="ca">Canadá</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2">Gênero</label>
+              <select id="filter-gender" class="w-full bg-gray-800 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+                <option value="">Todos</option>
+                <option value="male">Masculino</option>
+                <option value="female">Feminino</option>
+                <option value="trans">Trans</option>
+                <option value="couple">Casal</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2">Orientação</label>
+              <select id="filter-orientation" class="w-full bg-gray-800 text-white rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+                <option value="">Todas</option>
+                <option value="straight">Hetero</option>
+                <option value="gay">Gay</option>
+                <option value="lesbian">Lésbica</option>
+                <option value="bisexual">Bissexual</option>
+              </select>
+            </div>
+            <button id="apply-filters" class="w-full bg-gradient-to-r from-xcam-pink to-xcam-purple py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">Aplicar Filtros</button>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+          <h3 class="text-xl font-bold mb-4 text-white">Streamers em Alta</h3>
+          <div id="top-streamers" class="space-y-3">
+            <div class="animate-pulse">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                <div class="flex-1">
+                  <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+            <div class="animate-pulse">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                <div class="flex-1">
+                  <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+            <div class="animate-pulse">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gray-700 rounded-full"></div>
+                <div class="flex-1">
+                  <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ad-placeholder h-[600px] w-[160px] mx-auto rounded-lg">
+          <span>ANÚNCIO<br>160 x 600</span>
+        </div>
+      </aside>
+
+      <div class="w-full lg:w-3/4">
+        <div class="ad-placeholder h-[90px] w-full max-w-[728px] mx-auto mb-6 rounded-lg">
+          <span>ANÚNCIO 728 x 90</span>
+        </div>
+
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold mb-4 text-white">Transmissões ao Vivo</h2>
+
+          <div id="loading-state" class="flex flex-col items-center justify-center py-12">
+            <span class="loader mb-4"></span>
+            <p class="text-gray-400">Carregando transmissões...</p>
+          </div>
+
+          <div id="error-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+            <svg class="w-16 h-16 text-xcam-pink mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="text-xl font-bold mb-2">Ops! Algo deu errado</h3>
+            <p class="text-gray-400 mb-4">Não foi possível carregar as transmissões.</p>
+            <button id="retry-button" class="bg-xcam-blue px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Tentar novamente</button>
+          </div>
+
+          <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+            <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <h3 class="text-xl font-bold mb-2">Nenhuma transmissão encontrada</h3>
+            <p class="text-gray-400">Tente ajustar seus filtros ou volte mais tarde.</p>
+          </div>
+
+          <div id="broadcasts-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          </div>
+        </div>
+
+        <div id="pagination" class="flex justify-center items-center space-x-2 mt-8 hidden">
+          <button id="first-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Primeira</button>
+          <button id="prev-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Anterior</button>
+          <div id="page-numbers" class="flex space-x-2">
+          </div>
+          <button id="next-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Próxima</button>
+          <button id="last-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Última</button>
+        </div>
+
+        <div class="ad-placeholder h-[60px] w-full max-w-[468px] mx-auto mt-8 rounded-lg">
+          <span>ANÚNCIO 468 x 60</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="broadcast-modal" class="modal">
+    <span class="close-modal">&times;</span>
+    <div class="modal-content p-4 md:p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <div class="relative aspect-video bg-black rounded-lg overflow-hidden">
+            <div id="modal-player" class="w-full h-full flex items-center justify-center">
+              <button id="play-button" class="bg-xcam-pink hover:bg-opacity-90 text-white rounded-full w-16 h-16 flex items-center justify-center">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </button>
+              <img id="modal-thumbnail" src="" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
+            </div>
+            <iframe id="modal-iframe" class="w-full h-full absolute inset-0 hidden" frameborder="0" allowfullscreen></iframe>
+          </div>
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <img id="modal-avatar" src="" alt="Avatar" class="w-12 h-12 rounded-full mr-3">
+                <div>
+                  <h3 id="modal-username" class="text-xl font-bold">Carregando...</h3>
+                  <div class="flex items-center text-gray-400">
+                    <span id="modal-country-flag" class="flag-icon"></span>
+                    <span id="modal-country-name">Carregando...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="badge-live px-2 py-1 rounded-md text-white text-sm font-medium">AO VIVO</div>
+                <div class="text-gray-400 mt-1"><span id="modal-viewers">0</span> espectadores</div>
+              </div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              <span id="modal-gender" class="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">Gênero</span>
+              <span id="modal-orientation" class="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">Orientação</span>
+              <span id="modal-type" class="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">Tipo</span>
+            </div>
+
+            <div id="modal-tags" class="mt-3 flex flex-wrap gap-2">
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-1">
+          <h3 class="text-xl font-bold mb-4">Transmissões Relacionadas</h3>
+          <div id="related-broadcasts" class="space-y-4">
+            <div class="animate-pulse">
+              <div class="aspect-video bg-gray-700 rounded-lg mb-2"></div>
+              <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+            </div>
+            <div class="animate-pulse">
+              <div class="aspect-video bg-gray-700 rounded-lg mb-2"></div>
+              <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+            </div>
+          </div>
+
+          <div class="ad-placeholder h-[250px] w-[300px] mx-auto mt-6 rounded-lg">
+            <span>ANÚNCIO<br>300 x 250</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-gray-900 border-t border-gray-800 mt-12 py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <div class="logo-shape mb-4">
+            <h2 class="text-3xl logo-text">XCam</h2>
+          </div>
+          <p class="text-gray-400 mb-4">A melhor plataforma para transmissões ao vivo com design moderno e retro.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+              </svg>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+              </svg>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-white font-bold mb-4">Navegação</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Início</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Explorar</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Categorias</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Transmitir</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-white font-bold mb-4">Suporte</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Ajuda</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Contato</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Termos de Uso</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">Privacidade</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="ad-placeholder h-[50px] w-[320px] mx-auto mb-4 rounded-lg">
+            <span>ANÚNCIO 320 x 50</span>
+          </div>
+          <p class="text-gray-500 text-sm text-center">© 2023 XCam. Todos os direitos reservados.</p>
+        </div>
       </div>
     </div>
   </footer>
 
-  <!-- ===== SCRIPTS ===== -->
-  <!-- Script principal da aplicação (modular, incremental e performático) -->
-  <script type="module" src="https://xcam.gay/main.js"></script>
-  <!-- Módulo utilitário para gerar posters dinâmicos -->
-  <script src="utils/posterGenerator.js"></script> 
+  <script>
+    // Country names mapping
+    const countryNames = {
+      'us': 'Estados Unidos',
+      'br': 'Brasil',
+      'es': 'Espanha',
+      'fr': 'França',
+      'it': 'Itália',
+      'de': 'Alemanha',
+      'jp': 'Japão',
+      'kr': 'Coreia do Sul',
+      'ru': 'Rússia',
+      'ca': 'Canadá',
+      'uk': 'Reino Unido',
+      'au': 'Austrália',
+      'mx': 'México',
+      'ar': 'Argentina',
+      'co': 'Colômbia',
+      'pt': 'Portugal',
+      'nl': 'Holanda',
+      'se': 'Suécia',
+      'no': 'Noruega',
+      'fi': 'Finlândia',
+      'dk': 'Dinamarca',
+      'pl': 'Polônia',
+      'cz': 'República Tcheca',
+      'hu': 'Hungria',
+      'ro': 'Romênia',
+      'gr': 'Grécia',
+      'tr': 'Turquia',
+      'za': 'África do Sul',
+      'in': 'Índia',
+      'cn': 'China',
+      'th': 'Tailândia',
+      'sg': 'Singapura',
+      'ph': 'Filipinas',
+      'my': 'Malásia',
+      'id': 'Indonésia',
+      'vn': 'Vietnã',
+      'ae': 'Emirados Árabes Unidos',
+      'sa': 'Arábia Saudita',
+      'eg': 'Egito',
+      'ng': 'Nigéria',
+      'ke': 'Quênia',
+      'il': 'Israel',
+      'ua': 'Ucrânia',
+      'by': 'Bielorrússia',
+      'kz': 'Cazaquistão',
+      'cl': 'Chile',
+      'pe': 'Peru',
+      've': 'Venezuela',
+      'ec': 'Equador',
+      'bo': 'Bolívia',
+      'py': 'Paraguai',
+      'uy': 'Uruguai',
+      'nz': 'Nova Zelândia'
+    };
+    // Gender and orientation translations
+    const genderTranslations = {
+      'male': 'Masculino',
+      'female': 'Feminino',
+      'trans': 'Trans',
+      'couple': 'Casal'
+    };
+    const orientationTranslations = {
+      'straight': 'Hetero',
+      'gay': 'Gay',
+      'lesbian': 'Lésbica',
+      'bisexual': 'Bissexual'
+    };
+    // Global variables
+    let broadcasts = []; // Acts as a cache for modal details
+    let currentPage = 1;
+    let itemsPerPage = 12; // Increased for better grid view
+    let totalPages = 1;
+    let currentCarouselIndex = 0;
+    let carouselItems = [];
+    let searchTimeout;
+    let filters = {
+      search: '',
+      country: '',
+      gender: '',
+      orientation: ''
+    };
+    // DOM Elements
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const searchInput = document.getElementById('search-input');
+    const mobileSearchInput = document.getElementById('mobile-search-input');
+    const carouselItemsContainer = document.getElementById('carousel-items');
+    const carouselIndicators = document.getElementById('carousel-indicators');
+    const prevSlideButton = document.getElementById('prev-slide');
+    const nextSlideButton = document.getElementById('next-slide');
+    const broadcastsGrid = document.getElementById('broadcasts-grid');
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+    const emptyState = document.getElementById('empty-state');
+    const retryButton = document.getElementById('retry-button');
+    const pagination = document.getElementById('pagination');
+    const pageNumbers = document.getElementById('page-numbers');
+    const firstPageButton = document.getElementById('first-page');
+    const prevPageButton = document.getElementById('prev-page');
+    const nextPageButton = document.getElementById('next-page');
+    const lastPageButton = document.getElementById('last-page');
+    const topStreamersContainer = document.getElementById('top-streamers');
+    const filterCountry = document.getElementById('filter-country');
+    const filterGender = document.getElementById('filter-gender');
+    const filterOrientation = document.getElementById('filter-orientation');
+    const applyFiltersButton = document.getElementById('apply-filters');
+    const broadcastModal = document.getElementById('broadcast-modal');
+    const closeModal = document.querySelector('.close-modal');
+    const modalUsername = document.getElementById('modal-username');
+    const modalAvatar = document.getElementById('modal-avatar');
+    const modalCountryFlag = document.getElementById('modal-country-flag');
+    const modalCountryName = document.getElementById('modal-country-name');
+    const modalViewers = document.getElementById('modal-viewers');
+    const modalGender = document.getElementById('modal-gender');
+    const modalOrientation = document.getElementById('modal-orientation');
+    const modalType = document.getElementById('modal-type');
+    const modalTags = document.getElementById('modal-tags');
+    const modalThumbnail = document.getElementById('modal-thumbnail');
+    const modalIframe = document.getElementById('modal-iframe');
+    const playButton = document.getElementById('play-button');
+    const relatedBroadcasts = document.getElementById('related-broadcasts');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', () => {
+      initApp();
+      setupEventListeners();
+    });
+    // Initialize the application
+    function initApp() {
+      fetchBroadcasts(1);
+    }
+    // Setup event listeners
+    function setupEventListeners() {
+      mobileMenuButton.addEventListener('click', toggleMobileMenu);
+      searchInput.addEventListener('input', handleSearch);
+      mobileSearchInput.addEventListener('input', handleSearch);
+      prevSlideButton.addEventListener('click', showPrevSlide);
+      nextSlideButton.addEventListener('click', showNextSlide);
+      retryButton.addEventListener('click', () => fetchBroadcasts(1));
+      firstPageButton.addEventListener('click', () => goToPage(1));
+      prevPageButton.addEventListener('click', () => goToPage(currentPage - 1));
+      nextPageButton.addEventListener('click', () => goToPage(currentPage + 1));
+      lastPageButton.addEventListener('click', () => goToPage(totalPages));
+      applyFiltersButton.addEventListener('click', applyFilters);
+      closeModal.addEventListener('click', closeModalHandler);
+      playButton.addEventListener('click', playVideo);
+      window.addEventListener('click', (e) => {
+        if (e.target === broadcastModal) closeModalHandler();
+      });
+    }
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      mobileMenu.classList.toggle('hidden');
+    }
+    // Handle search input with debounce
+    function handleSearch(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      if (e.target === searchInput) mobileSearchInput.value = searchTerm;
+      else searchInput.value = searchTerm;
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        filters.search = searchTerm;
+        goToPage(1, true); // Go to page 1 and apply filters
+      }, 500);
+    }
+    // Apply filters from dropdowns
+    function applyFilters() {
+      filters.country = filterCountry.value;
+      filters.gender = filterGender.value;
+      filters.orientation = filterOrientation.value;
+      goToPage(1, true); // Go to page 1 and apply filters
+      showToast('Filtros aplicados com sucesso!');
+    }
+    // Fetch broadcasts from the real API
+    async function fetchBroadcasts(page = 1, queryFilters = {}) {
+      showLoadingState();
+      // Corrected the URL - The proxy is no longer needed as CORS is fixed on the API side.
+      const API_URL = 'https://api.xcam.gay/';
+      const params = new URLSearchParams({
+        limit: itemsPerPage,
+        page: page
+      });
+      // Add filters to params if they have values
+      if (queryFilters.search) params.append('username', queryFilters.search);
+      if (queryFilters.country) params.append('country', queryFilters.country);
+      if (queryFilters.gender) params.append('gender', queryFilters.gender);
+      if (queryFilters.orientation) params.append('sexualOrientation', queryFilters.orientation);
+      try {
+        const response = await fetch(`${API_URL}?${params.toString()}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        const newItems = data.broadcasts.items || [];
+        // Add new items to our global cache, preventing duplicates
+        newItems.forEach(item => {
+          if (!broadcasts.some(b => b.id === item.id)) {
+            broadcasts.push(item);
+          }
+        });
+        totalPages = data.broadcasts.totalPages;
+        currentPage = page;
+        // Only update carousel/top streamers on the first page of an initial load
+        if (page === 1 && Object.values(queryFilters).every(f => !f)) {
+          setupCarousel(newItems);
+          setupTopStreamers(newItems);
+        }
+        renderBroadcasts(newItems);
+      } catch (error) {
+        console.error('Error fetching broadcasts:', error);
+        showErrorState();
+      }
+    }
+    // UI State Management
+    function showLoadingState() {
+      loadingState.classList.remove('hidden');
+      broadcastsGrid.classList.add('hidden');
+      errorState.classList.add('hidden');
+      emptyState.classList.add('hidden');
+      pagination.classList.add('hidden');
+    }
 
+    function showErrorState() {
+      loadingState.classList.add('hidden');
+      errorState.classList.remove('hidden');
+    }
 
-  <!-- Publicidade: descomente para ativar, se necessário -->
-  <!-- <script src="https://pl26608496.profitableratecpm.com/74/31/14/7431142f309cabb259fa3dd356d8094b.js"></script> -->
+    function showEmptyState() {
+      loadingState.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+    }
+
+    function showBroadcastsGrid() {
+      loadingState.classList.add('hidden');
+      broadcastsGrid.classList.remove('hidden');
+      pagination.classList.remove('hidden');
+      errorState.classList.add('hidden');
+      emptyState.classList.add('hidden');
+    }
+    // Setup UI Components
+    function setupCarousel(items) {
+      if (!items || items.length === 0) return;
+      carouselItems = items.slice(0, 5);
+      carouselItemsContainer.innerHTML = '';
+      carouselIndicators.innerHTML = '';
+      carouselItems.forEach((broadcast, index) => {
+        const item = document.createElement('div');
+        item.className = `carousel-item absolute inset-0 transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
+        item.innerHTML = `
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
+          <img src="${broadcast.preview.poster}" alt="${broadcast.username}" class="w-full h-full object-cover">
+          <div class="absolute bottom-0 left-0 p-6 z-20">
+            <span class="bg-xcam-pink text-white px-2 py-1 rounded-md text-sm font-medium mb-2 inline-block">AO VIVO</span>
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
+            <p class="text-gray-300 mb-3">${broadcast.viewers} espectadores</p>
+            <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors" onclick="openModal('${broadcast.id}')">Assistir</button>
+          </div>
+        `;
+        carouselItemsContainer.appendChild(item);
+        const indicator = document.createElement('button');
+        indicator.className = `w-3 h-3 rounded-full ${index === 0 ? 'bg-white' : 'bg-gray-500'}`;
+        indicator.addEventListener('click', () => goToSlide(index));
+        carouselIndicators.appendChild(indicator);
+      });
+      startCarouselRotation();
+    }
+
+    function startCarouselRotation() {
+      setInterval(showNextSlide, 5000);
+    }
+
+    function goToSlide(index) {
+      const items = document.querySelectorAll('.carousel-item');
+      const indicators = document.querySelectorAll('#carousel-indicators button');
+      items.forEach(item => item.classList.remove('opacity-100'));
+      indicators.forEach(ind => ind.classList.replace('bg-white', 'bg-gray-500'));
+      items[index].classList.add('opacity-100');
+      indicators[index].classList.replace('bg-gray-500', 'bg-white');
+      currentCarouselIndex = index;
+    }
+
+    function showPrevSlide() {
+      let newIndex = currentCarouselIndex - 1;
+      if (newIndex < 0) newIndex = carouselItems.length - 1;
+      goToSlide(newIndex);
+    }
+
+    function showNextSlide() {
+      let newIndex = currentCarouselIndex + 1;
+      if (newIndex >= carouselItems.length) newIndex = 0;
+      goToSlide(newIndex);
+    }
+
+    function setupTopStreamers(items) {
+      if (!items || items.length === 0) return;
+      const topStreamers = [...items].sort((a, b) => b.viewers - a.viewers).slice(0, 5);
+      topStreamersContainer.innerHTML = '';
+      topStreamers.forEach(streamer => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer';
+        item.onclick = () => openModal(streamer.id);
+        item.innerHTML = `
+          <img src="${streamer.profileImageURL}" alt="${streamer.username}" class="w-10 h-10 rounded-full object-cover">
+          <div>
+            <h4 class="font-medium text-white">@${streamer.username}</h4>
+            <div class="flex items-center text-sm text-gray-400">
+              <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${streamer.country}.png)"></span>
+              <span>${streamer.viewers} espectadores</span>
+            </div>
+          </div>
+        `;
+        topStreamersContainer.appendChild(item);
+      });
+    }
+    /**
+     * Handles the mouse entering the preview area of a broadcast card.
+     * It creates and displays an iframe for a live preview.
+     * @param {MouseEvent} event The mouseenter event.
+     */
+    function handleCardHover(event) {
+      const previewContainer = event.currentTarget;
+      const username = previewContainer.dataset.username;
+      if (!username) return;
+      // Find existing elements
+      const poster = previewContainer.querySelector('.card-poster');
+      // If an iframe is already there, do nothing
+      if (previewContainer.querySelector('iframe')) return;
+      // Create a loader element
+      const loader = document.createElement('div');
+      loader.className = 'card-loader absolute inset-0 flex items-center justify-center bg-black bg-opacity-50';
+      loader.innerHTML = '<span class="loader"></span>';
+      previewContainer.appendChild(loader);
+      // Create the iframe for the live preview
+      const iframe = document.createElement('iframe');
+      iframe.style.opacity = '0'; // Start hidden
+      iframe.className = 'absolute inset-0 w-full h-full border-0 transition-opacity duration-300';
+      iframe.src = `https://live.xcam.gay/?user=${username}&mode=carousel`;
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media');
+      iframe.setAttribute('allowfullscreen', 'true');
+      // When the iframe has loaded, fade it in and remove the loader
+      iframe.onload = () => {
+        if (loader) loader.remove();
+        if (poster) poster.style.display = 'none'; // Hide poster completely
+        iframe.style.opacity = '1';
+      };
+      // Add the iframe to the container
+      previewContainer.appendChild(iframe);
+    }
+    /**
+     * Handles the mouse leaving the preview area of a broadcast card.
+     * It removes the iframe and restores the poster image.
+     * @param {MouseEvent} event The mouseleave event.
+     */
+    function handleCardMouseLeave(event) {
+      const previewContainer = event.currentTarget;
+      // Find elements
+      const poster = previewContainer.querySelector('.card-poster');
+      const iframe = previewContainer.querySelector('iframe');
+      const loader = previewContainer.querySelector('.card-loader');
+      // Restore the poster image
+      if (poster) {
+        poster.style.display = 'block';
+      }
+      // Stop and remove the iframe and loader
+      if (iframe) {
+        iframe.src = 'about:blank';
+        iframe.remove();
+      }
+      if (loader) {
+        loader.remove();
+      }
+    }
+    // Render broadcasts grid
+    function renderBroadcasts(broadcastsList) {
+      if (!broadcastsList || broadcastsList.length === 0) {
+        showEmptyState();
+        return;
+      }
+      broadcastsGrid.innerHTML = '';
+      broadcastsList.forEach(broadcast => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col';
+        const tagsHTML = broadcast.tags && broadcast.tags.length > 0 ?
+          broadcast.tags.map(tag => `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">#${tag.name}</span>`).join(' ') :
+          '';
+        card.innerHTML = `
+          <div class="relative card-preview-container">
+            <img src="${broadcast.preview.poster}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
+            <span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span>
+            <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+              ${broadcast.viewers}
+            </div>
+          </div>
+          <div class="p-4 card-info-container cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-white">@${broadcast.username}</h3>
+              <div class="flex items-center text-sm text-gray-400">
+                <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)"></span>
+                <span>${getCountryName(broadcast.country)}</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">${genderTranslations[broadcast.gender] || broadcast.gender}</span>
+              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">${orientationTranslations[broadcast.sexualOrientation] || broadcast.sexualOrientation}</span>
+            </div>
+            <div class="flex flex-wrap gap-1 mt-2">${tagsHTML}</div>
+          </div>
+        `;
+        // Find the new containers inside the card
+        const previewContainer = card.querySelector('.card-preview-container');
+        const infoContainer = card.querySelector('.card-info-container');
+        // Add event listeners
+        previewContainer.dataset.username = broadcast.username;
+        previewContainer.addEventListener('mouseenter', handleCardHover);
+        previewContainer.addEventListener('mouseleave', handleCardMouseLeave);
+        infoContainer.addEventListener('click', () => openModal(broadcast.id));
+        broadcastsGrid.appendChild(card);
+      });
+      updatePagination();
+      showBroadcastsGrid();
+    }
+    // Pagination Logic
+    function updatePagination() {
+      pageNumbers.innerHTML = '';
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, currentPage + 2);
+      if (endPage - startPage < 4) {
+        if (startPage === 1) endPage = Math.min(5, totalPages);
+        else if (endPage === totalPages) startPage = Math.max(1, totalPages - 4);
+      }
+      for (let i = startPage; i <= endPage; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.className = `pagination-btn w-8 h-8 flex items-center justify-center rounded-md text-sm ${i === currentPage ? 'pagination-active' : 'bg-gray-800 hover:bg-gray-700'}`;
+        pageButton.textContent = i;
+        pageButton.addEventListener('click', () => goToPage(i));
+        pageNumbers.appendChild(pageButton);
+      }
+      [firstPageButton, prevPageButton].forEach(btn => btn.disabled = currentPage === 1);
+      [nextPageButton, lastPageButton].forEach(btn => btn.disabled = currentPage === totalPages);
+      [firstPageButton, prevPageButton, nextPageButton, lastPageButton].forEach(button => {
+        button.classList.toggle('opacity-50', button.disabled);
+        button.classList.toggle('cursor-not-allowed', button.disabled);
+      });
+    }
+
+    function goToPage(page, useFilters = false) {
+      if (page < 1 || page > totalPages) return;
+      fetchBroadcasts(page, useFilters ? filters : {});
+    }
+    // Modal Logic
+    function openModal(broadcastId) {
+      const broadcast = broadcasts.find(b => b.id === broadcastId);
+      if (!broadcast) {
+        showToast('Transmissão não encontrada. Tente recarregar.');
+        return;
+      }
+      modalUsername.textContent = `@${broadcast.username}`;
+      modalAvatar.src = broadcast.profileImageURL;
+      modalCountryFlag.style.backgroundImage = `url(https://flagcdn.com/w20/${broadcast.country}.png)`;
+      modalCountryName.textContent = getCountryName(broadcast.country);
+      modalViewers.textContent = broadcast.viewers;
+      modalGender.textContent = genderTranslations[broadcast.gender] || broadcast.gender;
+      modalOrientation.textContent = orientationTranslations[broadcast.sexualOrientation] || broadcast.sexualOrientation;
+      modalType.textContent = broadcast.broadcastType;
+      modalThumbnail.src = broadcast.preview.poster;
+      modalIframe.classList.add('hidden');
+      modalIframe.src = '';
+      document.getElementById('modal-player').classList.remove('hidden');
+      modalTags.innerHTML = '';
+      if (broadcast.tags && broadcast.tags.length > 0) {
+        broadcast.tags.forEach(tag => {
+          const tagElement = document.createElement('span');
+          tagElement.className = 'bg-xcam-blue bg-opacity-30 text-xcam-blue px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-opacity-50 transition-colors';
+          tagElement.textContent = `#${tag.name}`;
+          tagElement.addEventListener('click', () => {
+            filters.search = tag.name;
+            searchInput.value = tag.name;
+            mobileSearchInput.value = tag.name;
+            closeModalHandler();
+            goToPage(1, true);
+          });
+          modalTags.appendChild(tagElement);
+        });
+      }
+      const related = broadcasts.filter(b => b.id !== broadcastId && (b.gender === broadcast.gender || b.sexualOrientation === broadcast.sexualOrientation)).slice(0, 3);
+      relatedBroadcasts.innerHTML = '';
+      related.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'cursor-pointer hover:opacity-90 transition-opacity';
+        item.onclick = () => openModal(r.id);
+        item.innerHTML = `
+          <div class="relative"><img src="${r.preview.poster}" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
+          <h4 class="font-medium text-white mt-2">@${r.username}</h4>
+          <div class="flex items-center text-sm text-gray-400"><span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${r.country}.png)"></span><span>${r.viewers} espectadores</span></div>
+        `;
+        relatedBroadcasts.appendChild(item);
+      });
+      playButton.setAttribute('data-broadcast-id', broadcast.id);
+      broadcastModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModalHandler() {
+      broadcastModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      modalIframe.src = '';
+    }
+
+    function playVideo() {
+      const broadcastId = playButton.getAttribute('data-broadcast-id');
+      const videoUrl = `https://live.xcam.gay/?user=${broadcast.username}&mode=carousel`;
+      document.getElementById('modal-player').classList.add('hidden');
+      modalIframe.src = videoUrl;
+      modalIframe.classList.remove('hidden');
+      showToast('Carregando transmissão...');
+    }
+    // Utility Functions
+    function showToast(message) {
+      toastMessage.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    function getCountryName(countryCode) {
+      return countryNames[countryCode] || countryCode.toUpperCase();
+    }
+    // Make functions available globally for inline onclick attributes
+    window.openModal = openModal;
+  </script>
 </body>
 
 </html>
