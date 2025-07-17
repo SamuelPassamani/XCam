@@ -5,7 +5,7 @@
  *
  * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
  * @info        https://aserio.work/
- * @version     3.0.0
+ * @version     3.1.0
  * @lastupdate  2025-07-17
  *
  * @description
@@ -193,8 +193,8 @@ async function handleHlsProxy(request, url) {
 
 async function handleUserFullInfo(username) {
     const [profile, liveInfo] = await Promise.all([
-        handleUserProfile(username),
-        handleLiveInfo(username)
+        fetchUserProfile(username),
+        fetchStreamInfo(username)
     ]);
     return new Response(JSON.stringify({ profile, liveInfo }, null, 2), {
         headers: { 'Content-Type': 'application/json' }
@@ -222,10 +222,34 @@ export default {
       else if (searchParams.has('poster')) {
         response = await handlePosterProxy(searchParams.get('poster'));
       }
-      // Rota 3: Redirecionamento de Stream (/stream/{username})
+      // Rota 3: Redirecionamento de Stream (/stream/{username}[.m3u8 | /index.m3u8])
       else if (pathname.startsWith('/stream/')) {
-        const username = pathname.split('/')[2];
-        response = await handleStreamRedirect(username);
+        // Extrai a parte do path após '/stream/'
+        let usernamePart = pathname.substring('/stream/'.length);
+
+        // Remove sufixos opcionais para isolar o nome de usuário
+        if (usernamePart.endsWith('/index.m3u8')) {
+          usernamePart = usernamePart.slice(0, -'/index.m3u8'.length);
+        } else if (usernamePart.endsWith('.m3u8')) {
+          usernamePart = usernamePart.slice(0, -'.m3u8'.length);
+        }
+        
+        // Remove a barra final, se houver
+        if (usernamePart.endsWith('/')) {
+            usernamePart = usernamePart.slice(0, -1);
+        }
+
+        const username = usernamePart;
+
+        // Verifica se o nome de usuário não está vazio após a limpeza
+        if (username) {
+          response = await handleStreamRedirect(username);
+        } else {
+          response = new Response(JSON.stringify({ error: "Nome de usuário não especificado na rota." }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
       }
       // Rota 4: Proxy HLS (/hls-proxy?url=...)
       else if (pathname === '/hls-proxy') {
@@ -318,6 +342,9 @@ export default {
  * =========================================================================================
  *
  * @log de mudanças:
+ * - v3.1.0 (2025-07-17):
+ * - ROTA DE STREAM MELHORADA: A rota `/stream/{username}` agora aceita os sufixos
+ * `.m3u8` e `/index.m3u8` para maior compatibilidade com players de vídeo.
  * - v3.0.0 (2025-07-17):
  * - RESTAURAÇÃO COMPLETA: Reintegração de 100% das rotas e lógicas do arquivo
  * original (proxies, CSV, endpoints legados) na nova estrutura organizada.
