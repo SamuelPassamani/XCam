@@ -21,21 +21,27 @@
  * =========================================================================================
  */
 
-// Lista de domínios permitidos para CORS dinâmico
+// Lista de domínios e padrões permitidos
 const ALLOWED_ORIGINS = [
   "https://xcam.gay", "https://beta.xcam.gay", "https://player.xcam.gay",
   "https://db.xcam.gay", "https://modal.xcam.gay", "https://live.xcam.gay",
   "https://status.xcam.gay", "https://drive.xcam.gay",
   "https://samuelpassamani.github.io", "https://xcam-app.aserio.workers.dev",
-  "https://xcam-api.aserio.workers.dev", "https://script.google.com",
-  "https://script.googleusercontent.com", "https://web-sandbox.oaiusercontent.com",
-  "https://persistent.oaistatic.com", "https://openai.com",
-  "https://ab.chatgpt.com", "https://chatgpt.com", "https://cdn.oaistatic.com",
+  "https://xcam-api.aserio.workers.dev",
+  "https://web-sandbox.oaiusercontent.com", "https://persistent.oaistatic.com",
+  "https://openai.com", "https://ab.chatgpt.com", "https://chatgpt.com", "https://cdn.oaistatic.com",
   "https://codepen.io", "https://cdpn.io", "https://cpwebassets.codepen.io",
   "https://netlify.app", "https://xcamgay.netlify.app", "https://xcam-modal.netlify.app",
   "https://xcam-db.netlify.app", "https://xcam-drive.netlify.app",
   "https://xcam-status.netlify.app", "https://xcam-player.netlify.app",
-  "https://xcam-beta.netlify.app", "https://playhls.com"
+  "https://xcam-beta.netlify.app", "https://playhls.com",
+  // Adicionando o padrão para Google e seus subdomínios
+  "*.google.com",
+  "*.googleusercontent.com",
+  "*.googlesyndication.com",
+  "*.usercontent.goog",
+  "*.gstatic.com",
+  "*.doubleclick.net"
 ];
 
 // =========================================================================================
