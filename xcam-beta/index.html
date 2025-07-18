@@ -1059,7 +1059,7 @@
     }
 
     function goToPage(page, useFilters = false) {
-      if (page < 1 || page > totalPages) return;
+      if (page < 1 || page > totalPages || page === currentPage) return;
       fetchBroadcasts(page, useFilters ? filters : {});
     }
     // Modal Logic
@@ -1144,4 +1144,4 @@
   </script>
 </body>
 
-</html>
+</htm
