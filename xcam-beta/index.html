@@ -617,7 +617,7 @@
     import {
       COUNTRY_NAMES,
       TRANSLATIONS
-    } from './translations.js';
+    } from 'https://cdn.jsdelivr.net/gh/SamuelPassamani/XCam@main/xcam-beta/translations.js';
 
     // --- LÓGICA DA APLICAÇÃO ---
     
@@ -821,12 +821,13 @@
         const posterUrl = getPosterUrl(broadcast); // Use the new helper function
         const item = document.createElement('div');
         item.className = `carousel-item opacity-0`;
-        if (index === 0) {
-            item.classList.remove('opacity-0');
-        }
+        item.dataset.username = broadcast.username; // Store username for iframe
+        
         item.innerHTML = `
+          <div class="carousel-media-container absolute inset-0 bg-black">
+             <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">
+          </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
-          <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">
           <div class="absolute bottom-0 left-0 p-6 z-20">
             <span class="bg-xcam-pink text-white px-2 py-1 rounded-md text-sm font-medium mb-2 inline-block">AO VIVO</span>
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
@@ -840,36 +841,52 @@
         indicator.addEventListener('click', () => goToSlide(index));
         carouselIndicators.appendChild(indicator);
       });
+      goToSlide(0); // Initialize the first slide with an iframe
       startCarouselRotation();
     }
 
     function startCarouselRotation() {
-      setInterval(showNextSlide, 5000);
+      setInterval(showNextSlide, 15000);
     }
 
     function goToSlide(index) {
         const items = document.querySelectorAll('.carousel-item');
         const indicators = document.querySelectorAll('#carousel-indicators button');
         
-        // Esconde todos os slides primeiro
         items.forEach((item, i) => {
-            item.classList.add('opacity-0');
+            const mediaContainer = item.querySelector('.carousel-media-container');
+            if (i === index) {
+                // Ativa o slide
+                item.classList.remove('opacity-0');
+                
+                // Adiciona o iframe se não existir
+                if (!mediaContainer.querySelector('iframe')) {
+                    const username = item.dataset.username;
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'w-full h-full border-0';
+                    iframe.src = `https://live.xcam.gay/?user=${username}&mode=carousel`;
+                    iframe.setAttribute('allow', 'autoplay; encrypted-media');
+                    // Limpa o container e adiciona o iframe
+                    mediaContainer.innerHTML = '';
+                    mediaContainer.appendChild(iframe);
+                }
+            } else {
+                // Desativa o slide
+                item.classList.add('opacity-0');
+                
+                // Remove o iframe para parar o vídeo e restaurar o poster
+                if (mediaContainer.querySelector('iframe')) {
+                    const broadcast = carouselItems[i];
+                    const posterUrl = getPosterUrl(broadcast);
+                    mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">`;
+                }
+            }
         });
         
-        // Atualiza os indicadores
         indicators.forEach((indicator, i) => {
-            indicator.classList.remove('bg-white');
-            indicator.classList.add('bg-gray-500');
+            indicator.classList.toggle('bg-white', i === index);
+            indicator.classList.toggle('bg-gray-500', i !== index);
         });
-        
-        // Mostra o slide selecionado e ativa o indicador correspondente
-        if (items[index]) {
-            items[index].classList.remove('opacity-0');
-        }
-        if (indicators[index]) {
-            indicators[index].classList.add('bg-white');
-            indicators[index].classList.remove('bg-gray-500');
-        }
         
         currentCarouselIndex = index;
     }
