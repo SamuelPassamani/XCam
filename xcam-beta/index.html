@@ -857,6 +857,25 @@
       errorState.classList.add('hidden');
       emptyState.classList.add('hidden');
     }
+    
+    /**
+     * Gets a valid poster URL with fallbacks.
+     * @param {object} broadcast - The broadcast object from the API.
+     * @returns {string} A valid image URL.
+     */
+    function getPosterUrl(broadcast) {
+      // 1. Primary source from API (XCam API)
+      if (broadcast && broadcast.preview && broadcast.preview.poster) {
+        return broadcast.preview.poster;
+      }
+      // 2. Secondary source (XCam CDN)
+      if (broadcast && broadcast.username) {
+        return `https://poster.xcam.gay/${broadcast.username}.jpg`;
+      }
+      // 3. Final fallback
+      return 'https://cdn.xcam.gay/0:/src/files/loading.gif';
+    }
+
     // Setup UI Components
     function setupCarousel(items) {
       if (!items || items.length === 0) return;
@@ -864,11 +883,12 @@
       carouselItemsContainer.innerHTML = '';
       carouselIndicators.innerHTML = '';
       carouselItems.forEach((broadcast, index) => {
+        const posterUrl = getPosterUrl(broadcast); // Use the new helper function
         const item = document.createElement('div');
         item.className = `carousel-item absolute inset-0 transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
         item.innerHTML = `
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
-          <img src="${broadcast.preview.poster}" alt="${broadcast.username}" class="w-full h-full object-cover">
+          <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">
           <div class="absolute bottom-0 left-0 p-6 z-20">
             <span class="bg-xcam-pink text-white px-2 py-1 rounded-md text-sm font-medium mb-2 inline-block">AO VIVO</span>
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
@@ -999,6 +1019,7 @@
       }
       broadcastsGrid.innerHTML = '';
       broadcastsList.forEach(broadcast => {
+        const posterUrl = getPosterUrl(broadcast); // Use the new helper function
         const card = document.createElement('div');
         card.className = 'bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col';
         const tagsHTML = broadcast.tags && broadcast.tags.length > 0 ?
@@ -1006,7 +1027,7 @@
           '';
         card.innerHTML = `
           <div class="relative card-preview-container">
-            <img src="${broadcast.preview.poster}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
+            <img src="${posterUrl}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
             <span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span>
             <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center">
               <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -1084,7 +1105,7 @@
       modalGender.textContent = genderTranslations[broadcast.gender] || broadcast.gender;
       modalOrientation.textContent = orientationTranslations[broadcast.sexualOrientation] || broadcast.sexualOrientation;
       modalType.textContent = broadcast.broadcastType;
-      modalThumbnail.src = broadcast.preview.poster;
+      modalThumbnail.src = getPosterUrl(broadcast); // Use the helper function here as well
       modalIframe.classList.add('hidden');
       modalIframe.src = '';
       document.getElementById('modal-player').classList.remove('hidden');
@@ -1111,7 +1132,7 @@
         item.className = 'cursor-pointer hover:opacity-90 transition-opacity';
         item.onclick = () => openModal(r.id);
         item.innerHTML = `
-          <div class="relative"><img src="${r.preview.poster}" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
+          <div class="relative"><img src="${getPosterUrl(r)}" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
           <h4 class="font-medium text-white mt-2">@${r.username}</h4>
           <div class="flex items-center text-sm text-gray-400"><span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${r.country}.png)"></span><span>${r.viewers} espectadores</span></div>
         `;
