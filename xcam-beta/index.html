@@ -77,7 +77,12 @@
     }
 
     .carousel-item {
-      transition: opacity 0.5s ease;
+      transition: opacity 0.5s ease-in-out;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
 
     .toast {
@@ -326,16 +331,6 @@
     <section class="mb-10 relative overflow-hidden rounded-xl retro-glow">
       <div id="carousel" class="relative h-64 md:h-80 lg:h-96">
         <div id="carousel-items" class="h-full">
-          <div class="carousel-item absolute inset-0 opacity-0 transition-opacity duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
-            <img src="" alt="Transmissão em destaque" class="w-full h-full object-cover">
-            <div class="absolute bottom-0 left-0 p-6 z-20">
-              <span class="bg-xcam-pink text-white px-2 py-1 rounded-md text-sm font-medium mb-2 inline-block">AO VIVO</span>
-              <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Carregando...</h2>
-              <p class="text-gray-300 mb-3"><span id="carousel-viewers">0</span> espectadores</p>
-              <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Assistir</button>
-            </div>
-          </div>
         </div>
 
         <button id="prev-slide" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all">
@@ -616,76 +611,16 @@
     </div>
   </footer>
 
-  <script>
-    // Country names mapping
-    const countryNames = {
-      'us': 'Estados Unidos',
-      'br': 'Brasil',
-      'es': 'Espanha',
-      'fr': 'França',
-      'it': 'Itália',
-      'de': 'Alemanha',
-      'jp': 'Japão',
-      'kr': 'Coreia do Sul',
-      'ru': 'Rússia',
-      'ca': 'Canadá',
-      'uk': 'Reino Unido',
-      'au': 'Austrália',
-      'mx': 'México',
-      'ar': 'Argentina',
-      'co': 'Colômbia',
-      'pt': 'Portugal',
-      'nl': 'Holanda',
-      'se': 'Suécia',
-      'no': 'Noruega',
-      'fi': 'Finlândia',
-      'dk': 'Dinamarca',
-      'pl': 'Polônia',
-      'cz': 'República Tcheca',
-      'hu': 'Hungria',
-      'ro': 'Romênia',
-      'gr': 'Grécia',
-      'tr': 'Turquia',
-      'za': 'África do Sul',
-      'in': 'Índia',
-      'cn': 'China',
-      'th': 'Tailândia',
-      'sg': 'Singapura',
-      'ph': 'Filipinas',
-      'my': 'Malásia',
-      'id': 'Indonésia',
-      'vn': 'Vietnã',
-      'ae': 'Emirados Árabes Unidos',
-      'sa': 'Arábia Saudita',
-      'eg': 'Egito',
-      'ng': 'Nigéria',
-      'ke': 'Quênia',
-      'il': 'Israel',
-      'ua': 'Ucrânia',
-      'by': 'Bielorrússia',
-      'kz': 'Cazaquistão',
-      'cl': 'Chile',
-      'pe': 'Peru',
-      've': 'Venezuela',
-      'ec': 'Equador',
-      'bo': 'Bolívia',
-      'py': 'Paraguai',
-      'uy': 'Uruguai',
-      'nz': 'Nova Zelândia'
-    };
-    // Gender and orientation translations
-    const genderTranslations = {
-      'male': 'Masculino',
-      'female': 'Feminino',
-      'trans': 'Trans',
-      'couple': 'Casal'
-    };
-    const orientationTranslations = {
-      'straight': 'Hetero',
-      'gay': 'Gay',
-      'lesbian': 'Lésbica',
-      'bisexual': 'Bissexual'
-    };
+  <script type="module">
+    // Importa as traduções do script externo
+    // CORREÇÃO: Usa um CDN (jsDelivr) para garantir que o arquivo seja servido com o Content-Type correto (application/javascript)
+    import {
+      COUNTRY_NAMES,
+      TRANSLATIONS
+    } from 'https://cdn.jsdelivr.net/gh/SamuelPassamani/XCam@main/xcam-beta/translations.js';
+
+    // --- LÓGICA DA APLICAÇÃO ---
+    
     // Global variables
     let broadcasts = []; // Acts as a cache for modal details
     let currentPage = 1;
@@ -885,7 +820,10 @@
       carouselItems.forEach((broadcast, index) => {
         const posterUrl = getPosterUrl(broadcast); // Use the new helper function
         const item = document.createElement('div');
-        item.className = `carousel-item absolute inset-0 transition-opacity duration-500 ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
+        item.className = `carousel-item opacity-0`;
+        if (index === 0) {
+            item.classList.remove('opacity-0');
+        }
         item.innerHTML = `
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
           <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">
@@ -910,13 +848,30 @@
     }
 
     function goToSlide(index) {
-      const items = document.querySelectorAll('.carousel-item');
-      const indicators = document.querySelectorAll('#carousel-indicators button');
-      items.forEach(item => item.classList.remove('opacity-100'));
-      indicators.forEach(ind => ind.classList.replace('bg-white', 'bg-gray-500'));
-      items[index].classList.add('opacity-100');
-      indicators[index].classList.replace('bg-gray-500', 'bg-white');
-      currentCarouselIndex = index;
+        const items = document.querySelectorAll('.carousel-item');
+        const indicators = document.querySelectorAll('#carousel-indicators button');
+        
+        // Esconde todos os slides primeiro
+        items.forEach((item, i) => {
+            item.classList.add('opacity-0');
+        });
+        
+        // Atualiza os indicadores
+        indicators.forEach((indicator, i) => {
+            indicator.classList.remove('bg-white');
+            indicator.classList.add('bg-gray-500');
+        });
+        
+        // Mostra o slide selecionado e ativa o indicador correspondente
+        if (items[index]) {
+            items[index].classList.remove('opacity-0');
+        }
+        if (indicators[index]) {
+            indicators[index].classList.add('bg-white');
+            indicators[index].classList.remove('bg-gray-500');
+        }
+        
+        currentCarouselIndex = index;
     }
 
     function showPrevSlide() {
@@ -1043,8 +998,8 @@
               </div>
             </div>
             <div class="flex flex-wrap gap-2 mb-2">
-              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">${genderTranslations[broadcast.gender] || broadcast.gender}</span>
-              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">${orientationTranslations[broadcast.sexualOrientation] || broadcast.sexualOrientation}</span>
+              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">${TRANSLATIONS.gender[broadcast.gender] || broadcast.gender}</span>
+              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">${TRANSLATIONS.sexPreference[broadcast.sexualOrientation] || broadcast.sexualOrientation}</span>
             </div>
             <div class="flex flex-wrap gap-1 mt-2">${tagsHTML}</div>
           </div>
@@ -1102,8 +1057,8 @@
       modalCountryFlag.style.backgroundImage = `url(https://flagcdn.com/w20/${broadcast.country}.png)`;
       modalCountryName.textContent = getCountryName(broadcast.country);
       modalViewers.textContent = broadcast.viewers;
-      modalGender.textContent = genderTranslations[broadcast.gender] || broadcast.gender;
-      modalOrientation.textContent = orientationTranslations[broadcast.sexualOrientation] || broadcast.sexualOrientation;
+      modalGender.textContent = TRANSLATIONS.gender[broadcast.gender] || broadcast.gender;
+      modalOrientation.textContent = TRANSLATIONS.sexPreference[broadcast.sexualOrientation] || broadcast.sexualOrientation;
       modalType.textContent = broadcast.broadcastType;
       modalThumbnail.src = getPosterUrl(broadcast); // Use the helper function here as well
       modalIframe.classList.add('hidden');
@@ -1163,9 +1118,9 @@
       toast.classList.remove('hidden');
       setTimeout(() => toast.classList.add('hidden'), 3000);
     }
-
+    
     function getCountryName(countryCode) {
-      return countryNames[countryCode] || countryCode.toUpperCase();
+      return COUNTRY_NAMES[countryCode] || countryCode.toUpperCase();
     }
     // Make functions available globally for inline onclick attributes
     window.openModal = openModal;
