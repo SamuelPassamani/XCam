@@ -34,8 +34,8 @@ const playerInstance = jwplayer("player").setup({
           type: "video/x-mpegURL",
           default: true
         }
-      ],
-      
+      ]
+
       /* LEGENDA DESABILITADA: O bloco de 'captions' abaixo foi comentado 
         para ocultar o botão e as opções de legenda no player.
       */
@@ -151,9 +151,11 @@ playerInstance.on("ready", function () {
   // Move the timeslider in-line with other controls
   const playerContainer = playerInstance.getContainer();
   const buttonContainer = playerContainer.querySelector(".jw-button-container");
-  const spacer = buttonContainer ? buttonContainer.querySelector(".jw-spacer") : null;
+  const spacer = buttonContainer
+    ? buttonContainer.querySelector(".jw-spacer")
+    : null;
   const timeSlider = playerContainer.querySelector(".jw-slider-time");
-  
+
   // CORREÇÃO: Inserir a barra de tempo ANTES do espaçador para manter o alinhamento dos ícones.
   if (spacer && timeSlider && spacer.parentNode) {
     spacer.parentNode.insertBefore(timeSlider, spacer);
@@ -181,23 +183,25 @@ playerInstance.on("ready", function () {
     const forwardDisplayButton = forwardContainer.querySelector(
       ".jw-icon-rewind"
     );
-    const nextContainer = playerContainer.querySelector(".jw-display-icon-next");
+    const nextContainer = playerContainer.querySelector(
+      ".jw-display-icon-next"
+    );
 
     if (forwardDisplayButton && nextContainer && nextContainer.parentNode) {
       forwardDisplayButton.style.transform = "scaleX(-1)";
       forwardDisplayButton.ariaLabel = "Forward 10 Seconds";
       nextContainer.parentNode.insertBefore(forwardContainer, nextContainer);
-      
+
       // control bar icon
       const nextButton = playerContainer.querySelector(".jw-display-icon-next");
       if (nextButton) {
         nextButton.style.display = "none"; // hide next button
       }
-      
+
       const rewindControlBarButton = buttonContainer.querySelector(
         ".jw-icon-rewind"
       );
-      
+
       if (rewindControlBarButton && rewindControlBarButton.parentNode) {
         const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
         forwardControlBarButton.style.transform = "scaleX(-1)";
