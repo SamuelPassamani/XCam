@@ -35,6 +35,11 @@ const playerInstance = jwplayer("player").setup({
           default: true
         }
       ],
+      
+      /* LEGENDA DESABILITADA: O bloco de 'captions' abaixo foi comentado 
+        para ocultar o botão e as opções de legenda no player.
+      */
+      /*
       captions: [
         {
           file:
@@ -92,12 +97,19 @@ const playerInstance = jwplayer("player").setup({
           kind: "captions"
         }
       ],
+      */
+
+      /* MINIATURAS DESABILITADAS: O bloco de 'tracks' abaixo foi comentado
+        para desabilitar as miniaturas na barra de progresso.
+      */
+      /*
       tracks: [
         {
           file: "https://cdn.jwplayer.com/strips/iYfADWO1-120.vtt",
           kind: "thumbnails"
         }
       ]
+      */
     }
   ],
   advertising: {
@@ -111,7 +123,7 @@ const playerInstance = jwplayer("player").setup({
   }
 });
 
-playerInstance.off("ready", function () {
+playerInstance.on("ready", function () {
   const buttonId = "download-video-button";
   const iconPath =
     "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDI0djI0SDB6Ii8+PHBhdGggZD0iTTMgMTloMTh2Mkgzdi0yem0xMC01LjgyOEwxOS4wNzEgNy4xbDEuNDE0IDEuNDE0TDEyIDE3IDMuNTE1IDguNTE1IDQuOTI5IDcuMSAxMSAxMy4xN1YyaDJ2MTEuMTcyeiIgZmlsbD0icmdiYSgyNDcsMjQ3LDI0NywxKSIvPjwvc3ZnPg==";
@@ -139,7 +151,10 @@ playerInstance.off("ready", function () {
   const buttonContainer = playerContainer.querySelector(".jw-button-container");
   const spacer = buttonContainer.querySelector(".jw-spacer");
   const timeSlider = playerContainer.querySelector(".jw-slider-time");
-  buttonContainer.replaceChild(timeSlider, spacer);
+  if (spacer && timeSlider) {
+    buttonContainer.replaceChild(timeSlider, spacer);
+  }
+
 
   // Detect adblock
   playerInstance.on("adBlock", () => {
