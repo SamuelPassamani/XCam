@@ -8,6 +8,7 @@ const username = urlParams.get('user') || 'tentationdivine';
 
 const playerInstance = jwplayer("player").setup({
   controls: true,
+  autostart: true,
   sharing: true,
   displaytitle: true,
   displaydescription: true,
