@@ -5,10 +5,12 @@ const urlParams = new URLSearchParams(window.location.search);
 // 2. Procura pelo parâmetro 'user'. Se não encontrar, usa 'tentationdivine' como valor padrão.
 const username = urlParams.get('user') || 'tentationdivine';
 
+// 3. Procura pelo parâmetro 'img'. Se não encontrar, constrói a URL da imagem com base no username.
+const imageUrl = urlParams.get('img') || `https://poster.xcam.gay/${username}.jpg`;
+
 
 const playerInstance = jwplayer("player").setup({
   controls: true,
-  autostart: true,
   sharing: true,
   displaytitle: true,
   displaydescription: true,
@@ -32,12 +34,12 @@ const playerInstance = jwplayer("player").setup({
   },
 
   // --- Playlist Dinâmica ---
-  // O conteúdo da playlist agora é construído usando a variável 'username'.
+  // O conteúdo da playlist agora é construído usando as variáveis 'username' e 'imageUrl'.
   playlist: [
     {
       title: `@${username}`,
       description: "You're Watching",
-      image: `https://poster.xcam.gay/${username}.jpg`,
+      image: imageUrl,
       sources: [
         {
           file: `https://api.xcam.gay/stream/${username}.m3u8`,
