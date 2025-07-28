@@ -135,67 +135,85 @@ playerInstance.on("ready", function () {
   // This function is executed when the button is clicked
   function buttonClickAction() {
     const playlistItem = playerInstance.getPlaylistItem();
-    const anchor = document.createElement("a");
-    const fileUrl = playlistItem.file;
-    anchor.setAttribute("href", fileUrl);
-    const downloadName = playlistItem.file.split("/").pop();
-    anchor.setAttribute("download", downloadName);
-    anchor.style.display = "none";
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+    if (playlistItem && playlistItem.file) {
+      const anchor = document.createElement("a");
+      const fileUrl = playlistItem.file;
+      anchor.setAttribute("href", fileUrl);
+      const downloadName = playlistItem.file.split("/").pop();
+      anchor.setAttribute("download", downloadName);
+      anchor.style.display = "none";
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    }
   }
 
   // Move the timeslider in-line with other controls
   const playerContainer = playerInstance.getContainer();
   const buttonContainer = playerContainer.querySelector(".jw-button-container");
-  const spacer = buttonContainer.querySelector(".jw-spacer");
+  const spacer = buttonContainer ? buttonContainer.querySelector(".jw-spacer") : null;
   const timeSlider = playerContainer.querySelector(".jw-slider-time");
-  if (spacer && timeSlider) {
-    buttonContainer.replaceChild(timeSlider, spacer);
+  
+  // CORREÇÃO: Inserir a barra de tempo ANTES do espaçador para manter o alinhamento dos ícones.
+  if (spacer && timeSlider && spacer.parentNode) {
+    spacer.parentNode.insertBefore(timeSlider, spacer);
   }
-
 
   // Detect adblock
   playerInstance.on("adBlock", () => {
     const modal = document.querySelector("div.modal");
-    modal.style.display = "flex";
-
-    document
-      .getElementById("close")
-      .addEventListener("click", () => location.reload());
+    if (modal) {
+      modal.style.display = "flex";
+      const closeButton = document.getElementById("close");
+      if (closeButton) {
+        closeButton.addEventListener("click", () => location.reload());
+      }
+    }
   });
 
   // Forward 10 seconds
   const rewindContainer = playerContainer.querySelector(
     ".jw-display-icon-rewind"
   );
-  const forwardContainer = rewindContainer.cloneNode(true);
-  const forwardDisplayButton = forwardContainer.querySelector(
-    ".jw-icon-rewind"
-  );
-  forwardDisplayButton.style.transform = "scaleX(-1)";
-  forwardDisplayButton.ariaLabel = "Forward 10 Seconds";
-  const nextContainer = playerContainer.querySelector(".jw-display-icon-next");
-  nextContainer.parentNode.insertBefore(forwardContainer, nextContainer);
 
-  // control bar icon
-  playerContainer.querySelector(".jw-display-icon-next").style.display = "none"; // hide next button
-  const rewindControlBarButton = buttonContainer.querySelector(
-    ".jw-icon-rewind"
-  );
-  const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
-  forwardControlBarButton.style.transform = "scaleX(-1)";
-  forwardControlBarButton.ariaLabel = "Forward 10 Seconds";
-  rewindControlBarButton.parentNode.insertBefore(
-    forwardControlBarButton,
-    rewindControlBarButton.nextElementSibling
-  );
+  if (rewindContainer) {
+    const forwardContainer = rewindContainer.cloneNode(true);
+    const forwardDisplayButton = forwardContainer.querySelector(
+      ".jw-icon-rewind"
+    );
+    const nextContainer = playerContainer.querySelector(".jw-display-icon-next");
 
-  // add onclick handlers
-  [forwardDisplayButton, forwardControlBarButton].forEach((button) => {
-    button.onclick = () => {
-      playerInstance.seek(playerInstance.getPosition() + 10);
-    };
-  });
+    if (forwardDisplayButton && nextContainer && nextContainer.parentNode) {
+      forwardDisplayButton.style.transform = "scaleX(-1)";
+      forwardDisplayButton.ariaLabel = "Forward 10 Seconds";
+      nextContainer.parentNode.insertBefore(forwardContainer, nextContainer);
+      
+      // control bar icon
+      const nextButton = playerContainer.querySelector(".jw-display-icon-next");
+      if (nextButton) {
+        nextButton.style.display = "none"; // hide next button
+      }
+      
+      const rewindControlBarButton = buttonContainer.querySelector(
+        ".jw-icon-rewind"
+      );
+      
+      if (rewindControlBarButton && rewindControlBarButton.parentNode) {
+        const forwardControlBarButton = rewindControlBarButton.cloneNode(true);
+        forwardControlBarButton.style.transform = "scaleX(-1)";
+        forwardControlBarButton.ariaLabel = "Forward 10 Seconds";
+        rewindControlBarButton.parentNode.insertBefore(
+          forwardControlBarButton,
+          rewindControlBarButton.nextElementSibling
+        );
+
+        // add onclick handlers
+        [forwardDisplayButton, forwardControlBarButton].forEach((button) => {
+          button.onclick = () => {
+            playerInstance.seek(playerInstance.getPosition() + 10);
+          };
+        });
+      }
+    }
+  }
 });
