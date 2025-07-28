@@ -1,3 +1,11 @@
+// --- Lógica para Parâmetros Dinâmicos ---
+// 1. Pega os parâmetros da URL atual.
+const urlParams = new URLSearchParams(window.location.search);
+
+// 2. Procura pelo parâmetro 'user'. Se não encontrar, usa 'tentationdivine' como valor padrão.
+const username = urlParams.get('user') || 'tentationdivine';
+
+
 const playerInstance = jwplayer("player").setup({
   controls: true,
   sharing: true,
@@ -22,19 +30,21 @@ const playerInstance = jwplayer("player").setup({
     edgeStyle: "raised"
   },
 
+  // --- Playlist Dinâmica ---
+  // O conteúdo da playlist agora é construído usando a variável 'username'.
   playlist: [
     {
-      title: "@tentationdivine",
+      title: `@${username}`,
       description: "You're Watching",
-      image: "https://poster.xcam.gay/tentationdivine.jpg",
+      image: `https://poster.xcam.gay/${username}.jpg`,
       sources: [
         {
-          file: "https://api.xcam.gay/stream/tentationdivine.m3u8",
+          file: `https://api.xcam.gay/stream/${username}.m3u8`,
           label: "Source",
           type: "video/x-mpegURL",
           default: true
         }
-      ]
+      ],
 
       /* LEGENDA DESABILITADA: O bloco de 'captions' abaixo foi comentado 
         para ocultar o botão e as opções de legenda no player.
@@ -123,10 +133,10 @@ const playerInstance = jwplayer("player").setup({
   }
 });
 
-playerInstance.off("ready", function () {
+playerInstance.on("ready", function () {
   const buttonId = "download-video-button";
   const iconPath =
-    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDI0djI0SDB6Ii8+PHBhdGggZD0iTTMgMTloMTh2Mkgzdi0yem0xMC01LjgyOEwxOS4wNzEgNy4xbDEuNDE0IDEuNDE0TDEyIDE3IDMuNTE1IDguNTE1IDQuOTI5IDcuMSAxMSAxMy4xN1YyaDJ2MTEuMTcyeiIgZmlsbD0iI2ZmMDA3ZiIvPjwvc3ZnPg==";
+    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cGF0aCBmaWxsPSJub25lIiBkPSJNMCAwaDI0djI0SDB6Ii8+PHBhdGggZD0iTTMgMTloMTh2Mkgzdi0yem0xMC01LjgyOEwxOS4wNzEgNy4xbDEuNDE0IDEuNDE0TDEyIDE3IDMuNTE1IDguNTE1IDQuOTI5IDcuMSAxMSAxMy4xN1YyaDJ2MTEuMTcyeiIgZmlsbD0icmdiYSgyNDcsMjQ3LDI0NywxKSIvPjwvc3ZnPg==";
   const tooltipText = "Download Video";
 
   // Call the player's `addButton` API method to add the custom button
