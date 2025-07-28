@@ -8,6 +8,14 @@ const username = urlParams.get('user') || 'tentationdivine';
 // 3. Procura pelo parâmetro 'img'. Se não encontrar, constrói a URL da imagem com base no username.
 const imageUrl = urlParams.get('img') || `https://poster.xcam.gay/${username}.jpg`;
 
+// 4. Procura pelo parâmetro 'tags' e formata a descrição.
+const tagsParam = urlParams.get('tags');
+let descriptionText = ''; // Padrão: string vazia
+if (tagsParam) {
+  // Se 'tags' existir, transforma "tag1,tag2" em "#tag1 #tag2"
+  descriptionText = tagsParam.split(',').map(tag => `#${tag.trim()}`).join(' ');
+}
+
 
 const playerInstance = jwplayer("player").setup({
   controls: true,
@@ -34,11 +42,11 @@ const playerInstance = jwplayer("player").setup({
   },
 
   // --- Playlist Dinâmica ---
-  // O conteúdo da playlist agora é construído usando as variáveis 'username' e 'imageUrl'.
+  // O conteúdo da playlist agora é construído usando as variáveis dinâmicas.
   playlist: [
     {
       title: `@${username}`,
-      description: "You're Watching",
+      description: descriptionText,
       image: imageUrl,
       sources: [
         {
