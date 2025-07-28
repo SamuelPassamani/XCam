@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Netflix Skin for JWPLAYER8 v2.0.7</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -50,8 +59,19 @@
     </div>
   </div>
 
-  <!-- Script do Player adicionado aqui -->
+  <!-- 
+    CORREÇÃO: A biblioteca principal do JW Player precisa ser carregada ANTES do seu script de configuração.
+    A URL foi atualizada conforme solicitado.
+  -->
+  <script src="https://content.jwplatform.com/libraries/KB5zFt7A.js"></script>
+
+  <!-- Script do Player adicionado aqui (agora carregado depois da biblioteca) -->
   <script src="https://xcam.gay/player/script.js"></script>
+
+</body>
+</html>
+<!-- partial -->
+  <script src='https://content.jwplatform.com/libraries/KB5zFt7A.js'></script><script  src="./script.js"></script>
 
 </body>
 </html>
