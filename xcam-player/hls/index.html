@@ -69,7 +69,25 @@
         $(document).ready(function () {
             var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             var $player = $("#player");
-            var videoSrc = "https://api.xcam.gay/stream/JacksonOlsenn.m3u8"; // URL do stream
+            
+            // XDev: Início da lógica para URL dinâmica
+            // 1. Captura os parâmetros da URL.
+            const urlParams = new URLSearchParams(window.location.search);
+            const user = urlParams.get('user'); // Procura pelo parâmetro 'user'.
+
+            var videoSrc;
+
+            // 2. Verifica se o parâmetro 'user' foi encontrado.
+            if (user) {
+                // Se sim, constrói a URL do vídeo com o valor do parâmetro.
+                videoSrc = `https://api.xcam.gay/stream/${user}.m3u8`;
+                console.log(`Parâmetro 'user' encontrado. A carregar stream para: ${user}`);
+            } else {
+                // Se não, usa uma URL padrão como fallback.
+                videoSrc = "https://api.xcam.gay/stream/JacksonOlsenn.m3u8"; // URL Padrão
+                console.log("Nenhum parâmetro 'user' encontrado. A carregar stream padrão.");
+            }
+            // XDev: Fim da lógica para URL dinâmica
 
             // Garante que o player inicie automaticamente
             $player.prop('autoplay', true);
@@ -101,6 +119,7 @@
 </head>
 <body>
     <div class="main">
+        <!-- XDev: Removido o atributo 'controls' para desativar os controlos do player -->
         <video class="player" id="player"></video>
     </div>
 </body>
