@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -470,15 +471,9 @@
         <div class="lg:col-span-2">
           <div class="relative aspect-video bg-black rounded-lg overflow-hidden">
             <div id="modal-player" class="w-full h-full flex items-center justify-center">
-              <button id="play-button" class="bg-xcam-pink hover:bg-opacity-90 text-white rounded-full w-16 h-16 flex items-center justify-center">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </button>
               <img id="modal-thumbnail" src="" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
             </div>
-            <iframe id="modal-iframe" class="w-full h-full absolute inset-0 hidden" frameborder="0" allowfullscreen></iframe>
+            <iframe id="modal-iframe" class="w-full h-full absolute inset-0" frameborder="0" allowfullscreen></iframe>
           </div>
 
           <div class="mt-4">
@@ -702,7 +697,6 @@
       lastPageButton.addEventListener('click', () => goToPage(totalPages));
       applyFiltersButton.addEventListener('click', applyFilters);
       closeModal.addEventListener('click', closeModalHandler);
-      playButton.addEventListener('click', playVideo);
       window.addEventListener('click', (e) => {
         if (e.target === broadcastModal) closeModalHandler();
       });
@@ -1081,22 +1075,18 @@
         showToast('Transmissão não encontrada. Tente recarregar.');
         return;
       }
+
+      // Populate text and static info
       modalUsername.textContent = `@${broadcast.username}`;
       modalAvatar.src = broadcast.profileImageURL;
       modalCountryFlag.style.backgroundImage = `url(https://flagcdn.com/w20/${broadcast.country}.png)`;
       modalCountryName.textContent = getCountryName(broadcast.country);
       modalViewers.textContent = broadcast.viewers;
-      
       modalGender.innerHTML = `<img src="${GENDER_ICON_SVG}" class="w-4 h-4 mr-2" alt="Gender Icon">${TRANSLATIONS.gender[broadcast.gender] || broadcast.gender}`;
-      
       modalOrientation.innerHTML = `<img src="${ORIENTATION_ICON_SVG}" class="w-4 h-4 mr-2" alt="Orientation Icon">${TRANSLATIONS.sexPreference[broadcast.sexualOrientation] || broadcast.sexualOrientation}`;
-      
       modalType.innerHTML = `<img src="${BROADCAST_TYPE_ICON_SVG}" class="w-4 h-4 mr-2" alt="Broadcast Type Icon">${TRANSLATIONS.broadcastType[broadcast.broadcastType] || broadcast.broadcastType}`;
       
-      modalThumbnail.src = getPosterUrl(broadcast); // Use the helper function here as well
-      modalIframe.classList.add('hidden');
-      modalIframe.src = '';
-      document.getElementById('modal-player').classList.remove('hidden');
+      // Populate tags
       modalTags.innerHTML = '';
       if (broadcast.tags && broadcast.tags.length > 0) {
         broadcast.tags.forEach(tag => {
@@ -1113,6 +1103,18 @@
           modalTags.appendChild(tagElement);
         });
       }
+
+      // Construct the new iframe URL
+      const posterUrl = encodeURIComponent(getPosterUrl(broadcast));
+      const tagsString = broadcast.tags ? encodeURIComponent(broadcast.tags.map(tag => tag.name).join(',')) : '';
+      const iframeUrl = `https://xcam.gay/player/?user=${broadcast.username}&img=${posterUrl}&tags=${tagsString}`;
+
+      // Set iframe source and show it, hide the thumbnail/play button
+      modalIframe.src = iframeUrl;
+      document.getElementById('modal-player').classList.add('hidden');
+      modalIframe.classList.remove('hidden');
+
+      // Populate related broadcasts
       const related = broadcasts.filter(b => b.id !== broadcastId && (b.gender === broadcast.gender || b.sexualOrientation === broadcast.sexualOrientation)).slice(0, 3);
       relatedBroadcasts.innerHTML = '';
       related.forEach(r => {
@@ -1126,10 +1128,12 @@
         `;
         relatedBroadcasts.appendChild(item);
       });
-      playButton.setAttribute('data-broadcast-id', broadcast.id);
+
+      // Show the modal
       broadcastModal.style.display = 'block';
       document.body.style.overflow = 'hidden';
     }
+
 
     function closeModalHandler() {
       broadcastModal.style.display = 'none';
@@ -1137,17 +1141,6 @@
       modalIframe.src = '';
     }
 
-    function playVideo() {
-      const broadcastId = playButton.getAttribute('data-broadcast-id');
-      const broadcast = broadcasts.find(b => b.id === broadcastId);
-      if (!broadcast) return;
-      
-      const videoUrl = `https://player.xcam.gay/hls/?user=${broadcast.username}`;
-      document.getElementById('modal-player').classList.add('hidden');
-      modalIframe.src = videoUrl;
-      modalIframe.classList.remove('hidden');
-      showToast('Carregando transmissão...');
-    }
     // Utility Functions
     function showToast(message) {
       toastMessage.textContent = message;
