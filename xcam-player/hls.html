@@ -44,15 +44,15 @@
 
                         if (isIOS) {
                             console.log("Using native iOS playback");
-                            $player.attr("src", "https://api.xcam.gay/stream/vida_23.m3u8");
+                            $player.attr("src", "https://api.xcam.gay/stream/JacksonOlsenn.m3u8");
                         } else if (Hls.isSupported()) {
                             console.log("Using HLS.js for playback");
                             hls.detachMedia();
-                            hls.loadSource("https://api.xcam.gay/stream/vida_23.m3u8");
+                            hls.loadSource("https://api.xcam.gay/stream/JacksonOlsenn.m3u8");
                             hls.attachMedia($player[0]);
                         } else if ($player[0].canPlayType('application/vnd.apple.mpegurl')) {
                             console.log("Using native HLS playback");
-                            $player.attr("src", "https://api.xcam.gay/stream/vida_23.m3u8");
+                            $player.attr("src", "https://api.xcam.gay/stream/JacksonOlsenn.m3u8");
                         } else {
                             console.log("This browser does not support HLS playback");
                         }
