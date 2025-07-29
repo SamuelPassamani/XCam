@@ -41,6 +41,7 @@ export const TRANSLATIONS = {
   sexPreference: {
     bisexual: "Bissexual",
     straight: "Heterossexual",
+    bicurious: "Bicurioso",
     gay: "Gay",
     lesbian: "Lésbica",
     unknown: "Não informado"
