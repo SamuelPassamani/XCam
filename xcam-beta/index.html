@@ -610,11 +610,29 @@
               </script>
               <script type="text/javascript" src="//www.highperformanceformat.com/86125e96829d2dff85e55f10406512f0/invoke.js"></script>
           </div>
-          <p class="text-gray-500 text-sm text-center">© 2023 XCam. Todos os direitos reservados.</p>
+          <p class="text-gray-500 text-sm text-center">© 2025 XCam.World Todos os direitos reservados.</p>
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- Age Gate Modal -->
+  <div id="age-gate-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black bg-opacity-90 p-4">
+    <div class="bg-[#111] text-center p-8 rounded-lg max-w-lg w-full border border-gray-700 shadow-lg shadow-xcam-pink/20">
+      <img src="https://github.com/SamuelPassamani/XCam/raw/refs/heads/main/xcam-beta/src/logo.svg" alt="XCam Logo" class="h-12 mx-auto mb-6">
+      <h2 class="text-3xl font-bold text-white mb-4">Este é um site adulto</h2>
+      <p class="text-gray-400 mb-6">
+        Este site contém material com restrição de idade, incluindo nudez e representações explícitas de atividade sexual. Ao continuar, você afirma que tem pelo menos 18 anos de idade ou a maioridade na jurisdição de onde está acessando o site e que consente em visualizar conteúdo sexualmente explícito.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <button id="age-confirm-btn" class="w-full bg-xcam-pink text-black font-bold py-3 rounded-lg hover:opacity-90 transition-opacity">Tenho 18 anos ou mais - Entrar</button>
+        <button id="age-deny-btn" class="w-full bg-gray-700 text-white font-bold py-3 rounded-lg hover:bg-gray-600 transition-opacity">Tenho menos de 18 anos - Sair</button>
+      </div>
+      <p class="text-xs text-gray-500 mt-6">
+        &copy; XCam.gay, 2025
+      </p>
+    </div>
+  </div>
 
   <script type="module">
     // Importa as traduções do script externo
@@ -692,7 +710,33 @@
     const toastMessage = document.getElementById('toast-message');
     
     // Initialize the application
-    document.addEventListener('DOMContentLoaded', initApp);
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- AGE GATE MODAL LOGIC ---
+        const ageGateModal = document.getElementById('age-gate-modal');
+        const confirmBtn = document.getElementById('age-confirm-btn');
+        const denyBtn = document.getElementById('age-deny-btn');
+
+        const isAgeVerified = localStorage.getItem('ageVerified');
+
+        if (!isAgeVerified) {
+            ageGateModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling behind the modal
+        }
+
+        confirmBtn.addEventListener('click', () => {
+            localStorage.setItem('ageVerified', 'true');
+            ageGateModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        denyBtn.addEventListener('click', () => {
+            // Redirect to a neutral site
+            window.location.href = 'https://www.google.com';
+        });
+        // --- END AGE GATE MODAL LOGIC ---
+
+        initApp();
+    });
     
     // Initialize the application
     async function initApp() {
@@ -729,7 +773,7 @@
 
     // --- Gemini API Integration ---
     async function callGeminiAPI(prompt) {
-        const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
+        const apiKey = ""; // API key is handled by the environment
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         
         const payload = {
