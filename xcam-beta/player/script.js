@@ -6,7 +6,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get('user') || 'tentationdivine';
 
 // 3. Procura pelo parâmetro 'img'. Se não encontrar, constrói a URL da imagem com base no username.
-const imageUrl = urlParams.get('img') || `https://poster.xcam.gay/${username}.jpg`;
+const imageUrl = urlParams.get('img') || `https://snapshots.xcdnpro.com/thumbnails/${username}`;
 
 // 4. Procura pelo parâmetro 'tags' e formata a descrição.
 const tagsParam = urlParams.get('tags');
