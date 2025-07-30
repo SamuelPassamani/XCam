@@ -5,13 +5,13 @@
  *
  * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
  * @info        https://aserio.work/
- * @version     3.3.0
+ * @version     3.4.0
  * @lastupdate  2025-07-30
  *
  * @description
  * Worker principal da XCam API. Esta versão implementa a busca completa de broadcasts
  * para permitir a filtragem de dados com totais corretos e adiciona suporte a
- * múltiplos valores em filtros (ex: country=br,us). Restaura 100% da
+ * múltiplos valores em filtros (ex: country=br,us e tags=cum,ass). Restaura 100% da
  * funcionalidade do script original.
  *
  * @modes       production
@@ -352,17 +352,24 @@ export default {
         const limit = parseInt(searchParams.get("limit") || "30", 10);
         const format = searchParams.get("format") || "json";
         const country = searchParams.get("country");
+        const tags = searchParams.get("tags");
         
         // 1. Busca TODOS os broadcasts disponíveis.
         const allItems = await fetchAllBroadcasts();
         
-        // 2. Aplica qualquer filtro sobre o conjunto de dados completo.
+        // 2. Aplica filtros em cadeia sobre o conjunto de dados completo.
         let filteredItems = allItems;
+
         if (country) {
-            // Transforma a string de países (ex: "br,us") em um array de lowercase ["br", "us"]
             const countries = country.split(',').map(c => c.trim().toLowerCase());
-            // Filtra os itens, mantendo aqueles cujo país está na lista de países solicitados.
-            filteredItems = allItems.filter(item => item.country && countries.includes(item.country.toLowerCase()));
+            filteredItems = filteredItems.filter(item => item.country && countries.includes(item.country.toLowerCase()));
+        }
+
+        if (tags) {
+            const requiredTags = tags.split(',').map(t => t.trim().toLowerCase());
+            filteredItems = filteredItems.filter(item => 
+                item.tags && item.tags.some(tag => requiredTags.includes(tag.slug.toLowerCase()))
+            );
         }
 
         // 3. Calcula os totais e a paginação COM BASE NA LISTA FILTRADA.
@@ -421,6 +428,10 @@ export default {
  * =========================================================================================
  *
  * @log de mudanças:
+ * - v3.4.0 (2025-07-30):
+ * - FILTRO DE TAGS: Adicionado suporte para o parâmetro `tags` na rota principal.
+ * Aceita múltiplos valores separados por vírgula (ex: `?tags=cum,ass`) e
+ * funciona em conjunto com outros filtros.
  * - v3.3.0 (2025-07-30):
  * - FILTRO COM MÚLTIPLOS VALORES: A rota principal agora aceita múltiplos valores
  * separados por vírgula no parâmetro `country` (ex: `?country=br,us`).
@@ -441,8 +452,8 @@ export default {
  * @roadmap futuro:
  * - CACHE AVANÇADO: Implementar cache (KV Storage) para a função `fetchAllBroadcasts`
  * para reduzir drasticamente o número de chamadas à API externa. (Prioridade Alta)
- * - FILTROS MÚLTIPLOS: Expandir a rota principal para aceitar múltiplos filtros
- * combinados (ex: ?country=br,us&tag=cum).
+ * - FILTROS MÚLTIPLOS (AVANÇADO): Permitir combinações lógicas mais complexas
+ * nos filtros (ex: tags=c2c&country=br,us ou tags=c2c|big-dick).
  * - VALIDAÇÃO DE SCHEMA: Adicionar validação (ex: Zod) para os parâmetros de URL.
  * - MONITORAMENTO E LOGS: Integrar um serviço de logging (ex: Logflare).
  *
