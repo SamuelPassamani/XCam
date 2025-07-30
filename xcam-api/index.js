@@ -5,13 +5,14 @@
  *
  * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
  * @info        https://aserio.work/
- * @version     3.1.0
- * @lastupdate  2025-07-17
+ * @version     3.2.0
+ * @lastupdate  2025-07-30
  *
  * @description
- * Worker principal da XCam API. Versão final que restaura 100% da funcionalidade
- * do script original, incluindo todas as rotas de proxy, endpoints legados e lógicas
- * de agregação, dentro de uma arquitetura refatorada, segura e organizada.
+ * Worker principal da XCam API. Esta versão implementa a busca completa de broadcasts
+ * para permitir a filtragem de dados com totais corretos. Restaura 100% da
+ * funcionalidade do script original, incluindo rotas de proxy e endpoints legados,
+ * dentro de uma arquitetura refatorada, segura e organizada.
  *
  * @modes       production
  * =========================================================================================
@@ -96,6 +97,65 @@ function buildCam4GraphQLBody(offset, limit) {
     variables: { input: { orderBy: "trending", filters: [], gender: "male", cursor: { first: limit, offset } } },
     query: `query getGenderPreferencePageData($input: BroadcastsInput) { broadcasts(input: $input) { total items { id username country sexualOrientation profileImageURL preview { src poster } viewers broadcastType gender tags { name slug } } } }`
   });
+}
+
+/**
+ * Busca TODOS os broadcasts disponíveis na API do Cam4, descobrindo o total
+ * na primeira chamada e continuando a buscar em páginas até atingir esse total.
+ * @returns {Promise<Array>} - Uma promessa que resolve para um array com todos os broadcasts.
+ */
+async function fetchAllBroadcasts() {
+    const allItems = [];
+    let offset = 0;
+    const apiPageLimit = 300; // Limite máximo de itens por chamada da API do Cam4
+    let totalDiscovered = 0;
+
+    // Faz a primeira chamada para descobrir o total
+    const firstResponse = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apollographql-client-name": "CAM4-client" },
+        body: buildCam4GraphQLBody(0, apiPageLimit)
+    });
+
+    if (!firstResponse.ok) {
+        console.error("Falha ao realizar a primeira busca na API do Cam4.");
+        return []; // Retorna vazio se a primeira chamada falhar
+    }
+
+    const firstData = await firstResponse.json();
+    totalDiscovered = firstData.data?.broadcasts?.total || 0;
+    const firstItems = firstData.data?.broadcasts?.items || [];
+    
+    if (firstItems.length > 0) {
+        allItems.push(...firstItems);
+    }
+
+    // Se o total descoberto for maior que o que já buscamos, continua buscando o restante
+    offset += firstItems.length;
+    while (offset < totalDiscovered) {
+        const response = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "apollographql-client-name": "CAM4-client" },
+            body: buildCam4GraphQLBody(offset, apiPageLimit)
+        });
+
+        if (!response.ok) {
+            console.error(`Falha ao buscar broadcasts com offset ${offset}.`);
+            break; // Interrompe se uma chamada intermediária falhar
+        }
+
+        const data = await response.json();
+        const items = data.data?.broadcasts?.items || [];
+
+        if (items.length === 0) {
+            break; // Para se a API retornar uma página vazia inesperadamente
+        }
+
+        allItems.push(...items);
+        offset += items.length;
+    }
+
+    return allItems;
 }
 
 async function findUserInGraphQL(username) {
@@ -287,27 +347,42 @@ export default {
       }
       // Rota 8: Listagem principal de transmissões (/)
       else if (pathname === '/') {
+        // Parâmetros de paginação, formato e filtro
         const page = parseInt(searchParams.get("page") || "1", 10);
         const limit = parseInt(searchParams.get("limit") || "30", 10);
         const format = searchParams.get("format") || "json";
+        const country = searchParams.get("country");
+        
+        // 1. Busca TODOS os broadcasts disponíveis.
+        const allItems = await fetchAllBroadcasts();
+        
+        // 2. Aplica qualquer filtro sobre o conjunto de dados completo.
+        const filteredItems = country
+            ? allItems.filter(item => item.country && item.country.toLowerCase() === country.toLowerCase())
+            : allItems;
+
+        // 3. Calcula os totais e a paginação COM BASE NA LISTA FILTRADA.
+        const total = filteredItems.length;
+        const totalPages = Math.ceil(total / limit);
         const offset = (page - 1) * limit;
 
-        const cam4Response = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "apollographql-client-name": "CAM4-client" },
-          body: buildCam4GraphQLBody(offset, limit)
-        });
+        // 4. Pega a fatia de itens para a página solicitada.
+        const itemsForPage = filteredItems.slice(offset, offset + limit).map((item, index) => ({
+            XCamId: offset + index + 1,
+            ...item
+        }));
 
-        if (!cam4Response.ok) throw new Error("Falha ao comunicar com a API do Cam4");
-
-        const cam4Data = await cam4Response.json();
-        const items = (cam4Data.data?.broadcasts?.items || []).map((item, index) => ({ XCamId: offset + index + 1, ...item }));
-        const total = cam4Data.data?.broadcasts?.total || 0;
-        const totalPages = Math.ceil(total / limit);
-        const responseData = { broadcasts: { total, page, totalPages, items } };
-
+        const responseData = {
+            broadcasts: {
+                total,
+                page,
+                totalPages,
+                items: itemsForPage
+            }
+        };
+        
         if (format.toLowerCase() === "csv") {
-            response = new Response(jsonToCsv(items), { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="broadcasts_p${page}.csv"` }});
+            response = new Response(jsonToCsv(filteredItems), { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="broadcasts_filtered.csv"` }});
         } else {
             response = new Response(JSON.stringify(responseData, null, 2), { headers: { 'Content-Type': 'application/json' } });
         }
@@ -342,20 +417,26 @@ export default {
  * =========================================================================================
  *
  * @log de mudanças:
+ * - v3.2.0 (2025-07-30):
+ * - BUSCA COMPLETA E FILTRO: Implementada a função `fetchAllBroadcasts` para buscar
+ * todos os resultados da API externa. Adicionado filtro por `country` na rota
+ * principal, com cálculo correto de `total` e `totalPages` sobre os dados filtrados.
  * - v3.1.0 (2025-07-17):
  * - ROTA DE STREAM MELHORADA: A rota `/stream/{username}` agora aceita os sufixos
  * `.m3u8` e `/index.m3u8` para maior compatibilidade com players de vídeo.
  * - v3.0.0 (2025-07-17):
  * - RESTAURAÇÃO COMPLETA: Reintegração de 100% das rotas e lógicas do arquivo
  * original (proxies, CSV, endpoints legados) na nova estrutura organizada.
- * Este passo corrige o erro de remoção indevida de funcionalidades.
  * - v2.1.0 (2025-07-17):
  * - REFATORAÇÃO INICIAL: Código reestruturado em blocos, com CORS melhorado,
  * roteador simplificado e comentários detalhados.
  *
  * @roadmap futuro:
- * - CACHE AVANÇADO: Implementar cache usando KV Storage para respostas de GraphQL.
- * - VALIDAÇÃO DE SCHEMA: Adicionar validação (ex: Zod) para as respostas das APIs.
+ * - CACHE AVANÇADO: Implementar cache (KV Storage) para a função `fetchAllBroadcasts`
+ * para reduzir drasticamente o número de chamadas à API externa. (Prioridade Alta)
+ * - FILTROS MÚLTIPLOS: Expandir a rota principal para aceitar múltiplos filtros
+ * combinados (ex: ?country=br&tag=cum).
+ * - VALIDAÇÃO DE SCHEMA: Adicionar validação (ex: Zod) para os parâmetros de URL.
  * - MONITORAMENTO E LOGS: Integrar um serviço de logging (ex: Logflare).
  *
  * =========================================================================================
