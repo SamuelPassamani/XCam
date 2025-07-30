@@ -402,7 +402,7 @@
         </div>
 
         <div class="mb-6">
-          <h2 class="text-2xl font-bold mb-4 text-white">Transmissões ao Vivo</h2>
+          <h2 id="broadcasts-title" class="text-2xl font-bold mb-4 text-white">Transmissões ao Vivo</h2>
 
           <div id="loading-state" class="flex flex-col items-center justify-center py-12">
             <span class="loader mb-4"></span>
@@ -752,7 +752,7 @@
     }
     // --- Gemini API Integration ---
     async function callGeminiAPI(prompt) {
-      const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
+      const apiKey = ""; // API key is handled by the environment
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
       const payload = {
         contents: [{
@@ -935,6 +935,11 @@
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const newItems = data.broadcasts.items || [];
+        const totalBroadcasts = data.broadcasts.total || 0;
+        const broadcastsTitle = document.getElementById('broadcasts-title');
+        if (broadcastsTitle) {
+          broadcastsTitle.textContent = `${totalBroadcasts.toLocaleString('pt-BR')} Transmissões ao Vivo`;
+        }
         newItems.forEach(item => {
           if (!broadcasts.some(b => b.id === item.id)) {
             broadcasts.push(item);
