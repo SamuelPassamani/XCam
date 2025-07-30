@@ -815,15 +815,41 @@
       btn.disabled = true;
       btn.innerHTML = `<span class="loader !w-6 !h-6 !border-4"></span> Gerando...`;
       geminiBioContent.classList.remove('hidden');
-      geminiBioContent.textContent = 'Aguarde, a IA está criando uma biografia...';
+      geminiBioContent.textContent = 'Aguarde, a IA está coletando informações e criando uma biografia...';
+      let additionalDetails = '';
+      try {
+        const userInfoResponse = await fetch(`https://api.xcam.gay/user/${broadcast.username}/Info`);
+        if (userInfoResponse.ok) {
+          const userInfo = await userInfoResponse.json();
+          const details = [];
+          if (userInfo.age) details.push(`Idade: ${userInfo.age}`);
+          if (userInfo.ethnicity) details.push(`Etnia: ${userInfo.ethnicity}`);
+          if (userInfo.maritalStatus) details.push(`Estado Civil: ${userInfo.maritalStatus}`);
+          if (userInfo.hairColor) details.push(`Cor do Cabelo: ${userInfo.hairColor}`);
+          if (userInfo.bodyHair) details.push(`Pelos Corporais: ${userInfo.bodyHair}`);
+          if (userInfo.bodyDecorations && userInfo.bodyDecorations.length > 0) details.push(`Decorações Corporais: ${userInfo.bodyDecorations.join(', ')}`);
+          if (userInfo.maleBodyType) details.push(`Tipo de Corpo: ${userInfo.maleBodyType}`);
+          if (userInfo.maleRole) details.push(`Função: ${userInfo.maleRole}`);
+          if (userInfo.bio && userInfo.bio.trim() !== '') {
+            const cleanBio = userInfo.bio.replace(/\[.*?\]/g, '');
+            details.push(`Bio Original: "${cleanBio}"`);
+          }
+          if (details.length > 0) {
+            additionalDetails = `\n- Detalhes Adicionais: ${details.join('; ')}`;
+          }
+        }
+      } catch (error) {
+        console.error('Falha ao buscar informações adicionais do usuário:', error);
+        // It will just proceed without additional details, which is a graceful fallback.
+      }
       const prompt = `Crie uma biografia curta, criativa e envolvente em português para um(a) streamer da plataforma XCam com as seguintes informações:
         - Nome de usuário: ${broadcast.username}
         - País: ${getCountryName(broadcast.country)}
         - Gênero: ${TRANSLATIONS.gender[broadcast.gender] || broadcast.gender}
         - Orientação: ${TRANSLATIONS.sexPreference[broadcast.sexualOrientation] || broadcast.sexualOrientation}
-        - Tags: ${broadcast.tags.map(t => t.name).join(', ')}
-        
-        Seja criativo e use um tom que combine com uma plataforma de streaming ao vivo. Não inclua informações que não foram fornecidas.`;
+        - Tags: ${broadcast.tags.map(t => t.name).join(', ')}${additionalDetails}
+
+        Seja criativo e use um tom que combine com uma plataforma de streaming ao vivo. Não inclua informações que não foram fornecidas. Se a bio original for fornecida, use-a como inspiração para o tom e estilo, mas não a copie.`;
       const bio = await callGeminiAPI(prompt);
       if (bio) {
         geminiBioContent.textContent = bio;
