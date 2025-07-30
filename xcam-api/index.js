@@ -5,14 +5,14 @@
  *
  * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
  * @info        https://aserio.work/
- * @version     3.2.0
+ * @version     3.3.0
  * @lastupdate  2025-07-30
  *
  * @description
  * Worker principal da XCam API. Esta versão implementa a busca completa de broadcasts
- * para permitir a filtragem de dados com totais corretos. Restaura 100% da
- * funcionalidade do script original, incluindo rotas de proxy e endpoints legados,
- * dentro de uma arquitetura refatorada, segura e organizada.
+ * para permitir a filtragem de dados com totais corretos e adiciona suporte a
+ * múltiplos valores em filtros (ex: country=br,us). Restaura 100% da
+ * funcionalidade do script original.
  *
  * @modes       production
  * =========================================================================================
@@ -357,9 +357,13 @@ export default {
         const allItems = await fetchAllBroadcasts();
         
         // 2. Aplica qualquer filtro sobre o conjunto de dados completo.
-        const filteredItems = country
-            ? allItems.filter(item => item.country && item.country.toLowerCase() === country.toLowerCase())
-            : allItems;
+        let filteredItems = allItems;
+        if (country) {
+            // Transforma a string de países (ex: "br,us") em um array de lowercase ["br", "us"]
+            const countries = country.split(',').map(c => c.trim().toLowerCase());
+            // Filtra os itens, mantendo aqueles cujo país está na lista de países solicitados.
+            filteredItems = allItems.filter(item => item.country && countries.includes(item.country.toLowerCase()));
+        }
 
         // 3. Calcula os totais e a paginação COM BASE NA LISTA FILTRADA.
         const total = filteredItems.length;
@@ -417,6 +421,9 @@ export default {
  * =========================================================================================
  *
  * @log de mudanças:
+ * - v3.3.0 (2025-07-30):
+ * - FILTRO COM MÚLTIPLOS VALORES: A rota principal agora aceita múltiplos valores
+ * separados por vírgula no parâmetro `country` (ex: `?country=br,us`).
  * - v3.2.0 (2025-07-30):
  * - BUSCA COMPLETA E FILTRO: Implementada a função `fetchAllBroadcasts` para buscar
  * todos os resultados da API externa. Adicionado filtro por `country` na rota
@@ -435,7 +442,7 @@ export default {
  * - CACHE AVANÇADO: Implementar cache (KV Storage) para a função `fetchAllBroadcasts`
  * para reduzir drasticamente o número de chamadas à API externa. (Prioridade Alta)
  * - FILTROS MÚLTIPLOS: Expandir a rota principal para aceitar múltiplos filtros
- * combinados (ex: ?country=br&tag=cum).
+ * combinados (ex: ?country=br,us&tag=cum).
  * - VALIDAÇÃO DE SCHEMA: Adicionar validação (ex: Zod) para os parâmetros de URL.
  * - MONITORAMENTO E LOGS: Integrar um serviço de logging (ex: Logflare).
  *
