@@ -626,7 +626,7 @@
     // --- LÓGICA DA APLICAÇÃO ---
     
     // Constantes para os ícones
-    const GENDER_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGlkPSJGbGF0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik0yMTkuOTk3OCwyMy45NTU1N3EtLjAwMjE5LS41Njk4NC0uMDU3NDktMS4xMzgxOWMtLjAxOC0uMTg0MDgtLjA1MjM3LS4zNjI3OS0uMDc4NDktLjU0NDQzLS4wMjk3OS0uMjA1NTctLjA1MzcxLS40MTIxMS0uMDk0MjQtLjYxNjIxLS4wNDAyOS0uMjAzNjItLjA5NjA3LS40MDA4OC0uMTQ2NDktLjYwMDU5LS4wNDU0MS0uMTgwMTctLjA4NDg0LS4zNjA4NC0uMTM4NjctLjUzOTA2LS4wNTg4NC0uMTk0MzQtLjEzMTU5LS4zODEzNS0uMTk5NzEtLjU3MTI5LS4wNjQ0NS0uMTc5NjktLjEyMzUzLS4zNjA4NC0uMTk2NzctLjUzNzYtLjA3MzQ5LS4xNzcyNC0uMTU5NjctLjM0NjY4LS4yNDEwOS0uNTE5NTMtLjA4NTgyLS4xODIxMy0uMTY2ODctLjM2NjIxLS4yNjI1Ny0uNTQ0OTItLjA4OC0uMTY0NTUtLjE4ODI0LS4zMjAzMS0uMjgzNy0uNDgwNDctLjEwNTM0LS4xNzYyNy0uMjA1Mi0uMzU1LS4zMjAzMS0uNTI2ODUtLjExNTcyLS4xNzMzNC0uMjQ0NzUtLjMzNTQ1LS4zNjktLjUwMi0uMTEtLjE0NzQ2LS4yMTI1Mi0uMjk4MzQtLjMzMDItLjQ0MTQtLjIzNDYyLS4yODYxNC0uNDgzNC0uNTU5NTctLjc0MzE2LS44MjIyNy0uMDE3ODItLjAxODA3LS4wMzI0Ny0uMDM4MDktLjA1MDU0LS4wNTYxNS0uMDE4MzEtLjAxODU2LS4wMzg1Ny0uMDMzMi0uMDU2ODgtLjA1MTI3cS0uMzk0NDEtLjM4OTY2LS44MjIyNy0uNzQzMTdjLS4xMzk2NS0uMTE0NzQtLjI4Njg2LS4yMTQzNS0uNDMwNDItLjMyMTc3LS4xNjk5Mi0uMTI3LS4zMzYwNi0uMjU4NzktLjUxMjY5LS4zNzctLjE2ODgzLS4xMTMyOC0uMzQ0MjQtLjIxMDkzLS41MTczNC0uMzE0NDUtLjE2MzMzLS4wOTc2NS0uMzIzMjQtLjIwMDE5LS40OTE0NS0uMjktLjE3MzEtLjA5Mjc3LS4zNTEyLS4xNzA5LS41Mjc1OS0uMjU0MzktLjE3ODcxLS4wODQ0OC0uMzU0NjItLjE3MzgzLS41MzgtLjI0OTUxLS4xNjkzMi0uMDcwMzItLjM0MjI5LS4xMjY0Ny0uNTE0LS4xODg0OC0uMTk3NTEtLjA3MTI5LS4zOTMwNy0uMTQ2NDktLjU5NTM0LS4yMDgtLjE2ODgyLS4wNTA3OC0uMzQwNDUtLjA4Nzg5LS41MTA4Ni0uMTMxMzUtLjIwODc0LS4wNTMyMi0uNDE1MjktLjExMTMyLS42MjgxOC0uMTUzMzItLjE5MDU1LS4wMzc1OS0uMzgzLS4wNTk1Ny0uNTc1MDctLjA4Nzg5LS4xOTU0NC0uMDI4ODEtLjM4ODMxLS4wNjQ5NC0uNTg2NzktLjA4NDQ3LS4zMzI1Mi0uMDMyNzEtLjY2Ni0uMDQ1NDEtLjk5OTg4LS4wNTA3OEMyMDguMTE4NTMsMTIuMDA4MywyMDguMDYwMywxMiwyMDgsMTJIMTcyYTEyLDEyLDAsMCwwLDAsMjRoNy4wMjkzbC0xNS4wNTEsMTUuMDUxMjdBNzEuOTc1MjYsNzEuOTc1MjYsMCwxLDAsMTA4LDE3OC45ODFWMTkySDg4YTEyLDEyLDAsMCwwLDAsMjRoMjB2MTZhMTIsMTIsMCwwLDAsMjQsMFYyMTZoMjBhMTIsMTIsMCwwLDAsMC0yNEgxMzJWMTc4Ljk4MUE3MS45MjgsNzEuOTI4LDAsMCwwLDE4MC4yNzc4Myw2OC42OTI4N0wxOTYsNTIuOTcwN1Y2MGExMiwxMiwwLDAsMCwyNCwwVjI0QzIyMCwyMy45ODQ4NiwyMTkuOTk3OCwyMy45NzAyMSwyMTkuOTk3OCwyMy45NTU1N1pNMTIwLDE1NmE0OCw0OCwwLDEsMSw0OC00OEE0OC4wNTQ2OCw0OC4wNTQ2OCwwLDAsMSwxMjAsMTU2WiIvPgo8L3N2Zz4=";
+    const GENDER_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGlkPSJGbGF0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik0yMTkuOTk3OCwyMy45NTU1N3EtLjAwMjE5LS41Njk4NC0uMDU3NDktMS4xMzgxOWMtLjAxOC0uMTg0MDgtLjA1MjM3LS4zNjI3OS0uMDc4NDktLjU0NDQzLS4wMjk3OS0uMjA1NTctLjA1MzcxLS40MTIxMS0uMDk0MjQtLjYxNjIxLS4wNDAyOS0uMjAzNjItLjA5NjA3LS40MDA4OC0uMTQ2NDktLjYwMDU5LS4wNDU0MS0uMTgwMTctLjA4NDg0LS4zNjA4NC0uMTM4NjctLjUzOTA2LS4wNTg4NC0uMTk0MzQtLjEzMTU5LS4zODEzNS0uMTk5NzEtLjU3MTI5LS4wNjQ0NS0uMTc5NjktLjEyMzUzLS4zNjA4NC0uMTk2NzctLjUzNzYtLjA3MzQ5LS4xNzcyNC0uMTU5NjctLjM0NjY4LS4yNDEwOS0uNTE5NTMtLjA4NTgyLS4xODIxMy0uMTY2ODctLjM2NjIxLS4yNjI1Ny0uNTQ0OTItLjA4OC0uMTY0NTUtLjE4ODI0LS4zMjAzMS0uMjgzNy0uNDgwNDctLjEwNTM0LS4xNzYyNy0uMjA1Mi0uMzU1LS4zMjAzMS0uNTI2ODUtLjExNTcyLS4xNzMzNC0uMjQ0NzUtLjMzNTQ1LS4zNjktLjUwMi0uMTEtLjE0NzQ2LS4yMTI1Mi0uMjk4MzQtLjMzMDItLjQ0MTQtLjIzNDYyLS4yODYxNC0uNDgzNC0uNTU5NTctLjc0MzE2LS44MjIyNy0uMDE3ODItLjAxODA3LS4wMzI0Ny0uMDM4MDktLjA1MDU0LS4wNTYxNS0uMDE4MzEtLjAxODU2LS4wMzg1Ny0uMDMzMi0uMDU2ODgtLjA1MTI3cS0uMzk0NDEtLjM4OTY2LS44MjIyNy0uNzQzMTdjLS4xMzk2NS0uMTE0NzQtLjI4Njg2LS4yMTQzNS0uNDMwNDItLjMyMTc3LS4xNjk5Mi0uMTI3LS4zMzYwNi0uMjU4NzktLjUxMjY5LS4zNzctLjE2ODgzLS4xMTMyOC0uMzQ0MjQtLjIxMDkzLS41MTczNC0uMzE0NDUtLjE2MzMzLS4wOTc2NS0uMzIzMjQtLjIwMDE5LS40OTE0NS0uMjktLjE3MzEtLjA5Mjc3LS4zNTEyLS4xNzA5LS41Mjc1OS0uMjU0MzktLjE3ODcxLS4wODQ0OC0uMzU0NjItLjE3MzgzLS41MzgtLjI0OTUxLS4xNjkzMi0uMDcwMzItLjM0MjI5LS4xMjY0Ny0uNTE0LS4xODg0OC0uMTk3NTEtLjA3MTI5LS4zOTMwNy0uMTQ2NDktLjU5NTM0LS4yMDgtLjE2ODgyLS4wNTA3OC0uMzQwNDUtLjA4Nzg5LS41MTA4Ni0uMTMxMzUtLjIwODc0LS4wNTMyMi0uNDE1MjktLjExMTMyLS42MjgxOC0uMTUzMzItLjE5MDU1LS4wMzc1OS0uMzgzLS4wNTk1Ny0uNTc1MDctLjA4Nzg5LS4xOTU0NC0uMDI4ODEtLjM4ODMxLS4wNjQ5NC0uNTg2NzktLjA4NDQ3LS4zMzI1Mi0uMDMyNzEtLjY2Ni0uMDQ1NDEtLjk5OTg4LS4wNTA3OEMyMDguMTE4NTMsMTIuMDA4MywyMDguMDYwMywxMiwyMDgsMTJIMTcyYTEyLDEyLDAsMCwwLDAsMjRoNy4wMjkzbC0xNS4wNTEsMTUuMDUxMjdBNzEuOTc1MjYsNzEuOTc1MjYsMCwxLDAsMTA4LDE3OC45ODFWMTkySDg4YTEyLDEyLDAsMCwwLDAsMjRoMjB2MTZhMTIsMTIsMCwwLDAsMjQsMFYyMTZoMjBhMTIsMTIsMCwwLDAsMC0yNEgxMzJWMTc4Ljk4MUE3MS45MjgsNzEuOTI4LDAsMCwwLDE4MC4yNzc4Myw2OC42OTI4N0wxOTYsNTIuOTcwN1Y2MGExMiwxMiwwLDAsMCwyNCwwVjI0QzIyMCwyMy45ODQ4NiwyMTkuOTk3OCwyMy45NzAyMSwyMTkuOTk3OCwyMy45NTU1N1pNMTIwLDE1NmE0OCw0OCwwLDEsMSw0OC00OEE0OC4wNTQ2OCw0OC4wNTQ2OCwwLDAsMSwxMjAsMTU2WiIvPgo8L3N2Zz4=";
     const BROADCAST_TYPE_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iX3gzMl8iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIAoJIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiICB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KPCFbQ0RBVEFbCgkuc3Qwe2ZpbGw6I0ZGRkZGRjt9Cl1dPgo8L3N0eWxlPgo8Zz4KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMDMuMTY5LDI1Ni44MjhjNDMuNzAzLDAsNzkuMTI1LTM1LjQzOCw3OS4xMjUtNzkuMTQxYzAtNDMuNjg4LTM1LjQyMi03OS4xMjUtNzkuMTI1LTc5LjEyNQoJCVMyNC4wNDQsMTM0LDI0LjA0NCwxNzcuNjg4QzI0LjA0NCwyMjEuMzkxLDU5LjQ2NiwyNTYuODI4LDEwMy4xNjksMjU2LjgyOHoiLz4KCTxjaXJjbGUgY2xhc3M9InN0MCIgY3g9IjMwMi42MzgiIGN5PSIxNDQuNzE5IiByPSIxMDYuODI4Ii8+Cgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzMyLjYzOCwyODAuMjM0SDc0LjE1M3YxNzEuNDM4YzAsMTIuMzkxLDEwLjA0NywyMi40MzgsMjIuNDM4LDIyLjQzOGgyMzYuMDQ3CgkJYzEyLjM3NSwwLDIyLjQyMi0xMC4wNDcsMjIuNDIyLTIyLjQzOHYtMTQ5QzM1NS4wNiwyOTAuMjgxLDM0NS4wMTMsMjgwLjIzNCwzMzIuNjM4LDI4MC4yMzR6Ii8+Cgk8cmVjdCB4PSIzNzEuMjE2IiB5PSIzMzEuNjcyIiBjbGFzcz0ic3QwIiB3aWR0aD0iMzQuMjk3IiBoZWlnaHQ9Ijk5LjY1NiIvPgoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTUwNi41OTEsMjkzLjQzOGMtMy4zNTktMi4wMzEtNy41NDctMi4xNTYtMTEuMDMxLTAuMzEzbC03My4yMzQsMzguNTQ3djk4LjU0N2w3My4yMzQsMzguNTQ3CgkJYzMuNDg0LDEuODQ0LDcuNjcyLDEuNzE5LDExLjAzMS0wLjMxM3M1LjQwNi01LjY3Miw1LjQwNi05LjYwOVYzMDMuMDQ3QzUxMS45OTcsMjk5LjEwOSw1MDkuOTUsMjk1LjQ2OSw1MDYuNTkxLDI5My40Mzh6Ii8+Cgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMC44NTYsMjg3LjE1NmMtMS43MzQsNC4xODgtMC43ODEsOS4wMTYsMi40MzgsMTIuMjM0bDU0LjA0Nyw1NC4wNDd2LTczLjIwM0gxMS4yMTYKCQlDNi42ODUsMjgwLjIzNCwyLjU5MSwyODIuOTY5LDAuODU2LDI4Ny4xNTZ6Ii8+CjwvZz4KPC9zdmc+";
     const ORIENTATION_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNOC41NTI4NCAzLjAwMDEyQzcuOTM1OTggMy4wMDAxMiA3LjIzODQxIDMuMDY1MTQgNi41NzIwOSAzLjI5MjI0QzIuNTU0OTQgNC42MDM4NyAxLjI2MzQxIDguODk0IDIuMzk4NzcgMTIuNDNMMi40MDM1NCAxMi40NDQ4TDIuNDA4NzcgMTIuNDU5NUMzLjAzNDM1IDE0LjIxNzQgNC4wNDIyNiAxNS44MTI3IDUuMzUzMzYgMTcuMTI0OUw1LjM2MDkxIDE3LjEzMjRMNS4zNjg2MiAxNy4xMzk4QzcuMjM3ODIgMTguOTMyMyA5LjI3MjU0IDIwLjQ5NTMgMTEuNDc1NiAyMS44NTE1TDExLjk5MzQgMjIuMTcwM0wxMi41MTQ3IDIxLjg1NzNDMTQuNzIyNiAyMC41MzE1IDE2Ljc5NjQgMTguOTI1NCAxOC42NDMyIDE3LjE0NzRMMTguNjQ5IDE3LjE0MTlMMTguNjU0NyAxNy4xMzYyQzE5Ljk3NzEgMTUuODIxNSAyMC45ODUxIDE0LjIxNDQgMjEuNjAxNSAxMi40NTQ5TDIxLjYwNjYgMTIuNDQwMkwyMS42MTEzIDEyLjQyNTNDMjIuNzI1MSA4Ljg5NzAzIDIxLjQ0MDEgNC42MDE3NiAxNy40NTA3IDMuMzA5NDhDMTYuNzk3NiAzLjA5MjIxIDE2LjEyMzYgMy4wMDAxMiAxNS40NjQ4IDMuMDAwMTJDMTMuOTgyOCAzLjAwMDExIDEyLjg4NTggMy42MjA2NCAxMi4wMDA0IDQuMjUzMDlDMTEuMTIxOSAzLjYyNTQ1IDEwLjAxNzYgMy4wMDAxMiA4LjU1Mjg0IDMuMDAwMTJaIiBmaWxsPSIjRkZGRkZGIi8+PC9zdmc+";
 
@@ -642,7 +642,8 @@
       search: '',
       country: '',
       gender: '',
-      orientation: ''
+      orientation: '',
+      tags: ''
     };
     // DOM Elements
     const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -691,14 +692,15 @@
     const toastMessage = document.getElementById('toast-message');
     
     // Initialize the application
-    document.addEventListener('DOMContentLoaded', () => {
-      initApp();
-      setupEventListeners();
-    });
+    document.addEventListener('DOMContentLoaded', initApp);
     
     // Initialize the application
-    function initApp() {
-      fetchBroadcasts(1);
+    async function initApp() {
+        setupEventListeners();
+        // Fetch initial data for decoration (carousel, top streamers)
+        await fetchInitialData();
+        // Initialize main content based on URL parameters
+        initializeFromUrl();
     }
     
     // Setup event listeners
@@ -708,7 +710,11 @@
       mobileSearchInput.addEventListener('input', handleSearch);
       prevSlideButton.addEventListener('click', showPrevSlide);
       nextSlideButton.addEventListener('click', showNextSlide);
-      retryButton.addEventListener('click', () => fetchBroadcasts(1));
+      retryButton.addEventListener('click', () => {
+          const params = new URLSearchParams(window.location.search);
+          const page = parseInt(params.get('page'), 10) || 1;
+          fetchBroadcasts(page, filters);
+      });
       firstPageButton.addEventListener('click', () => goToPage(1));
       prevPageButton.addEventListener('click', () => goToPage(currentPage - 1));
       nextPageButton.addEventListener('click', () => goToPage(currentPage + 1));
@@ -723,7 +729,7 @@
 
     // --- Gemini API Integration ---
     async function callGeminiAPI(prompt) {
-        const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
+        const apiKey = ""; // API key is handled by the environment
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         
         const payload = {
@@ -825,7 +831,8 @@
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
         filters.search = searchTerm;
-        goToPage(1, true); // Go to page 1 and apply filters
+        filters.tags = searchTerm.replace(/ /g, ',');
+        goToPage(1);
       }, 500);
     }
     // Apply filters from dropdowns
@@ -833,47 +840,87 @@
       filters.country = filterCountry.value;
       filters.gender = filterGender.value;
       filters.orientation = filterOrientation.value;
-      goToPage(1, true); // Go to page 1 and apply filters
+      goToPage(1);
       showToast('Filtros aplicados com sucesso!');
     }
-    // Fetch broadcasts from the real API
+    
+    // Initialize filters and fetch data based on URL parameters
+    function initializeFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        
+        const page = parseInt(params.get('page'), 10) || 1;
+        const limit = parseInt(params.get('limit'), 10) || 12;
+        const country = params.get('country') || '';
+        const tags = params.get('tags') || '';
+
+        itemsPerPage = limit;
+        currentPage = page;
+        filters.country = country;
+        filters.tags = tags;
+        filters.search = tags.replace(/,/g, ' '); // Sync search input with tags
+
+        // Update UI to reflect URL state
+        filterCountry.value = country;
+        searchInput.value = filters.search;
+        mobileSearchInput.value = filters.search;
+        
+        fetchBroadcasts(currentPage, filters);
+    }
+
+    // Fetch initial data for Carousel and Top Streamers (unfiltered)
+    async function fetchInitialData() {
+        const API_URL = 'https://api.xcam.gay/';
+        try {
+            const response = await fetch(`${API_URL}?limit=10&page=1`);
+            if (!response.ok) throw new Error('Failed to fetch initial data');
+            const data = await response.json();
+            const items = data.broadcasts.items || [];
+            setupCarousel(items);
+            setupTopStreamers(items);
+        } catch (error) {
+            console.error('Error fetching initial data:', error);
+            // Handle error for these specific components if necessary
+        }
+    }
+
+    // Fetch broadcasts for the main grid, respecting filters
     async function fetchBroadcasts(page = 1, queryFilters = {}) {
       showLoadingState();
-      // Corrected the URL - The proxy is no longer needed as CORS is fixed on the API side.
       const API_URL = 'https://api.xcam.gay/';
       const params = new URLSearchParams({
         limit: itemsPerPage,
         page: page
       });
-      // Add filters to params if they have values
+      
+      // Append filters to params if they have values
       if (queryFilters.search) params.append('username', queryFilters.search);
       if (queryFilters.country) params.append('country', queryFilters.country);
       if (queryFilters.gender) params.append('gender', queryFilters.gender);
       if (queryFilters.orientation) params.append('sexualOrientation', queryFilters.orientation);
+      if (queryFilters.tags) params.append('tags', queryFilters.tags);
+
       try {
         const response = await fetch(`${API_URL}?${params.toString()}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const newItems = data.broadcasts.items || [];
-        // Add new items to our global cache, preventing duplicates
+        
         newItems.forEach(item => {
           if (!broadcasts.some(b => b.id === item.id)) {
             broadcasts.push(item);
           }
         });
+
         totalPages = data.broadcasts.totalPages;
         currentPage = page;
-        // Only update carousel/top streamers on the first page of an initial load
-        if (page === 1 && Object.values(queryFilters).every(f => !f)) {
-          setupCarousel(newItems);
-          setupTopStreamers(newItems);
-        }
+        
         renderBroadcasts(newItems);
       } catch (error) {
         console.error('Error fetching broadcasts:', error);
         showErrorState();
       }
     }
+
     // UI State Management
     function showLoadingState() {
       loadingState.classList.remove('hidden');
@@ -1158,10 +1205,27 @@
       });
     }
 
-    function goToPage(page, useFilters = false) {
-      if (page < 1 || page > totalPages || (page === currentPage && !useFilters) ) return;
-      fetchBroadcasts(page, useFilters ? filters : {});
+    function goToPage(page) {
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        updateUrl();
+        fetchBroadcasts(currentPage, filters);
     }
+
+    function updateUrl() {
+        const params = new URLSearchParams();
+        if (itemsPerPage !== 12) params.set('limit', itemsPerPage);
+        if (currentPage > 1) params.set('page', currentPage);
+        if (filters.country) params.set('country', filters.country);
+        if (filters.tags) params.set('tags', filters.tags);
+        // Add other filters from the state if they should be reflected in the URL
+        if (filters.gender) params.set('gender', filters.gender);
+        if (filters.orientation) params.set('sexualOrientation', filters.orientation);
+
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        history.pushState({ path: newUrl }, '', newUrl);
+    }
+
     // Modal Logic
     function openModal(broadcastId) {
       const broadcast = broadcasts.find(b => b.id === broadcastId);
@@ -1188,11 +1252,11 @@
           tagElement.className = 'bg-xcam-blue bg-opacity-30 text-xcam-blue px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-opacity-50 transition-colors';
           tagElement.textContent = `#${tag.name}`;
           tagElement.addEventListener('click', () => {
-            filters.search = tag.name;
+            filters.tags = tag.name;
             searchInput.value = tag.name;
             mobileSearchInput.value = tag.name;
             closeModalHandler();
-            goToPage(1, true);
+            goToPage(1);
           });
           modalTags.appendChild(tagElement);
         });
