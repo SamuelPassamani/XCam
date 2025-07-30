@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "https://xcam-drive.aserio.workers.dev/0:/src/poster/:splat"
+  to = "https://snapshots.xcdnpro.com/thumbnails/:splat"
   status = 200
   force = true
     [redirects.headers]
