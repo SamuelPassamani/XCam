@@ -5,14 +5,14 @@
  *
  * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
  * @info        https://aserio.work/
- * @version     3.5.0
+ * @version     3.6.0
  * @lastupdate  2025-07-30
  *
  * @description
  * Worker principal da XCam API. Esta versão implementa a busca completa de broadcasts
  * para permitir a filtragem de dados com totais corretos, adiciona suporte a
- * múltiplos valores em filtros e uma nova rota de proxy para imagens de poster.
- * Restaura 100% da funcionalidade do script original.
+ * múltiplos valores em filtros (country, tags, gender, etc.) e uma nova rota de
+ * proxy para imagens de poster.
  *
  * @modes       production
  * =========================================================================================
@@ -370,6 +370,9 @@ export default {
         const format = searchParams.get("format") || "json";
         const country = searchParams.get("country");
         const tags = searchParams.get("tags");
+        const gender = searchParams.get("gender");
+        const orientation = searchParams.get("orientation");
+        const broadcastType = searchParams.get("broadcastType");
         
         // 1. Busca TODOS os broadcasts disponíveis.
         const allItems = await fetchAllBroadcasts();
@@ -387,6 +390,21 @@ export default {
             filteredItems = filteredItems.filter(item => 
                 item.tags && item.tags.some(tag => requiredTags.includes(tag.slug.toLowerCase()))
             );
+        }
+        
+        if (gender) {
+            const genders = gender.split(',').map(g => g.trim().toLowerCase());
+            filteredItems = filteredItems.filter(item => item.gender && genders.includes(item.gender.toLowerCase()));
+        }
+
+        if (orientation) {
+            const orientations = orientation.split(',').map(o => o.trim().toLowerCase());
+            filteredItems = filteredItems.filter(item => item.sexualOrientation && orientations.includes(item.sexualOrientation.toLowerCase()));
+        }
+
+        if (broadcastType) {
+            const broadcastTypes = broadcastType.split(',').map(b => b.trim().toLowerCase());
+            filteredItems = filteredItems.filter(item => item.broadcastType && broadcastTypes.includes(item.broadcastType.toLowerCase()));
         }
 
         // 3. Calcula os totais e a paginação COM BASE NA LISTA FILTRADA.
@@ -445,6 +463,9 @@ export default {
  * =========================================================================================
  *
  * @log de mudanças:
+ * - v3.6.0 (2025-07-30):
+ * - NOVOS FILTROS: Adicionado suporte para os parâmetros `gender`, `orientation`,
+ * e `broadcastType` na rota principal, todos com suporte a múltiplos valores.
  * - v3.5.0 (2025-07-30):
  * - NOVO PROXY DE IMAGEM: Adicionada a rota `/poster/{username}.jpg` para servir
  * imagens de thumbnail diretamente, mantendo o proxy legado `?poster=`.
