@@ -5,14 +5,14 @@
  *
  * @author      Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
  * @info        https://aserio.work/
- * @version     3.4.0
+ * @version     3.5.0
  * @lastupdate  2025-07-30
  *
  * @description
  * Worker principal da XCam API. Esta versão implementa a busca completa de broadcasts
- * para permitir a filtragem de dados com totais corretos e adiciona suporte a
- * múltiplos valores em filtros (ex: country=br,us e tags=cum,ass). Restaura 100% da
- * funcionalidade do script original.
+ * para permitir a filtragem de dados com totais corretos, adiciona suporte a
+ * múltiplos valores em filtros e uma nova rota de proxy para imagens de poster.
+ * Restaura 100% da funcionalidade do script original.
  *
  * @modes       production
  * =========================================================================================
@@ -226,6 +226,19 @@ async function handlePosterProxy(username) {
     return newResponse;
 }
 
+async function handlePosterImageProxy(pathname) {
+    const username = pathname.substring('/poster/'.length).replace('.jpg', '');
+    if (!username) {
+        return new Response("Nome de usuário inválido no path.", { status: 400 });
+    }
+    const targetUrl = `https://snapshots.xcdnpro.com/thumbnails/${username}`;
+    const imageResponse = await fetch(targetUrl, { headers: { "Referer": "https://xcam.gay/" } });
+    const newResponse = new Response(imageResponse.body, imageResponse);
+    newResponse.headers.set('Content-Type', imageResponse.headers.get('content-type') || 'image/jpeg');
+    newResponse.headers.set('Cache-Control', 'public, max-age=3600');
+    return newResponse;
+}
+
 async function handleStreamRedirect(username) {
   const streamInfo = await fetchStreamInfo(username);
   const targetUrl = streamInfo.cdnURL || streamInfo.edgeURL;
@@ -282,7 +295,11 @@ export default {
       else if (searchParams.has('poster')) {
         response = await handlePosterProxy(searchParams.get('poster'));
       }
-      // Rota 3: Redirecionamento de Stream (/stream/{username}[.m3u8 | /index.m3u8])
+      // Rota 3: Proxy de imagem para poster (/poster/{username}.jpg)
+      else if (pathname.startsWith('/poster/') && pathname.endsWith('.jpg')) {
+        response = await handlePosterImageProxy(pathname);
+      }
+      // Rota 4: Redirecionamento de Stream (/stream/{username}[.m3u8 | /index.m3u8])
       else if (pathname.startsWith('/stream/')) {
         // Extrai a parte do path após '/stream/'
         let usernamePart = pathname.substring('/stream/'.length);
@@ -311,15 +328,15 @@ export default {
           });
         }
       }
-      // Rota 4: Proxy HLS (/hls-proxy?url=...)
+      // Rota 5: Proxy HLS (/hls-proxy?url=...)
       else if (pathname === '/hls-proxy') {
         response = await handleHlsProxy(request, url);
       }
-      // Rota 5: Dados agregados de usuário (?user={username})
+      // Rota 6: Dados agregados de usuário (?user={username})
       else if (searchParams.has('user')) {
         response = await handleUserFullInfo(searchParams.get('user'));
       }
-      // Rota 6: Dados de um streamer específico (?stream={username})
+      // Rota 7: Dados de um streamer específico (?stream={username})
       else if (searchParams.has('stream')) {
         const username = searchParams.get('stream');
         const [graphData, streamInfo, posterInfo] = await Promise.all([
@@ -331,7 +348,7 @@ export default {
           headers: { 'Content-Type': 'application/json' }
         });
       }
-      // Rota 7: Endpoints REST legados (/user/{username}/...)
+      // Rota 8: Endpoints REST legados (/user/{username}/...)
       else if (pathname.startsWith('/user/')) {
         const parts = pathname.split('/').filter(Boolean);
         const username = parts[1];
@@ -345,7 +362,7 @@ export default {
         }
         response = new Response(JSON.stringify(data, null, 2), { headers: { 'Content-Type': 'application/json' }});
       }
-      // Rota 8: Listagem principal de transmissões (/)
+      // Rota 9: Listagem principal de transmissões (/)
       else if (pathname === '/') {
         // Parâmetros de paginação, formato e filtro
         const page = parseInt(searchParams.get("page") || "1", 10);
@@ -428,26 +445,24 @@ export default {
  * =========================================================================================
  *
  * @log de mudanças:
+ * - v3.5.0 (2025-07-30):
+ * - NOVO PROXY DE IMAGEM: Adicionada a rota `/poster/{username}.jpg` para servir
+ * imagens de thumbnail diretamente, mantendo o proxy legado `?poster=`.
  * - v3.4.0 (2025-07-30):
  * - FILTRO DE TAGS: Adicionado suporte para o parâmetro `tags` na rota principal.
- * Aceita múltiplos valores separados por vírgula (ex: `?tags=cum,ass`) e
- * funciona em conjunto com outros filtros.
+ * Aceita múltiplos valores separados por vírgula (ex: `?tags=cum,ass`).
  * - v3.3.0 (2025-07-30):
  * - FILTRO COM MÚLTIPLOS VALORES: A rota principal agora aceita múltiplos valores
  * separados por vírgula no parâmetro `country` (ex: `?country=br,us`).
  * - v3.2.0 (2025-07-30):
  * - BUSCA COMPLETA E FILTRO: Implementada a função `fetchAllBroadcasts` para buscar
- * todos os resultados da API externa. Adicionado filtro por `country` na rota
- * principal, com cálculo correto de `total` e `totalPages` sobre os dados filtrados.
+ * todos os resultados da API externa, com cálculo correto de `total`.
  * - v3.1.0 (2025-07-17):
- * - ROTA DE STREAM MELHORADA: A rota `/stream/{username}` agora aceita os sufixos
- * `.m3u8` e `/index.m3u8` para maior compatibilidade com players de vídeo.
+ * - ROTA DE STREAM MELHORADA: A rota `/stream/{username}` foi otimizada.
  * - v3.0.0 (2025-07-17):
- * - RESTAURAÇÃO COMPLETA: Reintegração de 100% das rotas e lógicas do arquivo
- * original (proxies, CSV, endpoints legados) na nova estrutura organizada.
+ * - RESTAURAÇÃO COMPLETA: Reintegração de 100% das rotas e lógicas legadas.
  * - v2.1.0 (2025-07-17):
- * - REFATORAÇÃO INICIAL: Código reestruturado em blocos, com CORS melhorado,
- * roteador simplificado e comentários detalhados.
+ * - REFATORAÇÃO INICIAL: Código reestruturado em blocos.
  *
  * @roadmap futuro:
  * - CACHE AVANÇADO: Implementar cache (KV Storage) para a função `fetchAllBroadcasts`
