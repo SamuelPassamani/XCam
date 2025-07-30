@@ -342,6 +342,9 @@
               </select>
             </div>
             <button id="apply-filters" class="w-full bg-gradient-to-r from-xcam-pink to-xcam-purple py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">Aplicar Filtros</button>
+            <button id="surprise-me-btn" class="w-full bg-gradient-to-r from-xcam-yellow to-xcam-orange py-2 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center">
+                ✨ Surpreenda-me
+            </button>
           </div>
         </div>
 
@@ -502,6 +505,15 @@
 
             <div id="modal-tags" class="mt-3 flex flex-wrap gap-2">
             </div>
+            
+            <!-- Gemini Bio Section -->
+            <div id="gemini-bio-section" class="mt-4">
+              <button id="generate-bio-btn" class="w-full bg-gradient-to-r from-xcam-blue to-xcam-purple py-2 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center">
+                ✨ Gerar Biografia com IA
+              </button>
+              <div id="gemini-bio-content" class="mt-2 p-3 bg-gray-800 rounded-lg text-gray-300 hidden"></div>
+            </div>
+
           </div>
         </div>
 
@@ -657,6 +669,7 @@
     const filterGender = document.getElementById('filter-gender');
     const filterOrientation = document.getElementById('filter-orientation');
     const applyFiltersButton = document.getElementById('apply-filters');
+    const surpriseMeBtn = document.getElementById('surprise-me-btn');
     const broadcastModal = document.getElementById('broadcast-modal');
     const closeModal = document.querySelector('.close-modal');
     const modalUsername = document.getElementById('modal-username');
@@ -670,19 +683,24 @@
     const modalTags = document.getElementById('modal-tags');
     const modalThumbnail = document.getElementById('modal-thumbnail');
     const modalIframe = document.getElementById('modal-iframe');
+    const generateBioBtn = document.getElementById('generate-bio-btn');
+    const geminiBioContent = document.getElementById('gemini-bio-content');
     const playButton = document.getElementById('play-button');
     const relatedBroadcasts = document.getElementById('related-broadcasts');
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
+    
     // Initialize the application
     document.addEventListener('DOMContentLoaded', () => {
       initApp();
       setupEventListeners();
     });
+    
     // Initialize the application
     function initApp() {
       fetchBroadcasts(1);
     }
+    
     // Setup event listeners
     function setupEventListeners() {
       mobileMenuButton.addEventListener('click', toggleMobileMenu);
@@ -696,11 +714,105 @@
       nextPageButton.addEventListener('click', () => goToPage(currentPage + 1));
       lastPageButton.addEventListener('click', () => goToPage(totalPages));
       applyFiltersButton.addEventListener('click', applyFilters);
+      surpriseMeBtn.addEventListener('click', handleSurpriseMe);
       closeModal.addEventListener('click', closeModalHandler);
       window.addEventListener('click', (e) => {
         if (e.target === broadcastModal) closeModalHandler();
       });
     }
+
+    // --- Gemini API Integration ---
+    async function callGeminiAPI(prompt) {
+        const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+        
+        const payload = {
+            contents: [{
+                parts: [{ text: prompt }]
+            }]
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                console.error("Gemini API Error:", errorBody);
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+
+            const result = await response.json();
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                console.error("Unexpected API response structure:", result);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API:", error);
+            return null;
+        }
+    }
+
+    async function handleSurpriseMe() {
+        showToast('✨ A IA está buscando uma sugestão para você...');
+        const prompt = `Sugira um tema criativo para encontrar streamers na plataforma XCam. Responda APENAS com um objeto JSON com as chaves "country", "gender", "orientation", e "search". Use os seguintes valores possíveis: country (br, us, es, fr, it, de, jp, kr, ru, ca), gender (male, female, trans, couple), orientation (straight, gay, lesbian, bisexual). A chave "search" deve ser um termo de busca criativo em português. Exemplo: {"country": "br", "gender": "male", "orientation": "gay", "search": "músicos tocando ao vivo"}`;
+        
+        const result = await callGeminiAPI(prompt);
+
+        if (result) {
+            try {
+                const suggestion = JSON.parse(result);
+                filterCountry.value = suggestion.country || '';
+                filterGender.value = suggestion.gender || '';
+                filterOrientation.value = suggestion.orientation || '';
+                searchInput.value = suggestion.search || '';
+                mobileSearchInput.value = suggestion.search || '';
+                filters.search = suggestion.search || '';
+                
+                applyFilters();
+            } catch (e) {
+                console.error("Failed to parse Gemini suggestion:", e);
+                showToast("Não foi possível aplicar a sugestão da IA.");
+            }
+        } else {
+            showToast("A IA não conseguiu gerar uma sugestão. Tente novamente.");
+        }
+    }
+
+    async function handleGenerateBio(broadcast) {
+        const btn = document.getElementById('generate-bio-btn');
+        btn.disabled = true;
+        btn.innerHTML = `<span class="loader !w-6 !h-6 !border-4"></span> Gerando...`;
+        geminiBioContent.classList.remove('hidden');
+        geminiBioContent.textContent = 'Aguarde, a IA está criando uma biografia...';
+
+        const prompt = `Crie uma biografia curta, criativa e envolvente em português para um(a) streamer da plataforma XCam com as seguintes informações:
+        - Nome de usuário: ${broadcast.username}
+        - País: ${getCountryName(broadcast.country)}
+        - Gênero: ${TRANSLATIONS.gender[broadcast.gender] || broadcast.gender}
+        - Orientação: ${TRANSLATIONS.sexPreference[broadcast.sexualOrientation] || broadcast.sexualOrientation}
+        - Tags: ${broadcast.tags.map(t => t.name).join(', ')}
+        
+        Seja criativo e use um tom que combine com uma plataforma de streaming ao vivo. Não inclua informações que não foram fornecidas.`;
+
+        const bio = await callGeminiAPI(prompt);
+
+        if (bio) {
+            geminiBioContent.textContent = bio;
+        } else {
+            geminiBioContent.textContent = 'Não foi possível gerar a biografia no momento.';
+        }
+        btn.disabled = false;
+        btn.innerHTML = '✨ Gerar Biografia com IA';
+    }
+
     // Toggle mobile menu
     function toggleMobileMenu() {
       mobileMenu.classList.toggle('hidden');
@@ -789,24 +901,6 @@
       emptyState.classList.add('hidden');
     }
     
-    /**
-     * Gets a valid poster URL with fallbacks.
-     * @param {object} broadcast - The broadcast object from the API.
-     * @returns {string} A valid image URL.
-     */
-    function getPosterUrl(broadcast) {
-      // 1. Primary source from API (XCam API)
-      if (broadcast && broadcast.preview && broadcast.preview.poster) {
-        return broadcast.preview.poster;
-      }
-      // 2. Secondary source (XCam CDN)
-      if (broadcast && broadcast.username) {
-        return `https://snapshots.xcdnpro.com/thumbnails/${broadcast.username}`;
-      }
-      // 3. Final fallback
-      return 'https://cdn.xcam.gay/0:/src/files/loading.gif';
-    }
-
     // Setup UI Components
     function setupCarousel(items) {
       if (!items || items.length === 0) return;
@@ -814,14 +908,14 @@
       carouselItemsContainer.innerHTML = '';
       carouselIndicators.innerHTML = '';
       carouselItems.forEach((broadcast, index) => {
-        const posterUrl = getPosterUrl(broadcast); // Use the new helper function
+        const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
         const item = document.createElement('div');
         item.className = `carousel-item opacity-0`;
         item.dataset.username = broadcast.username; // Store username for iframe
         
         item.innerHTML = `
           <div class="carousel-media-container absolute inset-0 bg-black">
-             <img src="https://snapshots.xcdnpro.com/thumbnails/${broadcast.username}" alt="${broadcast.username}" class="w-full h-full object-cover">
+             <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
           <div class="absolute bottom-0 left-0 p-6 z-20">
@@ -873,8 +967,8 @@
                 // Remove o iframe para parar o vídeo e restaurar o poster
                 if (mediaContainer.querySelector('iframe')) {
                     const broadcast = carouselItems[i];
-                    const posterUrl = getPosterUrl(broadcast);
-                    mediaContainer.innerHTML = `<img src="https://snapshots.xcdnpro.com/thumbnails/${broadcast.username}" alt="${broadcast.username}" class="w-full h-full object-cover">`;
+                    const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
+                    mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">`;
                 }
             }
         });
@@ -987,7 +1081,7 @@
       }
       broadcastsGrid.innerHTML = '';
       broadcastsList.forEach(broadcast => {
-        const posterUrl = getPosterUrl(broadcast); // Use the new helper function
+        const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
         const card = document.createElement('div');
         card.className = 'bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col';
         const tagsHTML = broadcast.tags && broadcast.tags.length > 0 ?
@@ -995,7 +1089,7 @@
           '';
         card.innerHTML = `
           <div class="relative card-preview-container">
-            <img src="https://snapshots.xcdnpro.com/thumbnails/${broadcast.username}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
+            <img src="${posterUrl}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
             <span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span>
             <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center">
               <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -1104,10 +1198,17 @@
         });
       }
 
+      // Reset and setup Gemini Bio section
+      geminiBioContent.classList.add('hidden');
+      geminiBioContent.textContent = '';
+      generateBioBtn.onclick = () => handleGenerateBio(broadcast);
+      generateBioBtn.disabled = false;
+      generateBioBtn.innerHTML = '✨ Gerar Biografia com IA';
+
       // Construct the new iframe URL
-      const posterUrl = encodeURIComponent(getPosterUrl(broadcast));
+      const posterUrl = encodeURIComponent(`https://api.xcam.gay/poster/${broadcast.username}.jpg`);
       const tagsString = broadcast.tags ? encodeURIComponent(broadcast.tags.map(tag => tag.name).join(',')) : '';
-      const iframeUrl = `https://xcam.gay/player/?user=${broadcast.username}&img=https://snapshots.xcdnpro.com/thumbnails/${broadcast.username}&tags=${tagsString}`;
+      const iframeUrl = `https://xcam.gay/player/?user=${broadcast.username}&img=${posterUrl}&tags=${tagsString}`;
 
       // Set iframe source and show it, hide the thumbnail/play button
       modalIframe.src = iframeUrl;
@@ -1122,7 +1223,7 @@
         item.className = 'cursor-pointer hover:opacity-90 transition-opacity';
         item.onclick = () => openModal(r.id);
         item.innerHTML = `
-          <div class="relative"><img src="https://snapshots.xcdnpro.com/thumbnails/${broadcast.username}" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
+          <div class="relative"><img src="https://api.xcam.gay/poster/${r.username}.jpg" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
           <h4 class="font-medium text-white mt-2">@${r.username}</h4>
           <div class="flex items-center text-sm text-gray-400"><span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${r.country}.png)"></span><span>${r.viewers} espectadores</span></div>
         `;
