@@ -215,55 +215,6 @@
       background-color: #000;
       /* Fundo preto enquanto o iframe carrega */
     }
-
-    /* Ajuste de responsividade e proporção dos cards da grade de transmissões */
-    #broadcasts-grid > div {
-      aspect-ratio: 4/5;
-      min-width: 0;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-    @media (min-width: 1536px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-      }
-    }
-    @media (min-width: 1280px) and (max-width: 1535px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-    @media (min-width: 1024px) and (max-width: 1279px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-    @media (max-width: 1023px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-    @media (max-width: 639px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-      }
-    }
-    /* Ajuste para o conteúdo interno dos cards não "esticar" demais */
-    #broadcasts-grid .card-preview-container {
-      aspect-ratio: 16/10;
-      max-height: 320px;
-      min-height: 180px;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    #broadcasts-grid .card-info-container {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
   </style>
   <meta name="6a97888e-site-verification" content="15989ae96dff82fe33826928ae653613">
   <link rel="manifest" href="/manifest.json">
@@ -476,7 +427,7 @@
             <p class="text-gray-400">Tente ajustar seus filtros ou volte mais tarde.</p>
           </div>
 
-          <div id="broadcasts-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-6">
+          <div id="broadcasts-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
           </div>
         </div>
 
