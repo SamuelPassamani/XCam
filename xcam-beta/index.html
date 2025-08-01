@@ -216,36 +216,66 @@
       /* Fundo preto enquanto o iframe carrega */
     }
 
-    /* Garantir que a imagem do card fique sempre em 16:9 (paisagem) real */
+    /* Garantir proporção 16:9 real, sem conflitos */
     #broadcasts-grid .card-preview-container {
+      position: relative;
       width: 100%;
-      aspect-ratio: 16/9 !important;
+      aspect-ratio: 16/9;
       background: #000;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      position: relative;
+      border-radius: 12px;
+      min-height: unset;
+      max-height: unset;
     }
-    #broadcasts-grid .card-preview-container img.card-poster {
+    #broadcasts-grid .card-preview-container img.card-poster,
+    #broadcasts-grid .card-preview-container iframe {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      aspect-ratio: 16/9 !important;
+      aspect-ratio: 16/9;
       display: block;
       position: relative;
       z-index: 1;
     }
-    /* Efeito gradiente nas tags ao passar o mouse */
-    .tag-hover-gradient {
-      background: linear-gradient(90deg, #FF007F, #4169E1) !important;
-      color: #fff !important;
+    /* Overlays fixos sobre a imagem/iframe */
+    .card-overlay-live {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .card-overlay-viewers {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      z-index: 10;
+      pointer-events: none;
+      background: rgba(0,0,0,0.7);
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      color: #fff;
+    }
+    /* Efeito gradiente nas tags ao passar o mouse, igual paginação */
+    .tag-filter {
+      cursor: pointer;
       transition: background 0.2s, color 0.2s;
     }
-    /* Ajuste: a área abaixo da imagem não é clicável */
-    #broadcasts-grid .card-info-container {
-      cursor: default !important;
+    .tag-filter.tag-hover-gradient,
+    .tag-filter:hover {
+      background: linear-gradient(90deg, #FF007F, #4169E1) !important;
+      color: #fff !important;
+    }
+    /* Cursor pointer na flag */
+    .country-filter {
+      cursor: pointer;
     }
     /* Ajuste: flag apenas como ícone, nome só no title */
     #broadcasts-grid .flag-icon + span {
@@ -856,36 +886,6 @@
     const carouselItemsContainer = document.getElementById('carousel-items');
     const carouselIndicators = document.getElementById('carousel-indicators');
     const prevSlideButton = document.getElementById('prev-slide');
-    const nextSlideButton = document.getElementById('next-slide');
-    const broadcastsGrid = document.getElementById('broadcasts-grid');
-    const loadingState = document.getElementById('loading-state');
-    const errorState = document.getElementById('error-state');
-    const emptyState = document.getElementById('empty-state');
-    const retryButton = document.getElementById('retry-button');
-    const pagination = document.getElementById('pagination');
-    const pageNumbers = document.getElementById('page-numbers');
-    const firstPageButton = document.getElementById('first-page');
-    const prevPageButton = document.getElementById('prev-page');
-    const nextPageButton = document.getElementById('next-page');
-    const lastPageButton = document.getElementById('last-page');
-    const topStreamersContainer = document.getElementById('top-streamers');
-    const filterCountry = document.getElementById('filter-country');
-    const filterGender = document.getElementById('filter-gender');
-    const filterOrientation = document.getElementById('filter-orientation');
-    const applyFiltersButton = document.getElementById('apply-filters');
-    const surpriseMeBtn = document.getElementById('surprise-me-btn');
-    const broadcastModal = document.getElementById('broadcast-modal');
-    const closeModal = document.querySelector('.close-modal');
-    const modalUsername = document.getElementById('modal-username');
-    const modalAvatar = document.getElementById('modal-avatar');
-    const modalCountryFlag = document.getElementById('modal-country-flag');
-    const modalCountryName = document.getElementById('modal-country-name');
-    const modalViewers = document.getElementById('modal-viewers');
-    const modalGender = document.getElementById('modal-gender');
-    const modalOrientation = document.getElementById('modal-orientation');
-    const modalType = document.getElementById('modal-type');
-    const modalTags = document.getElementById('modal-tags');
-    const modalThumbnail = document.getElementById('modal-thumbnail');
     const modalIframe = document.getElementById('modal-iframe');
     const generateBioBtn = document.getElementById('generate-bio-btn');
     const geminiBioContent = document.getElementById('gemini-bio-content');
