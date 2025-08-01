@@ -893,6 +893,7 @@
     const prevPageButton = document.getElementById('prev-page');
     const nextPageButton = document.getElementById('next-page');
     const lastPageButton = document.getElementById('last-page');
+    const topStreamersContainer = document.getElementById('top-streamers');
     const applyFiltersButton = document.getElementById('apply-filters');
     const surpriseMeBtn = document.getElementById('surprise-me-btn');
     const closeModal = document.querySelector('.close-modal');
@@ -1109,7 +1110,7 @@
       itemsPerPage = limit;
       currentPage = page;
       filters.country = country;
-      filters.tags = tags;
+           filters.tags = tags;
       filters.search = tags.replace(/,/g, ' ');
       // Update UI to reflect URL state
       filterCountry.value = country;
