@@ -216,7 +216,42 @@
       /* Fundo preto enquanto o iframe carrega */
     }
 
-    /* Ajuste de responsividade e proporção dos cards da grade de transmissões */
+    /* Garantir que a imagem do card fique sempre em 16:9 (paisagem) real */
+    #broadcasts-grid .card-preview-container {
+      width: 100%;
+      aspect-ratio: 16/9 !important;
+      background: #000;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+    #broadcasts-grid .card-preview-container img.card-poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      aspect-ratio: 16/9 !important;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+    /* Efeito gradiente nas tags ao passar o mouse */
+    .tag-hover-gradient {
+      background: linear-gradient(90deg, #FF007F, #4169E1) !important;
+      color: #fff !important;
+      transition: background 0.2s, color 0.2s;
+    }
+    /* Ajuste: a área abaixo da imagem não é clicável */
+    #broadcasts-grid .card-info-container {
+      cursor: default !important;
+    }
+    /* Ajuste: flag apenas como ícone, nome só no title */
+    #broadcasts-grid .flag-icon + span {
+      display: none !important;
+    }
+
     #broadcasts-grid {
       display: grid;
       grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -1333,11 +1368,12 @@
         const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
         const card = document.createElement('div');
         card.className = 'bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col';
+        // Tags com hover gradiente e click para filtro
         const tagsHTML = broadcast.tags && broadcast.tags.length > 0 ?
-          broadcast.tags.map(tag => `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">#${tag.name}</span>`).join(' ') :
+          broadcast.tags.map(tag => `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs tag-filter" data-tag="${tag.name}">#${tag.name}</span>`).join(' ') :
           '';
         card.innerHTML = `
-          <div class="relative card-preview-container">
+          <div class="relative card-preview-container" data-username="${broadcast.username}">
             <img src="${posterUrl}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
             <span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span>
             <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center">
@@ -1345,12 +1381,11 @@
               ${broadcast.viewers}
             </div>
           </div>
-          <div class="p-4 card-info-container cursor-pointer">
+          <div class="p-4 card-info-container">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-white">@${broadcast.username}</h3>
               <div class="flex items-center text-sm text-gray-400">
-                <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)"></span>
-                <span>${getCountryName(broadcast.country)}</span>
+                <span class="flag-icon country-filter" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)" title="${getCountryName(broadcast.country)}" data-country="${broadcast.country}"></span>
               </div>
             </div>
             <div class="flex flex-wrap gap-2 mb-2">
@@ -1370,14 +1405,32 @@
             <div class="flex flex-wrap gap-1 mt-2">${tagsHTML}</div>
           </div>
         `;
-        // Find the new containers inside the card
+        // Eventos: hover e click na imagem/iframe
         const previewContainer = card.querySelector('.card-preview-container');
-        const infoContainer = card.querySelector('.card-info-container');
-        // Add event listeners
-        previewContainer.dataset.username = broadcast.username;
         previewContainer.addEventListener('mouseenter', handleCardHover);
         previewContainer.addEventListener('mouseleave', handleCardMouseLeave);
-        infoContainer.addEventListener('click', () => openModal(broadcast.id));
+        previewContainer.addEventListener('click', () => openModal(broadcast.id));
+        // Clique na flag
+        const flag = card.querySelector('.country-filter');
+        flag.addEventListener('click', (e) => {
+          e.stopPropagation();
+          filters.country = flag.dataset.country;
+          filterCountry.value = flag.dataset.country;
+          goToPage(1);
+        });
+        // Clique e hover nas tags
+        card.querySelectorAll('.tag-filter').forEach(tagEl => {
+          tagEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const tag = tagEl.dataset.tag;
+            filters.tags = tag;
+            searchInput.value = tag;
+            mobileSearchInput.value = tag;
+            goToPage(1);
+          });
+          tagEl.addEventListener('mouseenter', () => tagEl.classList.add('tag-hover-gradient'));
+          tagEl.addEventListener('mouseleave', () => tagEl.classList.remove('tag-hover-gradient'));
+        });
         broadcastsGrid.appendChild(card);
       });
       updatePagination();
