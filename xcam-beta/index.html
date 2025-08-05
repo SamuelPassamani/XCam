@@ -215,234 +215,6 @@
       background-color: #000;
       /* Fundo preto enquanto o iframe carrega */
     }
-
-    /* Garantir proporção 16:9 real, sem conflitos */
-    #broadcasts-grid .card-preview-container {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-      background: #000;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border-radius: 12px;
-      min-height: unset;
-      max-height: unset;
-    }
-    #broadcasts-grid .card-preview-container img.card-poster,
-    #broadcasts-grid .card-preview-container iframe {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      aspect-ratio: 16/9;
-      display: block;
-      position: relative;
-      z-index: 1;
-    }
-    /* Overlays fixos sobre a imagem/iframe */
-    .card-overlay-live {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      z-index: 10;
-      pointer-events: none;
-    }
-    .card-overlay-viewers {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      z-index: 10;
-      pointer-events: none;
-      background: rgba(0,0,0,0.7);
-      border-radius: 6px;
-      padding: 2px 10px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      color: #fff;
-    }
-    /* Efeito gradiente nas tags ao passar o mouse, igual paginação */
-    .tag-filter {
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    .tag-filter.tag-hover-gradient,
-    .tag-filter:hover {
-      background: linear-gradient(90deg, #FF007F, #4169E1) !important;
-      color: #fff !important;
-    }
-    /* Cursor pointer na flag */
-    .country-filter {
-      cursor: pointer;
-    }
-    /* Ajuste: flag apenas como ícone, nome só no title */
-    #broadcasts-grid .flag-icon + span {
-      display: none !important;
-    }
-
-    #broadcasts-grid {
-      display: grid;
-      grid-template-columns: repeat(1, minmax(0, 1fr));
-      gap: 24px;
-      align-items: stretch;
-    }
-
-    @media (min-width: 640px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (min-width: 1024px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (min-width: 1280px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-
-    @media (min-width: 1536px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-      }
-    }
-
-    #broadcasts-grid > div {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-width: 0;
-      min-height: 0;
-      background: #181c23;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid #23272f;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      padding: 0;
-      align-self: stretch;
-    }
-
-    #broadcasts-grid .card-preview-container {
-      width: 100%;
-      aspect-ratio: 16/9;
-      background: #000;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #broadcasts-grid .card-preview-container img.card-poster {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      aspect-ratio: 16/9;
-      display: block;
-    }
-
-    #broadcasts-grid .card-info-container {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      padding: 16px 16px 12px 16px;
-      gap: 8px;
-      background: transparent;
-      min-height: 80px;
-      overflow: visible;
-    }
-
-    #broadcasts-grid .card-info-container .flex.flex-wrap {
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    #broadcasts-grid .card-info-container .flex.flex-wrap .bg-gray-800 {
-      background: #23272f !important;
-      color: #b3b9c9 !important;
-    }
-
-    #broadcasts-grid .card-info-container .flex.flex-wrap .bg-gray-800 img {
-      margin-right: 4px;
-    }
-
-    #broadcasts-grid .card-info-container .flex.flex-wrap .bg-gray-800 {
-      font-size: 13px;
-      padding: 3px 10px;
-      border-radius: 999px;
-    }
-
-    #broadcasts-grid .card-info-container .flex.flex-wrap.gap-1.mt-2 span {
-      font-size: 12px;
-      background: #23272f;
-      color: #b3b9c9;
-      border-radius: 999px;
-      padding: 2px 8px;
-      margin-bottom: 2px;
-      display: inline-block;
-      max-width: 100%;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-
-    #broadcasts-grid .card-info-container .flex.flex-wrap.gap-1.mt-2 {
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    @media (min-width: 1536px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-      }
-    }
-
-    @media (min-width: 1280px) and (max-width: 1535px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-
-    @media (min-width: 1024px) and (max-width: 1279px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 1023px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 639px) {
-      #broadcasts-grid {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-      }
-    }
-
-    /* Ajuste para o conteúdo interno dos cards não "esticar" demais */
-    #broadcasts-grid .card-preview-container {
-      aspect-ratio: 16/10;
-      max-height: 320px;
-      min-height: 180px;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    #broadcasts-grid .card-info-container {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
   </style>
   <meta name="6a97888e-site-verification" content="15989ae96dff82fe33826928ae653613">
   <link rel="manifest" href="/manifest.json">
@@ -655,7 +427,7 @@
             <p class="text-gray-400">Tente ajustar seus filtros ou volte mais tarde.</p>
           </div>
 
-          <div id="broadcasts-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-6">
+          <div id="broadcasts-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
           </div>
         </div>
 
@@ -777,12 +549,12 @@
           <div class="flex space-x-4">
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0 .42-.015.63A9.935 9.935 0 0024 4.59z" />
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
               </svg>
             </a>
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
               </svg>
             </a>
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors">
@@ -861,7 +633,7 @@
     // --- LÓGICA DA APLICAÇÃO ---
     // Constantes para os ícones
     const GENDER_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGlkPSJGbGF0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik0yMTkuOTk3OCwyMy45NTU1N3EtLjAwMjE5LS41Njk4NC0uMDU3NDktMS4xMzgxOWMtLjAxOC0uMTg0MDgtLjA1MjM3LS4zNjI3OS0uMDc4NDktLjU0NDQzLS4wMjk3OS0uMjA1NTctLjA1MzcxLS40MTIxMS0uMDk0MjQtLjYxNjIxLS4wNDAyOS0uMjAzNjItLjA5NjA3LS40MDA4OC0uMTQ2NDktLjYwMDU5LS4wNDU0MS0uMTgwMTctLjA4NDg0LS4zNjA4NC0uMTM4NjctLjUzOTA2LS4wNTg4NC0uMTk0MzQtLjEzMTU5LS4zODEzNS0uMTk5NzEtLjU3MTI5LS4wNjQ0NS0uMTc5NjktLjEyMzUzLS4zNjA4NC0uMTk2NzctLjUzNzYtLjA3MzQ5LS4xNzcyNC0uMTU5NjctLjM0NjY4LS4yNDEwOS0uNTE5NTMtLjA4NTgyLS4xODIxMy0uMTY2ODctLjM2NjIxLS4yNjI1Ny0uNTQ0OTItLjA4OC0uMTY0NTUtLjE4ODI0LS4zMjAzMS0uMjgzNy0uNDgwNDctLjEwNTM0LS4xNzYyNy0uMjA1Mi0uMzU1LS4zMjAzMS0uNTI2ODUtLjExNTcyLS4xNzMzNC0uMjQ0NzUtLjMzNTQ1LS4zNjktLjUwMi0uMTEtLjE0NzQ2LS4yMTI1Mi0uMjk4MzQtLjMzMDItLjQ0MTQtLjIzNDYyLS4yODYxNC0uNDgzNC0uNTU5NTctLjc0MzE2LS44MjIyNy0uMDE3ODItLjAxODA3LS4wMzI0Ny0uMDM4MDktLjA1MDU0LS4wNTYxNS0uMDE4MzEtLjAxODU2LS4wMzg1Ny0uMDMzMi0uMDU2ODgtLjA1MTI3cS0uMzk0NDEtLjM4OTY2LS44MjIyNy0uNzQzMTdjLS4xMzk2NS0uMTE0NzQtLjI4Njg2LS4yMTQzNS0uNDMwNDItLjMyMTc3LS4xNjk5Mi0uMTI3LS4zMzYwNi0uMjU4NzktLjUxMjY5LS4zNzctLjE2ODgzLS4xMTMyOC0uMzQ0MjQtLjIxMDkzLS41MTczNC0uMzE0NDUtLjE2MzMzLS4wOTc2NS0uMzIzMjQtLjIwMDE5LS40OTE0NS0uMjktLjE3MzEtLjA5Mjc3LS4zNTEyLS4xNzA5LS41Mjc1OS0uMjU0MzktLjE3ODcxLS4wODQ0OC0uMzU0NjItLjE3MzgzLS41MzgtLjI0OTUxLS4xNjkzMi0uMDcwMzItLjM0MjI5LS4xMjY0Ny0uNTE0LS4xODg0OC0uMTk3NTEtLjA3MTI5LS4zOTMwNy0uMTQ2NDktLjU5NTM0LS4yMDgtLjE2ODgyLS4wNTA3OC0uMzQwNDUtLjA4Nzg5LS41MTA4Ni0uMTMxMzUtLjIwODc0LS4wNTMyMi0uNDE1MjktLjExMTMyLS42MjgxOC0uMTUzMzItLjE5MDU1LS4wMzc1OS0uMzgzLS4wNTk1Ny0uNTc1MDctLjA4Nzg5LS4xOTU0NC0uMDI4ODEtLjM4ODMxLS4wNjQ5NC0uNTg2NzktLjA4NDQ3LS4zMzI1Mi0uMDMyNzEtLjY2Ni0uMDQ1NDEtLjk5OTg4LS4wNTA3OEMyMDguMTE4NTMsMTIuMDA4MywyMDguMDYwMywxMiwyMDgsMTJIMTcyYTEyLDEyLDAsMCwwLDAsMjRoNy4wMjkzbC0xNS4wNTEsMTUuMDUxMjdBNzEuOTc1MjYsNzEuOTc1MjYsMCwxLDAsMTA4LDE3OC45ODFWMTkySDg4YTEyLDEyLDAsMCwwLDAsMjRoMjB2MTZhMTIsMTIsMCwwLDAsMjQsMFYyMTZoMjBhMTIsMTIsMCwwLDAsMC0yNEgxMzJWMTc4Ljk4MUE3MS45MjgsNzEuOTI4LDAsMCwwLDE4MC4yNzc4Myw2OC42OTI4N0wxOTYsNTIuOTcwN1Y2MGExMiwxMiwwLDAsMCwyNCwwVjI0QzIyMCwyMy45ODQ4NiwyMTkuOTk3OCwyMy45NzAyMSwyMTkuOTk3OCwyMy45NTU1N1pNMTIwLDE1NmE0OCw0OCwwLDEsMSw0OC00OEE0OC4wNTQ2OCw0OC4wNTQ2OCwwLDAsMSwxMjAsMTU2WiIvPgo8L3N2Zz4=";
-    const BROADCAST_TYPE_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjwhLS0gVXBsbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNOC41NTI4NCAzLjAwMDEyQzcuOTM1OTggMy4wMDAxMiA3LjIzODQxIDMuMDY1MTQgNi41NzIwOSAzLjI5MjI0QzIuNTU0OTQgNC42MDM4NyAxLjI2MzQxIDguODk0IDIuMzk4NzcgMTIuNDNMMi40MDM1NCAxMi40NDQ4TDIuNDA4NzcgMTIuNDU5NUMzLjAzNDM1IDE0LjIxNzQgNC4wNDIyNiAxNS44MTI3IDUuMzUzMzYgMTcuMTI0OUw1LjM2MDkxIDE3LjEzMjRMNS4zNjg2MiAxNy4xMzk4QzcuMjM3ODIgMTguOTMyMyA5LjI3MjU0IDIwLjQ5NTMgMTEuNDc1NiAyMS44NTE1TDExLjk5MzQgMjIuMTcwM0wxMi41MTQ3IDIxLjg1NzNDMTQuNzIyNiAyMC41MzE1IDE2Ljc5NjQgMTguOTI1NCAxOC42NDMyIDE3LjE0NzRMMTguNjQ5IDE3LjE0MTlMMTguNjU0NyAxNy4xMzYyQzE5Ljk3NzEgMTUuODIxNSAyMC45ODUxIDE0LjIxNDQgMjEuNjAxNSAxMi40NTQ5TDIxLjYwNjYgMTIuNDQwMkwyMS42MTEzIDEyLjQyNTNDMjIuNzI1MSA4Ljg5NzAzIDIxLjQ0MDEgNC42MDE3NiAxNy40NTA3IDMuMzA5NDhDMTYuNzk3NiAzLjA5MjIxIDE2LjEyMzYgMy4wMDAxMiAxNS40NjQ4IDMuMDAwMTJDMTMuOTgyOCAzLjAwMDExIDEyLjg4NTggMy42MjA2NCAxMi4wMDA0IDQuMjUzMDlDMTEuMTIxOSAzLjYyNTQ1IDEwLjAxNzYgMy4wMDAxMiA4LjU1Mjg0IDMuMDAwMTJaIiBmaWxsPSIjRkZGRkZGIi8+PC9zdmc+";
+    const BROADCAST_TYPE_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iX3gzMl8iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIAoJIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiICB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KPCFbQ0RBVEFbCgkuc3Qwe2ZpbGw6I0ZGRkZGRjt9Cl1dPgo8L3N0eWxlPgo8Zz4KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMDMuMTY5LDI1Ni44MjhjNDMuNzAzLDAsNzkuMTI1LTM1LjQzOCw3OS4xMjUtNzkuMTQxYzAtNDMuNjg4LTM1LjQyMi03OS4xMjUtNzkuMTI1LTc5LjEyNQoJCVMyNC4wNDQsMTM0LDI0LjA0NCwxNzcuNjg4QzI0LjA0NCwyMjEuMzkxLDU5LjQ2NiwyNTYuODI4LDEwMy4xNjksMjU2LjgyOHoiLz4KCTxjaXJjbGUgY2xhc3M9InN0MCIgY3g9IjMwMi42MzgiIGN5PSIxNDQuNzE5IiByPSIxMDYuODI4Ii8+Cgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzMyLjYzOCwyODAuMjM0SDc0LjE1M3YxNzEuNDM4YzAsMTIuMzkxLDEwLjA0NywyMi40MzgsMjIuNDM4LDIyLjQzOGgyMzYuMDQ3CgkJYzEyLjM3NSwwLDIyLjQyMi0xMC4wNDcsMjIuNDIyLTIyLjQzOHYtMTQ5QzM1NS4wNiwyOTAuMjgxLDM0NS4wMTMsMjgwLjIzNCwzMzIuNjM4LDI4MC4yMzR6Ii8+Cgk8cmVjdCB4PSIzNzEuMjE2IiB5PSIzMzEuNjcyIiBjbGFzcz0ic3QwIiB3aWR0aD0iMzQuMjk3IiBoZWlnaHQ9Ijk5LjY1NiIvPgoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTUwNi41OTEsMjkzLjQzOGMtMy4zNTktMi4wMzEtNy41NDctMi4xNTYtMTEuMDMxLTAuMzEzbC03My4yMzQsMzguNTQ3djk4LjU0N2w3My4yMzQsMzguNTQ3CgkJYzMuNDg0LDEuODQ0LDcuNjcyLDEuNzE5LDExLjAzMS0wLjMxM3M1LjQwNi01LjY3Miw1LjQwNi05LjYwOVYzMDMuMDQ3QzUxMS45OTcsMjk5LjEwOSw1MDkuOTUsMjk1LjQ2OSw1MDYuNTkxLDI5My40Mzh6Ii8+Cgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMC44NTYsMjg3LjE1NmMtMS43MzQsNC4xODgtMC43ODEsOS4wMTYsMi40MzgsMTIuMjM0bDU0LjA0Nyw1NC4wNDd2LTczLjIwM0gxMS4yMTYKCQlDNi42ODUsMjgwLjIzNCwyLjU5MSwyODIuOTY5LDAuODU2LDI4Ny4xNTZ6Ii8+CjwvZz4KPC9zdmc+";
     const ORIENTATION_ICON_SVG = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNOC41NTI4NCAzLjAwMDEyQzcuOTM1OTggMy4wMDAxMiA3LjIzODQxIDMuMDY1MTQgNi41NzIwOSAzLjI5MjI0QzIuNTU0OTQgNC42MDM4NyAxLjI2MzQxIDguODk0IDIuMzk4NzcgMTIuNDNMMi40MDM1NCAxMi40NDQ4TDIuNDA4NzcgMTIuNDU5NUMzLjAzNDM1IDE0LjIxNzQgNC4wNDIyNiAxNS44MTI3IDUuMzUzMzYgMTcuMTI0OUw1LjM2MDkxIDE3LjEzMjRMNS4zNjg2MiAxNy4xMzk4QzcuMjM3ODIgMTguOTMyMyA5LjI3MjU0IDIwLjQ5NTMgMTEuNDc1NiAyMS44NTE1TDExLjk5MzQgMjIuMTcwM0wxMi41MTQ3IDIxLjg1NzNDMTQuNzIyNiAyMC41MzE1IDE2Ljc5NjQgMTguOTI1NCAxOC42NDMyIDE3LjE0NzRMMTguNjQ5IDE3LjE0MTlMMTguNjU0NyAxNy4xMzYyQzE5Ljk3NzEgMTUuODIxNSAyMC45ODUxIDE0LjIxNDQgMjEuNjAxNSAxMi40NTQ5TDIxLjYwNjYgMTIuNDQwMkwyMS42MTEzIDEyLjQyNTNDMjIuNzI1MSA4Ljg5NzAzIDIxLjQ0MDEgNC42MDE3NiAxNy40NTA3IDMuMzA5NDhDMTYuNzk3NiAzLjA5MjIxIDE2LjEyMzYgMy4wMDAxMiAxNS40NjQ4IDMuMDAwMTJDMTMuOTgyOCAzLjAwMDExIDEyLjg4NTggMy42MjA2NCAxMi4wMDA0IDQuMjUzMDlDMTEuMTIxOSAzLjYyNTQ1IDEwLjAxNzYgMy4wMDAxMiA4LjU1Mjg0IDMuMDAwMTJaIiBmaWxsPSIjRkZGRkZGIi8+PC9zdmc+";
     // Global variables
     let broadcasts = []; // Acts as a cache for modal details
@@ -888,16 +660,24 @@
     const prevSlideButton = document.getElementById('prev-slide');
     const nextSlideButton = document.getElementById('next-slide');
     const broadcastsGrid = document.getElementById('broadcasts-grid');
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+    const emptyState = document.getElementById('empty-state');
     const retryButton = document.getElementById('retry-button');
+    const pagination = document.getElementById('pagination');
+    const pageNumbers = document.getElementById('page-numbers');
     const firstPageButton = document.getElementById('first-page');
     const prevPageButton = document.getElementById('prev-page');
     const nextPageButton = document.getElementById('next-page');
     const lastPageButton = document.getElementById('last-page');
     const topStreamersContainer = document.getElementById('top-streamers');
+    const filterCountry = document.getElementById('filter-country');
+    const filterGender = document.getElementById('filter-gender');
+    const filterOrientation = document.getElementById('filter-orientation');
     const applyFiltersButton = document.getElementById('apply-filters');
     const surpriseMeBtn = document.getElementById('surprise-me-btn');
-    const closeModal = document.querySelector('.close-modal');
     const broadcastModal = document.getElementById('broadcast-modal');
+    const closeModal = document.querySelector('.close-modal');
     const modalUsername = document.getElementById('modal-username');
     const modalAvatar = document.getElementById('modal-avatar');
     const modalCountryFlag = document.getElementById('modal-country-flag');
@@ -907,11 +687,14 @@
     const modalOrientation = document.getElementById('modal-orientation');
     const modalType = document.getElementById('modal-type');
     const modalTags = document.getElementById('modal-tags');
-    const loadingState = document.getElementById('loading-state');
-    const errorState = document.getElementById('error-state');
-    const emptyState = document.getElementById('empty-state');
-    const pagination = document.getElementById('pagination');
-    const pageNumbers = document.getElementById('page-numbers');
+    const modalThumbnail = document.getElementById('modal-thumbnail');
+    const modalIframe = document.getElementById('modal-iframe');
+    const generateBioBtn = document.getElementById('generate-bio-btn');
+    const geminiBioContent = document.getElementById('gemini-bio-content');
+    const playButton = document.getElementById('play-button');
+    const relatedBroadcasts = document.getElementById('related-broadcasts');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
     // Initialize the application
     document.addEventListener('DOMContentLoaded', () => {
       // --- AGE GATE MODAL LOGIC ---
@@ -1110,8 +893,8 @@
       itemsPerPage = limit;
       currentPage = page;
       filters.country = country;
-           filters.tags = tags;
-      filters.search = tags.replace(/,/g, ' ');
+      filters.tags = tags;
+      filters.search = tags.replace(/,/g, ' '); // Sync search input with tags
       // Update UI to reflect URL state
       filterCountry.value = country;
       searchInput.value = filters.search;
@@ -1387,12 +1170,11 @@
         const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
         const card = document.createElement('div');
         card.className = 'bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col';
-        // Tags com hover gradiente e click para filtro
         const tagsHTML = broadcast.tags && broadcast.tags.length > 0 ?
-          broadcast.tags.map(tag => `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs tag-filter" data-tag="${tag.name}">#${tag.name}</span>`).join(' ') :
+          broadcast.tags.map(tag => `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">#${tag.name}</span>`).join(' ') :
           '';
         card.innerHTML = `
-          <div class="relative card-preview-container" data-username="${broadcast.username}">
+          <div class="relative card-preview-container">
             <img src="${posterUrl}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
             <span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span>
             <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center">
@@ -1400,11 +1182,12 @@
               ${broadcast.viewers}
             </div>
           </div>
-          <div class="p-4 card-info-container">
+          <div class="p-4 card-info-container cursor-pointer">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-white">@${broadcast.username}</h3>
               <div class="flex items-center text-sm text-gray-400">
-                <span class="flag-icon country-filter" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)" title="${getCountryName(broadcast.country)}" data-country="${broadcast.country}"></span>
+                <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)"></span>
+                <span>${getCountryName(broadcast.country)}</span>
               </div>
             </div>
             <div class="flex flex-wrap gap-2 mb-2">
@@ -1424,32 +1207,14 @@
             <div class="flex flex-wrap gap-1 mt-2">${tagsHTML}</div>
           </div>
         `;
-        // Eventos: hover e click na imagem/iframe
+        // Find the new containers inside the card
         const previewContainer = card.querySelector('.card-preview-container');
+        const infoContainer = card.querySelector('.card-info-container');
+        // Add event listeners
+        previewContainer.dataset.username = broadcast.username;
         previewContainer.addEventListener('mouseenter', handleCardHover);
         previewContainer.addEventListener('mouseleave', handleCardMouseLeave);
-        previewContainer.addEventListener('click', () => openModal(broadcast.id));
-        // Clique na flag
-        const flag = card.querySelector('.country-filter');
-        flag.addEventListener('click', (e) => {
-          e.stopPropagation();
-          filters.country = flag.dataset.country;
-          filterCountry.value = flag.dataset.country;
-          goToPage(1);
-        });
-        // Clique e hover nas tags
-        card.querySelectorAll('.tag-filter').forEach(tagEl => {
-          tagEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const tag = tagEl.dataset.tag;
-            filters.tags = tag;
-            searchInput.value = tag;
-            mobileSearchInput.value = tag;
-            goToPage(1);
-          });
-          tagEl.addEventListener('mouseenter', () => tagEl.classList.add('tag-hover-gradient'));
-          tagEl.addEventListener('mouseleave', () => tagEl.classList.remove('tag-hover-gradient'));
-        });
+        infoContainer.addEventListener('click', () => openModal(broadcast.id));
         broadcastsGrid.appendChild(card);
       });
       updatePagination();
