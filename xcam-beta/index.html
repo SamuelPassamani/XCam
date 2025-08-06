@@ -216,11 +216,13 @@
       cursor: pointer;
       /* Fundo preto enquanto o iframe carrega */
     }
+
     .card-preview-container .badge-live,
     .card-preview-container .absolute.bottom-2.right-2 {
       z-index: 20;
       pointer-events: none;
     }
+
     .card-preview-container iframe {
       aspect-ratio: 16/9;
       width: 100%;
@@ -229,6 +231,7 @@
       inset: 0;
       z-index: 10;
     }
+
     .card-preview-container img.card-poster {
       aspect-ratio: 16/9;
       width: 100%;
@@ -1053,7 +1056,7 @@
 
     function startCarouselRotation() {
       setInterval(showNextSlide, 15000);
- }
+    }
 
     function goToSlide(index) {
       const items = document.querySelectorAll('.carousel-item');
