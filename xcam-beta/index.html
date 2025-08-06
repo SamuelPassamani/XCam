@@ -1254,11 +1254,21 @@
         `;
         // Find the new containers inside the card
         const previewContainer = card.querySelector('.card-preview-container');
-        const infoContainer = card.querySelector('.card-info-container');
         previewContainer.dataset.username = broadcast.username;
         previewContainer.style.cursor = 'pointer';
-        previewContainer.addEventListener('mouseenter', handleCardHover);
-        previewContainer.addEventListener('mouseleave', handleCardMouseLeave);
+        // Adiciona eventos de hover no card inteiro
+        card.addEventListener('mouseenter', function(e) {
+          handleCardHover({
+            currentTarget: previewContainer
+          });
+        });
+        card.addEventListener('mouseleave', function(e) {
+          handleCardMouseLeave({
+            currentTarget: previewContainer
+          });
+        });
+        // Remove eventos dos containers internos
+        // (Não adiciona eventos de mouseenter/mouseleave em previewContainer ou infoContainer)
         const clickOverlay = previewContainer.querySelector('.card-click-overlay');
         clickOverlay.addEventListener('click', (e) => {
           e.stopPropagation();
