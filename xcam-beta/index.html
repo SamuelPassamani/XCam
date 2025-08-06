@@ -216,13 +216,11 @@
       cursor: pointer;
       /* Fundo preto enquanto o iframe carrega */
     }
-
     .card-preview-container .badge-live,
     .card-preview-container .absolute.bottom-2.right-2 {
       z-index: 20;
       pointer-events: none;
     }
-
     .card-preview-container iframe {
       aspect-ratio: 16/9;
       width: 100%;
@@ -231,7 +229,6 @@
       inset: 0;
       z-index: 10;
     }
-
     .card-preview-container img.card-poster {
       aspect-ratio: 16/9;
       width: 100%;
@@ -933,7 +930,7 @@
     async function fetchInitialData() {
       const API_URL = 'https://api.xcam.gay/';
       try {
-        const response = await fetch(`${API_URL}?limit=10&page=1`);
+        const response = await fetch(`${API_URL}?limit=12&page=1`);
         if (!response.ok) throw new Error('Failed to fetch initial data');
         const data = await response.json();
         const items = data.broadcasts.items || [];
@@ -1056,7 +1053,7 @@
 
     function startCarouselRotation() {
       setInterval(showNextSlide, 15000);
-    }
+ }
 
     function goToSlide(index) {
       const items = document.querySelectorAll('.carousel-item');
@@ -1064,28 +1061,45 @@
       items.forEach((item, i) => {
         const mediaContainer = item.querySelector('.carousel-media-container');
         if (i === index) {
-          // Ativa o slide
           item.classList.remove('opacity-0');
-          // Adiciona o iframe se não existir
+          // Se não existe um poster, adiciona
+          if (!mediaContainer.querySelector('img')) {
+            const broadcast = carouselItems[i];
+            const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
+            mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">`;
+          }
+          // Se não existe um loader, adiciona
+          if (!mediaContainer.querySelector('.carousel-loader')) {
+            const loader = document.createElement('div');
+            loader.className = 'carousel-loader absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10';
+            loader.innerHTML = '<span class="loader"></span>';
+            mediaContainer.appendChild(loader);
+          }
+          // Se não existe um iframe, adiciona
           if (!mediaContainer.querySelector('iframe')) {
             const username = item.dataset.username;
             const iframe = document.createElement('iframe');
-            iframe.className = 'w-full h-full border-0';
+            iframe.className = 'w-full h-full border-0 absolute inset-0';
             iframe.src = `https://player.xcam.gay/hls/?user=${username}`;
             iframe.setAttribute('allow', 'autoplay; encrypted-media');
-            // Limpa o container e adiciona o iframe
-            mediaContainer.innerHTML = '';
+            iframe.style.opacity = '0';
+            iframe.onload = () => {
+              // Remove loader
+              const loader = mediaContainer.querySelector('.carousel-loader');
+              if (loader) loader.remove();
+              // Remove poster
+              const poster = mediaContainer.querySelector('.carousel-poster');
+              if (poster) poster.remove();
+              iframe.style.opacity = '1';
+            };
             mediaContainer.appendChild(iframe);
           }
         } else {
-          // Desativa o slide
           item.classList.add('opacity-0');
-          // Remove o iframe para parar o vídeo e restaurar o poster
-          if (mediaContainer.querySelector('iframe')) {
-            const broadcast = carouselItems[i];
-            const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-            mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">`;
-          }
+          // Remove iframe e loader, restaura poster
+          const broadcast = carouselItems[i];
+          const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
+          mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">`;
         }
       });
       indicators.forEach((indicator, i) => {
