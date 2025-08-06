@@ -1214,10 +1214,7 @@
           <div class="p-4 card-info-container cursor-pointer">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-white">@${broadcast.username}</h3>
-              <div class="flex items-center text-sm text-gray-400">
-                <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)"></span>
-                <span>${getCountryName(broadcast.country)}</span>
-              </div>
+              <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)" title="${getCountryName(broadcast.country)}" alt="${getCountryName(broadcast.country)}"></span>
             </div>
             <div class="flex flex-wrap gap-2 mb-2">
               <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs flex items-center">
