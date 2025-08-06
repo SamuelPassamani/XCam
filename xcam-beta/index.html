@@ -1230,7 +1230,7 @@
             </div>
             <div class="absolute inset-0 z-30 cursor-pointer card-click-overlay"></div>
           </div>
-          <div class="p-4 card-info-container cursor-pointer">
+          <div class="p-4 card-info-container">
             <div class="flex items-center justify-between mb-2">
               <h3 class="font-bold text-white">@${broadcast.username}</h3>
               <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)" title="${getCountryName(broadcast.country)}" alt="${getCountryName(broadcast.country)}"></span>
@@ -1264,7 +1264,7 @@
           e.stopPropagation();
           openModal(broadcast.id);
         });
-        infoContainer.addEventListener('click', () => openModal(broadcast.id));
+        // Não adiciona evento de clique ao infoContainer
         broadcastsGrid.appendChild(card);
       });
       updatePagination();
