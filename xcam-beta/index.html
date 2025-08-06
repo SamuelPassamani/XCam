@@ -1313,11 +1313,22 @@
     // Pagination Logic
     function updatePagination() {
       pageNumbers.innerHTML = '';
-      let startPage = Math.max(1, currentPage - 2);
-      let endPage = Math.min(totalPages, currentPage + 2);
-      if (endPage - startPage < 4) {
-        if (startPage === 1) endPage = Math.min(5, totalPages);
-        else if (endPage === totalPages) startPage = Math.max(1, totalPages - 4);
+      let isMobile = window.innerWidth < 640;
+      let startPage, endPage;
+      if (isMobile) {
+        // Mostra só 3 páginas
+        startPage = Math.max(1, currentPage - 1);
+        endPage = Math.min(totalPages, startPage + 2);
+        if (endPage - startPage < 2) {
+          startPage = Math.max(1, endPage - 2);
+        }
+      } else {
+        startPage = Math.max(1, currentPage - 2);
+        endPage = Math.min(totalPages, currentPage + 2);
+        if (endPage - startPage < 4) {
+          if (startPage === 1) endPage = Math.min(5, totalPages);
+          else if (endPage === totalPages) startPage = Math.max(1, totalPages - 4);
+        }
       }
       for (let i = startPage; i <= endPage; i++) {
         const pageButton = document.createElement('button');
@@ -1325,6 +1336,22 @@
         pageButton.textContent = i;
         pageButton.addEventListener('click', () => goToPage(i));
         pageNumbers.appendChild(pageButton);
+      }
+      // Botões de navegação
+      if (isMobile) {
+        firstPageButton.innerHTML = `<svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 19l-7-7 7-7\"></path></svg>`;
+        prevPageButton.innerHTML = `<svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M11 19l-7-7 7-7\"></path></svg>`;
+        nextPageButton.innerHTML = `<svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 5l7 7-7 7\"></path></svg>`;
+        lastPageButton.innerHTML = `<svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg>`;
+        firstPageButton.title = "Primeira";
+        prevPageButton.title = "Anterior";
+        nextPageButton.title = "Próxima";
+        lastPageButton.title = "Última";
+      } else {
+        firstPageButton.textContent = "Primeira";
+        prevPageButton.textContent = "Anterior";
+        nextPageButton.textContent = "Próxima";
+        lastPageButton.textContent = "Última";
       }
       [firstPageButton, prevPageButton].forEach(btn => btn.disabled = currentPage === 1);
       [nextPageButton, lastPageButton].forEach(btn => btn.disabled = currentPage === totalPages);
