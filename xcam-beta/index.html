@@ -215,6 +215,31 @@
       background-color: #000;
       /* Fundo preto enquanto o iframe carrega */
     }
+
+    .card-preview-container .badge-live,
+    .card-preview-container .absolute.bottom-2.right-2 {
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .card-preview-container iframe {
+      aspect-ratio: 16/9;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+    }
+
+    .card-preview-container img.card-poster {
+      aspect-ratio: 16/9;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+    }
   </style>
   <meta name="6a97888e-site-verification" content="15989ae96dff82fe33826928ae653613">
   <link rel="manifest" href="/manifest.json">
@@ -556,7 +581,7 @@
             </a>
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors" title="Instagram">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
               </svg>
             </a>
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors" title="Facebook">
@@ -1117,13 +1142,13 @@
       if (previewContainer.querySelector('iframe')) return;
       // Create a loader element
       const loader = document.createElement('div');
-      loader.className = 'card-loader absolute inset-0 flex items-center justify-center bg-black bg-opacity-50';
+      loader.className = 'card-loader absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10';
       loader.innerHTML = '<span class="loader"></span>';
       previewContainer.appendChild(loader);
       // Create the iframe for the live preview
       const iframe = document.createElement('iframe');
       iframe.style.opacity = '0'; // Start hidden
-      iframe.className = 'absolute inset-0 w-full h-full border-0 transition-opacity duration-300 aspect-[16/9]';
+      iframe.className = 'absolute inset-0 w-full h-full border-0 transition-opacity duration-300 aspect-video';
       iframe.src = `https://player.xcam.gay/hls/?user=${username}`;
       iframe.setAttribute('frameborder', '0');
       iframe.setAttribute('allow', 'autoplay; encrypted-media');
@@ -1134,8 +1159,10 @@
         if (poster) poster.style.display = 'none'; // Hide poster completely
         iframe.style.opacity = '1';
       };
-      // Add the iframe to the container
-      previewContainer.appendChild(iframe);
+      // Add the iframe to the container, but before the overlays
+      const badge = previewContainer.querySelector('.badge-live');
+      const viewers = previewContainer.querySelector('div.absolute.bottom-2.right-2');
+      previewContainer.insertBefore(iframe, badge);
     }
     /**
      * Handles the mouse leaving the preview area of a broadcast card.
@@ -1176,37 +1203,37 @@
           broadcast.tags.map(tag => `<span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">#${tag.name}</span>`).join(' ') :
           '';
         card.innerHTML = `
-          <div class=\"relative card-preview-container aspect-[16/9]\">
-            <img src=\"${posterUrl}\" alt=\"${broadcast.username}\" class=\"card-poster w-full aspect-[16/9] object-cover\">
-            <span class=\"badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium\">AO VIVO</span>
-            <div class=\"absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center\">
-              <svg class=\"w-3 h-3 mr-1\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 12a3 3 0 11-6 0 3 3 0 016 0z\"></path><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z\"></path></svg>
+          <div class="relative card-preview-container aspect-video">
+            <img src="${posterUrl}" alt="${broadcast.username}" class="card-poster w-full aspect-video object-cover">
+            <span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium z-20">AO VIVO</span>
+            <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center z-20">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
               ${broadcast.viewers}
             </div>
           </div>
-          <div class=\"p-4 card-info-container cursor-pointer\">
-            <div class=\"flex items-center justify-between mb-2\">
-              <h3 class=\"font-bold text-white\">@${broadcast.username}</h3>
-              <div class=\"flex items-center text-sm text-gray-400\">
-                <span class=\"flag-icon\" style=\"background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)\"></span>
+          <div class="p-4 card-info-container cursor-pointer">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-white">@${broadcast.username}</h3>
+              <div class="flex items-center text-sm text-gray-400">
+                <span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${broadcast.country}.png)"></span>
                 <span>${getCountryName(broadcast.country)}</span>
               </div>
             </div>
-            <div class=\"flex flex-wrap gap-2 mb-2\">
-              <span class=\"bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs flex items-center\">
-                <img src=\"${GENDER_ICON_SVG}\" class=\"w-3 h-3 mr-1.5\" alt=\"Gender Icon\">
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs flex items-center">
+                <img src="${GENDER_ICON_SVG}" class="w-3 h-3 mr-1.5" alt="Gender Icon">
                 ${TRANSLATIONS.gender[broadcast.gender] || broadcast.gender}
               </span>
-              <span class=\"bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs flex items-center\">
-                <img src=\"${ORIENTATION_ICON_SVG}\" class=\"w-3 h-3 mr-1.5\" alt=\"Orientation Icon\">
+              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs flex items-center">
+                <img src="${ORIENTATION_ICON_SVG}" class="w-3 h-3 mr-1.5" alt="Orientation Icon">
                 ${TRANSLATIONS.sexPreference[broadcast.sexualOrientation] || broadcast.sexualOrientation}
               </span>
-              <span class=\"bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs flex items-center\">
-                <img src=\"${BROADCAST_TYPE_ICON_SVG}\" class=\"w-3 h-3 mr-1.5\" alt=\"Broadcast Type Icon\">
+              <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs flex items-center">
+                <img src="${BROADCAST_TYPE_ICON_SVG}" class="w-3 h-3 mr-1.5" alt="Broadcast Type Icon">
                 ${TRANSLATIONS.broadcastType[broadcast.broadcastType] || broadcast.broadcastType}
               </span>
             </div>
-            <div class=\"flex flex-wrap gap-1 mt-2\">${tagsHTML}</div>
+            <div class="flex flex-wrap gap-1 mt-2">${tagsHTML}</div>
           </div>
         `;
         // Find the new containers inside the card
