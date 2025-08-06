@@ -327,27 +327,6 @@
   </header>
 
   <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <section class="mb-10 relative overflow-hidden rounded-xl retro-glow">
-      <div id="carousel" class="relative h-64 md:h-80 lg:h-96">
-        <div id="carousel-items" class="h-full">
-        </div>
-
-        <button id="prev-slide" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all" title="Anterior">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </button>
-        <button id="next-slide" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all" title="Próximo">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-
-        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20" id="carousel-indicators">
-        </div>
-      </div>
-    </section>
-
     <div class="flex flex-col lg:flex-row gap-6">
       <aside class="w-full lg:w-1/4 space-y-6">
         <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
@@ -387,7 +366,43 @@
           </div>
         </div>
 
-        <div class="bg-gray-900 rounded-xl p-4 border border-gray-800">
+        <!-- ANÚNCIO 160 x 600 -->
+        <div class="h-[600px] w-[160px] mx-auto rounded-lg flex items-center justify-center">
+          <script type="text/javascript">
+            atOptions = {
+              'key': '434854185c362cb10313038308c5724a',
+              'format': 'iframe',
+              'height': 600,
+              'width': 160,
+              'params': {}
+            };
+          </script>
+          <script type="text/javascript" src="https://www.highperformanceformat.com/434854185c362cb10313038308c5724a/invoke.js"></script>
+        </div>
+      </aside>
+      <div class="w-full lg:w-3/4 flex flex-col gap-6">
+        <section class="relative overflow-hidden rounded-xl retro-glow">
+          <div id="carousel" class="relative h-64 md:h-80 lg:h-96">
+            <div id="carousel-items" class="h-full">
+            </div>
+
+            <button id="prev-slide" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all" title="Anterior">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <button id="next-slide" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 z-20 hover:bg-opacity-70 transition-all" title="Próximo">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+
+            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20" id="carousel-indicators">
+            </div>
+          </div>
+        </section>
+
+        <section class="bg-gray-900 rounded-xl p-4 border border-gray-800">
           <h3 class="text-xl font-bold mb-4 text-white">Streamers em Alta</h3>
           <div id="top-streamers" class="space-y-3">
             <div class="animate-pulse">
@@ -418,24 +433,8 @@
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- ANÚNCIO 160 x 600 -->
-        <div class="h-[600px] w-[160px] mx-auto rounded-lg flex items-center justify-center">
-          <script type="text/javascript">
-            atOptions = {
-              'key': '434854185c362cb10313038308c5724a',
-              'format': 'iframe',
-              'height': 600,
-              'width': 160,
-              'params': {}
-            };
-          </script>
-          <script type="text/javascript" src="https://www.highperformanceformat.com/434854185c362cb10313038308c5724a/invoke.js"></script>
-        </div>
-      </aside>
-
-      <div class="w-full lg:w-3/4">
         <!-- ANÚNCIO 728 x 90 -->
         <div class="h-[90px] w-full max-w-[728px] mx-auto mb-6 rounded-lg flex items-center justify-center">
           <script type="text/javascript">
