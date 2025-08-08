@@ -1,884 +1,60 @@
-/* ============================================================
-   BASE ESTRUTURAL E RESET
-   ============================================================
-   - Define estilos base e variáveis de fonte/cor.
-   - Remove margens e paddings default.
-   - Garante fundo, cor principal e altura mínima.
-=============================================================== */
+/* Estilos movidos do <style> do index.html */
 body {
   font-family: "Inter", sans-serif;
   background-color: #121212;
-  color: #ffffff;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-
-body.modal-open {
-  overflow: hidden;
-}
-
-/* ============================================================
-   ANIMAÇÕES E EFEITOS GLOBAIS
-   ============================================================
-   - Pulse: destaque para elementos "vivos" (badges, etc).
-   - fadeIn: transições suaves de entrada.
-   - slideDown/slideUp: transições em modais/menus.
-=============================================================== */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* ============================================================
-   HEADER E NAVEGAÇÃO
-   ============================================================
-   - Header fixo, com blur, responsivo.
-   - Menu desktop e mobile.
-   - Busca estilizada.
-=============================================================== */
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background-color: rgba(18, 18, 18, 0.95);
-  border-bottom: 1px solid #333333;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
-}
-
-.logo {
-  height: 40px;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 24px;
-}
-
-.nav-link {
-  color: #cccccc;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s;
-  position: relative;
-}
-
-.nav-link:hover {
-  color: #ffffff;
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #ff007f, #ff4500);
-  transition: width 0.3s;
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  background-color: #1a1a1a;
-  border-radius: 4px;
-  padding: 6px 12px;
-  border: 1px solid #333333;
-  width: 240px;
-}
-
-.search-bar input {
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  outline: none;
-  width: 100%;
-  margin-left: 8px;
-}
-
-.search-bar i {
-  color: #888888;
-}
-
-.mobile-menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: #ffffff;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-/* ============================================================
-   MENU MOBILE - RESTAURADO E AJUSTADO (PARA IGUALAR O ORIGINAL)
-   ============================================================
-   - Exibe o menu mobile em telas pequenas.
-   - Oculta em telas médias/grandes.
-   - Slide in/out, sobreposição correta, responsividade.
-   - Garante clique fora para fechar (JS), focus-trap opcional.
-   - Hierarquia z-index para sobrepor header.
-   - Inclui busca no mobile.
-=============================================================== */
-.mobile-menu {
-  display: none;
-  position: fixed;
-  top: 60px;
-  left: 0;
-  right: 0;
-  background-color: #1a1a1a;
-  padding: 16px;
-  flex-direction: column;
-  gap: 16px;
-  border-bottom: 1px solid #333333;
-  transform: translateY(-100%);
-  opacity: 0;
-  transition: transform 0.3s, opacity 0.3s;
-  z-index: 999;
-}
-
-.mobile-menu.active {
-  display: flex;
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* Links do menu mobile */
-.mobile-menu .nav-link {
-  color: #cccccc;
-  padding: 14px 0 14px 8px;
-  font-size: 18px;
-  font-weight: 500;
-  text-decoration: none;
-  border-bottom: 1px solid #222;
-  transition: background 0.2s, color 0.2s;
-  border-radius: 4px;
-}
-
-.mobile-menu .nav-link:last-child {
-  border-bottom: none;
-}
-
-.mobile-menu .nav-link:hover,
-.mobile-menu .nav-link:focus {
-  background: #232323;
-  color: #ff007f;
-  outline: none;
-}
-
-/* Barra de busca dentro do menu mobile */
-.mobile-search {
-  display: flex;
-  align-items: center;
-  background-color: #232323;
-  border-radius: 4px;
-  padding: 8px 12px;
-  margin-top: 8px;
-  border: 1px solid #333333;
-}
-
-.mobile-search input {
-  background: transparent;
-  border: none;
-  color: #fff;
-  outline: none;
-  width: 100%;
-  margin-left: 8px;
-  font-size: 16px;
-}
-
-.mobile-search i {
-  color: #888;
-  font-size: 18px;
-}
-
-/* Botão hambúrguer só aparece no mobile */
-.mobile-menu-toggle {
-  display: none;
-}
-
-/* ===================== MEDIA QUERIES ===================== */
-
-/* No mobile/tablet: mostra botão e menu mobile, esconde menu desktop e barra desktop */
-@media (max-width: 900px) {
-  .mobile-menu-toggle {
-    display: block;
-  }
-  .nav-menu,
-  .search-bar {
-    display: none !important;
-  }
-  /* .mobile-menu { display: flex; NÃO defina aqui, pois .active controla isso } */
-}
-
-/* No desktop: esconde menu mobile */
-@media (min-width: 901px) {
-  .mobile-menu {
-    display: none !important;
-  }
-  .mobile-menu-toggle {
-    display: none !important;
-  }
-}
-
-/* ============================================================
-   CARROSSEL DE DESTAQUES (SLIDES E CONTROLES)
-   ============================================================
-   - Container principal, slides individuais, overlays, botões, badges.
-   - Responsividade para mobile e tablets.
-=============================================================== */
-
-/* Container principal do carrossel */
-.carousel {
-  position: relative;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  height: 480px;
-  margin-top: 60px;
-  overflow: hidden;
-  z-index: 1;
-}
-
-/* Slide individual absoluto, apenas .active fica visível */
-.carousel-slide {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  z-index: 0;
-}
-
-.carousel-slide.active {
-  opacity: 1;
-  z-index: 1;
-}
-
-/* Imagem de fundo do slide */
-.carousel-image {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-/* Sobreposição escura para contraste de texto */
-.carousel-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.8) 0%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.2) 100%
-  );
-  pointer-events: none;
-}
-
-/* Conteúdo centralizado e animado */
-.carousel-content {
-  text-align: center;
-  z-index: 2;
-  max-width: 600px;
-  margin: 0 auto;
-  animation: fadeIn 0.5s;
-  position: relative;
-  top: 40%;
-  transform: translateY(-40%);
-}
-
-/* Badge "AO VIVO" */
-.carousel-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: inline-block;
-  background: linear-gradient(90deg, #ff4500, #ff007f);
   color: white;
-  padding: 10px 26px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 17px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  animation: pulse 1.5s infinite;
-  z-index: 3;
 }
-
-/* Nome do streamer */
-.carousel-username {
-  position: absolute;
-  top: 310px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 28px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 16px 0 8px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* Informações rápidas (país, espectadores) */
-.carousel-info {
-  position: absolute;
-  top: 16px;
-  left: 70px;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  z-index: 3;
-}
-
-.carousel-country img {
-  height: 23px;
-  border-radius: 4px;
-}
-
-.carousel-viewers {
-  display: flex;
-  align-items: center;
-  color: #cccccc;
-  font-size: 20px;
-}
-
-/* Botão principal do carrossel ("Assistir", "Entrar", ...) */
-.carousel-button {
-  display: block;
-  position: absolute;
-  background: linear-gradient(135deg, #ff007f, #800080);
-  color: white;
-  bottom: 50px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 18px;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s;
-  z-index: 3;
-  box-shadow: 0 4px 16px rgba(255, 0, 127, 0.15);
-  border: none;
-}
-
-.carousel-button:hover,
-.carousel-button:focus {
-  transform: translateX(-50%) scale(1.08);
-  box-shadow: 0 8px 32px rgba(255, 0, 127, 0.3);
-  outline: none;
-}
-
-/* Controles laterais (anterior/próximo) */
-.carousel-controls {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 24px;
-  transform: translateY(-50%);
-  z-index: 4;
-  pointer-events: none;
-}
-
-.carousel-control {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.3s, background 0.3s;
-  font-size: 20px;
-  pointer-events: all;
-  border: none;
-  outline: none;
-}
-
-.carousel-control:hover,
-.carousel-control:focus {
-  opacity: 1;
-  background-color: rgba(255, 0, 127, 0.75);
-}
-
-/* Indicadores/bullets de slides */
-.carousel-indicators {
-  position: absolute;
-  bottom: 24px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  z-index: 4;
-}
-
-.carousel-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  outline: none;
-  border: none;
-}
-
-.carousel-indicator.active,
-.carousel-indicator:focus {
-  background-color: #ff007f;
-  transform: scale(1.2);
-}
-
-/* Iframe do carrossel de destaques */
-.carousel-iframe {
-  width: 100%;
-  height: 100%;
-  min-height: 100px;
-  max-height: 100%;
-  border: none;
-  border-radius: 8px;
-  background: #000;
-  display: block;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  transition: transform 0.3s;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* Efeito de zoom no hover do slide/carrossel */
-.carousel-slide:hover .carousel-iframe,
-.carousel-slide.active .carousel-iframe {
-  transform: scale(1.04);
-}
-
-/* Responsividade para o iframe do carrossel */
-@media (max-width: 900px) {
-  .carousel-iframe {
-    min-height: 60px;
-    border-radius: 6px;
-  }
-}
-
-/* =========== RESPONSIVIDADE DO CARROSSEL =========== */
-@media (max-width: 900px) {
-  .carousel {
-    height: 320px;
-  }
-  .carousel-username {
-    top: 180px;
-    font-size: 22px;
-  }
-  .carousel-content {
-    max-width: 90vw;
-    font-size: 14px;
-  }
-}
-@media (max-width: 600px) {
-  .carousel {
-    height: 180px;
-    margin-top: 50px;
-  }
-  .carousel-username {
-    top: 85px;
-    font-size: 16px;
-  }
-  .carousel-badge {
-    font-size: 12px;
-    padding: 5px 12px;
-  }
-  .carousel-content {
-    top: 35%;
-    max-width: 98vw;
-    font-size: 11px;
-  }
-  .carousel-controls {
-    padding: 0 6px;
-  }
-  .carousel-indicator {
-    width: 8px;
-    height: 8px;
-  }
-  .carousel-button {
-    bottom: 16px;
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-}
-
-/* ============================================================
-   FILTROS DE BUSCA (FILTERS)
-   ============================================================
-   - Seção de filtros: país, gênero, orientação.
-   - Visual destacado, responsivo, botões com feedback.
-   - Correção: garante contraste e acessibilidade.
-=============================================================== */
-
-.filters-section {
-  position: relative;
-  padding: 24px;
-  background-color: #1a1a1a;
-  border-bottom: 1px solid #333333;
-  z-index: 0;
-}
-
-.filters-container {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  min-width: 200px;
-}
-
-.filter-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #cccccc;
-}
-
-.filter-select {
-  background-color: #2a2a2a;
-  border: 1px solid #333333;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  outline: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.34 4 3.204 4h9.592c.864 0 1.319 1.013.753 1.658l-4.796 5.482a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
-}
-
-.filter-select:focus {
-  border-color: #ff007f;
-  box-shadow: 0 0 0 2px rgba(255, 0, 127, 0.25);
-}
-
-.filter-button {
-  background: linear-gradient(135deg, #4169e1, #800080);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-  align-self: flex-end;
-}
-
-.filter-button:hover,
-.filter-button:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
-  outline: none;
-}
-
-/* ============================================================
-   GRADE DE TRANSMISSÕES (BROADCASTS GRID) E CARDS
-   ============================================================
-   - Grid responsiva, robusta, nunca some por bug de framework.
-   - Cards com efeito hover, thumbnail, badges e tags.
-   - Correções: display:grid !important, z-index consistente.
-=============================================================== */
-
-.broadcasts-section {
-  padding: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 0px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title i {
-  color: #ff007f;
-}
-
-.broadcasts-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
-  margin-bottom: 64px;
-  width: 100%;
-  min-height: 100px;
-  opacity: 1 !important;
-  visibility: visible !important;
-  z-index: 2;
-  box-sizing: border-box;
-  background: transparent;
-}
-
-.broadcast-card {
-  background-color: #1a1a1a;
-  border: 1px solid #333333;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-}
-
-.broadcast-card:hover,
-.broadcast-card:focus-within {
+.card-hover:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  outline: none;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
-
-.card-thumbnail {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-  overflow: hidden;
-}
-
-.card-thumbnail .poster-img,
-.card-thumbnail .poster-iframe {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  border-radius: 8px;
-  transition: opacity 0.2s;
-  object-fit: cover;
-  background: #000;
-}
-
-.card-thumbnail .poster-img {
-  z-index: 1;
-  opacity: 1;
-}
-
-.card-thumbnail .poster-iframe {
-  z-index: 2;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Hover: mostra o iframe e esconde a imagem */
-.broadcast-card:hover .poster-iframe,
-.broadcast-card:focus-within .poster-iframe {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.broadcast-card:hover .poster-img,
-.broadcast-card:focus-within .poster-img {
-  opacity: 0;
-}
-
-.card-overlay {
+.carousel-item {
+  transition: opacity 0.5s ease-in-out;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 1; /* Garante que a sobreposição fique acima do iframe */
-  pointer-events: none; /* Permite cliques "através" da sobreposição no iframe */
 }
-
-.broadcast-card:hover .card-overlay,
-.broadcast-card:focus-within .card-overlay {
-  opacity: 1;
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
 }
-
-.play-button {
-  width: 50px;
-  height: 50px;
-  background-color: rgba(255, 0, 127, 0.8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 20px;
-  transform: scale(0.8);
-  transition: transform 0.3s;
-  pointer-events: all; /* Garante que o botão de play seja clicável */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
-
-.broadcast-card:hover .play-button,
-.broadcast-card:focus-within .play-button {
-  transform: scale(1);
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
-
-.live-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: linear-gradient(90deg, #ff007f, #ff4500);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 12px;
-  animation: pulse 1.5s infinite;
-  z-index: 2; /* Garante que o badge fique acima de tudo */
-}
-
-.card-info {
-  padding: 12px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.card-username {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 80%;
-}
-
-.card-country img {
-  height: 16px;
-  border-radius: 2px;
-}
-
-.card-viewers {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #cccccc;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.tag {
-  background-color: #2a2a2a;
-  color: #cccccc;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-/* Estados: carregando, vazio, erro */
-.loading-state,
-.error-state,
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  text-align: center;
-  padding: 24px;
-}
-
 .loader {
   width: 48px;
   height: 48px;
-  border: 4px solid #333333;
-  border-top: 4px solid #ff007f;
+  border: 5px solid #fff;
+  border-bottom-color: #ff007f;
+  border-right-color: #4169e1;
+  border-top-color: #ffd700;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }
-
-@keyframes spin {
+@keyframes rotation {
   0% {
     transform: rotate(0deg);
   }
@@ -886,425 +62,138 @@ body.modal-open {
     transform: rotate(360deg);
   }
 }
-
-.error-icon,
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+.badge-live {
+  background: linear-gradient(90deg, #ff007f, #ff4500);
+  animation: pulse 1.5s infinite;
 }
-
-.error-state h3,
-.empty-state h3 {
-  font-size: 20px;
-  margin-bottom: 8px;
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-
-.error-state p,
-.empty-state p {
-  color: #cccccc;
-  margin-bottom: 16px;
+.pagination-btn {
+  transition: all 0.2s ease;
 }
-
-.error-state button {
-  background: linear-gradient(135deg, #ff007f, #800080);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
+.pagination-btn:hover:not(.pagination-active) {
+  background-color: rgba(255, 255, 255, 0.1);
 }
-
-/* Botão "Atualizar" */
-.update-button {
-  display: inline-block;
-  background: linear-gradient(135deg, #ff007f, #800080);
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-  border: none;
-  margin-left: auto;
+.pagination-active {
+  background: linear-gradient(90deg, #ff007f, #4169e1);
 }
-
-.update-button:hover {
-  transform: scale(1.1);
+.retro-grid {
+  background-image: linear-gradient(rgba(64, 64, 64, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(64, 64, 64, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
-
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+.retro-glow {
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 0, 127, 0.3);
 }
-
-/* ============================================================
-   PAGINAÇÃO E LOAD MORE
-   ============================================================
-   - Botões e números para navegação entre páginas/lotes.
-=============================================================== */
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-.pagination-button,
-.pagination-number {
-  min-width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #1a1a1a;
-  border: 1px solid #333333;
-  color: #ffffff;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.pagination-button:hover:not([disabled]),
-.pagination-number:hover:not(.active) {
-  background-color: #2a2a2a;
-}
-
-.pagination-number.active {
-  background: linear-gradient(135deg, #ff007f, #800080);
-  border: none;
-}
-
-.pagination-button[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Load more button container & button */
-.load-more-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.load-more-btn,
-#load-more {
-  background: linear-gradient(135deg, #ff007f, #800080);
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-  border: none;
-  border-radius: 4px;
-  padding: 12px 32px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(255, 0, 127, 0.08);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.load-more-btn:hover,
-#load-more:hover,
-.load-more-btn:focus,
-#load-more:focus {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(255, 0, 127, 0.2);
-  outline: none;
-}
-
-.load-more-btn[disabled],
-#load-more[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ============================================================
-   MODAL DE TRANSMISSÃO — RESPONSIVO, ADAPTÁVEL E MODERNO (ATUALIZADO)
-   ============================================================
-   - Overlay centralizado e escurecido com animação suave.
-   - Modal com largura e altura limitadas ao viewport, sem overflow.
-   - LARGURA MÁXIMA MAIOR no desktop (1200px), maior área útil para o player.
-   - Modal sempre centralizado (flex vertical/horizontal).
-   - Player responsivo (iframe), proporção garantida e máxima usabilidade.
-   - Botão de fechar acessível em todos os tamanhos.
-   - Otimizado para mobile, tablet, desktop e ultrawide.
-=============================================================== */
-
-/* ================= MODAL DE TRANSMISSÃO ================= */
-
-/* Overlay do modal: cobre toda a tela, centraliza o conteúdo, escurece o fundo */
-.modal-overlay {
+.modal {
+  display: none;
   position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.92);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s, visibility 0.3s;
-}
-
-.modal-overlay.active {
-  opacity: 1; 
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Conteúdo central do modal */
-.modal-content {
-  background: #181818;
-  border-radius: 16px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.65);
-  width: 99vw;
-  max-width: 1120px;
-  min-width: 300px;
-  max-height: 96vh;   /* Aumenta a altura máxima do modal */
-  min-height: 340px;  /* Garante altura mínima confortável */
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  position: relative;
-  overflow: hidden;
-  animation: fadeIn 0.25s;
-}
-
-/* Botão de fechar do modal */
-.modal-close {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.55);
-  border: none;
-  color: #fff;
-  font-size: 2rem;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.modal-close:hover,
-.modal-close:focus {
-  background: rgba(255, 0, 127, 0.85);
-  color: #fff;
-  outline: none;
-}
-
-/* Container do iframe ocupa toda a área útil do modal */
-.modal-iframe-container {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  min-height: 220px;   /* Aumenta a altura mínima */
-  max-height: 92vh;    /* Permite crescer mais verticalmente */
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  position: relative;
-  background: #000;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  overflow-y: auto;
 }
-
-/* Iframe ocupa 100% do container e preenche todo espaço disponível */
-.modal-iframe {
-  width: 100%;
-  height: 85vh;        /* Ajusta a altura do iframe para preencher mais o espaço */
-  min-height: 220px;
-  max-height: 92vh;
-  border: none;
-  background: #000;
-  display: block;
-  flex: 1 1 auto;
-  border-radius: 0 0 16px 16px;
+.modal-content {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 1200px;
+  animation: modalFadeIn 0.3s;
 }
-
-/* ================ RESPONSIVIDADE ================ */
-
-@media (max-width: 1000px) {
-  .modal-content {
-    max-width: 99vw;
-    border-radius: 12px;
-    min-width: 0;
-    max-height: 98vh;
-  }
-  .modal-iframe-container {
-    border-radius: 0 0 12px 12px;
-    min-height: 160px;
-    max-height: 90vh;
-  }
-  .modal-iframe {
-    border-radius: 0 0 12px 12px;
-    min-height: 160px;
-    height: 86vh;
-    max-height: 90vh;
-  }
-}
-
-@media (max-width: 600px) {
-  .modal-content {
-    width: 100vw;
-    max-width: 100vw;
-    border-radius: 0;
-    min-width: 0;
-    max-height: 100vh;
-  }
-  .modal-close {
-    top: 8px;
-    right: 8px;
-    font-size: 1.6rem;
-    width: 34px;
-    height: 34px;
-  }
-  .modal-iframe-container {
-    border-radius: 0;
-    min-height: 80px;
-    max-height: 96vh;
-  }
-  .modal-iframe {
-    border-radius: 0;
-    min-height: 80px;
-    height: 82vh;
-    max-height: 96vh;
-  }
-}
-
-@media (min-height: 900px) and (min-width: 1200px) {
-  .modal-content {
-    max-height: 800px;
-  }
-  .modal-iframe,
-  .modal-iframe-container {
-    max-height: 760px;
-  }
-}
-
-/* Animação de entrada */
-@keyframes fadeIn {
+@keyframes modalFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
-
-/* Toasts (notificações temporárias) */
-.toast-container {
-  position: fixed;
-  top: 80px;
-  right: 24px;
-  z-index: 2050;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.toast {
-  background: linear-gradient(135deg, #ff007f, #800080);
-  color: white;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-weight: 500;
-  box-shadow: 0 2px 12px rgba(255, 0, 127, 0.08);
-  min-width: 180px;
-  max-width: 320px;
-  animation: fadeIn 0.2s;
-  font-size: 15px;
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
 }
-.toast-success {
-  background: linear-gradient(135deg, #00c851, #33b5e5);
+.close-modal:hover {
+  background-color: rgba(255, 0, 127, 0.5);
 }
-.toast-error {
-  background: linear-gradient(135deg, #ff4444, #ff007f);
+.flag-icon {
+  width: 20px;
+  height: 15px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 2px;
 }
-
-/* ============================================================
-   RODAPÉ (FOOTER)
-   ============================================================
-   - Footer fixo ao final, responsivo, com links, descrições.
-=============================================================== */
-.footer {
-  background-color: #181818;
-  color: #cccccc;
-  padding: 40px 0 24px 0;
-  border-top: 1px solid #333333;
-  margin-top: 24px;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.footer-logo {
-  height: 44px;
-  margin-bottom: 14px;
-}
-
-.footer-description {
-  font-size: 15px;
-  color: #cccccc;
-  margin-bottom: 16px;
-  max-width: 380px;
-}
-
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.footer-link {
-  color: #cccccc;
-  text-decoration: none;
-  font-size: 15px;
-  transition: color 0.2s;
-}
-
-.footer-link:hover,
-.footer-link:focus {
-  color: #ff007f;
-  outline: none;
-}
-
-.footer-copyright {
-  margin-top: 24px;
-  font-size: 13px;
-  color: #555;
+.card-preview-container {
+  position: relative;
   width: 100%;
-  text-align: center;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  cursor: pointer;
 }
-
-/* Responsividade do footer */
-@media (max-width: 900px) {
-  .footer-content {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  .footer-logo {
-    margin-bottom: 8px;
-  }
+.card-preview-container .badge-live,
+.card-preview-container .absolute.bottom-2.right-2 {
+  z-index: 20;
+  pointer-events: none;
+}
+.card-preview-container iframe {
+  aspect-ratio: 16/9;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+.card-preview-container img.card-poster {
+  aspect-ratio: 16/9;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+.card-tag {
+  background: #232323;
+  color: #ccc;
+  transition: background 0.3s, color 0.3s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 0, 127, 0.1);
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+.card-tag:hover {
+  background: linear-gradient(90deg, #ff007f, #800080);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 0, 127, 0.25);
 }
