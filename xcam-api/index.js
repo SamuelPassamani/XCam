@@ -26,7 +26,7 @@
 const ALLOWED_ORIGINS_PATTERNS = [
   "https://xcam.gay", "https://beta.xcam.gay", "https://player.xcam.gay",
   "https://db.xcam.gay", "https://modal.xcam.gay", "https://live.xcam.gay",
-  "https://status.xcam.gay", "https://drive.xcam.gay",
+  "https://status.xcam.gay", "https://drive.xcam.gay", "https://api.xcam.gay/",
   "https://samuelpassamani.github.io", "https://xcam-app.aserio.workers.dev",
   "https://xcam-api.aserio.workers.dev", "http://127.0.0.1:5500",
   "https://web-sandbox.oaiusercontent.com", "https://persistent.oaistatic.com",
@@ -552,4 +552,5 @@ export default {
  *
  * =========================================================================================
  */
+
 
