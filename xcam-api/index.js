@@ -332,11 +332,16 @@ export default {
     const url = new URL(request.url);
     const origin = request.headers.get('Origin');
     const allowedOrigin = getAllowedOrigin(origin);
-    // Se não for origin permitido, exige key válida
-    if (!allowedOrigin) {
-      const keyParam = url.searchParams.get('key');
-      if (!keyParam || !env || !env.key || keyParam !== env.key) {
-        return errorVideoResponse();
+    const { pathname } = url;
+
+    // EXCEÇÃO: Libera acesso público para poster imagem
+    if (!(pathname.startsWith('/poster/') && pathname.endsWith('.jpg'))) {
+      // Se não for origin permitido, exige key válida
+      if (!allowedOrigin) {
+        const keyParam = url.searchParams.get('key');
+        if (!keyParam || !env || !env.key || keyParam !== env.key) {
+          return errorVideoResponse();
+        }
       }
     }
 
@@ -552,5 +557,3 @@ export default {
  *
  * =========================================================================================
  */
-
-
