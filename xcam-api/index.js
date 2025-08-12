@@ -89,6 +89,31 @@ function jsonToCsv(items) {
   return [headers.join(","), ...csvRows].join("\n");
 }
 
+// Função para resposta de erro com vídeo em tela cheia
+function errorVideoResponse() {
+  const html = `
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+      <meta charset=\"UTF-8\">
+      <title>Acesso Negado</title>
+      <style>
+        html, body { height: 100%; margin: 0; background: #000; }
+        body { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; overflow: hidden; }
+        video { width: 100vw; height: 100vh; object-fit: cover; }
+      </style>
+    </head>
+    <body>
+      <video src="https://i.imgur.com/RagmROo.mp4" autoplay loop muted playsinline></video>
+    </body>
+    </html>
+  `;
+  return new Response(html, {
+    status: 403,
+    headers: { "Content-Type": "text/html; charset=utf-8" }
+  });
+}
+
 // --- Bloco de Funções de Requisição a APIs Externas ---
 
 function buildCam4GraphQLBody(offset, limit) {
@@ -277,12 +302,21 @@ async function handleUserFullInfo(username) {
 // --- Ponto de Entrada e Roteador Principal ---
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     if (request.method === 'OPTIONS') {
       return handleOptions(request);
     }
-
     const url = new URL(request.url);
+    const origin = request.headers.get('Origin');
+    const allowedOrigin = getAllowedOrigin(origin);
+    // Se não for origin permitido, exige key válida
+    if (!allowedOrigin) {
+      const keyParam = url.searchParams.get('key');
+      if (!keyParam || !env || !env.key || keyParam !== env.key) {
+        return errorVideoResponse();
+      }
+    }
+
     const { pathname, searchParams } = url;
     let response;
 
@@ -495,4 +529,3 @@ export default {
  *
  * =========================================================================================
  */
-
