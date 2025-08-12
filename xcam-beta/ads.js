@@ -27,15 +27,19 @@ function processAdSlots() {
     }
     // Se não couber nenhum, pega o menor
     if (!chosenZoneId) chosenZoneId = sortedZoneIds[sortedZoneIds.length - 1];
-    // Cria o placeholder <ins>
-    const ins = document.createElement('ins');
-    ins.className = 'eas6a97888e2';
-    ins.setAttribute('data-zoneid', chosenZoneId);
-    slot.appendChild(ins);
-    // Cria o script de ativação
-    const script = document.createElement('script');
-    script.innerHTML = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
-    slot.appendChild(script);
+    const size = ZONE_ID_MAP[chosenZoneId];
+    if (!size) return;
+    // Cria o iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = `//a.magsrv.com/iframe.php?idzone=${chosenZoneId}&size=${size.width}x${size.height}`;
+    iframe.width = size.width;
+    iframe.height = size.height;
+    iframe.scrolling = 'no';
+    iframe.marginWidth = '0';
+    iframe.marginHeight = '0';
+    iframe.frameBorder = '0';
+    iframe.setAttribute('style', 'display:block; border:0;');
+    slot.appendChild(iframe);
   });
 }
 
