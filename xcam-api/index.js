@@ -345,7 +345,7 @@ export default {
       }
     }
 
-    const { pathname, searchParams } = url;
+    const { searchParams } = url;
     let response;
 
     try {
