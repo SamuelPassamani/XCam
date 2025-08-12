@@ -116,7 +116,7 @@ function errorVideoResponse() {
           top: 0; left: 0;
           width: 100vw;
           height: 100vh;
-          object-fit: contain;
+          object-fit: cover;
           background: #000;
           border: none;
           margin: 0;
@@ -127,7 +127,7 @@ function errorVideoResponse() {
       </style>
     </head>
     <body>
-      <video src="https://i.imgur.com/RagmROo.mp4" autoplay loop muted playsinline></video>
+      <video src="https://i.imgur.com/fwRPZmQ.mp4" autoplay loop muted playsinline></video>
     </body>
     </html>
   `;
@@ -552,3 +552,4 @@ export default {
  *
  * =========================================================================================
  */
+
