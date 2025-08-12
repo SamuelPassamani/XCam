@@ -95,7 +95,7 @@ function errorVideoResponse() {
     <!DOCTYPE html>
     <html lang="pt-br">
     <head>
-      <meta charset=\"UTF-8\">
+      <meta charset="UTF-8">
       <title>Acesso Negado</title>
       <style>
         html, body {
@@ -104,27 +104,25 @@ function errorVideoResponse() {
           margin: 0;
           padding: 0;
           background: #000;
+          overflow: hidden;
         }
         body {
-          position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
           width: 100vw;
           height: 100vh;
           overflow: hidden;
-          margin: 0;
-          padding: 0;
         }
         video {
           position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
+          top: 0; left: 0;
           width: 100vw;
           height: 100vh;
-          min-width: 100vw;
-          min-height: 100vh;
-          object-fit: cover;
+          object-fit: contain;
+          background: #000;
+          border: none;
           margin: 0;
           padding: 0;
           z-index: 9999;
+          aspect-ratio: 16/9;
         }
       </style>
     </head>
