@@ -424,7 +424,20 @@ export default {
         }
         response = new Response(JSON.stringify(data, null, 2), { headers: { 'Content-Type': 'application/json' }});
       }
-      // Rota 9: Listagem principal de transmissões (/)
+      // Rota 9: Proxy para lista de tags (?list=tags)
+      else if (searchParams.get('list') === 'tags') {
+        // Proxy para a URL do GAS
+        const GAS_LIST_TAGS_URL = "https://script.google.com/macros/s/AKfycbwpth8ujr2oAy9vVdS3KUnkppgtPmUCGeIviAPAMUSAlFNrp5sd2rfEHm3xhaUkVXQ/exec?list=tags";
+        const gasResponse = await fetch(GAS_LIST_TAGS_URL, { headers: { accept: "application/json" } });
+        const body = await gasResponse.text();
+        response = new Response(body, {
+          status: gasResponse.status,
+          headers: {
+            'Content-Type': gasResponse.headers.get('content-type') || 'application/json'
+          }
+        });
+      }
+      // Rota 10: Listagem principal de transmissões (/)
       else if (pathname === '/') {
         // Parâmetros de paginação, formato e filtro
         const page = parseInt(searchParams.get("page") || "1", 10);
