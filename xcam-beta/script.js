@@ -14,7 +14,7 @@ const ORIENTATION_ICON_SVG =
 // Global variables
 let broadcasts = []; // Acts as a cache for modal details
 let currentPage = 1;
-let itemsPerPage = 12; // Increased for better grid view
+let itemsPerPage = 15; // Increased for better grid view
 let totalPages = 1;
 let currentCarouselIndex = 0;
 let carouselItems = [];
@@ -289,7 +289,7 @@ function applyFilters() {
 function initializeFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const page = parseInt(params.get("page"), 10) || 1;
-  const limit = parseInt(params.get("limit"), 10) || 12;
+  const limit = parseInt(params.get("limit"), 10) || 15;
   const country = params.get("country") || "";
   const tags = params.get("tags") || "";
   itemsPerPage = limit;
@@ -911,4 +911,5 @@ if ("serviceWorker" in navigator) {
         console.log("Falha ao registrar o Service Worker:", error);
       });
   });
+
 }
