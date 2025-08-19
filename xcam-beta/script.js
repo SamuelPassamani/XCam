@@ -2,7 +2,7 @@
 import {
   COUNTRY_NAMES,
   TRANSLATIONS
-} from "https://cdn.jsdelivr.net/gh/SamuelPassamani/XCam@main/xcam-beta/translations.js";
+} from "https://xcam.gay/translations.js";
 // --- LÓGICA DA APLICAÇÃO ---
 // Constantes para os ícones
 const GENDER_ICON_SVG =
@@ -902,7 +902,7 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register(
-        "https://cdn.jsdelivr.net/gh/SamuelPassamani/XCam@main/xcam-beta/sw.js"
+        "https://xcam.gay/sw.js"
       )
       .then((registration) => {
         console.log("Service Worker registrado com sucesso:", registration);
@@ -913,3 +913,4 @@ if ("serviceWorker" in navigator) {
   });
 
 }
+
