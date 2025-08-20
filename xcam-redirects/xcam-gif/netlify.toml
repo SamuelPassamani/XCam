@@ -1,1 +1,11 @@
-
+[[redirects]]
+  from = "/*"
+  to = "https://cdn.xcam.gay/10:/XCam/Conte%C3%BAdo%20Social/XCam%20Social%20M%C3%ADdias/XCam%20GIFs/:splat"
+  status = 200
+  force = true
+    [redirects.headers]
+    Access-Control-Allow-Origin = ""
+    Access-Control-Allow-Headers = ""
+    Access-Control-Allow-Methods = ""
+    Access-Control-Allow-Credentials = ""
+    Vary = ""
