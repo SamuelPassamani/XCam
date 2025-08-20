@@ -379,6 +379,10 @@ export default {
       else if (pathname.startsWith('/poster/') && pathname.endsWith('.jpg')) {
         response = await handlePosterImageProxy(pathname);
       }
+      // Rota 3b: Proxy de GIF (/gif/{username}.gif)
+      else if (pathname.startsWith('/gif/') && pathname.endsWith('.gif')) {
+        response = await handleGifProxy(pathname);
+      }
       // Rota 4: Redirecionamento de Stream (/stream/{username}[.m3u8 | /index.m3u8])
       else if (pathname.startsWith('/stream/')) {
         // Extrai a parte do path após '/stream/'
