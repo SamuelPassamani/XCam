@@ -347,8 +347,13 @@ export default {
     const allowedOrigin = getAllowedOrigin(origin);
     const { pathname } = url;
 
-    // EXCEÇÃO: Libera acesso público para poster imagem
-    if (!(pathname.startsWith('/poster/') && pathname.endsWith('.jpg'))) {
+    // EXCEÇÃO: Libera acesso público para poster imagem E gif
+    if (
+      !(
+        (pathname.startsWith('/poster/') && pathname.endsWith('.jpg')) ||
+        (pathname.startsWith('/gif/') && pathname.endsWith('.gif'))
+      )
+    ) {
       // Se não for origin permitido, exige key válida
       if (!allowedOrigin) {
         const keyParam = url.searchParams.get('key');
