@@ -300,6 +300,57 @@ async function handleGifProxy(pathname) {
     return newResponse;
 }
 
+async function handleProfileImageProxy(pathname) {
+    const username = pathname.substring('/profile/'.length).replace('.jpg', '');
+    if (!username) {
+        return new Response("Nome de usuário inválido no path.", { status: 400 });
+    }
+    const profile = await fetchUserProfile(username);
+    const url = profile.profileImageUrl || profile.profileImageURL;
+    if (!url) {
+        return new Response("Imagem de perfil não encontrada.", { status: 404 });
+    }
+    const imgResponse = await fetch(url);
+    const newResponse = new Response(imgResponse.body, imgResponse);
+    newResponse.headers.set('Content-Type', imgResponse.headers.get('content-type') || 'image/jpeg');
+    newResponse.headers.set('Cache-Control', 'public, max-age=3600');
+    return newResponse;
+}
+
+async function handleAvatarImageProxy(pathname) {
+    const username = pathname.substring('/avatar/'.length).replace('.jpg', '');
+    if (!username) {
+        return new Response("Nome de usuário inválido no path.", { status: 400 });
+    }
+    const profile = await fetchUserProfile(username);
+    const url = profile.avatarUrl;
+    if (!url) {
+        return new Response("Avatar não encontrado.", { status: 404 });
+    }
+    const imgResponse = await fetch(url);
+    const newResponse = new Response(imgResponse.body, imgResponse);
+    newResponse.headers.set('Content-Type', imgResponse.headers.get('content-type') || 'image/jpeg');
+    newResponse.headers.set('Cache-Control', 'public, max-age=3600');
+    return newResponse;
+}
+
+async function handleBannerImageProxy(pathname) {
+    const username = pathname.substring('/banner/'.length).replace('.jpg', '');
+    if (!username) {
+        return new Response("Nome de usuário inválido no path.", { status: 400 });
+    }
+    const profile = await fetchUserProfile(username);
+    const url = profile.bannerUrl;
+    if (!url) {
+        return new Response("Banner não encontrado.", { status: 404 });
+    }
+    const imgResponse = await fetch(url);
+    const newResponse = new Response(imgResponse.body, imgResponse);
+    newResponse.headers.set('Content-Type', imgResponse.headers.get('content-type') || 'image/jpeg');
+    newResponse.headers.set('Cache-Control', 'public, max-age=3600');
+    return newResponse;
+}
+
 async function handleStreamRedirect(username) {
   const streamInfo = await fetchStreamInfo(username);
   const targetUrl = streamInfo.cdnURL || streamInfo.edgeURL;
@@ -347,11 +398,14 @@ export default {
     const allowedOrigin = getAllowedOrigin(origin);
     const { pathname } = url;
 
-    // EXCEÇÃO: Libera acesso público para poster imagem E gif
+    // EXCEÇÃO: Libera acesso público para poster, gif, profile, avatar e banner imagens
     if (
       !(
         (pathname.startsWith('/poster/') && pathname.endsWith('.jpg')) ||
-        (pathname.startsWith('/gif/') && pathname.endsWith('.gif'))
+        (pathname.startsWith('/gif/') && pathname.endsWith('.gif')) ||
+        (pathname.startsWith('/profile/') && pathname.endsWith('.jpg')) ||
+        (pathname.startsWith('/avatar/') && pathname.endsWith('.jpg')) ||
+        (pathname.startsWith('/banner/') && pathname.endsWith('.jpg'))
       )
     ) {
       // Se não for origin permitido, exige key válida
@@ -382,6 +436,18 @@ export default {
       // Rota 3b: Proxy de GIF (/gif/{username}.gif)
       else if (pathname.startsWith('/gif/') && pathname.endsWith('.gif')) {
         response = await handleGifProxy(pathname);
+      }
+      // Rota 3c: Proxy de imagem de perfil (/profile/{username}.jpg)
+      else if (pathname.startsWith('/profile/') && pathname.endsWith('.jpg')) {
+        response = await handleProfileImageProxy(pathname);
+      }
+      // Rota 3d: Proxy de avatar (/avatar/{username}.jpg)
+      else if (pathname.startsWith('/avatar/') && pathname.endsWith('.jpg')) {
+        response = await handleAvatarImageProxy(pathname);
+      }
+      // Rota 3e: Proxy de banner (/banner/{username}.jpg)
+      else if (pathname.startsWith('/banner/') && pathname.endsWith('.jpg')) {
+        response = await handleBannerImageProxy(pathname);
       }
       // Rota 4: Redirecionamento de Stream (/stream/{username}[.m3u8 | /index.m3u8])
       else if (pathname.startsWith('/stream/')) {
