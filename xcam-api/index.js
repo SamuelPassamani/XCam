@@ -287,6 +287,19 @@ async function handlePosterImageProxy(pathname) {
     return newResponse;
 }
 
+async function handleGifProxy(pathname) {
+    const username = pathname.substring('/gif/'.length).replace('.gif', '');
+    if (!username) {
+        return new Response("Nome de usuário inválido no path.", { status: 400 });
+    }
+    const targetUrl = `https://cdn.xcam.gay/10:/XCam/Conte%C3%BAdo%20Social/XCam%20Social%20M%C3%ADdias/XCam%20GIFs/${username}.gif`;
+    const gifResponse = await fetch(targetUrl, { headers: { "Referer": "https://xcam.gay/" } });
+    const newResponse = new Response(gifResponse.body, gifResponse);
+    newResponse.headers.set('Content-Type', gifResponse.headers.get('content-type') || 'image/gif');
+    newResponse.headers.set('Cache-Control', 'public, max-age=3600');
+    return newResponse;
+}
+
 async function handleStreamRedirect(username) {
   const streamInfo = await fetchStreamInfo(username);
   const targetUrl = streamInfo.cdnURL || streamInfo.edgeURL;
