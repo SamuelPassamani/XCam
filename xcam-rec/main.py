@@ -96,6 +96,7 @@ def process_broadcast_worker(broadcast: Dict[str, Any], min_duration: int, max_d
         # --- Etapas subsequentes (gravação, validação, etc.) ---
         logger.info(f"▶️  Iniciando processamento para o streamer: {username}")
         
+        # Gera nome seguro e base para arquivos temporários
         safe_filename_base = f"{_sanitize_filename(username)}_{int(time.time())}"
         temp_video_path = os.path.join(config.TEMP_RECORDS_PATH, f"{safe_filename_base}.mp4")
         temp_poster_path = os.path.join(config.TEMP_POSTERS_PATH, f"{safe_filename_base}.jpg")
@@ -120,6 +121,33 @@ def process_broadcast_worker(broadcast: Dict[str, Any], min_duration: int, max_d
         
         if not file_is_valid:
             return
+
+        # --- Renomeia o arquivo de vídeo para o padrão correto antes do upload ---
+        from datetime import datetime
+        import pytz
+        now_sp = datetime.now(pytz.timezone('America/Sao_Paulo'))
+        formatted_date = now_sp.strftime('%d-%m-%Y')
+        formatted_time = now_sp.strftime('%H:%M')
+        duration_seconds = int(get_video_duration(temp_video_path))
+        # Função auxiliar para formatar duração
+        def _format_duration(seconds: int) -> str:
+            seconds = int(seconds)
+            hours, remainder = divmod(seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            parts = []
+            if hours > 0:
+                parts.append(f"{hours}h")
+            if minutes > 0:
+                parts.append(f"{minutes}m")
+            if seconds > 0 or not parts:
+                parts.append(f"{seconds}s")
+            return "".join(parts)
+        formatted_duration = _format_duration(duration_seconds)
+        title = f"{username}_{formatted_date}_{formatted_time}_{formatted_duration}"
+        file_name = f"{title}.mp4"
+        final_video_path = os.path.join(config.TEMP_RECORDS_PATH, file_name)
+        os.rename(temp_video_path, final_video_path)
+        temp_video_path = final_video_path  # Atualiza para o novo nome
 
         logger.info(f"📤 Iniciando upload do vídeo para {username}...")
         upload_response = upload_video(temp_video_path)
