@@ -26,7 +26,7 @@ import json                         # Para o caso de a resposta da API não ser 
 from typing import Dict, Any, List, Optional # Tipos para anotações, melhorando a clareza do código.
 
 # --- Importações de Módulos do Projeto ---
-from config import API_BASE_URL     # Importa a URL base do nosso arquivo de configuração central.
+from config import API_BASE_URL, API_KEY     # Importa a URL base e a chave da API do nosso arquivo de configuração central.
 
 # --- Variáveis Globais ---
 # CORREÇÃO: Inicializa um logger específico para este módulo, seguindo o padrão correto.
@@ -55,7 +55,7 @@ def get_online_models(page: int = 1, limit: int = 1000, country: Optional[str] =
     # O endpoint para a lista de modelos online.
     endpoint = "/"
     # Constrói o dicionário de parâmetros para a requisição.
-    params = {'page': page, 'limit': limit}
+    params = {'page': page, 'limit': limit, 'key': API_KEY}
     # Adiciona o país aos parâmetros apenas se for fornecido.
     if country:
         params['country'] = country
@@ -106,11 +106,12 @@ def get_user_live_info(username: str) -> Optional[Dict[str, Any]]:
     endpoint = f"/user/{username}/liveInfo"
     # Constrói a URL completa para a requisição.
     url = f"{API_BASE_URL}{endpoint}"
-    logger.info(f"📡 Buscando URL de fallback para '{username}' em: {url}")
+    params = {'key': API_KEY}
+    logger.info(f"📡 Buscando URL de fallback para '{username}' em: {url} com parâmetros: {params}")
 
     try:
         # Realiza a requisição HTTP GET.
-        response = requests.get(url, timeout=REQUEST_TIMEOUT)
+        response = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
         # Levanta uma exceção para códigos de erro.
         response.raise_for_status()
         # Retorna os dados do stream se a requisição for bem-sucedida.

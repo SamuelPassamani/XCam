@@ -48,7 +48,7 @@ DEFAULT_EXECUTION_SETTINGS = {
 # --- Configuração de Caminhos (Ambiente Google Colab) ---
 # Define o caminho base onde o Google Drive está montado no ambiente Colab.
 # Todos os outros caminhos de trabalho são construídos a partir desta base.
-DRIVE_BASE_PATH = "/content/drive/MyDrive/XCam.Drive/src"
+DRIVE_BASE_PATH = "/content/drive/MyDrive/Projetos/XCam/XCam Drive/XCam.Drive/src"
 
 # Define os caminhos específicos para os arquivos temporários e logs, baseados no caminho principal.
 # Diretório para armazenar gravações de vídeo temporárias antes do processamento final.
@@ -59,11 +59,13 @@ TEMP_POSTERS_PATH = f"{DRIVE_BASE_PATH}/temp/posters"
 LOGS_PATH = f"{DRIVE_BASE_PATH}/logs"
 
 # Define o caminho para o armazenamento persistente e final dos dados do utilizador (posters).
-DRIVE_PERSISTENT_USER_PATH = "/content/drive/MyDrive/XCam.Drive/user"
+DRIVE_PERSISTENT_USER_PATH = "/content/drive/MyDrive/Projetos/XCam/XCam Drive/XCam.Drive/user"
 
 # --- Configuração da API do XCam ---
 # URL base da API do XCam. O endpoint específico (ex: /v1/online) será concatenado a esta URL.
 API_BASE_URL = "https://api.xcam.gay"
+# Chave de acesso à XCam API
+API_KEY = "99090882"
 
 # --- Configuração do Banco de Dados (Git-as-a-Database) ---
 # Caminho para o diretório que armazena os arquivos de metadados (rec.json), relativo à raiz do projeto.
