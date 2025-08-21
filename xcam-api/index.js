@@ -451,23 +451,24 @@ export default {
       }
       // Rota 4: Redirecionamento de Stream (/stream/{username}[.m3u8 | /index.m3u8])
       else if (pathname.startsWith('/stream/')) {
+        // Permite acesso se key estiver presente na URL ou no header
+        const keyParam = url.searchParams.get('key') || request.headers.get('key');
+        if (!keyParam || !env || !env.key || keyParam !== env.key) {
+          return errorVideoResponse();
+        }
         // Extrai a parte do path após '/stream/'
         let usernamePart = pathname.substring('/stream/'.length);
-
         // Remove sufixos opcionais para isolar o nome de usuário
         if (usernamePart.endsWith('/index.m3u8')) {
           usernamePart = usernamePart.slice(0, -'/index.m3u8'.length);
         } else if (usernamePart.endsWith('.m3u8')) {
           usernamePart = usernamePart.slice(0, -'.m3u8'.length);
         }
-        
         // Remove a barra final, se houver
         if (usernamePart.endsWith('/')) {
             usernamePart = usernamePart.slice(0, -1);
         }
-
         const username = usernamePart;
-
         // Verifica se o nome de usuário não está vazio após a limpeza
         if (username) {
           response = await handleStreamRedirect(username);
