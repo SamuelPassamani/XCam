@@ -55,7 +55,7 @@ def get_online_models(page: int = 1, limit: int = 1000, country: Optional[str] =
     # O endpoint para a lista de modelos online.
     endpoint = "/"
     # Constrói o dicionário de parâmetros para a requisição.
-    params = {'page': page, 'limit': limit, 'key': API_KEY}
+    params = {'page': page, 'limit': limit, 'key': API_KEY} 
     # Adiciona o país aos parâmetros apenas se for fornecido.
     if country:
         params['country'] = country
