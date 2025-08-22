@@ -398,11 +398,13 @@ export default {
     const allowedOrigin = getAllowedOrigin(origin);
     const { pathname } = url;
 
-    // EXCEÇÃO: Libera acesso público para poster imagem E gif
-    if (
-      !(
+    // EXCEÇÃO: Libera acesso público para poster, gif, profile, avatar e banner imagens
+    if (!(
         (pathname.startsWith('/poster/') && pathname.endsWith('.jpg')) ||
-        (pathname.startsWith('/gif/') && pathname.endsWith('.gif'))
+        (pathname.startsWith('/gif/') && pathname.endsWith('.gif')) ||
+        (pathname.startsWith('/profile/') && pathname.endsWith('.jpg')) ||
+        (pathname.startsWith('/avatar/') && pathname.endsWith('.jpg')) ||
+        (pathname.startsWith('/banner/') && pathname.endsWith('.jpg'))
       )
     ) {
       // Se não for origin permitido, exige key válida
