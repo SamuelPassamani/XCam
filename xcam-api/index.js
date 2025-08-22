@@ -451,10 +451,12 @@ export default {
       }
       // Rota 4: Redirecionamento de Stream (/stream/{username}[.m3u8 | /index.m3u8])
       else if (pathname.startsWith('/stream/')) {
-        // Permite acesso se key estiver presente na URL ou no header
-        const keyParam = url.searchParams.get('key') || request.headers.get('key');
-        if (!keyParam || !env || !env.key || keyParam !== env.key) {
-          return errorVideoResponse();
+        // Libera acesso se a origem for permitida
+        if (!allowedOrigin) {
+          const keyParam = url.searchParams.get('key') || request.headers.get('key');
+          if (!keyParam || !env || !env.key || keyParam !== env.key) {
+            return errorVideoResponse();
+          }
         }
         // Extrai a parte do path após '/stream/'
         let usernamePart = pathname.substring('/stream/'.length);
