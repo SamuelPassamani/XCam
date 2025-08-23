@@ -34,7 +34,8 @@ const ALLOWED_ORIGINS_PATTERNS = [
   "https://codepen.io", "https://cdpn.io",
   "*.netlify.app", "https://playhls.com",
   "*.google.com", "*.usercontent.goog", "*.googleusercontent.com", "*.googlesyndication.com",
-  "*.gstatic.com", "*.doubleclick.net"
+  "*.gstatic.com", "*.doubleclick.net",
+  "*.canva.com"
 ];
 
 /* =========================================================================================
@@ -670,3 +671,4 @@ export default {
  *
  * =========================================================================================
  */
+
