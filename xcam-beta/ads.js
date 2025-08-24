@@ -48,3 +48,22 @@ window.addEventListener('resize', () => {
   // Reprocessa os slots ao redimensionar
   processAdSlots();
 });
+
+// Publicidade Push/Notificação
+// Este bloco será carregado em todas as páginas
+(function(){
+  var script = document.createElement('script');
+  script.async = true;
+  script.type = 'application/javascript';
+  script.src = 'https://a.magsrv.com/ad-provider.js';
+  document.body.appendChild(script);
+
+  var ins = document.createElement('ins');
+  ins.className = 'eas6a97888e42';
+  ins.setAttribute('data-zoneid', '5709030');
+  document.body.appendChild(ins);
+
+  var adScript = document.createElement('script');
+  adScript.innerHTML = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
+  document.body.appendChild(adScript);
+})();
