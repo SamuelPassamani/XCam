@@ -38,6 +38,8 @@
 
   gtag('config', 'G-F8BVRMTEBL');
 </script>
+<!-- Exemplo de metadescrição para SEO -->
+<meta name="description" content="XCam is the leading platform for adult live streams, connecting streamers and viewers worldwide. Discover exclusive shows, diverse categories, and a premium experience for users over 18. Watch, interact, and explore the best of adult content online with safety and privacy.">
 </head>
 
 <body class="min-h-screen">
@@ -388,7 +390,21 @@
 
   <script src="script.js" type="module"></script>
   <script src="ads.js"></script>
-
+  <script>
+fetch('https://api.xcam.gay/?list=tags')
+  .then(response => response.json())
+  .then(data => {
+    // Extrai os nomes das tags e limita para 30
+    const tags = data.resultado.map(tag => tag.name).slice(0, 30);
+    // Cria a meta tag keywords
+    const meta = document.createElement('meta');
+    meta.name = 'keywords';
+    meta.content = tags.join(', ');
+    // Insere no head
+    document.head.appendChild(meta);
+  })
+  .catch(err => console.error('Erro ao buscar tags:', err));
+</script>
 </body>
 
 </html>
