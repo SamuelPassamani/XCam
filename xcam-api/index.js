@@ -140,10 +140,17 @@ function errorVideoResponse() {
 
 // --- Bloco de Funções de Requisição a APIs Externas ---
 
-function buildCam4GraphQLBody(offset, limit) {
+function buildCam4GraphQLBody(offset, limit, orderBy = "trending") {
   return JSON.stringify({
     operationName: "getGenderPreferencePageData",
-    variables: { input: { orderBy: "trending", filters: [], gender: "male", cursor: { first: limit, offset } } },
+    variables: {
+      input: {
+        orderBy,
+        filters: [],
+        gender: "male",
+        cursor: { first: limit, offset }
+      }
+    },
     query: `query getGenderPreferencePageData($input: BroadcastsInput) { broadcasts(input: $input) { total items { id username country sexualOrientation profileImageURL preview { src poster } viewers broadcastType gender tags { name slug } } } }`
   });
 }
@@ -153,58 +160,57 @@ function buildCam4GraphQLBody(offset, limit) {
  * na primeira chamada e continuando a buscar em páginas até atingir esse total.
  * @returns {Promise<Array>} - Uma promessa que resolve para um array com todos os broadcasts.
  */
-async function fetchAllBroadcasts() {
-    const allItems = [];
-    let offset = 0;
-    const apiPageLimit = 300; // Limite máximo de itens por chamada da API do Cam4
-    let totalDiscovered = 0;
+async function fetchAllBroadcasts(orderBy = "trending") {
+  const allItems = [];
+  let offset = 0;
+  const apiPageLimit = 300;
+  let totalDiscovered = 0;
 
-    // Faz a primeira chamada para descobrir o total
-    const firstResponse = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "apollographql-client-name": "CAM4-client" },
-        body: buildCam4GraphQLBody(0, apiPageLimit)
+  // Primeira chamada para descobrir o total
+  const firstResponse = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "apollographql-client-name": "CAM4-client" },
+    body: buildCam4GraphQLBody(0, apiPageLimit, orderBy)
+  });
+
+  if (!firstResponse.ok) {
+    console.error("Falha ao realizar a primeira busca na API do Cam4.");
+    return [];
+  }
+
+  const firstData = await firstResponse.json();
+  totalDiscovered = firstData.data?.broadcasts?.total || 0;
+  const firstItems = firstData.data?.broadcasts?.items || [];
+
+  if (firstItems.length > 0) {
+    allItems.push(...firstItems);
+  }
+
+  offset += firstItems.length;
+  while (offset < totalDiscovered) {
+    const response = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "apollographql-client-name": "CAM4-client" },
+      body: buildCam4GraphQLBody(offset, apiPageLimit, orderBy)
     });
 
-    if (!firstResponse.ok) {
-        console.error("Falha ao realizar a primeira busca na API do Cam4.");
-        return []; // Retorna vazio se a primeira chamada falhar
+    if (!response.ok) {
+      console.error(`Falha ao buscar broadcasts com offset ${offset}.`);
+      break;
     }
 
-    const firstData = await firstResponse.json();
-    totalDiscovered = firstData.data?.broadcasts?.total || 0;
-    const firstItems = firstData.data?.broadcasts?.items || [];
-    
-    if (firstItems.length > 0) {
-        allItems.push(...firstItems);
+    const data = await response.json();
+    const items = data.data?.broadcasts?.items || [];
+
+    if (items.length === 0) {
+      break;
     }
 
-    // Se o total descoberto for maior que o que já buscamos, continua buscando o restante
-    offset += firstItems.length;
-    while (offset < totalDiscovered) {
-        const response = await fetch("https://pt.cam4.com/graph?operation=getGenderPreferencePageData&ssr=false", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "apollographql-client-name": "CAM4-client" },
-            body: buildCam4GraphQLBody(offset, apiPageLimit)
-        });
+    allItems.push(...items);
+    offset += items.length;
+  }
 
-        if (!response.ok) {
-            console.error(`Falha ao buscar broadcasts com offset ${offset}.`);
-            break; // Interrompe se uma chamada intermediária falhar
-        }
-
-        const data = await response.json();
-        const items = data.data?.broadcasts?.items || [];
-
-        if (items.length === 0) {
-            break; // Para se a API retornar uma página vazia inesperadamente
-        }
-
-        allItems.push(...items);
-        offset += items.length;
-    }
-
-    return allItems;
+  return allItems;
 }
 
 async function findUserInGraphQL(username) {
@@ -395,9 +401,35 @@ export default {
       return handleOptions(request);
     }
     const url = new URL(request.url);
-    const origin = request.headers.get('Origin');
-    const allowedOrigin = getAllowedOrigin(origin);
-    const { pathname } = url;
+    const { pathname, searchParams } = url;
+
+    // --- NOVO: Captura o parâmetro "order" ---
+    let orderBy = "trending";
+    if (searchParams.has("order")) {
+      const orderParam = searchParams.get("order");
+      switch (orderParam) {
+        case "mostViewers":
+          orderBy = "mostViewers";
+          break;
+        case "leastViewers":
+          orderBy = "leastViewers";
+          break;
+        case "youngest":
+          orderBy = "youngest";
+          break;
+        case "oldest":
+          orderBy = "oldest";
+          break;
+        case "recent":
+          orderBy = "recent";
+          break;
+        case "trending":
+          orderBy = "trending";
+          break;
+        default:
+          orderBy = "trending";
+      }
+    }
 
     // EXCEÇÃO: Libera acesso público para poster, gif, profile, avatar e banner imagens
     if (!(
@@ -409,6 +441,8 @@ export default {
       )
     ) {
       // Se não for origin permitido, exige key válida
+      const origin = request.headers.get('Origin');
+      const allowedOrigin = getAllowedOrigin(origin);
       if (!allowedOrigin) {
         const keyParam = url.searchParams.get('key');
         if (!keyParam || !env || !env.key || keyParam !== env.key) {
@@ -417,7 +451,6 @@ export default {
       }
     }
 
-    const { searchParams } = url;
     let response;
 
     try {
@@ -536,10 +569,10 @@ export default {
         const gender = searchParams.get("gender");
         const orientation = searchParams.get("orientation");
         const broadcastType = searchParams.get("broadcastType");
-        
-        // 1. Busca TODOS os broadcasts disponíveis.
-        const allItems = await fetchAllBroadcasts();
-        
+
+        // 1. Busca TODOS os broadcasts disponíveis, usando orderBy
+        const allItems = await fetchAllBroadcasts(orderBy);
+
         // 2. Aplica filtros em cadeia sobre o conjunto de dados completo.
         let filteredItems = allItems;
 
@@ -671,4 +704,3 @@ export default {
  *
  * =========================================================================================
  */
-
