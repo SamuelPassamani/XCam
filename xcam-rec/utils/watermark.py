@@ -51,11 +51,11 @@ def add_watermark(input_video, output_video, watermark_image, max_width=180, mar
     else:
         watermark_to_use = watermark_image
 
-    # Filtro FFmpeg: redimensiona a marca d'água proporcionalmente à largura do vídeo (main_w*relative_scale)
-    # mas nunca maior que max_width. 'min(main_w*relative_scale,max_width)': calcula o menor valor
+    # Filtro FFmpeg: redimensiona a marca d'água proporcionalmente à largura do vídeo (ow*relative_scale)
+    # mas nunca maior que max_width. 'min(ow*relative_scale,max_width)': calcula o menor valor
     filter_complex = (
-        f"[1:v]scale='min(main_w*{relative_scale},{max_width})':-1[wm];"
-        f"[0:v][wm]overlay=W-w-{margin}:{margin}"
+        f"[1:v][0:v]scale2ref=w='min(ow*{relative_scale},{max_width})':h=-1[wm][base];"
+        f"[base][wm]overlay=W-w-{margin}:{margin}"
     )
 
     command = [
