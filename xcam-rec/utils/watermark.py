@@ -6,19 +6,25 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def get_video_width(video_path):
+    import json
+    import subprocess
+    command = [
+        "ffprobe", "-v", "error",
+        "-select_streams", "v:0",
+        "-show_entries", "stream=width",
+        "-of", "json",
+        video_path
+    ]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        width = json.loads(result.stdout)["streams"][0]["width"]
+        return int(width)
+    except Exception as e:
+        logger.error(f"❌ Não foi possível obter a largura do vídeo: {e}")
+        return None
+
 def add_watermark(input_video, output_video, watermark_image, max_width=180, margin=20, relative_scale=0.22):
-    """
-    Adiciona uma marca d'água no canto superior direito do vídeo, com redimensionamento proporcional.
-    Args:
-        input_video (str): Caminho do vídeo de entrada.
-        output_video (str): Caminho do vídeo de saída (com marca d'água).
-        watermark_image (str): Caminho do arquivo de imagem/SVG da marca d'água.
-        max_width (int): Largura máxima absoluta da marca d'água em pixels (usado como limite superior).
-        margin (int): Margem em pixels do canto superior/direito.
-        relative_scale (float): Proporção da largura do vídeo que a marca d'água deve ocupar (ex: 0.22 = 22%).
-    Returns:
-        bool: True se sucesso, False caso contrário.
-    """
     logger.info(
         f"🔧 Iniciando adição de marca d'água: input='{input_video}', output='{output_video}', watermark='{watermark_image}', max_width={max_width}, margin={margin}, relative_scale={relative_scale}"
     )
@@ -31,10 +37,7 @@ def add_watermark(input_video, output_video, watermark_image, max_width=180, mar
         logger.error(f"Arquivo da marca d'água não encontrado: {watermark_image}")
         return False
 
-    # Detecta extensão da marca d'água
     ext = os.path.splitext(watermark_image)[-1].lower()
-
-    # Se SVG, converte para PNG temporário
     if ext == ".svg":
         try:
             import cairosvg
@@ -51,11 +54,16 @@ def add_watermark(input_video, output_video, watermark_image, max_width=180, mar
     else:
         watermark_to_use = watermark_image
 
-    # Filtro FFmpeg: redimensiona a marca d'água proporcionalmente à largura do vídeo (ow*relative_scale)
-    # mas nunca maior que max_width. 'min(ow*relative_scale,max_width)': calcula o menor valor
+    # --- Obtém largura real do vídeo para cálculo proporcional ---
+    video_width = get_video_width(input_video)
+    if not video_width:
+        logger.error("❌ Não foi possível determinar a largura do vídeo.")
+        return False
+    target_logo_width = int(min(video_width * relative_scale, max_width))
+
+    # Filtro: redimensiona a logo para target_logo_width px de largura
     filter_complex = (
-        f"[1:v][0:v]scale2ref=w='min(ow*{relative_scale},{max_width})':h=-1[wm][base];"
-        f"[base][wm]overlay=W-w-{margin}:{margin}"
+        f"[1:v]scale={target_logo_width}:-1[wm];[0:v][wm]overlay=W-w-{margin}:{margin}"
     )
 
     command = [
@@ -73,11 +81,9 @@ def add_watermark(input_video, output_video, watermark_image, max_width=180, mar
     try:
         result = subprocess.run(command, check=True, capture_output=True, text=True)
         logger.info(f"Saída completa do FFmpeg:\n{result.stdout}\n{result.stderr}")
-        # Remove PNG temporário se criado
         if ext == ".svg" and os.path.exists(watermark_to_use):
             os.remove(watermark_to_use)
             logger.info(f"PNG temporário removido: {watermark_to_use}")
-        # Confirma se arquivo foi criado
         if not os.path.exists(output_video):
             logger.error(f"Arquivo de saída NÃO foi criado: {output_video}")
             return False
