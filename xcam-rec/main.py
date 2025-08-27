@@ -7,7 +7,7 @@
 # @titulo:         main.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.10.0
+# @version:        1.11.0
 # @lastupdate:     2025-08-27
 # @description:    Script principal e orquestrador do módulo XCam Rec. Este script é responsável
 #                  por obter a lista de streamers online, implementar uma lógica de fallback
@@ -172,8 +172,9 @@ def process_broadcast_worker(
         logger.info(f"✅ Processo para {username} concluído com sucesso.")
 
     finally:
-        if os.path.exists(temp_video_path):
-            os.remove(temp_video_path)
+        # NÃO remover o arquivo .mp4 ao final do processamento! (mantém o vídeo na pasta)
+        # if os.path.exists(temp_video_path):
+        #     os.remove(temp_video_path)
         if os.path.exists(temp_poster_path):
             os.remove(temp_poster_path)
         recording_set.remove(username)
@@ -242,5 +243,7 @@ if __name__ == "__main__":
     main(args)
 
 # @log de mudanças:
-# 2025-08-27 (v1.10.0):
-# - FEATURE: Marca d'água agora pode ser definida pelo usuário via CLI e é propagada até os workers.
+# 2025-08-27 (v1.11.0):
+# - Ajuste: Não remover mais o arquivo .mp4 final ao término do processamento.
+# - Manter apenas a remoção do .jpg temporário de thumbnail.
+# - Restante da lógica permanece igual.
