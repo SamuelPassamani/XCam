@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Acesso Negado</title>
+  <style>
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      overflow: hidden;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      background: #000;
+      border: none;
+      margin: 0;
+      padding: 0;
+      z-index: 9999;
+      aspect-ratio: 16/9;
+    }
+  </style>
+</head>
+<body>
+  <video src="https://i.imgur.com/fwRPZmQ.mp4" autoplay loop muted playsinline></video>
+</body>
+</html>
