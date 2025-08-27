@@ -18,8 +18,16 @@ def add_watermark(input_video, output_video, watermark_image, max_width=180, mar
     Returns:
         bool: True se sucesso, False caso contrário.
     """
-    if not os.path.exists(input_video) or not os.path.exists(watermark_image):
-        logger.error("Arquivo de vídeo ou marca d'água não encontrado.")
+    logger.info(
+        f"🔧 Iniciando adição de marca d'água: input={input_video}, output={output_video}, watermark={watermark_image}, max_width={max_width}, margin={margin}"
+    )
+
+    if not os.path.exists(input_video):
+        logger.error(f"Arquivo de vídeo não encontrado: {input_video}")
+        return False
+
+    if not os.path.exists(watermark_image):
+        logger.error(f"Arquivo da marca d'água não encontrado: {watermark_image}")
         return False
 
     # Detecta extensão da marca d'água
@@ -35,12 +43,13 @@ def add_watermark(input_video, output_video, watermark_image, max_width=180, mar
         except ImportError:
             logger.error("A biblioteca cairosvg é necessária para SVG. Instale com 'pip install cairosvg'.")
             return False
+        except Exception as e:
+            logger.error(f"Erro ao converter SVG para PNG: {e}")
+            return False
     else:
         watermark_to_use = watermark_image
 
     # Comando FFmpeg
-    # - Redimensiona a marca d'água para a largura máxima e mantém proporção
-    # - Posiciona no canto superior direito com margin
     command = [
         "ffmpeg",
         "-i", input_video,
@@ -52,13 +61,26 @@ def add_watermark(input_video, output_video, watermark_image, max_width=180, mar
         output_video
     ]
 
+    logger.info(f"Executando comando FFmpeg: {' '.join(command)}")
+
     try:
-        subprocess.run(command, check=True, capture_output=True)
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
         logger.info(f"Marca d'água inserida com sucesso em {output_video}")
         # Remove PNG temporário se criado
         if ext == ".svg" and os.path.exists(watermark_to_use):
             os.remove(watermark_to_use)
+        # Confirma se arquivo foi criado
+        if not os.path.exists(output_video):
+            logger.error(f"Arquivo de saída não foi criado: {output_video}")
+            return False
         return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Falha ao adicionar marca d'água: {e}\nSTDERR: {e.stderr}")
+        if ext == ".svg" and os.path.exists(watermark_to_use):
+            os.remove(watermark_to_use)
+        return False
     except Exception as e:
-        logger.error(f"Falha ao adicionar marca d'água: {e}")
+        logger.error(f"Erro inesperado ao rodar FFmpeg: {e}")
+        if ext == ".svg" and os.path.exists(watermark_to_use):
+            os.remove(watermark_to_use)
         return False
