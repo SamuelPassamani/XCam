@@ -7,8 +7,8 @@
 # @titulo:         config.py
 # @author:         Samuel Passamani / Um Projeto do Estudio A.Sério [AllS Company]
 # @info:           https://aserio.work/
-# @version:        1.4.0
-# @lastupdate:     2025-07-14
+# @version:        1.5.0
+# @lastupdate:     2025-08-27
 # @description:    Este arquivo centraliza todas as configurações de caminhos, parâmetros e
 #                  variáveis de comportamento do módulo XCam Rec. Os valores definidos aqui
 #                  funcionam como **padrões (defaults)** e podem ser sobrescritos por
@@ -82,6 +82,12 @@ LOG_LEVEL = "INFO"
 # Define o nome do ficheiro onde os logs de execução serão guardados.
 LOG_FILE = "xcam_recorder.log"
 
+# --- Configuração da Marca d'Água ---
+# Caminho para o arquivo de imagem/SVG da marca d'água.
+WATERMARK_IMAGE_PATH = "/content/drive/MyDrive/Projetos/XCam/Conteúdo Social/XCam Social Mídias/logoGay.png"
+# Largura máxima da marca d'água ao ser inserida no vídeo (em pixels).
+WATERMARK_MAX_WIDTH = 180
+
 # ---------------------------------------------------------------------------------------------
 # 3. CORPO
 # ---------------------------------------------------------------------------------------------
@@ -95,6 +101,9 @@ LOG_FILE = "xcam_recorder.log"
 # ---------------------------------------------------------------------------------------------
 
 # @log de mudanças:
+# 2025-08-27 (v1.5.0):
+# - FEATURE: Adicionada a configuração global da marca d'água (WATERMARK_IMAGE_PATH e WATERMARK_MAX_WIDTH).
+#
 # 2025-07-14 (v1.4.0):
 # - REFACTOR: As configurações de execução (intervalo, durações, params da API) foram agrupadas
 #   num dicionário `DEFAULT_EXECUTION_SETTINGS` para reforçar a sua natureza de valores padrão.
