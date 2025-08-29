@@ -198,37 +198,58 @@
           </div>
         </section>
 
-        <div class="mb-6">
+        <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
           <h2 id="broadcasts-title" class="text-2xl md:text-3xl font-bold mb-4 text-white">Transmissões ao Vivo</h2>
-
-          <div id="loading-state" class="flex flex-col items-center justify-center py-12">
-            <span class="loader mb-4"></span>
-            <p class="text-gray-400">Carregando transmissões...</p>
-          </div>
-
-          <div id="error-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
-            <svg class="w-16 h-16 text-xcam-pink mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <h3 class="text-xl font-bold mb-2">Ops! Algo deu errado</h3>
-            <p class="text-gray-400 mb-4">Não foi possível carregar as transmissões.</p>
-            <button id="retry-button" class="bg-xcam-blue px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Tentar novamente</button>
-          </div>
-
-          <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
-            <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-            <h3 class="text-xl font-bold mb-2">Nenhuma transmissão encontrada</h3>
-            <p class="text-gray-400">Tente ajustar seus filtros ou volte mais tarde.</p>
-          </div>
-
-          <div id="broadcasts-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          <div id="order-menu" class="flex flex-wrap gap-2 items-center">
+            <span class="text-gray-400 mr-2 font-medium">Ordem:</span>
+            <button class="order-btn" data-order="mostViewers" title="Mais espectadores">
+              <img src="https://xcam.gay/assets/icons/buttons/mostViewers.svg" class="w-6 h-6 inline" alt="Mais espectadores">
+            </button>
+            <button class="order-btn" data-order="leastViewers" title="Menos espectadores">
+              <img src="https://xcam.gay/assets/icons/buttons/leastViewers.svg" class="w-6 h-6 inline" alt="Menos espectadores">
+            </button>
+            <button class="order-btn" data-order="youngest" title="Mais jovens">
+              <img src="https://xcam.gay/assets/icons/buttons/youngest.svg" class="w-6 h-6 inline" alt="Mais jovens">
+            </button>
+            <button class="order-btn" data-order="oldest" title="Mais velhos">
+              <img src="https://xcam.gay/assets/icons/buttons/oldest.svg" class="w-6 h-6 inline" alt="Mais velhos">
+            </button>
+            <button class="order-btn" data-order="recent" title="Mais recentes">
+              <img src="https://xcam.gay/assets/icons/buttons/recent.svg" class="w-6 h-6 inline" alt="Mais recentes">
+            </button>
+            <button class="order-btn" data-order="trending" title="Em alta">
+              <img src="https://xcam.gay/assets/icons/buttons/trending.svg" class="w-6 h-6 inline" alt="Em alta">
+            </button>
           </div>
         </div>
 
-        <div id="pagination" class="flex justify-center items-center space-x-2 mt-8 hidden">
+        <div id="loading-state" class="flex flex-col items-center justify-center py-12">
+          <span class="loader mb-4"></span>
+          <p class="text-gray-400">Carregando transmissões...</p>
+        </div>
+
+        <div id="error-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+          <svg class="w-16 h-16 text-xcam-pink mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-xl font-bold mb-2">Ops! Algo deu errado</h3>
+          <p class="text-gray-400 mb-4">Não foi possível carregar as transmissões.</p>
+          <button id="retry-button" class="bg-xcam-blue px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Tentar novamente</button>
+        </div>
+
+        <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+          <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <h3 class="text-xl font-bold mb-2">Nenhuma transmissão encontrada</h3>
+          <p class="text-gray-400">Tente ajustar seus filtros ou volte mais tarde.</p>
+        </div>
+
+        <div id="broadcasts-grid" class="hidden w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+        </div>
+
+        <div id="pagination" class="flex justify-center items-center space-x-2 mt-8 hidden w-full">
           <button id="first-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Primeira</button>
           <button id="prev-page" class="pagination-btn bg-gray-800 hover:bg-gray-700 text-white rounded-md px-3 py-1 text-sm">Anterior</button>
           <div id="page-numbers" class="flex space-x-2">
