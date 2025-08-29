@@ -126,19 +126,15 @@ function setupEventListeners() {
   window.addEventListener("click", (e) => {
     if (e.target === broadcastModal) closeModalHandler();
   });
-  // Eventos para menu de ordem
-  document.querySelectorAll('.order-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const selectedOrder = btn.getAttribute('data-order');
-      setOrder(selectedOrder);
-      setOrderMenuActive(selectedOrder);
+  document.querySelectorAll(".order-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const selectedOrder = btn.getAttribute("data-order");
+      if (order !== selectedOrder) {
+        order = selectedOrder;
+        updateOrderMenuUI();
+        goToPage(1);
+      }
     });
-  });
-}
-
-function setOrderMenuActive(selectedOrder) {
-  document.querySelectorAll('.order-btn').forEach(btn => {
-    btn.classList.toggle('selected', btn.getAttribute('data-order') === selectedOrder);
   });
 }
 // --- Gemini API Integration ---
@@ -300,6 +296,18 @@ function applyFilters() {
   goToPage(1);
   showToast("Filtros aplicados com sucesso!");
 }
+// Update order menu UI
+function updateOrderMenuUI() {
+  document.querySelectorAll(".order-btn").forEach(btn => {
+    if (btn.getAttribute("data-order") === order) {
+      btn.classList.add("selected");
+      btn.setAttribute("aria-current", "true");
+    } else {
+      btn.classList.remove("selected");
+      btn.removeAttribute("aria-current");
+    }
+  });
+}
 // Initialize filters and fetch data based on URL parameters
 function initializeFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -307,18 +315,17 @@ function initializeFromUrl() {
   const limit = parseInt(params.get("limit"), 10) || 15;
   const country = params.get("country") || "";
   const tags = params.get("tags") || "";
-  const urlOrder = params.get("order") || "mostViewers";
+  order = params.get("order") || "mostViewers";
   itemsPerPage = limit;
   currentPage = page;
   filters.country = country;
   filters.tags = tags;
   filters.search = tags.replace(/,/g, " "); // Sync search input with tags
-  order = urlOrder;
   // Update UI to reflect URL state
   filterCountry.value = country;
   searchInput.value = filters.search;
   mobileSearchInput.value = filters.search;
-  setOrderMenuActive(order);
+  updateOrderMenuUI();
   fetchBroadcasts(currentPage, filters);
 }
 // Fetch initial data for Carousel and Top Streamers (unfiltered)
@@ -344,7 +351,6 @@ async function fetchBroadcasts(page = 1, queryFilters = {}) {
     limit: itemsPerPage,
     page: page
   });
-  if (order) params.append("order", order); // Adiciona order na query
   // Append filters to params if they have values
   if (queryFilters.search) params.append("username", queryFilters.search);
   if (queryFilters.country) params.append("country", queryFilters.country);
@@ -352,6 +358,7 @@ async function fetchBroadcasts(page = 1, queryFilters = {}) {
   if (queryFilters.orientation)
     params.append("sexualOrientation", queryFilters.orientation);
   if (queryFilters.tags) params.append("tags", queryFilters.tags);
+  if (order) params.append("order", order);
   try {
     const response = await fetch(`${API_URL}?${params.toString()}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -548,7 +555,7 @@ function setupTopStreamers(items) {
     topStreamersContainer.appendChild(item);
   });
 }
- /**
+/**
  * Handles the mouse entering the preview area of a broadcast card.
  * It creates and displays an iframe for a live preview.
  * @param {MouseEvent} event The mouseenter event.
@@ -799,10 +806,9 @@ function updateUrl() {
   if (currentPage > 1) params.set("page", currentPage);
   if (filters.country) params.set("country", filters.country);
   if (filters.tags) params.set("tags", filters.tags);
-  // Add other filters from the state if they should be reflected in the URL
   if (filters.gender) params.set("gender", filters.gender);
   if (filters.orientation) params.set("sexualOrientation", filters.orientation);
-  if (order && order !== "mostViewers") params.set("order", order); // Adiciona order na URL
+  if (order && order !== "mostViewers") params.set("order", order);
   else if (order === "mostViewers") params.delete("order");
   const newUrl = `${window.location.pathname}?${params.toString()}`;
   history.pushState(
@@ -812,13 +818,6 @@ function updateUrl() {
     "",
     newUrl
   );
-}
-// Função utilitária para alterar o order global e atualizar grade/página
-function setOrder(newOrder) {
-  if (order !== newOrder) {
-    order = newOrder;
-    goToPage(1);
-  }
 }
 // Modal Logic
 function openModal(broadcastId) {
