@@ -255,10 +255,18 @@ body {
 }
 
 .order-btn svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: block;
+  margin: 0 auto;
   color: #fff;
   fill: currentColor;
   stroke: currentColor;
   transition: color 0.2s;
+}
+
+.order-btn:not(.selected):not(:hover) svg {
+  opacity: 0.6;
 }
 
 .order-btn:hover svg,
