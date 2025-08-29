@@ -6,11 +6,11 @@ import {
 // --- LÓGICA DA APLICAÇÃO ---
 // Constantes para os ícones
 const GENDER_ICON_SVG =
-  "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw9IiNGRkZGRkYiIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGlkPSJGbGF0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik0yMTkuOTk3OCwyMy45NTU1N3EtLjAwMjE5LS41Njk4NC0uMDU3NDktMS4xMzgxOWMtLjAxOC0uMTg0MDgtLjA1MjM3LS4zNjI3OS0uMDc4NDktLjU0NDQzLS4wMjk3OS0uMjA1NTctLjA1MzcxLS40MTIxMS0uMDk0MjQtLjYxNjIxLS4wNDAyOS0uMjAzNjItLjA5NjA3LS40MDA4OC0uMTQ2NDktLjYwMDU5LS4wNDU0MS0uMTgwMTctLjA4NDg0LS4zNjA4NC0uMTM4NjctLjUzOTA2LS4wNTg4NC0uMTk0MzQtLjEzMTU5LS4zODEzNS0uMTk5NzEtLjU3MTI5LS4wNjQ0NS0uMTc5NjktLjEyMzUzLS4zNjA4NC0uMTk2NzctLjUzNzYtLjA3MzQ5LS4xNzcyNC0uMTU5NjctLjM0NjY4LS4yNDEwOS0uNTE5NTMtLjA4NTgyLS4xODIxMy0uMTY2ODctLjM2NjIxLS4yNjI1Ny0uNTQ0OTItLjA4OC0uMTY0NTUtLjE4ODI0LS4zMjAzMS0uMjgzNy0uNDgwNDctLjEwNTM0LS4xNzYyNy0uMjA1Mi0uMzU1LS4zMjAzMS0uNTI2ODUtLjExNTcyLS4xNzMzNC0uMjQ0NzUtLjMzNTQ1LS4zNjktLjUwMi0uMTEtLjE0NzQ2LS4yMTI1Mi0uMjk4MzQtLjMzMDItLjQ0MTQtLjIzNDYyLS4yODYxNC0uNDgzNC0uNTU5NTctLjc0MzE2LS44MjIyNy0uMDE3ODItLjAxODA3LS4wMzI0Ny0uMDM4MDktLjA1MDU0LS4wNTYxNS0uMDE4MzEtLjAxODU2LS4wMzg1Ny0uMDMzMi0uMDU2ODgtLjA1MTI3cS0uMzk0NDEtLjM4OTY2LS44MjIyNy0uNzQzMTdjLS4xMzk2NS0uMTE0NzQtLjI4Njg2LS4yMTQzNS0uNDMwNDItLjMyMTc3LS4xNjk5Mi0uMTI3LS4zMzYwNi0uMjU4NzktLjUxMjY5LS4zNzctLjE2ODgzLS4xMTMyOC0uMzQ0MjQtLjIxMDkzLS41MTczNC0uMzE0NDUtLjE2MzMzLS4wOTc2NS0uMzIzMjQtLjIwMDE5LS40OTE0NS0uMjktLjE3MzEtLjA5Mjc3LS4zNTEyLS4xNzA5LS41Mjc1OS0uMjU0MzktLjE3ODcxLS4wODQ0OC0uMzU0NjItLjE3MzgzLS41MzgtLjI0OTUxLS4xNjkzMi0uMDcwMzItLjM0MjI5LS4xMjY0Ny0uNTE0LS4xODg0OC0uMTk3NTEtLjA3MTI5LS4zOTMwNy0uMTQ2NDktLjU5NTM0LS4yMDgtLjE2ODgyLS4wNTA3OC0uMzQwNDUtLjA4Nzg5LS41MTA4Ni0uMTMxMzUtLjIwODc0LS4wNTMyMi0uNDE1MjktLjExMTMyLS42MjgxOC0uMTUzMzItLjE5MDU1LS4wMzc1OS0uMzgzLS4wNTk1Ny0uNTc1MDctLjA4Nzg5LS4xOTU0NC0uMDI4ODEtLjM4ODMxLS4wNjQ5NC0uNTg2NzktLjA4NDQ3LS4zMzI1Mi0uMDMyNzEtLjY2Ni0uMDQ1NDEtLjk5OTg4LS4wNTA3OEMyMDguMTE4NTMsMTIuMDA4MywyMDguMDYwMywxMiwyMDgsMTJIMTcyYTEyLDEyLDAsMCwwLDAsMjRoNy4wMjkzbC0xNS4wNTEsMTUuMDUxMjdBNzEuOTc1MjYsNzEuOTc1MjYsMCwxLDAsMTA4LDE3OC45ODFWMTkySDg4YTEyLDEyLDAsMCwwLDAsMjRoMjB2MTZhMTIsMTIsMCwwLDAsMjQsMFYyMTZoMjBhMTIsMTIsMCwwLDAsMC0yNEgxMzJWMTc4Ljk4MUE3MS45MjgsNzEuOTI4LDAsMCwwLDE4MC4yNzc4Myw2OC42OTI4N0wxOTYsNTIuOTcwN1Y2MGExMiwxMiwwLDAsMCwyNCwwVjI0QzIyMCwyMy45ODQ4NiwyMTkuOTk3OCwyMy45NzAyMSwyMTkuOTk3OCwyMy45NTU1N1pNMTIwLDE1NmE0OCw0OCwwLDEsMSw0OC00OEE0OC4wNTQ2OCw0OC4wNTQ2OCwwLDAsMSwxMjAsMTU2WiIvPgo8L3N2Zz4=";
+  "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIGZpbGw[...]"
 const BROADCAST_TYPE_ICON_SVG =
-  "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjwhLS0gVXBsb2FkZWQgdG86IFNWRyBSZXBvLCB3d3cuc3ZncmVwby5jb20sIEdlbmVyYXRvcjogU1ZHIFJlcG8gTWl4ZXIgVG9vbHMgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iX3gzMl8iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIAoJIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiICB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KPCFbQ0RBVEFbCgkuc3Qwe2ZpbGw6I0ZGRkZGRjt9Cl1dPgo8L3N0eWxlPgo8Zz4KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMDMuMTY5LDI1Ni44MjhjNDMuNzAzLDAsNzkuMTI1LTM1LjQzOCw3OS4xMjUtNzkuMTQxYzAtNDMuNjg4LTM1LjQyMi03OS4xMjUtNzkuMTI1LTc5LjEyNQoJCVMyNC4wNDQsMTM0LDI0LjA0NCwxNzcuNjg4QzI0LjA0NCwyMjEuMzkxLDU5LjQ2NiwyNTYuODI4LDEwMy4xNjksMjU2LjgyOHoiLz4KCTxjaXJjbGUgY2xhc3M9InN0MCIgY3g9IjMwMi42MzgiIGN5PSIxNDQuNzE5IiByPSIxMDYuODI4Ii8+Cgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMy4wMDAxMiwyODAuMjM0SDc0LjE1M3YxNzEuNDM4YzAsMTIuMzkxLDEwLjA0NywyMi40MzgsMjIuNDM4LDIyLjQzOGgyMzYuMDQ3CgkJYzEyLjM3NSwwLDIyLjQyMi0xMC4wNDcsMjIuNDIyLTIyLjQzOHYtMTQ5QzM1NS4wNiwyOTAuMjgxLDM0NS4wMTMsMjgwLjIzNCwzMzIuNjM4LDI4MC4yMzR6Ii8+Cgk8cmVjdCB4PSIzNzEuMjE2IiB5PSIzMzEuNjcyIiBjbGFzcz0ic3QwIiB3aWR0aD0iMzQuMjk3IiBoZWlnaHQ9Ijk5LjY1NiIvPgoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTUwNi41OTEsMjkzLjQzOGMtMy4zNTktMi4wMzEtNy41NDctMi4xNTYtMTEuMDMxLTAuMzEzbC03My4yMzQsMzguNTQ3djk4LjU0N2w3My4yMzQsMzguNTQ3CgkJYzMuNDg0LDEuODQ0LDcuNjcyLDEuNzE5LDExLjAzMS0wLjMxM3M1LjQwNi01LjY3Miw1LjQwNi05LjYwOVYzMDMuMDQ3QzUxMS45OTcsMjk5LjEwOSw1MDkuOTUsMjk1LjQ2OSw1MDYuNTkxLDI5My40Mzh6Ii8+Cgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMC44NTYsMjg3LjE1NmMtMS43MzQsNC4xODgtMC43ODEsOS4wMTYsMi40MzgsMTIuMjM0bDU0LjA0Nyw1NC4wNDd2LTczLjIwM0gxMS4yMTYKCQlDNi42ODUsMjgwLjIzNCwyLjU5MSwyODIuOTY5LDAuODU2LDI4Ny4xNTZ6Ii8+CjwvZz4KPC9zdmc+";
+  "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N[...]"
 const ORIENTATION_ICON_SVG =
-  "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNOC41NTI4NCAzLjAwMDEyQzcuOTM1OTggMy4wMDAxMiA3LjIzODQxIDMuMDY1MTQgNi41NzIwOSAzLjI5MjI0QzIuNTU0OTQgNC42MDM4NyAxLjI2MzQxIDguODk0IDIuMzk4NzcgMTIuNDNMMi40MDM1NCAxMi40NDQ4TDIuNDA4NzcgMTIuNDU5NUMzLjAzNDM1IDE0LjIxNzQgNC4wNDIyNiAxNS44MTI3IDUuMzUzMzYgMTcuMTI0OUw1LjM2MDkxIDE3LjEzMjRMNS4zNjg2MiAxNy4xMzk4QzcuMjM3ODIgMTguOTMyMyA5LjI3MjU0IDIwLjQ5NTMgMTEuNDc1NiAyMS44NTE1TDExLjk5MzQgMjIuMTcwM0wxMi41MTQ3IDIxLjg1NzNDMTQuNzIyNiAyMC41MzE1IDE2Ljc5NjQgMTguOTI1NCAxOC42NDMyIDE3LjE0NzRMMTguNjQ5IDE3LjE0MTlMMTguNjU0NyAxNy4xMzYyQzE5Ljk3NzEgMTUuODIxNSAyMC45ODUxIDE0LjIxNDQgMjEuNjAxNSAxMi40NTQ5TDIxLjYwNjYgMTIuNDQwMkwyMS42MTEzIDEyLjQyNTNDMjIuNzI1MSA4Ljg5NzAzIDIxLjQ0MDEgNC42MDE3NiAxNy40NTA3IDMuMzA5NDhDMTYuNzk3NiAzLjA5MjIxIDE2LjEyMzYgMy4wMDAxMiAxNS40NjQ4IDMuMDAwMTJDMTMuOTgyOCAzLjAwMDExIDEyLjg4NTggMy42MjA2NCAxMi4wMDA0IDQuMjUzMDlDMTEuMTIxOSAzLjYyNTQ1IDEwLjAxNzYgMy4wMDAxMiA4LjU1Mjg0IDMuMDAwMTJaIiBmaWxsPSIjRkZGRkZGIi8+PC9zdmc+";
+  "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmc[...]"
 // Global variables
 let broadcasts = []; // Acts as a cache for modal details
 let currentPage = 1;
@@ -24,7 +24,8 @@ let filters = {
   country: "",
   gender: "",
   orientation: "",
-  tags: ""
+  tags: "",
+  order: "mostViewers" // NOVO parâmetro com valor padrão
 };
 // DOM Elements
 const mobileMenuButton = document.getElementById("mobile-menu-button");
@@ -71,6 +72,8 @@ const playButton = document.getElementById("play-button");
 const relatedBroadcasts = document.getElementById("related-broadcasts");
 const toast = document.getElementById("toast");
 const toastMessage = document.getElementById("toast-message");
+const orderMenu = document.getElementById("order-menu"); // novo menu de ordem
+const orderButtons = document.querySelectorAll(".order-btn"); // botões ordem
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
   // --- AGE GATE MODAL LOGIC ---
@@ -125,7 +128,32 @@ function setupEventListeners() {
   window.addEventListener("click", (e) => {
     if (e.target === broadcastModal) closeModalHandler();
   });
+
+  // Order menu - evento para todos os botões de ordenação
+  if (orderMenu) {
+    orderMenu.addEventListener("click", (e) => {
+      const btn = e.target.closest(".order-btn");
+      if (btn && !btn.classList.contains("active")) {
+        // Atualiza filtro e visual
+        filters.order = btn.dataset.order;
+        updateOrderButtons();
+        goToPage(1);
+      }
+    });
+  }
 }
+
+// Atualiza o visual dos botões de ordenação
+function updateOrderButtons() {
+  document.querySelectorAll(".order-btn").forEach((btn) => {
+    if (btn.dataset.order === filters.order) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
+
 // --- Gemini API Integration ---
 async function callGeminiAPI(prompt) {
   const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
@@ -174,7 +202,7 @@ async function callGeminiAPI(prompt) {
 }
 async function handleSurpriseMe() {
   showToast("✨ A IA está buscando uma sugestão para você...");
-  const prompt = `Sugira um tema criativo para encontrar streamers na plataforma XCam. Responda APENAS com um objeto JSON com as chaves "country", "gender", "orientation", e "search". Use os seguintes valores possíveis: country (br, us, es, fr, it, de, jp, kr, ru, ca), gender (male, female, trans, couple), orientation (straight, gay, lesbian, bisexual). A chave "search" deve ser um termo de busca criativo em português. Exemplo: {"country": "br", "gender": "male", "orientation": "gay", "search": "músicos tocando ao vivo"}`;
+  const prompt = `Sugira um tema criativo para encontrar streamers na plataforma XCam. Responda APENAS com um objeto JSON com as chaves "country", "gender", "orientation", e "search". Use os seguintes[...]`
   const result = await callGeminiAPI(prompt);
   if (result) {
     try {
@@ -245,7 +273,7 @@ async function handleGenerateBio(broadcast) {
           .map((t) => t.name)
           .join(", ")}${additionalDetails}
 
-        Seja criativo e use um tom que combine com uma plataforma de streaming ao vivo. Não inclua informações que não foram fornecidas. Se a bio original for fornecida, use-a como inspiração para o tom e estilo, mas não a copie.`;
+        Seja criativo e use um tom que combine com uma plataforma de streaming ao vivo. Não inclua informações que não foram fornecidas. Se a bio original for fornecida, use-a como inspiração pa[...]`
   const bio = await callGeminiAPI(prompt);
 
   geminiBioContent.classList.remove("hidden");
@@ -292,15 +320,18 @@ function initializeFromUrl() {
   const limit = parseInt(params.get("limit"), 10) || 15;
   const country = params.get("country") || "";
   const tags = params.get("tags") || "";
+  const order = params.get("order") || "mostViewers";
   itemsPerPage = limit;
   currentPage = page;
   filters.country = country;
   filters.tags = tags;
-  filters.search = tags.replace(/,/g, " "); // Sync search input with tags
+  filters.search = tags.replace(/,/g, " ");
+  filters.order = order;
   // Update UI to reflect URL state
   filterCountry.value = country;
   searchInput.value = filters.search;
   mobileSearchInput.value = filters.search;
+  updateOrderButtons();
   fetchBroadcasts(currentPage, filters);
 }
 // Fetch initial data for Carousel and Top Streamers (unfiltered)
@@ -333,6 +364,7 @@ async function fetchBroadcasts(page = 1, queryFilters = {}) {
   if (queryFilters.orientation)
     params.append("sexualOrientation", queryFilters.orientation);
   if (queryFilters.tags) params.append("tags", queryFilters.tags);
+  if (queryFilters.order) params.append("order", queryFilters.order);
   try {
     const response = await fetch(`${API_URL}?${params.toString()}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -620,7 +652,7 @@ function renderBroadcasts(broadcastsList) {
     }" class="card-poster w-full aspect-video object-cover pointer-events-none">
             <span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium z-20">AO VIVO</span>
             <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded-md text-white text-xs flex items-center z-20">
-              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"[...]
               ${broadcast.viewers}
             </div>
             <div class="absolute inset-0 z-30 cursor-pointer card-click-overlay"></div>
@@ -780,9 +812,10 @@ function updateUrl() {
   if (currentPage > 1) params.set("page", currentPage);
   if (filters.country) params.set("country", filters.country);
   if (filters.tags) params.set("tags", filters.tags);
-  // Add other filters from the state if they should be reflected in the URL
   if (filters.gender) params.set("gender", filters.gender);
   if (filters.orientation) params.set("sexualOrientation", filters.orientation);
+  if (filters.order && filters.order !== "mostViewers") params.set("order", filters.order);
+  // Só coloca order se não for o padrão para URLs limpas
   const newUrl = `${window.location.pathname}?${params.toString()}`;
   history.pushState(
     {
@@ -870,9 +903,9 @@ function openModal(broadcastId) {
     item.className = "cursor-pointer hover:opacity-90 transition-opacity";
     item.onclick = () => openModal(r.id);
     item.innerHTML = `
-          <div class="relative"><img src="https://api.xcam.gay/poster/${r.username}.jpg" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
+          <div class="relative"><img src="https://api.xcam.gay/poster/${r.username}.jpg" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 [...] 
           <h4 class="font-medium text-white mt-2">@${r.username}</h4>
-          <div class="flex items-center text-sm text-gray-400"><span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${r.country}.png)"></span><span>${r.viewers} espectadores</span></div>
+          <div class="flex items-center text-sm text-gray-400"><span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${r.country}.png)"></span><span>${r.viewers} espectadores</s[...] 
         `;
     relatedBroadcasts.appendChild(item);
   });
@@ -913,4 +946,3 @@ if ("serviceWorker" in navigator) {
   });
 
 }
-
