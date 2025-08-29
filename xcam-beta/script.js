@@ -126,7 +126,20 @@ function setupEventListeners() {
   window.addEventListener("click", (e) => {
     if (e.target === broadcastModal) closeModalHandler();
   });
-  // Eventos para menu de ordem serão adicionados depois
+  // Eventos para menu de ordem
+  document.querySelectorAll('.order-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const selectedOrder = btn.getAttribute('data-order');
+      setOrder(selectedOrder);
+      setOrderMenuActive(selectedOrder);
+    });
+  });
+}
+
+function setOrderMenuActive(selectedOrder) {
+  document.querySelectorAll('.order-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.getAttribute('data-order') === selectedOrder);
+  });
 }
 // --- Gemini API Integration ---
 async function callGeminiAPI(prompt) {
@@ -305,7 +318,7 @@ function initializeFromUrl() {
   filterCountry.value = country;
   searchInput.value = filters.search;
   mobileSearchInput.value = filters.search;
-  // setOrderMenuActive(order); // será implementado junto ao menu visual
+  setOrderMenuActive(order);
   fetchBroadcasts(currentPage, filters);
 }
 // Fetch initial data for Carousel and Top Streamers (unfiltered)
@@ -535,7 +548,7 @@ function setupTopStreamers(items) {
     topStreamersContainer.appendChild(item);
   });
 }
-/**
+ /**
  * Handles the mouse entering the preview area of a broadcast card.
  * It creates and displays an iframe for a live preview.
  * @param {MouseEvent} event The mouseenter event.
