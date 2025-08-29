@@ -28,7 +28,7 @@
   <meta name="6a97888e-site-verification" content="15989ae96dff82fe33826928ae653613">
   <link rel="manifest" href="https://xcam.gay/manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com">
+  <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Pl[...]
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8BVRMTEBL"></script>
 <script>
@@ -39,7 +39,7 @@
   gtag('config', 'G-F8BVRMTEBL');
 </script>
 <!-- Exemplo de metadescrição para SEO -->
-<meta name="description" content="XCam is the leading platform for adult live streams, connecting streamers and viewers worldwide. Discover exclusive shows, diverse categories, and a premium experience for users over 18. Watch, interact, and explore the best of adult content online with safety and privacy.">
+<meta name="description" content="XCam is the leading platform for adult live streams, connecting streamers and viewers worldwide. Discover exclusive shows, diverse categories, and a premium experienc[...]
 </head>
 
 <body class="min-h-screen">
@@ -68,7 +68,7 @@
 
         <div class="hidden md:block w-full md:w-auto mt-4 md:mt-0 order-3 md:order-2">
           <div class="relative">
-            <input type="text" id="search-input" placeholder="Buscar transmissões..." class="w-full md:w-64 lg:w-80 bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+            <input type="text" id="search-input" placeholder="Buscar transmissões..." class="w-full md:w-64 lg:w-80 bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2[...]
             <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
@@ -90,7 +90,7 @@
           <a href="#" class="text-white hover:text-xcam-orange transition-colors">Categorias</a>
           <a href="#" class="bg-gradient-to-r from-xcam-pink to-xcam-purple px-4 py-2 rounded-full font-medium hover:opacity-90 transition-opacity text-center">Transmitir</a>
           <div class="relative mt-2">
-            <input type="text" id="mobile-search-input" placeholder="Buscar transmissões..." class="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-xcam-pink">
+            <input type="text" id="mobile-search-input" placeholder="Buscar transmissões..." class="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ri[...]
             <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
@@ -134,7 +134,7 @@
               </select>
             </div>
             <button id="apply-filters" class="w-full bg-gradient-to-r from-xcam-pink to-xcam-purple py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">Aplicar Filtros</button>
-            <button id="surprise-me-btn" class="w-full bg-gradient-to-r from-xcam-yellow to-xcam-orange py-2 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center">
+            <button id="surprise-me-btn" class="w-full bg-gradient-to-r from-xcam-yellow to-xcam-orange py-2 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center[...]
               ✨ Surpreenda-me
             </button>
           </div>
@@ -198,8 +198,34 @@
           </div>
         </section>
 
+        <!-- Ordem de Transmissão: Botões em linha com o título -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <h2 id="broadcasts-title" class="text-2xl font-bold">Transmissões ao Vivo</h2>
+          <div id="order-menu" style="display: flex; align-items: center; gap: 10px;">
+            <span style="color: #CCC; font-weight: 500; margin-right: 8px;">Ordem:</span>
+            <button class="order-btn" data-order="mostViewers" title="Mais espectadores">
+              <img src="/assets/icons/buttons/mostViewers.svg" alt="Mais espectadores" />
+            </button>
+            <button class="order-btn" data-order="leastViewers" title="Menos espectadores">
+              <img src="/assets/icons/buttons/leastViewers.svg" alt="Menos espectadores" />
+            </button>
+            <button class="order-btn" data-order="youngest" title="Usuários mais novos">
+              <img src="/assets/icons/buttons/youngest.svg" alt="Usuários mais novos" />
+            </button>
+            <button class="order-btn" data-order="oldest" title="Usuários mais antigos">
+              <img src="/assets/icons/buttons/oldest.svg" alt="Usuários mais antigos" />
+            </button>
+            <button class="order-btn" data-order="recent" title="Transmissões recentes">
+              <img src="/assets/icons/buttons/recent.svg" alt="Transmissões recentes" />
+            </button>
+            <button class="order-btn" data-order="trending" title="Tendências">
+              <img src="/assets/icons/buttons/trending.svg" alt="Tendências" />
+            </button>
+          </div>
+        </div>
+
         <div class="mb-6">
-          <h2 id="broadcasts-title" class="text-2xl md:text-3xl font-bold mb-4 text-white">Transmissões ao Vivo</h2>
+          <!-- O título e os botões de ordem já foram adicionados acima -->
 
           <div id="loading-state" class="flex flex-col items-center justify-center py-12">
             <span class="loader mb-4"></span>
@@ -217,7 +243,7 @@
 
           <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
             <svg class="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H[...]
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
             <h3 class="text-xl font-bold mb-2">Nenhuma transmissão encontrada</h3>
@@ -284,7 +310,7 @@
 
             <!-- Gemini Bio Section -->
             <div id="gemini-bio-section" class="mt-4">
-              <button id="generate-bio-btn" class="w-full bg-gradient-to-r from-xcam-blue to-xcam-purple py-2 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center">
+              <button id="generate-bio-btn" class="w-full bg-gradient-to-r from-xcam-blue to-xcam-purple py-2 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-cente[...]
                 ✨ Carregar Biografia do Usuário
               </button>
               <div id="gemini-bio-content" class="mt-2 p-3 bg-gray-800 rounded-lg text-gray-300 hidden"></div>
@@ -324,17 +350,17 @@
           <div class="flex space-x-4">
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors" title="Twitter">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 [...]
               </svg>
             </a>
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors" title="Instagram">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-[...]
               </svg>
             </a>
             <a href="#" class="text-gray-400 hover:text-xcam-pink transition-colors" title="Facebook">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z" />
+                <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.9[...]
               </svg>
             </a>
           </div>
@@ -376,7 +402,7 @@
       <img src="https://xcam.gay/src/logoGay.svg" alt="XCam Logo" class="h-12 mx-auto mb-6">
       <h2 class="text-3xl font-bold text-white mb-4">Este é um site adulto</h2>
       <p class="text-gray-400 mb-6">
-        Este site contém material com restrição de idade, incluindo nudez e representações explícitas de atividade sexual. Ao continuar, você afirma que tem pelo menos 18 anos de idade ou a maioridade na jurisdição de onde está acessando o site e que consente em visualizar conteúdo sexualmente explícito.
+        Este site contém material com restrição de idade, incluindo nudez e representações explícitas de atividade sexual. Ao continuar, você afirma que tem pelo menos 18 anos de idade ou a mai[...]
       </p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button id="age-confirm-btn" class="w-full bg-xcam-pink text-black font-bold py-3 rounded-lg hover:opacity-90 transition-opacity">Tenho 18 anos ou mais - Entrar</button>

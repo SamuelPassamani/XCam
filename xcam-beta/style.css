@@ -242,3 +242,26 @@ body {
   align-items: center;
   margin: 1rem 0;
 }
+
+/* Estilos para os botões de ordem */
+.order-btn {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s, box-shadow 0.2s;
+  padding: 5px;
+  opacity: 0.75;
+}
+.order-btn:hover,
+.order-btn.active {
+  background: #fff2;
+  box-shadow: 0 0 0 2px #f09c, 0 1px 8px #0002;
+  opacity: 1;
+}
+.order-btn img {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
