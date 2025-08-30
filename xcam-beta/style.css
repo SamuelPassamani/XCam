@@ -310,3 +310,15 @@ body {
   font-weight: 600;
   color: #fff;
 }
+
+
+/* Responsividade do label "espectadores" */
+.carousel-item .viewer-label {
+  margin-left: 0.25rem;
+}
+
+@media (max-width: 640px) {
+  .carousel-item .viewer-label {
+    display: none;
+  }
+}
