@@ -30,16 +30,18 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <meta http-equiv="Delegate-CH" content="Sec-CH-UA https://s.magsrv.com; Sec-CH-UA-Mobile https://s.magsrv.com; Sec-CH-UA-Arch https://s.magsrv.com; Sec-CH-UA-Model https://s.magsrv.com; Sec-CH-UA-Platform https://s.magsrv.com; Sec-CH-UA-Platform-Version https://s.magsrv.com; Sec-CH-UA-Bitness https://s.magsrv.com; Sec-CH-UA-Full-Version-List https://s.magsrv.com; Sec-CH-UA-Full-Version https://s.magsrv.com">
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F8BVRMTEBL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8BVRMTEBL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-F8BVRMTEBL');
-</script>
-<!-- Exemplo de metadescrição para SEO -->
-<meta name="description" content="XCam is the leading platform for adult live streams, connecting streamers and viewers worldwide. Discover exclusive shows, diverse categories, and a premium experience for users over 18. Watch, interact, and explore the best of adult content online with safety and privacy.">
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-F8BVRMTEBL');
+  </script>
+  <!-- Exemplo de metadescrição para SEO -->
+  <meta name="description" content="XCam is the leading platform for adult live streams, connecting streamers and viewers worldwide. Discover exclusive shows, diverse categories, and a premium experience for users over 18. Watch, interact, and explore the best of adult content online with safety and privacy.">
 </head>
 
 <body class="min-h-screen">
@@ -424,20 +426,20 @@
   <script src="script.js" type="module"></script>
   <script src="ads.js"></script>
   <script>
-fetch('https://api.xcam.gay/?list=tags')
-  .then(response => response.json())
-  .then(data => {
-    // Extrai os nomes das tags e limita para 30
-    const tags = data.resultado.map(tag => tag.name).slice(0, 30);
-    // Cria a meta tag keywords
-    const meta = document.createElement('meta');
-    meta.name = 'keywords';
-    meta.content = tags.join(', ');
-    // Insere no head
-    document.head.appendChild(meta);
-  })
-  .catch(err => console.error('Erro ao buscar tags:', err));
-</script>
+    fetch('https://api.xcam.gay/?list=tags')
+      .then(response => response.json())
+      .then(data => {
+        // Extrai os nomes das tags e limita para 30
+        const tags = data.resultado.map(tag => tag.name).slice(0, 30);
+        // Cria a meta tag keywords
+        const meta = document.createElement('meta');
+        meta.name = 'keywords';
+        meta.content = tags.join(', ');
+        // Insere no head
+        document.head.appendChild(meta);
+      })
+      .catch(err => console.error('Erro ao buscar tags:', err));
+  </script>
 </body>
 
 </html>

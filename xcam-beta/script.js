@@ -134,6 +134,22 @@ function setupEventListeners() {
       setOrderMenuActive(selectedOrder);
     });
   });
+
+  // Troca para Pink no hover
+  document.querySelectorAll('.order-btn').forEach(btn => {
+    const icon = btn.querySelector('.order-icon-img');
+    const orderType = btn.getAttribute('data-order');
+    btn.addEventListener('mouseenter', () => {
+      if (!btn.classList.contains('selected')) {
+        icon.src = `assets/icons/buttons/${orderType}Pink.svg`;
+      }
+    });
+    btn.addEventListener('mouseleave', () => {
+      if (!btn.classList.contains('selected')) {
+        icon.src = `assets/icons/buttons/${orderType}Black.svg`;
+      }
+    });
+  });
 }
 
 function setOrderMenuActive(selectedOrder) {
@@ -150,23 +166,6 @@ function setOrderMenuActive(selectedOrder) {
     }
   });
 }
-
-// Troca para Pink no hover
-document.querySelectorAll('.order-btn').forEach(btn => {
-  const icon = btn.querySelector('.order-icon-img');
-  const orderType = btn.getAttribute('data-order');
-  btn.addEventListener('mouseenter', () => {
-    if (!btn.classList.contains('selected')) {
-      icon.src = `assets/icons/buttons/${orderType}Pink.svg`;
-    }
-  });
-  btn.addEventListener('mouseleave', () => {
-    if (!btn.classList.contains('selected')) {
-      icon.src = `assets/icons/buttons/${orderType}Black.svg`;
-    }
-  });
-});
-
 // --- Gemini API Integration ---
 async function callGeminiAPI(prompt) {
   const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
@@ -903,4 +902,67 @@ function openModal(broadcastId) {
   );
   const tagsString = broadcast.tags
     ? encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(","))
+    : "";
+  const iframeUrl = `https://xcam.gay/player/?user=${broadcast.username}&img=${posterUrl}&tags=${tagsString}`;
+  // Set iframe source and show it, hide the thumbnail/play button
+  modalIframe.src = iframeUrl;
+  document.getElementById("modal-player").classList.add("hidden");
+  modalIframe.classList.remove("hidden");
+  // Populate related broadcasts
+  const related = broadcasts
+    .filter(
+      (b) =>
+        b.id !== broadcastId &&
+        (b.gender === broadcast.gender ||
+          b.sexualOrientation === broadcast.sexualOrientation)
+    )
+    .slice(0, 3);
+  relatedBroadcasts.innerHTML = "";
+  related.forEach((r) => {
+    const item = document.createElement("div");
+    item.className = "cursor-pointer hover:opacity-90 transition-opacity";
+    item.onclick = () => openModal(r.id);
+    item.innerHTML = `
+          <div class="relative"><img src="https://api.xcam.gay/poster/${r.username}.jpg" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
+          <h4 class="font-medium text-white mt-2">@${r.username}</h4>
+          <div class="flex items-center text-sm text-gray-400"><span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${r.country}.png)"></span><span>${r.viewers} espectadores</span></div>
+        `;
+    relatedBroadcasts.appendChild(item);
+  });
+  // Show the modal
+  broadcastModal.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
 
+function closeModalHandler() {
+  broadcastModal.style.display = "none";
+  document.body.style.overflow = "auto";
+  modalIframe.src = "";
+}
+// Utility Functions
+function showToast(message) {
+  toastMessage.textContent = message;
+  toast.classList.remove("hidden");
+  setTimeout(() => toast.classList.add("hidden"), 3000);
+}
+
+function getCountryName(countryCode) {
+  return COUNTRY_NAMES[countryCode] || countryCode.toUpperCase();
+}
+// Make functions available globally for inline onclick attributes
+window.openModal = openModal;
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register(
+        "https://xcam.gay/sw.js"
+      )
+      .then((registration) => {
+        console.log("Service Worker registrado com sucesso:", registration);
+      })
+      .catch((error) => {
+        console.log("Falha ao registrar o Service Worker:", error);
+      });
+  });
+
+}
