@@ -330,7 +330,7 @@ function applyFilters() {
 function initializeFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const page = parseInt(params.get("page"), 10) || 1;
-  const limit = parseInt(params.get("limit"), 10) || 15;
+  const limit = parseInt(params.get("limit"), 10) || 17;
   const country = params.get("country") || "";
   const tags = params.get("tags") || "";
   const urlOrder = params.get("order") || "mostViewers";
@@ -351,7 +351,7 @@ function initializeFromUrl() {
 async function fetchInitialData() {
   const API_URL = "https://api.xcam.gay/";
   try {
-    const response = await fetch(`${API_URL}?limit=12&page=1`);
+    const response = await fetch(`${API_URL}?limit=5&page=1`);
     if (!response.ok) throw new Error("Failed to fetch initial data");
     const data = await response.json();
     const items = data.broadcasts.items || [];
@@ -821,7 +821,7 @@ function goToPage(page) {
 
 function updateUrl() {
   const params = new URLSearchParams();
-  if (itemsPerPage !== 12) params.set("limit", itemsPerPage);
+  if (itemsPerPage !== 17) params.set("limit", itemsPerPage);
   if (currentPage > 1) params.set("page", currentPage);
   if (filters.country) params.set("country", filters.country);
   if (filters.tags) params.set("tags", filters.tags);
