@@ -12,7 +12,8 @@ const BROADCAST_TYPE_ICON_SVG =
 const ORIENTATION_ICON_SVG =
   "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSI4MDBweCIgaGVpZHRoPSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNOC41NTI4NCAzLjAwMDEyQzcuOTM1OTggMy4wMDAxMiA3LjIzODQxIDMuMDY1MTQgNi41NzIwOSAzLjI5MjI0QzIuNTU0OTQgNC42MDM4NyAxLjI2MzQxIDguODk0IDIuMzk4NzcgMTIuNDNMMi40MDM1NCAxMi40NDQ4TDIuNDA4NzcgMTIuNDU5NUMzLjAzNDM1IDE0LjIxNzQgNC4wNDIyNiAxNS44MTI3IDUuMzUzMzYgMTcuMTI0OUw1LjM2MDkxIDE3LjEzMjRMNS4zNjg2MiAxNy4xMzk4QzcuMjM3ODIgMTguOTMyMyA5LjI3MjU0IDIwLjQ5NTMgMTEuNDc1NiAyMS44NTE1TDExLjk5MzQgMjIuMTcwM0wxMi41MTQ3IDIxLjg1NzNDMTQuNzIyNiAyMC41MzE1IDE2Ljc5NjQgMTguOTI1NCAxOC42NDMyIDE3LjE0NzRMMTguNjQ5IDE3LjE0MTlMMTguNjU0NyAxNy4xMzYyQzE5Ljk3NzEgMTUuODIxNSAyMC45ODUxIDE0LjIxNDQgMjEuNjAxNSAxMi40NTQ5TDIxLjYwNjYgMTIuNDQwMkwyMS42MTEzIDEyLjQyNTNDMjIuNzI1MSA4Ljg5NzAzIDIxLjQ0MDEgNC42MDE3NiAxNy40NTA3IDMuMzA5NDhDMTYuNzk3NiAzLjA5MjIxIDE2LjEyMzYgMy4wMDAxMiAxNS40NjQ4IDMuMDAwMTJDMTMuOTgyOCAzLjAwMDExIDEyLjg4NTggMy42MjA2NCAxMi4wMDA0IDQuMjUzMDlDMTEuMTIxOSAzLjYyNTQ1IDEwLjAxNzYgMy4wMDAxMiA4LjU1Mjg0IDMuMDAwMTJaIiBmaWxsPSIjRkZGRkZGIi8+PC9zdmc+";
 // Global variables
-let broadcasts = []; // Acts as a cache for modal details
+let broadcasts = []; // Cache global (opcional)
+let currentPageBroadcasts = []; // Itens da página atual
 let currentPage = 1;
 let itemsPerPage = 15; // Increased for better grid view
 let totalPages = 1;
@@ -392,11 +393,10 @@ async function fetchBroadcasts(page = 1, queryFilters = {}) {
         "pt-BR"
       )} Transmissões ao Vivo`;
     }
-    broadcasts.length = 0;
-    newItems.forEach(item => broadcasts.push(item)); // Atualiza o array global corretamente
+    currentPageBroadcasts = newItems; // Atualiza apenas os itens da página atual
     totalPages = data.broadcasts.totalPages;
     currentPage = page;
-    renderBroadcasts(newItems);
+    renderBroadcasts(currentPageBroadcasts);
   } catch (error) {
     console.error("Error fetching broadcasts:", error);
     showErrorState();
@@ -847,7 +847,7 @@ function setOrder(newOrder) {
 }
 // Modal Logic
 function openModal(broadcastId) {
-  const broadcast = broadcasts.find((b) => b.id === broadcastId);
+  const broadcast = currentPageBroadcasts.find((b) => b.id === broadcastId);
   if (!broadcast) {
     showToast("Transmissão não encontrada. Tente recarregar.");
     return;
