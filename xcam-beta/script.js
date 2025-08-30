@@ -459,9 +459,10 @@ function setupCarousel(items) {
           <div class="carousel-media-container absolute inset-0 bg-black">
              <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">
             <div class="badge-live">AO VIVO</div>
-        </div>
+          </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
           <div class="absolute bottom-0 left-0 p-6 z-20">
+            
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
             <p class="text-gray-300 mb-3">${broadcast.viewers} espectadores</p>
             <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors" onclick="openModal('${broadcast.id}')">Assistir</button>
@@ -494,7 +495,8 @@ function goToSlide(index) {
       if (!mediaContainer.querySelector("img")) {
         const broadcast = carouselItems[i];
         const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-        mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">`;
+        mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+            <div class="badge-live">AO VIVO</div>`;
       }
       // Se não existe um loader, adiciona
       if (!mediaContainer.querySelector(".carousel-loader")) {
@@ -528,7 +530,8 @@ function goToSlide(index) {
       // Remove iframe e loader, restaura poster
       const broadcast = carouselItems[i];
       const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-      mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">`;
+      mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+            <div class="badge-live">AO VIVO</div>`;
     }
   });
   indicators.forEach((indicator, i) => {
