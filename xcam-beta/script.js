@@ -14,7 +14,7 @@ const ORIENTATION_ICON_SVG =
 // Global variables
 let broadcasts = []; // Acts as a cache for modal details
 let currentPage = 1;
-let itemsPerPage = 15; // Increased for better grid view
+let itemsPerPage = 17; // Increased for better grid view
 let totalPages = 1;
 let currentCarouselIndex = 0;
 let carouselItems = [];
