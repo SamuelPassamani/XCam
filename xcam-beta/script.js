@@ -392,7 +392,8 @@ async function fetchBroadcasts(page = 1, queryFilters = {}) {
         "pt-BR"
       )} Transmissões ao Vivo`;
     }
-    broadcasts = newItems; // Corrige: sobrescreve o array global
+    broadcasts.length = 0;
+    newItems.forEach(item => broadcasts.push(item)); // Atualiza o array global corretamente
     totalPages = data.broadcasts.totalPages;
     currentPage = page;
     renderBroadcasts(newItems);
