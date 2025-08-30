@@ -392,11 +392,7 @@ async function fetchBroadcasts(page = 1, queryFilters = {}) {
         "pt-BR"
       )} Transmissões ao Vivo`;
     }
-    newItems.forEach((item) => {
-      if (!broadcasts.some((b) => b.id === item.id)) {
-        broadcasts.push(item);
-      }
-    });
+    broadcasts = newItems; // Corrige: sobrescreve o array global
     totalPages = data.broadcasts.totalPages;
     currentPage = page;
     renderBroadcasts(newItems);
