@@ -297,28 +297,61 @@ body {
   min-height: 320px;
 }
 
-/* Strongly position badge inside carousel slides */
+
+/* Carousel: Viewer count (top-left) and badge-live (top-right) styling */
+.carousel-item .viewer-count {
+  position: absolute !important;
+  top: 0.6rem !important;
+  left: 0.6rem !important;
+  z-index: 60 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  background-color: rgba(0,0,0,0.65) !important;
+  color: #ffffff !important;
+  padding: 0 0.6rem !important;
+  height: 1.8rem !important;
+  border-radius: 0.45rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+
+.carousel-item .viewer-count svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
 .carousel-item .badge-live {
   position: absolute !important;
-  top: 0.5rem !important;
-  right: 0.5rem !important;
-  z-index: 999 !important;
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #fff;
+  top: 0.6rem !important;
+  right: 0.6rem !important;
+  z-index: 60 !important;
+  padding: 0 0.6rem !important;
+  height: 1.8rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0.45rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  background: linear-gradient(90deg, #ff007f, #ff4500) !important;
 }
 
-
-/* Responsividade do label "espectadores" */
+/* Responsividade - esconder label "espectadores" em telas pequenas */
 .carousel-item .viewer-label {
-  margin-left: 0.25rem;
+  margin-left: 0.35rem;
 }
-
 @media (max-width: 640px) {
   .carousel-item .viewer-label {
     display: none;
+  }
+  .carousel-item .viewer-count {
+    padding: 0 0.5rem !important;
+    font-size: 0.95rem !important;
   }
 }

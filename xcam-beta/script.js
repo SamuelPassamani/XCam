@@ -455,19 +455,23 @@ function setupCarousel(items) {
     const item = document.createElement("div");
     item.className = `carousel-item opacity-0`;
     item.dataset.username = broadcast.username; // Store username for iframe
-    item.innerHTML = `
-          <div class="carousel-media-container absolute inset-0 bg-black">
-             <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover">
-            <div class="badge-live">AO VIVO</div>
+    item.innerHTML = `<div class="carousel-media-container absolute inset-0 bg-black">
+             <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+             <div class="viewer-count">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+               </svg>
+               ${broadcast.viewers} <span class="viewer-label">espectadores</span>
+             </div>
+             <div class="badge-live">AO VIVO</div>
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
           <div class="absolute bottom-0 left-0 p-6 z-20">
-            
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
             <p class="text-gray-300 mb-3">${broadcast.viewers} espectadores</p>
             <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors" onclick="openModal('${broadcast.id}')">Assistir</button>
-          </div>
-        `;
+          </div>`;
     carouselItemsContainer.appendChild(item);
     const indicator = document.createElement("button");
     indicator.className = `w-3 h-3 rounded-full ${
@@ -495,8 +499,7 @@ function goToSlide(index) {
       if (!mediaContainer.querySelector("img")) {
         const broadcast = carouselItems[i];
         const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-        mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
-            <div class="badge-live">AO VIVO</div>`;
+        `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">\n             <div class="viewer-count">\n               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>\n               </svg>\n               ${broadcast.viewers} <span class="viewer-label">espectadores</span>\n             </div>\n             <div class="badge-live">AO VIVO</div>`;
       }
       // Se não existe um loader, adiciona
       if (!mediaContainer.querySelector(".carousel-loader")) {
@@ -530,8 +533,7 @@ function goToSlide(index) {
       // Remove iframe e loader, restaura poster
       const broadcast = carouselItems[i];
       const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-      mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
-            <div class="badge-live">AO VIVO</div>`;
+      `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">\n             <div class="viewer-count">\n               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>\n               </svg>\n               ${broadcast.viewers} <span class="viewer-label">espectadores</span>\n             </div>\n             <div class="badge-live">AO VIVO</div>`;
     }
   });
   indicators.forEach((indicator, i) => {
