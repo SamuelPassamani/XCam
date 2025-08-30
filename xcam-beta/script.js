@@ -900,19 +900,9 @@ function openModal(broadcastId) {
   handleGenerateBio(broadcast); // Chama a função automaticamente
 
   // Construct the new iframe URL
-    const posterUrl = encodeURIComponent(
-      `https://api.xcam.gay/poster/${broadcast.username}.jpg`
-    );
-    const tagsString = broadcast.tags
-      ? encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(","))
-      : "";
-  
-    // Set modal thumbnail and iframe
-    modalThumbnail.src = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-    modalIframe.src = `https://player.xcam.gay/hls/?user=${broadcast.username}`;
-  
-    // Show the modal
-    broadcastModal.style.display = "flex";
-    document.body.style.overflow = "hidden";
-  }
+  const posterUrl = encodeURIComponent(
+    `https://api.xcam.gay/poster/${broadcast.username}.jpg`
+  );
+  const tagsString = broadcast.tags
+    ? encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(","))
 
