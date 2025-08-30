@@ -296,3 +296,16 @@ body {
   max-height: 90vh;
   min-height: 320px;
 }
+
+/* Badge AO VIVO - Posição no Carousel */
+.carousel-item .badge-live {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 30;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+}

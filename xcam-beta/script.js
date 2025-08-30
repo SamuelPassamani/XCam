@@ -461,7 +461,7 @@ function setupCarousel(items) {
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
           <div class="absolute bottom-0 left-0 p-6 z-20">
-            <span class="bg-xcam-pink text-white px-2 py-1 rounded-md text-sm font-medium mb-2 inline-block">AO VIVO</span>
+            <div class="badge-live">AO VIVO</div>
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
             <p class="text-gray-300 mb-3">${broadcast.viewers} espectadores</p>
             <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors" onclick="openModal('${broadcast.id}')">Assistir</button>
