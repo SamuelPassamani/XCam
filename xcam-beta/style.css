@@ -312,34 +312,13 @@ body {
 }
 
 
-/* Contador de espectadores no carousel */
-.carousel-item .viewer-count {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.375rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+/* Responsividade do label "espectadores" */
+.carousel-item .viewer-label {
+  margin-left: 0.25rem;
 }
 
-.carousel-item .viewer-count svg {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.4rem;
-  flex-shrink: 0;
-}
-
-/* Ajustar altura proporcional ao badge-live */
-.carousel-item .viewer-count,
-.carousel-item .badge-live {
-  height: 1.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (max-width: 640px) {
+  .carousel-item .viewer-label {
+    display: none;
+  }
 }
