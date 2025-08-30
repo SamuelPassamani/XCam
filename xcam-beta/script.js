@@ -464,7 +464,6 @@ function setupCarousel(items) {
           <div class="absolute bottom-0 left-0 p-6 z-20">
             
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
-            <p class="text-gray-300 mb-3">${broadcast.viewers} espectadores</p>
             <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors" onclick="openModal('${broadcast.id}')">Assistir</button>
           </div>
         `;
