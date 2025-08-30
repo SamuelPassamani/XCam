@@ -243,7 +243,7 @@ body {
   margin: 1rem 0;
 }
 
-/* --- CORREÇÃO DE TAMANHO DOS BOTÕES DE ORDEM --- */
+/* --- BOTÕES DE ORDEM: visual, tamanho e alinhamento --- */
 .order-btn {
   background: transparent;
   border: none;
@@ -252,7 +252,7 @@ body {
   transition: background 0.2s, box-shadow 0.2s;
   outline: none;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 1;
   vertical-align: middle;
   height: 2.5rem;
   width: 2.5rem;
@@ -261,10 +261,8 @@ body {
   justify-content: center;
 }
 
-.order-btn:hover {
-  background: linear-gradient(90deg, #ff007f, #4169e1, #ffd700);
-  box-shadow: 0 0 8px #ff007f55;
-  opacity: 1;
+.order-btn:hover:not(.selected) .order-icon-img {
+  /* O src será trocado via JS, não precisa filtro */
 }
 
 .order-btn.selected,

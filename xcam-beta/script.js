@@ -146,7 +146,7 @@ function setupEventListeners() {
     });
     btn.addEventListener('mouseleave', () => {
       if (!btn.classList.contains('selected')) {
-        icon.src = `assets/icons/buttons/${orderType}Black.svg`;
+        icon.src = `assets/icons/buttons/${orderType}White.svg`;
       }
     });
   });
@@ -156,13 +156,14 @@ function setOrderMenuActive(selectedOrder) {
   document.querySelectorAll('.order-btn').forEach(btn => {
     const icon = btn.querySelector('.order-icon-img');
     const orderType = btn.getAttribute('data-order');
-    btn.classList.toggle('selected', orderType === selectedOrder);
+    const isSelected = orderType === selectedOrder;
+    btn.classList.toggle('selected', isSelected);
 
     // Troca o SVG conforme o estado
-    if (orderType === selectedOrder) {
-      icon.src = `assets/icons/buttons/${orderType}White.svg`;
-    } else {
+    if (isSelected) {
       icon.src = `assets/icons/buttons/${orderType}Black.svg`;
+    } else {
+      icon.src = `assets/icons/buttons/${orderType}White.svg`;
     }
   });
 }
