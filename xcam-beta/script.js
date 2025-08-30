@@ -151,6 +151,7 @@ function setOrderMenuActive(selectedOrder) {
   });
 }
 
+// Troca para Pink no hover, volta para White ou Black no mouseleave
 function setupOrderMenuHover() {
   document.querySelectorAll('.order-btn').forEach(btn => {
     const icon = btn.querySelector('.order-icon-img');
@@ -169,6 +170,7 @@ function setupOrderMenuHover() {
     });
   });
 }
+
 // --- Gemini API Integration ---
 async function callGeminiAPI(prompt) {
   const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment

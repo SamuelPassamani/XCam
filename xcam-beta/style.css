@@ -271,15 +271,12 @@ body {
   pointer-events: none;
 }
 
-.order-btn:hover {
-  background: linear-gradient(90deg, #ff007f, #4169e1, #ffd700);
-  box-shadow: 0 0 8px #ff007f55;
-  opacity: 1;
-}
-
-.order-btn.selected,
-.order-btn.selected:focus {
+.order-btn.selected .order-icon-square {
   background: linear-gradient(90deg, #ff007f, #ffd700);
   box-shadow: 0 0 12px #ffd70099;
-  opacity: 1;
+}
+
+.order-btn:not(.selected) .order-icon-square {
+  background: #232323;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }
