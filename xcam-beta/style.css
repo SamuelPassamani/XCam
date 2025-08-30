@@ -244,31 +244,51 @@ body {
 }
 
 .order-icon-square {
-  width: 44px;
-  height: 44px;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  max-width: 40px !important;
+  max-height: 40px !important;
   background: #232323;
-  border-radius: 14px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: box-shadow 0.2s, background 0.2s;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  padding: 0 !important;
 }
 
 .order-btn {
-  padding: 0;
+  padding: 0 !important;
   border: none;
   background: transparent;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  max-width: 40px !important;
+  max-height: 40px !important;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .order-btn .order-icon-img {
-  width: 28px;
-  height: 28px;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
   transition: filter 0.2s;
   user-select: none;
   pointer-events: none;
+  display: block;
 }
 
 .order-btn:hover {
