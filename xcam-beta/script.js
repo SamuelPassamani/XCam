@@ -210,7 +210,7 @@ async function callGeminiAPI(prompt) {
   }
 }
 async function handleSurpriseMe() {
-  showToast("✨ A IA está buscando uma sugestão para você...");
+  showToast("✨ A IAXCam está buscando uma sugestão para você...");
   const prompt = `Sugira um tema criativo para encontrar streamers na plataforma XCam. Responda APENAS com um objeto JSON com as chaves "country", "gender", "orientation", e "search". Use os seguintes valores possíveis: country (br, us, es, fr, it, de, jp, kr, ru, ca), gender (male, female, trans, couple), orientation (straight, gay, lesbian, bisexual). A chave "search" deve ser um termo de busca criativo em português. Exemplo: {"country": "br", "gender": "male", "orientation": "gay", "search": "músicos tocando ao vivo"}`;
   const result = await callGeminiAPI(prompt);
   if (result) {
@@ -225,10 +225,10 @@ async function handleSurpriseMe() {
       applyFilters();
     } catch (e) {
       console.error("Failed to parse Gemini suggestion:", e);
-      showToast("Não foi possível aplicar a sugestão da IA.");
+      showToast("Não foi possível aplicar a sugestão da IAXCam.");
     }
   } else {
-    showToast("A IA não conseguiu gerar uma sugestão. Tente novamente.");
+    showToast("A IAXCam não conseguiu gerar uma sugestão. Tente novamente.");
   }
 }
 async function handleGenerateBio(broadcast) {
