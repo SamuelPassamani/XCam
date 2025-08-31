@@ -14,7 +14,7 @@ const ORIENTATION_ICON_SVG =
 // Global variables
 let broadcasts = []; // Acts as a cache for modal details
 let currentPage = 1;
-let itemsPerPage = 17; // Increased for better grid view
+let itemsPerPage = 16; // Increased for better grid view
 let totalPages = 1;
 let currentCarouselIndex = 0;
 let carouselItems = [];
@@ -128,7 +128,7 @@ function setupEventListeners() {
   });
   // Eventos para menu de ordem
   document.querySelectorAll('.order-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
+    btn.addEventListener('click', function() {
       const selectedOrder = btn.getAttribute('data-order');
       setOrder(selectedOrder);
       setOrderMenuActive(selectedOrder);
@@ -172,15 +172,11 @@ async function callGeminiAPI(prompt) {
   const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
   const payload = {
-    contents: [
-      {
-        parts: [
-          {
-            text: prompt
-          }
-        ]
-      }
-    ]
+    contents: [{
+      parts: [{
+        text: prompt
+      }]
+    }]
   };
   try {
     const response = await fetch(apiUrl, {
@@ -330,7 +326,7 @@ function applyFilters() {
 function initializeFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const page = parseInt(params.get("page"), 10) || 1;
-  const limit = parseInt(params.get("limit"), 10) || 17;
+  const limit = parseInt(params.get("limit"), 10) || 16;
   const country = params.get("country") || "";
   const tags = params.get("tags") || "";
   const urlOrder = params.get("order") || "mostViewers";
@@ -498,7 +494,16 @@ function goToSlide(index) {
       if (!mediaContainer.querySelector("img")) {
         const broadcast = carouselItems[i];
         const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-        `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">\n             <div class="viewer-count">\n               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>\n               </svg>\n               ${broadcast.viewers} <span class="viewer-label">espectadores</span>\n             </div>\n             <div class="badge-live">AO VIVO</div>`;
+        // CORREÇÃO: A string template foi atribuída a mediaContainer.innerHTML
+        mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+             <div class="viewer-count">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+               </svg>
+               ${broadcast.viewers} <span class="viewer-label">espectadores</span>
+             </div>
+             <div class="badge-live">AO VIVO</div>`;
       }
       // Se não existe um loader, adiciona
       if (!mediaContainer.querySelector(".carousel-loader")) {
@@ -530,9 +535,23 @@ function goToSlide(index) {
     } else {
       item.classList.add("opacity-0");
       // Remove iframe e loader, restaura poster
+      const iframe = mediaContainer.querySelector("iframe");
+      if (iframe) iframe.remove();
+      const loader = mediaContainer.querySelector(".carousel-loader");
+      if (loader) loader.remove();
+
       const broadcast = carouselItems[i];
       const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
-      `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">\n             <div class="viewer-count">\n               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>\n                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>\n               </svg>\n               ${broadcast.viewers} <span class="viewer-label">espectadores</span>\n             </div>\n             <div class="badge-live">AO VIVO</div>`;
+      // CORREÇÃO: A string template foi atribuída a mediaContainer.innerHTML
+      mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+             <div class="viewer-count">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+               </svg>
+               ${broadcast.viewers} <span class="viewer-label">espectadores</span>
+             </div>
+             <div class="badge-live">AO VIVO</div>`;
     }
   });
   indicators.forEach((indicator, i) => {
@@ -541,6 +560,7 @@ function goToSlide(index) {
   });
   currentCarouselIndex = index;
 }
+
 
 function showPrevSlide() {
   let newIndex = currentCarouselIndex - 1;
@@ -578,7 +598,7 @@ function setupTopStreamers(items) {
     topStreamersContainer.appendChild(item);
   });
 }
- /**
+/**
  * Handles the mouse entering the preview area of a broadcast card.
  * It creates and displays an iframe for a live preview.
  * @param {MouseEvent} event The mouseenter event.
@@ -657,11 +677,11 @@ function renderBroadcasts(broadcastsList) {
       "bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col max-w-full";
     // tags com classe card-tag para efeito gradiente
     const tagsHTML =
-      broadcast.tags && broadcast.tags.length > 0
-        ? broadcast.tags
-            .map((tag) => `<span class="card-tag">#${tag.name}</span>`)
-            .join(" ")
-        : "";
+      broadcast.tags && broadcast.tags.length > 0 ?
+      broadcast.tags
+      .map((tag) => `<span class="card-tag">#${tag.name}</span>`)
+      .join(" ") :
+      "";
     card.innerHTML = `
           <div class="relative card-preview-container aspect-video cursor-pointer">
             <img src="${posterUrl}" alt="${
@@ -710,12 +730,12 @@ function renderBroadcasts(broadcastsList) {
     const previewContainer = card.querySelector(".card-preview-container");
     previewContainer.dataset.username = broadcast.username;
     previewContainer.style.cursor = "pointer";
-    card.addEventListener("mouseenter", function (e) {
+    card.addEventListener("mouseenter", function(e) {
       handleCardHover({
         currentTarget: previewContainer
       });
     });
-    card.addEventListener("mouseleave", function (e) {
+    card.addEventListener("mouseleave", function(e) {
       handleCardMouseLeave({
         currentTarget: previewContainer
       });
@@ -825,7 +845,7 @@ function goToPage(page) {
 
 function updateUrl() {
   const params = new URLSearchParams();
-  if (itemsPerPage !== 17) params.set("limit", itemsPerPage);
+  if (itemsPerPage !== 16) params.set("limit", itemsPerPage);
   if (currentPage > 1) params.set("page", currentPage);
   if (filters.country) params.set("country", filters.country);
   if (filters.tags) params.set("tags", filters.tags);
@@ -835,13 +855,9 @@ function updateUrl() {
   if (order && order !== "mostViewers") params.set("order", order); // Adiciona order na URL
   else if (order === "mostViewers") params.delete("order");
   const newUrl = `${window.location.pathname}?${params.toString()}`;
-  history.pushState(
-    {
-      path: newUrl
-    },
-    "",
-    newUrl
-  );
+  history.pushState({
+    path: newUrl
+  }, "", newUrl);
 }
 // Função utilitária para alterar o order global e atualizar grade/página
 function setOrder(newOrder) {
@@ -905,9 +921,9 @@ function openModal(broadcastId) {
   const posterUrl = encodeURIComponent(
     `https://api.xcam.gay/poster/${broadcast.username}.jpg`
   );
-  const tagsString = broadcast.tags
-    ? encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(","))
-    : "";
+  const tagsString = broadcast.tags ?
+    encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(",")) :
+    "";
   const iframeUrl = `https://xcam.gay/player/?user=${broadcast.username}&img=${posterUrl}&tags=${tagsString}`;
   // Set iframe source and show it, hide the thumbnail/play button
   modalIframe.src = iframeUrl;
@@ -917,9 +933,9 @@ function openModal(broadcastId) {
   const related = broadcasts
     .filter(
       (b) =>
-        b.id !== broadcastId &&
-        (b.gender === broadcast.gender ||
-          b.sexualOrientation === broadcast.sexualOrientation)
+      b.id !== broadcastId &&
+      (b.gender === broadcast.gender ||
+        b.sexualOrientation === broadcast.sexualOrientation)
     )
     .slice(0, 3);
   relatedBroadcasts.innerHTML = "";
@@ -969,5 +985,4 @@ if ("serviceWorker" in navigator) {
         console.log("Falha ao registrar o Service Worker:", error);
       });
   });
-
 }
