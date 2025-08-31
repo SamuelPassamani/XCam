@@ -52,13 +52,13 @@ body {
 .loader {
   width: 48px;
   height: 48px;
-  border: 5px solid #fff;
-  border-bottom-color: #ff007f;
-  border-right-color: #4169e1;
-  border-top-color: #ffd700;
-  border-radius: 50%;
   display: inline-block;
-  box-sizing: border-box;
+  /* Utiliza o SVG como fundo e remove as bordas antigas */
+  background-image: url("https://player.xcam.gay/src/buffer.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: none;
+  /* Mantém a animação de rotação */
   animation: rotation 1s linear infinite;
 }
 
@@ -297,7 +297,6 @@ body {
   min-height: 320px;
 }
 
-
 /* Carousel: Viewer count (top-left) and badge-live (top-right) styling */
 .carousel-item .viewer-count {
   position: absolute !important;
@@ -307,14 +306,14 @@ body {
   display: flex !important;
   align-items: center !important;
   gap: 0.4rem !important;
-  background-color: rgba(0,0,0,0.65) !important;
+  background-color: rgba(0, 0, 0, 0.65) !important;
   color: #ffffff !important;
   padding: 0 0.6rem !important;
   height: 1.8rem !important;
   border-radius: 0.45rem !important;
   font-size: 0.95rem !important;
   font-weight: 600 !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .carousel-item .viewer-count svg {
@@ -338,7 +337,7 @@ body {
   font-size: 0.95rem !important;
   font-weight: 600 !important;
   color: #fff !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   background: linear-gradient(90deg, #ff007f, #ff4500) !important;
 }
 

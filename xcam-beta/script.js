@@ -1,8 +1,5 @@
 // Importa as traduções do script externo
-import {
-  COUNTRY_NAMES,
-  TRANSLATIONS
-} from "https://xcam.gay/translations.js";
+import { COUNTRY_NAMES, TRANSLATIONS } from "https://xcam.gay/translations.js";
 // --- LÓGICA DA APLICAÇÃO ---
 // Constantes para os ícones
 const GENDER_ICON_SVG =
@@ -127,25 +124,25 @@ function setupEventListeners() {
     if (e.target === broadcastModal) closeModalHandler();
   });
   // Eventos para menu de ordem
-  document.querySelectorAll('.order-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const selectedOrder = btn.getAttribute('data-order');
+  document.querySelectorAll(".order-btn").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const selectedOrder = btn.getAttribute("data-order");
       setOrder(selectedOrder);
       setOrderMenuActive(selectedOrder);
     });
   });
 
   // Troca para Pink no hover
-  document.querySelectorAll('.order-btn').forEach(btn => {
-    const icon = btn.querySelector('.order-icon-img');
-    const orderType = btn.getAttribute('data-order');
-    btn.addEventListener('mouseenter', () => {
-      if (!btn.classList.contains('selected')) {
+  document.querySelectorAll(".order-btn").forEach((btn) => {
+    const icon = btn.querySelector(".order-icon-img");
+    const orderType = btn.getAttribute("data-order");
+    btn.addEventListener("mouseenter", () => {
+      if (!btn.classList.contains("selected")) {
         icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}Pink.svg`;
       }
     });
-    btn.addEventListener('mouseleave', () => {
-      if (!btn.classList.contains('selected')) {
+    btn.addEventListener("mouseleave", () => {
+      if (!btn.classList.contains("selected")) {
         icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}White.svg`;
       }
     });
@@ -153,11 +150,11 @@ function setupEventListeners() {
 }
 
 function setOrderMenuActive(selectedOrder) {
-  document.querySelectorAll('.order-btn').forEach(btn => {
-    const icon = btn.querySelector('.order-icon-img');
-    const orderType = btn.getAttribute('data-order');
+  document.querySelectorAll(".order-btn").forEach((btn) => {
+    const icon = btn.querySelector(".order-icon-img");
+    const orderType = btn.getAttribute("data-order");
     const isSelected = orderType === selectedOrder;
-    btn.classList.toggle('selected', isSelected);
+    btn.classList.toggle("selected", isSelected);
 
     // Troca o SVG conforme o estado
     if (isSelected) {
@@ -172,11 +169,15 @@ async function callGeminiAPI(prompt) {
   const apiKey = "AIzaSyABqoAHX3hByzK57WuefKFLK2yl8rsGBXA"; // API key is handled by the environment
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
   const payload = {
-    contents: [{
-      parts: [{
-        text: prompt
-      }]
-    }]
+    contents: [
+      {
+        parts: [
+          {
+            text: prompt
+          }
+        ]
+      }
+    ]
   };
   try {
     const response = await fetch(apiUrl, {
@@ -561,7 +562,6 @@ function goToSlide(index) {
   currentCarouselIndex = index;
 }
 
-
 function showPrevSlide() {
   let newIndex = currentCarouselIndex - 1;
   if (newIndex < 0) newIndex = carouselItems.length - 1;
@@ -677,11 +677,11 @@ function renderBroadcasts(broadcastsList) {
       "bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col max-w-full";
     // tags com classe card-tag para efeito gradiente
     const tagsHTML =
-      broadcast.tags && broadcast.tags.length > 0 ?
-      broadcast.tags
-      .map((tag) => `<span class="card-tag">#${tag.name}</span>`)
-      .join(" ") :
-      "";
+      broadcast.tags && broadcast.tags.length > 0
+        ? broadcast.tags
+            .map((tag) => `<span class="card-tag">#${tag.name}</span>`)
+            .join(" ")
+        : "";
     card.innerHTML = `
           <div class="relative card-preview-container aspect-video cursor-pointer">
             <img src="${posterUrl}" alt="${
@@ -730,12 +730,12 @@ function renderBroadcasts(broadcastsList) {
     const previewContainer = card.querySelector(".card-preview-container");
     previewContainer.dataset.username = broadcast.username;
     previewContainer.style.cursor = "pointer";
-    card.addEventListener("mouseenter", function(e) {
+    card.addEventListener("mouseenter", function (e) {
       handleCardHover({
         currentTarget: previewContainer
       });
     });
-    card.addEventListener("mouseleave", function(e) {
+    card.addEventListener("mouseleave", function (e) {
       handleCardMouseLeave({
         currentTarget: previewContainer
       });
@@ -852,12 +852,17 @@ function updateUrl() {
   // Add other filters from the state if they should be reflected in the URL
   if (filters.gender) params.set("gender", filters.gender);
   if (filters.orientation) params.set("sexualOrientation", filters.orientation);
-  if (order && order !== "mostViewers") params.set("order", order); // Adiciona order na URL
+  if (order && order !== "mostViewers") params.set("order", order);
+  // Adiciona order na URL
   else if (order === "mostViewers") params.delete("order");
   const newUrl = `${window.location.pathname}?${params.toString()}`;
-  history.pushState({
-    path: newUrl
-  }, "", newUrl);
+  history.pushState(
+    {
+      path: newUrl
+    },
+    "",
+    newUrl
+  );
 }
 // Função utilitária para alterar o order global e atualizar grade/página
 function setOrder(newOrder) {
@@ -921,9 +926,9 @@ function openModal(broadcastId) {
   const posterUrl = encodeURIComponent(
     `https://api.xcam.gay/poster/${broadcast.username}.jpg`
   );
-  const tagsString = broadcast.tags ?
-    encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(",")) :
-    "";
+  const tagsString = broadcast.tags
+    ? encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(","))
+    : "";
   const iframeUrl = `https://xcam.gay/player/?user=${broadcast.username}&img=${posterUrl}&tags=${tagsString}`;
   // Set iframe source and show it, hide the thumbnail/play button
   modalIframe.src = iframeUrl;
@@ -933,9 +938,9 @@ function openModal(broadcastId) {
   const related = broadcasts
     .filter(
       (b) =>
-      b.id !== broadcastId &&
-      (b.gender === broadcast.gender ||
-        b.sexualOrientation === broadcast.sexualOrientation)
+        b.id !== broadcastId &&
+        (b.gender === broadcast.gender ||
+          b.sexualOrientation === broadcast.sexualOrientation)
     )
     .slice(0, 3);
   relatedBroadcasts.innerHTML = "";
@@ -975,9 +980,7 @@ window.openModal = openModal;
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register(
-        "https://xcam.gay/sw.js"
-      )
+      .register("https://xcam.gay/sw.js")
       .then((registration) => {
         console.log("Service Worker registrado com sucesso:", registration);
       })
