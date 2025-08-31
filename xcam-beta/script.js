@@ -141,12 +141,12 @@ function setupEventListeners() {
     const orderType = btn.getAttribute('data-order');
     btn.addEventListener('mouseenter', () => {
       if (!btn.classList.contains('selected')) {
-        icon.src = `assets/icons/buttons/${orderType}Pink.svg`;
+        icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}Pink.svg`;
       }
     });
     btn.addEventListener('mouseleave', () => {
       if (!btn.classList.contains('selected')) {
-        icon.src = `assets/icons/buttons/${orderType}White.svg`;
+        icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}White.svg`;
       }
     });
   });
@@ -161,9 +161,9 @@ function setOrderMenuActive(selectedOrder) {
 
     // Troca o SVG conforme o estado
     if (isSelected) {
-      icon.src = `assets/icons/buttons/${orderType}Black.svg`;
+      icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}Black.svg`;
     } else {
-      icon.src = `assets/icons/buttons/${orderType}White.svg`;
+      icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}White.svg`;
     }
   });
 }
@@ -586,7 +586,7 @@ function setupTopStreamers(items) {
       "flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer";
     item.onclick = () => openModal(streamer.id);
     item.innerHTML = `
-          <img src="${streamer.profileImageURL}" alt="${streamer.username}" class="w-10 h-10 rounded-full object-cover">
+          <img src="https://api.xcam.gay/avatar/${streamer.username}.jpg" alt="${streamer.username}" class="w-10 h-10 rounded-full object-cover">
           <div>
             <h4 class="font-medium text-white">@${streamer.username}</h4>
             <div class="flex items-center text-sm text-gray-400">
