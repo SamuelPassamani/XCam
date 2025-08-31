@@ -169,7 +169,7 @@ function setOrderMenuActive(selectedOrder) {
 }
 // --- Gemini API Integration ---
 async function callGeminiAPI(prompt) {
-  const apiKey = "AIzaSyAnXS2Mg_XlR78L1l08q5rSIsXvhwtt2L4"; // API key is handled by the environment
+  const apiKey = "AIzaSyABqoAHX3hByzK57WuefKFLK2yl8rsGBXA"; // API key is handled by the environment
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
   const payload = {
     contents: [{
