@@ -6,8 +6,17 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/assets/icons/icon-36x36.png',
+  '/assets/icons/icon-48x48.png',
+  '/assets/icons/icon-48x48.svg',
+  '/assets/icons/icon-180x180.png',
+  '/assets/icons/icon-180x180.svg',
   '/assets/icons/icon-192x192.png',
+  '/assets/icons/icon-192x192.svg',
   '/assets/icons/icon-512x512.png',
+  '/assets/icons/icon-512x512.svg',
+  '/assets/icons/icon-3900x3900.png',
+  '/assets/icons/icon-3900x3900.svg',
   // Adicione aqui outros arquivos importantes que você queira que funcionem offline
   // Ex: '/styles/main.css', '/scripts/main.js'
   // No seu caso, o CSS e JS estão no index.html, então não precisa adicionar.

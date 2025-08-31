@@ -1,17 +1,37 @@
 {
   "lang": "pt-BR",
-  "name": "XCam - Transmissões ao Vivo",
+  "name": "XCam - Transmissões xXx ao Vivo",
   "short_name": "XCam",
-  "description": "A melhor plataforma para transmissões ao vivo com design moderno e retro.",
+  "description": "A melhor plataforma para suas transmissões xXx ao vivo.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#1a1a1a",
   "icons": [
     {
+      "src": "assets/icons/icon-36x36.png",
+      "sizes": "36x36",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-48x48.svg",
+      "sizes": "48x48",
+      "type": "image/svg+xml"
+    },
+    {
       "src": "assets/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-72x72.svg",
+      "sizes": "72x72",
+      "type": "image/svg+xml"
     },
     {
       "src": "assets/icons/icon-96x96.png",
@@ -19,9 +39,19 @@
       "type": "image/png"
     },
     {
+      "src": "assets/icons/icon-96x96.svg",
+      "sizes": "96x96",
+      "type": "image/svg+xml"
+    },
+    {
       "src": "assets/icons/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-128x128.svg",
+      "sizes": "128x128",
+      "type": "image/svg+xml"
     },
     {
       "src": "assets/icons/icon-144x144.png",
@@ -29,9 +59,31 @@
       "type": "image/png"
     },
     {
+      "src": "assets/icons/icon-144x144.svg",
+      "sizes": "144x144",
+      "type": "image/svg+xml"
+    },
+    {
       "src": "assets/icons/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-152x152.svg",
+      "sizes": "152x152",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "assets/icons/icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-180x180.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     },
     {
       "src": "assets/icons/icon-192x192.png",
@@ -40,14 +92,43 @@
       "purpose": "any maskable"
     },
     {
+      "src": "assets/icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
       "src": "assets/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
+      "src": "assets/icons/icon-384x384.svg",
+      "sizes": "384x384",
+      "type": "image/svg+xml"
+    },
+    {
       "src": "assets/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-3900x3900.png",
+      "sizes": "3900x3900",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-3900x3900.svg",
+      "sizes": "3900x3900",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
