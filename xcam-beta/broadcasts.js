@@ -12,7 +12,7 @@
  * Este script é responsável por construir e gerenciar a grade principal de transmissões ao vivo do XCam.
  * Ele realiza a busca eficiente de transmissões, renderiza os cards de forma reativa e utiliza como poster seguro
  * (imagem de preview) um frame dinâmico extraído do endpoint seguro:
- *   https://api.xcam.gay/v1/media/poster/{username}
+ *   https://api-xcam.netlify.app/v1/media/poster/{username}
  * Isso garante compatibilidade máxima com CORS e Same-Origin Policy para uso direto em <img> ou <canvas>,
  * otimizando performance e experiência do usuário.
  * 
@@ -36,8 +36,8 @@ import { countryNames } from "https://xcam.gay/translations.js";
 
 // Configurações editáveis e regras de comportamento
 const CONFIG = {
-  apiBaseUrl: "https://api.xcam.gay/",
-  apiPosterUrl: "https://api.xcam.gay/v1/media/poster/",
+  apiBaseUrl: "https://api-xcam.netlify.app/",
+  apiPosterUrl: "https://api-xcam.netlify.app/v1/media/poster/",
   itemsPerPage: 20, // Quantidade de cards exibidos por lote na UI
   defaultPoster: "https://poster.xcam.gay/${username}",
   loadingGif: "https://xcam.gay/src/loading.gif",
@@ -144,7 +144,7 @@ async function clearPosterCache() {
 // Pré-carrega todos os posters do endpoint ?poster=0 e alimenta o cache
 async function preloadAllPostersToCache() {
   try {
-    const resp = await fetch("https://api.xcam.gay/?poster=0", {
+    const resp = await fetch("https://api-xcam.netlify.app/?poster=0", {
       headers: { accept: "application/json" }
     });
     if (resp.ok) {
@@ -456,7 +456,7 @@ async function renderBroadcastCard(data) {
   if (!posterSrc) {
     if (!window._xcamAllPosters) {
       try {
-        const resp = await fetch("https://api.xcam.gay/?poster=0", {
+        const resp = await fetch("https://api-xcam.netlify.app/?poster=0", {
           headers: { accept: "application/json" }
         });
         if (resp.ok) {
@@ -603,4 +603,5 @@ document.addEventListener("DOMContentLoaded", () => {
  * - Animações de entrada para os cards recém-carregados para uma UX mais fluida.
  *
  * =====================================================================================
+
  */
