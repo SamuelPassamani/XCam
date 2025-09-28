@@ -240,7 +240,7 @@ async function handleGenerateBio(broadcast) {
   let additionalDetails = "";
   try {
     const userInfoResponse = await fetch(
-      `https://api.xcam.gay/user/${broadcast.username}/Info`
+      `https://api-xcam.netlify.app/user/${broadcast.username}/Info`
     );
     if (userInfoResponse.ok) {
       const userInfo = await userInfoResponse.json();
@@ -346,7 +346,7 @@ function initializeFromUrl() {
 }
 // Fetch initial data for Carousel and Top Streamers (unfiltered)
 async function fetchInitialData() {
-  const API_URL = "https://api.xcam.gay/";
+  const API_URL = "https://api-xcam.netlify.app/";
   try {
     const response = await fetch(`${API_URL}?limit=5&page=1`);
     if (!response.ok) throw new Error("Failed to fetch initial data");
@@ -362,7 +362,7 @@ async function fetchInitialData() {
 // Fetch broadcasts for the main grid, respecting filters
 async function fetchBroadcasts(page = 1, queryFilters = {}) {
   showLoadingState();
-  const API_URL = "https://api.xcam.gay/";
+  const API_URL = "https://api-xcam.netlify.app/";
   const params = new URLSearchParams({
     limit: itemsPerPage,
     page: page
@@ -448,7 +448,7 @@ function setupCarousel(items) {
   carouselItemsContainer.innerHTML = "";
   carouselIndicators.innerHTML = "";
   carouselItems.forEach((broadcast, index) => {
-    const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
+    const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
     const item = document.createElement("div");
     item.className = `carousel-item opacity-0`;
     item.dataset.username = broadcast.username; // Store username for iframe
@@ -494,7 +494,7 @@ function goToSlide(index) {
       // Se não existe um poster, adiciona
       if (!mediaContainer.querySelector("img")) {
         const broadcast = carouselItems[i];
-        const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
+        const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
         // CORREÇÃO: A string template foi atribuída a mediaContainer.innerHTML
         mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
              <div class="viewer-count">
@@ -542,7 +542,7 @@ function goToSlide(index) {
       if (loader) loader.remove();
 
       const broadcast = carouselItems[i];
-      const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
+      const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
       // CORREÇÃO: A string template foi atribuída a mediaContainer.innerHTML
       mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
              <div class="viewer-count">
@@ -586,7 +586,7 @@ function setupTopStreamers(items) {
       "flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer";
     item.onclick = () => openModal(streamer.id);
     item.innerHTML = `
-          <img src="https://api.xcam.gay/avatar/${streamer.username}.jpg" alt="${streamer.username}" class="w-10 h-10 rounded-full object-cover">
+          <img src="https://api-xcam.netlify.app/avatar/${streamer.username}.jpg" alt="${streamer.username}" class="w-10 h-10 rounded-full object-cover">
           <div>
             <h4 class="font-medium text-white">@${streamer.username}</h4>
             <div class="flex items-center text-sm text-gray-400">
@@ -671,7 +671,7 @@ function renderBroadcasts(broadcastsList) {
   }
   broadcastsGrid.innerHTML = "";
   broadcastsList.forEach((broadcast) => {
-    const posterUrl = `https://api.xcam.gay/poster/${broadcast.username}.jpg`;
+    const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
     const card = document.createElement("div");
     card.className =
       "bg-gray-900 rounded-xl overflow-hidden border border-gray-800 transition-all duration-300 card-hover flex flex-col max-w-full";
@@ -924,7 +924,7 @@ function openModal(broadcastId) {
 
   // Construct the new iframe URL
   const posterUrl = encodeURIComponent(
-    `https://api.xcam.gay/poster/${broadcast.username}.jpg`
+    `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`
   );
   const tagsString = broadcast.tags
     ? encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(","))
@@ -949,7 +949,7 @@ function openModal(broadcastId) {
     item.className = "cursor-pointer hover:opacity-90 transition-opacity";
     item.onclick = () => openModal(r.id);
     item.innerHTML = `
-          <div class="relative"><img src="https://api.xcam.gay/poster/${r.username}.jpg" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
+          <div class="relative"><img src="https://api-xcam.netlify.app/poster/${r.username}.jpg" alt="${r.username}" class="w-full aspect-video object-cover rounded-lg"><span class="badge-live absolute top-2 right-2 px-2 py-1 rounded-md text-white text-xs font-medium">AO VIVO</span></div>
           <h4 class="font-medium text-white mt-2">@${r.username}</h4>
           <div class="flex items-center text-sm text-gray-400"><span class="flag-icon" style="background-image: url(https://flagcdn.com/w20/${r.country}.png)"></span><span>${r.viewers} espectadores</span></div>
         `;
