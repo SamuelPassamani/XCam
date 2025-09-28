@@ -14,7 +14,7 @@ export function setupCarousel({ intervalMs = 6000 } = {}) {
 
   async function fetchTopBroadcasts() {
     try {
-      const response = await fetch("https://api.xcam.gay/?limit=10");
+      const response = await fetch("https://api-xcam.netlify.app/?limit=10");
       const data = await response.json();
       const items = data?.broadcasts?.items || [];
 
