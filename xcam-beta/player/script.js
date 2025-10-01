@@ -50,7 +50,7 @@ const playerInstance = jwplayer("player").setup({
       image: imageUrl,
       sources: [
         {
-          file: `https://api.xcam.gay/stream/${username}.m3u8`,
+          file: `https://api-xcam.netlify.app/stream/${username}.m3u8`,
           label: "Source",
           type: "video/x-mpegURL",
           default: true
