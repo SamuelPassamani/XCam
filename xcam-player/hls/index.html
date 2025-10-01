@@ -80,11 +80,11 @@
             // 2. Verifica se o parâmetro 'user' foi encontrado.
             if (user) {
                 // Se sim, constrói a URL do vídeo com o valor do parâmetro.
-                videoSrc = `https://api.xcam.gay/stream/${user}.m3u8`;
+                videoSrc = `https://api-xcam.netlify.app/stream/${user}.m3u8`;
                 console.log(`Parâmetro 'user' encontrado. A carregar stream para: ${user}`);
             } else {
                 // Se não, usa uma URL padrão como fallback.
-                videoSrc = "https://api.xcam.gay/stream/JacksonOlsenn.m3u8"; // URL Padrão
+                videoSrc = "https://api-xcam.netlify.app/stream/JacksonOlsenn.m3u8"; // URL Padrão
                 console.log("Nenhum parâmetro 'user' encontrado. A carregar stream padrão.");
             }
             // XDev: Fim da lógica para URL dinâmica
