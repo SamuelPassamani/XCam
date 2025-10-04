@@ -45,6 +45,11 @@ const ALLOWED_ORIGINS_PATTERNS = [
 
 // --- Bloco de Funções de Segurança e Utilitários ---
 
+/**
+ * Checks if a given origin is allowed based on a list of patterns.
+ * @param {string | null} origin - The origin to check.
+ * @returns {string | null} The allowed origin if it matches a pattern, otherwise null.
+ */
 function getAllowedOrigin(origin) {
   if (!origin || ALLOWED_ORIGINS_PATTERNS.includes(origin)) return origin;
   for (const pattern of ALLOWED_ORIGINS_PATTERNS) {
@@ -57,6 +62,11 @@ function getAllowedOrigin(origin) {
   return null;
 }
 
+/**
+ * Handles preflight OPTIONS requests for CORS.
+ * @param {Request} request - The incoming request object.
+ * @returns {Response} A response with appropriate CORS headers.
+ */
 function handleOptions(request) {
   const origin = request.headers.get('Origin');
   const allowedOrigin = getAllowedOrigin(origin);
@@ -74,6 +84,11 @@ function handleOptions(request) {
   return new Response(null, { status: 403, headers: { 'Allow': 'GET, POST, OPTIONS' } });
 }
 
+/**
+ * Converts an array of objects to a CSV string.
+ * @param {Array<Object>} items - The array of objects to convert.
+ * @returns {string} The CSV string representation of the items.
+ */
 function jsonToCsv(items) {
   if (!items || items.length === 0) return "";
   const headers = Object.keys(items[0]);
@@ -90,7 +105,10 @@ function jsonToCsv(items) {
   return [headers.join(","), ...csvRows].join("\n");
 }
 
-// Função para resposta de erro com vídeo em tela cheia
+/**
+ * Returns a response with a fullscreen video for access denied errors.
+ * @returns {Response} An HTML response with a fullscreen background video.
+ */
 function errorVideoResponse() {
   const html = `
     <!DOCTYPE html>
@@ -140,6 +158,13 @@ function errorVideoResponse() {
 
 // --- Bloco de Funções de Requisição a APIs Externas ---
 
+/**
+ * Builds the body for a CAM4 GraphQL API request.
+ * @param {number} offset - The offset for pagination.
+ * @param {number} limit - The number of items to fetch.
+ * @param {string} [orderBy="trending"] - The sorting order for the results.
+ * @returns {string} The JSON stringified GraphQL request body.
+ */
 function buildCam4GraphQLBody(offset, limit, orderBy = "trending") {
   return JSON.stringify({
     operationName: "getGenderPreferencePageData",
@@ -156,9 +181,10 @@ function buildCam4GraphQLBody(offset, limit, orderBy = "trending") {
 }
 
 /**
- * Busca TODOS os broadcasts disponíveis na API do Cam4, descobrindo o total
- * na primeira chamada e continuando a buscar em páginas até atingir esse total.
- * @returns {Promise<Array>} - Uma promessa que resolve para um array com todos os broadcasts.
+ * Fetches all available broadcasts from the Cam4 API by first discovering the total
+ * and then paginating through the results until all broadcasts are retrieved.
+ * @param {string} [orderBy="trending"] - The sorting order for the broadcasts.
+ * @returns {Promise<Array>} A promise that resolves to an array of all broadcast items.
  */
 async function fetchAllBroadcasts(orderBy = "trending") {
   const allItems = [];
@@ -213,6 +239,11 @@ async function fetchAllBroadcasts(orderBy = "trending") {
   return allItems;
 }
 
+/**
+ * Finds a specific user in the CAM4 GraphQL API by searching through pages.
+ * @param {string} username - The username to search for.
+ * @returns {Promise<Object|null>} A promise that resolves to the user object if found, otherwise null.
+ */
 async function findUserInGraphQL(username) {
   const limit = 300;
   const maxPages = 25;
@@ -235,6 +266,11 @@ async function findUserInGraphQL(username) {
   return null;
 }
 
+/**
+ * Fetches stream information for a given user from the CAM4 REST API.
+ * @param {string} username - The username to fetch stream info for.
+ * @returns {Promise<Object>} A promise that resolves to the stream information object.
+ */
 async function fetchStreamInfo(username) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/streamInfo`;
   const response = await fetch(apiUrl, { headers: { accept: "application/json" } });
@@ -242,6 +278,11 @@ async function fetchStreamInfo(username) {
   return response.json();
 }
 
+/**
+ * Fetches profile information for a given user from the CAM4 REST API.
+ * @param {string} username - The username to fetch profile info for.
+ * @returns {Promise<Object>} A promise that resolves to the user profile object.
+ */
 async function fetchUserProfile(username) {
   const apiUrl = `https://pt.cam4.com/rest/v1.0/profile/${username}/info`;
   const response = await fetch(apiUrl, { headers: { accept: "application/json" } });
@@ -249,6 +290,11 @@ async function fetchUserProfile(username) {
   return response.json();
 }
 
+/**
+ * Fetches poster information for a user from a Google Apps Script endpoint.
+ * @param {string} username - The username to fetch poster info for.
+ * @returns {Promise<Object|null>} A promise that resolves to the poster information object or null on failure.
+ */
 async function fetchPosterInfoFromGAS(username) {
   const GAS_URL = `https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?poster=${encodeURIComponent(username)}`;
   try {
@@ -265,6 +311,11 @@ async function fetchPosterInfoFromGAS(username) {
 
 // --- Bloco de Handlers de Rota e Proxy ---
 
+/**
+ * Proxies a request to the Google Apps Script for recording information.
+ * @param {string} username - The username for the recording request.
+ * @returns {Promise<Response>} A promise that resolves to the proxied response.
+ */
 async function handleRecProxy(username) {
   const GAS_URL = "https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?rec=" + encodeURIComponent(username);
   const response = await fetch(GAS_URL, { redirect: 'follow' });
@@ -273,6 +324,11 @@ async function handleRecProxy(username) {
   return newResponse;
 }
 
+/**
+ * Proxies a request to the Google Apps Script for poster information.
+ * @param {string} username - The username for the poster request.
+ * @returns {Promise<Response>} A promise that resolves to the proxied response.
+ */
 async function handlePosterProxy(username) {
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyr1M8TYzdRaJpaCbFcnAFGh7JbERDX9EfgOGUCKDZDriGsxudgBLTrmxU3PP4REoOqdA/exec?poster=" + encodeURIComponent(username);
     const response = await fetch(GAS_URL, { redirect: 'follow' });
@@ -281,6 +337,11 @@ async function handlePosterProxy(username) {
     return newResponse;
 }
 
+/**
+ * Proxies a request for a user's poster image.
+ * @param {string} pathname - The request pathname, e.g., '/poster/username.jpg'.
+ * @returns {Promise<Response>} A promise that resolves to the image response or an error response.
+ */
 async function handlePosterImageProxy(pathname) {
     const username = pathname.substring('/poster/'.length).replace('.jpg', '');
     if (!username) {
@@ -294,6 +355,11 @@ async function handlePosterImageProxy(pathname) {
     return newResponse;
 }
 
+/**
+ * Proxies a request for a user's GIF.
+ * @param {string} pathname - The request pathname, e.g., '/gif/username.gif'.
+ * @returns {Promise<Response>} A promise that resolves to the GIF response or an error response.
+ */
 async function handleGifProxy(pathname) {
     const username = pathname.substring('/gif/'.length).replace('.gif', '');
     if (!username) {
@@ -307,6 +373,11 @@ async function handleGifProxy(pathname) {
     return newResponse;
 }
 
+/**
+ * Proxies a request for a user's profile image.
+ * @param {string} pathname - The request pathname, e.g., '/profile/username.jpg'.
+ * @returns {Promise<Response>} A promise that resolves to the image response or an error response.
+ */
 async function handleProfileImageProxy(pathname) {
     const username = pathname.substring('/profile/'.length).replace('.jpg', '');
     if (!username) {
@@ -324,6 +395,11 @@ async function handleProfileImageProxy(pathname) {
     return newResponse;
 }
 
+/**
+ * Proxies a request for a user's avatar image.
+ * @param {string} pathname - The request pathname, e.g., '/avatar/username.jpg'.
+ * @returns {Promise<Response>} A promise that resolves to the image response or an error response.
+ */
 async function handleAvatarImageProxy(pathname) {
     const username = pathname.substring('/avatar/'.length).replace('.jpg', '');
     if (!username) {
@@ -341,6 +417,11 @@ async function handleAvatarImageProxy(pathname) {
     return newResponse;
 }
 
+/**
+ * Proxies a request for a user's banner image.
+ * @param {string} pathname - The request pathname, e.g., '/banner/username.jpg'.
+ * @returns {Promise<Response>} A promise that resolves to the image response or an error response.
+ */
 async function handleBannerImageProxy(pathname) {
     const username = pathname.substring('/banner/'.length).replace('.jpg', '');
     if (!username) {
@@ -358,6 +439,11 @@ async function handleBannerImageProxy(pathname) {
     return newResponse;
 }
 
+/**
+ * Redirects to a user's live stream URL.
+ * @param {string} username - The username for the stream.
+ * @returns {Promise<Response>} A promise that resolves to a redirect response or a 404 error.
+ */
 async function handleStreamRedirect(username) {
   const streamInfo = await fetchStreamInfo(username);
   const targetUrl = streamInfo.cdnURL || streamInfo.edgeURL;
@@ -365,6 +451,12 @@ async function handleStreamRedirect(username) {
   return new Response(JSON.stringify({ error: `Nenhuma URL de stream encontrada para ${username}.` }), { status: 404 });
 }
 
+/**
+ * Proxies HLS playlist requests, adding a referer header.
+ * @param {Request} request - The incoming request object.
+ * @param {URL} url - The URL object of the request.
+ * @returns {Promise<Response>} A promise that resolves to the proxied HLS response.
+ */
 async function handleHlsProxy(request, url) {
     const targetUrl = url.searchParams.get("url");
     if (!targetUrl) return new Response("Parâmetro 'url' é obrigatório.", { status: 400 });
@@ -383,6 +475,11 @@ async function handleHlsProxy(request, url) {
     return newResponse;
 }
 
+/**
+ * Fetches and aggregates full user information (profile and live info).
+ * @param {string} username - The username to fetch information for.
+ * @returns {Promise<Response>} A promise that resolves to a JSON response with the user's full info.
+ */
 async function handleUserFullInfo(username) {
     const [profile, liveInfo] = await Promise.all([
         fetchUserProfile(username),
@@ -396,6 +493,12 @@ async function handleUserFullInfo(username) {
 // --- Ponto de Entrada e Roteador Principal ---
 
 export default {
+  /**
+   * The main fetch handler for the Cloudflare Worker.
+   * @param {Request} request - The incoming request object.
+   * @param {Object} env - The environment variables for the worker.
+   * @returns {Promise<Response>} A promise that resolves to the response.
+   */
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
       return handleOptions(request);
