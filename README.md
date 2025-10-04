@@ -1,76 +1,117 @@
 <p align="center">
-  <img src="https://xcam.gay/src/logo.svg" alt="XCam Logo" width="300"/>
+  <img src="https://xcam.gay/src/logo.svg" alt="Logotipo XCam" width="300"/>
 </p>
 
-# 📦 XCam v2.0 – Plataforma Modular para Transmissões ao Vivo
+# 📦 XCam v3.0 – Plataforma Modular para Transmissões ao Vivo
 
-XCam Web App: [![Netlify Status](https://api.netlify.com/api/v1/badges/ded26182-8393-4141-ab43-7ba4c85cc568/deploy-status)](https://app.netlify.com/projects/xcamgay/deploys)  
-XCam Beta: [![Netlify Status](https://api.netlify.com/api/v1/badges/a275d640-eef5-44cd-bebd-dd4301f59428/deploy-status)](https://app.netlify.com/projects/xcam-beta/deploys)  
-XCam API: [![Netlify Status](https://api.netlify.com/api/v1/badges/b3bf1a04-7e16-40b3-8972-676895751821/deploy-status)](https://app.netlify.com/projects/xcam-api/deploys)  
-XCam Drive: [![Netlify Status](https://api.netlify.com/api/v1/badges/03b67a1e-db8a-493b-bfc7-d6f494ce2396/deploy-status)](https://app.netlify.com/projects/xcam-drive/deploys)  
-XCam Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/1672f90b-0206-4302-988e-de804cc49dc0/deploy-status)](https://app.netlify.com/projects/xcam-status/deploys)
+Bem-vindo ao repositório oficial do **XCam**, uma plataforma modular e escalável para agregar e exibir transmissões de vídeo ao vivo. Este projeto foi concebido com uma arquitetura de micro-serviços e micro-frontends, garantindo flexibilidade, manutenção simplificada e alta performance.
 
 ---
 
-## 📁 Estrutura Geral do Projeto
+## 🏛️ Arquitetura do Projeto
 
-```
-/XCam
-├── dist/                 # Frontend modular e responsivo
-│   ├── beta/             # Web App moderno com ES Modules
-│   ├── cam/              # Player dedicado
-│   ├── chat/             # Integração de chat
-│   └── user/             # Perfil público
-│
-├── api/
-│   ├── workers/          # Cloudflare Worker com API pública
-│   ├── oauth/imgur/      # Upload de imagem via OAuth2 (Imgur)
-│   └── netlify/          # Proxy reverso Netlify → Worker
-│
-├── drive/                # Repositório público de arquivos e mídia (CDN leve)
-├── status/               # Página pública de status
-├── README.md             # Documentação geral
-└── CHANGELOG.md          # Histórico técnico de versões
-```
+O XCam utiliza uma abordagem descentralizada, onde cada funcionalidade principal é encapsulada em seu próprio módulo (diretório `xcam-*`). Esses módulos interagem entre si através de APIs e URLs bem definidas, operando de forma independente.
+
+A arquitetura geral é composta por:
+
+-   **Frontend Applications (`xcam-app`, `xcam-beta`):** Interfaces web que consomem os dados da `xcam-api` para exibir as transmissões aos usuários.
+-   **API Central (`xcam-api`):** Um Cloudflare Worker que atua como um proxy inteligente, agregando dados de fontes externas, aplicando filtros e servindo um endpoint unificado e seguro para os frontends.
+-   **Módulos de Conteúdo (`xcam-player`, `xcam-modal`):** Componentes de UI independentes, geralmente carregados via `iframe`, responsáveis por funcionalidades específicas como a reprodução de vídeo e a exibição de detalhes da transmissão.
+-   **Sistema de Gravação (`xcam-rec`):** Um módulo backend em Python responsável por gravar, processar e fazer o upload das transmissões ao vivo.
+-   **Infraestrutura de Suporte (`xcam-drive`, `xcam-redirects`):** Serviços de apoio, como uma CDN para arquivos estáticos e gerenciamento de redirecionamentos.
 
 ---
 
-## 🧠 Tecnologias e Arquitetura
+## 🧩 Descrição dos Módulos
 
-- **Frontend:** HTML5, TailwindCSS (CDN), JavaScript (ESModules)
-- **Back-end:** Cloudflare Workers (serverless)
-- **API CAM4:** GraphQL com filtros dinâmicos
-- **CORS e Cache:** controle completo via Worker
-- **Internacionalização:** i18n.js e fallback multilíngue
-- **Acessibilidade:** ARIA, navegação por teclado
-- **Assets públicos:** via `/drive` com links diretos
+Cada diretório `xcam-*` representa um módulo com uma responsabilidade única:
 
----
-
-## 🗂️ Armazenamento Público – `/drive`
-
-A pasta `/drive` serve arquivos estáticos via `https://drive.xcam.gay/`. Pode conter:
-
-- Logos, banners, vídeos e imagens públicas
-- Exportações técnicas e arquivos de integração
-- Recursos acessados dinamicamente no front-end
+| Módulo | Descrição | Tecnologias Principais |
+| :--- | :--- | :--- |
+| **`xcam-api`** | **API Central:** Cloudflare Worker que serve como o coração do sistema, buscando, filtrando e servindo dados das transmissões. Gerencia CORS, cache e múltiplos endpoints (JSON, CSV, imagens, etc.). | `JavaScript (Cloudflare Worker)` |
+| **`xcam-app`** | **Aplicação Principal:** Frontend legado que exibe a grade de transmissões, filtros e o carrossel de destaques. | `HTML`, `CSS`, `JavaScript` |
+| **`xcam-beta`** | **Aplicação Moderna:** A versão mais recente do frontend, construída com uma arquitetura de Módulos ES, promovendo melhor organização e performance. | `HTML`, `CSS`, `JavaScript (ESM)` |
+| **`xcam-drive`** | **CDN de Arquivos:** Um Cloudflare Worker que atua como um proxy para arquivos armazenados no Google Drive, funcionando como uma CDN leve para assets públicos (vídeos, imagens, etc.). | `JavaScript (Cloudflare Worker)` |
+| **`xcam-modal`** | **Modal de Detalhes:** Componente de UI isolado, carregado via `iframe`, que exibe informações detalhadas de um streamer, incluindo player, biografia e redes sociais. | `HTML`, `CSS`, `JavaScript` |
+| **`xcam-player`** | **Player de Vídeo Unificado:** Player de vídeo versátil (baseado em JWPlayer) que opera em múltiplos modos (completo, preview, carousel) para diferentes contextos da aplicação. | `HTML`, `CSS`, `JavaScript`, `JWPlayer` |
+| **`xcam-rec`** | **Sistema de Gravação:** Módulo backend em Python que orquestra a gravação de transmissões ao vivo usando FFmpeg, adiciona marcas d'água, valida a duração e faz o upload dos vídeos. | `Python`, `FFmpeg`, `requests` |
+| **`xcam-db`** | **Banco de Dados (Git-as-a-Database):** Diretório que armazena metadados das gravações (`rec.json`) para cada usuário, seguindo uma abordagem de "Git como banco de dados". | `JSON` |
+| **`xcam-redirects`**| **Gerenciador de Redirecionamentos:** Provavelmente um conjunto de regras (ex: `_redirects` para Netlify) ou um worker para gerenciar redirecionamentos entre os diferentes subdomínios e serviços do XCam. | `Configuração Netlify` |
+| **`xcam-status`** | **Página de Status:** Uma página pública simples para exibir o status operacional dos serviços do XCam. | `HTML`, `CSS` |
 
 ---
 
-## 🚀 API Pública
+## 🚀 Como Começar
 
-Exemplo:
-```
-GET https://api.xcam.gay/?page=1&limit=30&format=json&gender=male
-```
+Para configurar o ambiente de desenvolvimento, siga os passos abaixo.
+
+### Pré-requisitos
+
+-   **Node.js:** Necessário para as ferramentas de desenvolvimento frontend.
+-   **Python 3.x:** Necessário para executar o módulo de gravação `xcam-rec`.
+-   **FFmpeg:** Essencial para o funcionamento do `xcam-rec`. Deve estar instalado e acessível no `PATH` do sistema.
+-   **Cloudflare Wrangler:** CLI para desenvolver e publicar os Cloudflare Workers (`xcam-api`, `xcam-drive`).
+
+### Configuração dos Módulos
+
+#### Frontend (`xcam-beta`)
+
+1.  Como a aplicação é composta por arquivos estáticos e Módulos ES, ela pode ser servida por qualquer servidor web simples.
+2.  Para desenvolvimento local, você pode usar uma extensão como o **Live Server** no VS Code na raiz do diretório `xcam-beta`.
+
+#### Módulo de Gravação (`xcam-rec`)
+
+1.  Navegue até o diretório `xcam-rec`:
+    ```bash
+    cd xcam-rec
+    ```
+2.  Instale as dependências Python:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Execute o script principal com os parâmetros desejados (veja os argumentos em `main.py`):
+    ```bash
+    python main.py --workers 4 --max-duration 3600
+    ```
+
+#### Workers (`xcam-api`, `xcam-drive`)
+
+1.  Navegue até o diretório do worker (ex: `cd xcam-api`).
+2.  Autentique-se com o Wrangler:
+    ```bash
+    wrangler login
+    ```
+3.  Execute o worker em modo de desenvolvimento local:
+    ```bash
+    wrangler dev
+    ```
+4.  Para publicar, execute:
+    ```bash
+    wrangler publish
+    ```
 
 ---
 
-## 📌 Histórico de Versões
+## 🌐 API Pública (`xcam-api`)
 
-1. **v1.0** – Estrutura modular inicial
-2. **v1.5** – Integração com API CAM4
-3. **v2.0** – CORS fixado, cache controlado, API pública robusta
+O endpoint principal da API é a porta de entrada para todos os dados de transmissão.
+
+**Endpoint Base:** `https://api.xcam.gay/`
+
+### Principais Funcionalidades e Endpoints
+
+-   **Listagem de Transmissões:**
+    -   `GET /`: Retorna uma lista paginada de todas as transmissões online.
+    -   **Parâmetros:** `limit`, `page`, `order`, `gender`, `country`, `orientation`, `tags`, `format` (json/csv).
+
+-   **Proxy de Mídia:**
+    -   `GET /poster/{username}.jpg`: Retorna a imagem de preview (poster) de um usuário.
+    -   `GET /avatar/{username}.jpg`: Retorna o avatar de um usuário.
+    -   `GET /rec/?rec={username}`: Retorna os metadados de gravação (`rec.json`) de um usuário.
+
+-   **Informações de Stream:**
+    -   `GET /stream/{username}`: Redireciona para a URL do stream HLS ao vivo.
+    -   `GET /?stream={username}`: Retorna um objeto JSON com dados agregados (GraphQL, stream info, poster info) de um usuário.
 
 ---
 
@@ -79,77 +120,3 @@ GET https://api.xcam.gay/?page=1&limit=30&format=json&gender=male
 Desenvolvido por **Samuel Passamani**  
 📧 contato@xcam.gay  
 🌐 Idealizador do XCam e da arquitetura escalável deste sistema.
-
----
-
-## 🧩 Detalhamento Técnico Avançado
-
-### 🔧 Cloudflare Worker (`index.js`)
-- Estrutura modular e função principal `fetch()`
-- Suporte a `GET`, `POST`, `OPTIONS` (preflight)
-- Lista de domínios CORS autorizados controlada por `ALLOWED_ORIGINS`
-- `Access-Control-Allow-Origin` dinâmico e sem duplicações
-- `Cache-Control: no-store` para rotas que exigem dados atualizados
-- `fetchTasks` paralelos para paginação GraphQL CAM4
-- Ordenação local por número de viewers (`broadcasts.sort`)
-- Filtros aplicados localmente: gênero, país, orientação, tags
-- Respostas em JSON e CSV com headers apropriados
-- Logging leve preparado para debug (comentado por padrão)
-
-### 🌐 Netlify
-- `netlify.toml` com redirecionamentos e headers customizados
-- Deploy por branch (`xcam-main`, `xcam-beta`, `xcam-api`)
-- HTTPS automático, cache estático controlado via headers
-- Suporte a subdomínios independentes (Web App, Drive, Status)
-- Ideal para integração com GitHub Actions e webhooks de build
-
-### 🎯 Modularização do Front-end
-- Separação por arquivos: `filters.js`, `main.js`, `carousel.js`, `i18n.js`, etc.
-- `DOMContentLoaded` usado corretamente para iniciar componentes
-- Elementos DOM verificados antes de manipulação (evita `null`)
-- Grade de transmissões gerenciada via `broadcasts.js`
-- Eventos desacoplados, via `addEventListener` e funções nomeadas
-- Uso de `data-*` attributes para tradução dinâmica
-- CSS mínimo, extensível com Tailwind CLI futuro
-- Atualização da grade via `refreshBroadcasts()` e scroll infinito
-
-### 🛡️ Segurança e Estabilidade
-- CORS dinâmico com fallback seguro (`Access-Control-Allow-Origin: null`)
-- Workers sem dependência externa
-- Sem banco de dados (dados puxados da CAM4 via API)
-- Nenhum dado sensível trafegado
-- Estrutura limpa, sem uso de bibliotecas pesadas ou frameworks
-
-
-
----
-
-## 🧪 Linguagens e Tecnologias Utilizadas
-
-### 🖥️ HTML5
-- Utilizado em todas as views do front-end
-- Estrutura semântica com tags apropriadas: `<main>`, `<section>`, `<header>`, `<footer>`
-- Uso extensivo de `data-*` para internacionalização e controle dinâmico de atributos
-- Carregamento assíncrono de scripts com `type="module"`
-
-### 🎨 CSS3 (via Tailwind CDN)
-- Utilizado para estilização base do front-end (beta)
-- `cdn.tailwindcss.com` para desenvolvimento ágil e leve
-- Padrões responsivos baseados em `flex`, `grid`, `max-w`, `hidden`, `block`
-- Estilo personalizado adicional via `style.css` local
-- Preparado para futura migração ao PostCSS ou Tailwind CLI
-
-### 📜 JavaScript (ES Modules)
-- Código moderno estruturado com `import` e `export`
-- Separação clara de responsabilidades por arquivo (UI, dados, filtros, internacionalização)
-- Utilização de `async/await`, `fetch`, `try/catch`, `Map`, `Set`, e `localStorage`
-- Compatível com navegadores modernos (Chrome 90+, Firefox 88+, Edge 90+, Safari 14+)
-- Integração com APIs externas como CAM4 GraphQL
-
-### ☁️ JavaScript (Cloudflare Worker)
-- Executado em edge computing (V8)
-- Script `index.js` implementa `fetch()` com roteamento de endpoints
-- Uso de `Request`, `Response`, `URL`, `Headers`, e `caches.default`
-- Manipulação de JSON, CSV, e headers HTTP manualmente
-- Otimizado para latência mínima, sem dependências externas
-
