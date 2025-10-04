@@ -543,8 +543,12 @@ function goToSlide(index) {
 
       const broadcast = carouselItems[i];
       const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
-      // CORREÇÃO: A string template foi atribuída a mediaContainer.innerHTML
-      mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+      const poster = mediaContainer.querySelector("img");
+      if (poster) {
+        poster.style.display = "block";
+      } else {
+        // CORREÇÃO: A string template foi atribuída a mediaContainer.innerHTML
+        mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
              <div class="viewer-count">
                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -553,6 +557,7 @@ function goToSlide(index) {
                ${broadcast.viewers} <span class="viewer-label">espectadores</span>
              </div>
              <div class="badge-live">AO VIVO</div>`;
+      }
     }
   });
   indicators.forEach((indicator, i) => {

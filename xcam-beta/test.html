@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test for goToSlide</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="carousel" class="relative h-[40vw] max-h-[90vh]">
+    <div id="carousel-items" class="h-full"></div>
+    <div id="carousel-indicators"></div>
+</div>
+
+<div id="results"></div>
+
+<script type="module">
+    import { TRANSLATIONS, COUNTRY_NAMES } from "https://xcam.gay/translations.js";
+
+    // Mock necessary global variables and functions from script.js
+    window.COUNTRY_NAMES = COUNTRY_NAMES;
+    window.TRANSLATIONS = TRANSLATIONS;
+    let carouselItems = [];
+    let currentCarouselIndex = 0;
+
+    const carouselItemsContainer = document.getElementById("carousel-items");
+    const carouselIndicators = document.getElementById("carousel-indicators");
+
+    // Paste the functions to be tested here: setupCarousel and goToSlide
+    function setupCarousel(items) {
+        if (!items || items.length === 0) return;
+        carouselItems = items.slice(0, 5);
+        carouselItemsContainer.innerHTML = "";
+        carouselIndicators.innerHTML = "";
+        carouselItems.forEach((broadcast, index) => {
+            const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
+            const item = document.createElement("div");
+            item.className = `carousel-item opacity-0`;
+            item.dataset.username = broadcast.username;
+            item.innerHTML = `<div class="carousel-media-container absolute inset-0 bg-black">
+             <img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+             <div class="viewer-count">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+               </svg>
+               ${broadcast.viewers} <span class="viewer-label">espectadores</span>
+             </div>
+             <div class="badge-live">AO VIVO</div>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
+          <div class="absolute bottom-0 left-0 p-6 z-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">@${broadcast.username}</h2>
+            <button class="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors" onclick="openModal('${broadcast.id}')">Assistir</button>
+          </div>`;
+            carouselItemsContainer.appendChild(item);
+            const indicator = document.createElement("button");
+            indicator.className = `w-3 h-3 rounded-full ${index === 0 ? "bg-white" : "bg-gray-500"}`;
+            indicator.addEventListener("click", () => goToSlide(index));
+            carouselIndicators.appendChild(indicator);
+        });
+        goToSlide(0);
+    }
+
+    function goToSlide(index) {
+        const items = document.querySelectorAll(".carousel-item");
+        const indicators = document.querySelectorAll("#carousel-indicators button");
+        items.forEach((item, i) => {
+            const mediaContainer = item.querySelector(".carousel-media-container");
+            if (i === index) {
+                item.classList.remove("opacity-0");
+                if (!mediaContainer.querySelector("img")) {
+                    const broadcast = carouselItems[i];
+                    const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
+                    mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+             <div class="viewer-count">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+               </svg>
+               ${carouselItems[i].viewers} <span class="viewer-label">espectadores</span>
+             </div>
+             <div class="badge-live">AO VIVO</div>`;
+                }
+                if (!mediaContainer.querySelector(".carousel-loader")) {
+                    const loader = document.createElement("div");
+                    loader.className = "carousel-loader absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10";
+                    loader.innerHTML = '<span class="loader"></span>';
+                    mediaContainer.appendChild(loader);
+                }
+                if (!mediaContainer.querySelector("iframe")) {
+                    const username = item.dataset.username;
+                    const iframe = document.createElement("iframe");
+                    iframe.className = "w-full h-full border-0 absolute inset-0";
+                    iframe.src = `https://player.xcam.gay/hls/?user=${username}`;
+                    iframe.setAttribute("allow", "autoplay; encrypted-media");
+                    iframe.style.opacity = "0";
+                    iframe.onload = () => {
+                        const loader = mediaContainer.querySelector(".carousel-loader");
+                        if (loader) loader.remove();
+                        const poster = mediaContainer.querySelector(".carousel-poster");
+                        if (poster) poster.remove();
+                        iframe.style.opacity = "1";
+                    };
+                    mediaContainer.appendChild(iframe);
+                }
+            } else {
+                item.classList.add("opacity-0");
+                const iframe = mediaContainer.querySelector("iframe");
+                if (iframe) iframe.remove();
+                const loader = mediaContainer.querySelector(".carousel-loader");
+                if (loader) loader.remove();
+
+                const broadcast = carouselItems[i];
+                const posterUrl = `https://api-xcam.netlify.app/poster/${broadcast.username}.jpg`;
+                const poster = mediaContainer.querySelector("img");
+                if (poster) {
+                    poster.style.display = "block";
+                } else {
+                    mediaContainer.innerHTML = `<img src="${posterUrl}" alt="${broadcast.username}" class="w-full h-full object-cover carousel-poster">
+             <div class="viewer-count">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+               </svg>
+               ${broadcast.viewers} <span class="viewer-label">espectadores</span>
+             </div>
+             <div class="badge-live">AO VIVO</div>`;
+                }
+            }
+        });
+        indicators.forEach((indicator, i) => {
+            indicator.classList.toggle("bg-white", i === index);
+            indicator.classList.toggle("bg-gray-500", i !== index);
+        });
+        currentCarouselIndex = index;
+    }
+
+    // --- Test Runner ---
+    const resultsContainer = document.getElementById("results");
+
+    function assert(condition, message) {
+        const p = document.createElement("p");
+        p.textContent = (condition ? "✅ PASS: " : "❌ FAIL: ") + message;
+        p.style.color = condition ? "green" : "red";
+        resultsContainer.appendChild(p);
+    }
+
+    function runTests() {
+        console.log("Running tests...");
+
+        // Mock data
+        const mockBroadcasts = [
+            { id: '1', username: 'user1', viewers: 100, country: 'br' },
+            { id: '2', username: 'user2', viewers: 200, country: 'us' }
+        ];
+
+        // --- Test 1: Initial setup ---
+        setupCarousel(mockBroadcasts);
+        const initialItems = document.querySelectorAll(".carousel-item");
+        assert(initialItems.length === 2, "Test 1: Carousel should have 2 items after setup.");
+        const activeSlide = initialItems[0];
+        const inactiveSlide = initialItems[1];
+
+        // --- Test 2: Inactive slide should not have an iframe after setup ---
+        // We need to wait for the iframe in the active slide to load and trigger changes
+        setTimeout(() => {
+            const inactiveMediaContainer = inactiveSlide.querySelector(".carousel-media-container");
+            const inactiveIframe = inactiveMediaContainer.querySelector("iframe");
+            const inactivePoster = inactiveMediaContainer.querySelector("img");
+            assert(!inactiveIframe, "Test 2: Inactive slide should not have an iframe.");
+            assert(inactivePoster, "Test 2: Inactive slide should have a poster image.");
+
+            // --- Test 3: Switch slide and check DOM ---
+            goToSlide(1);
+
+            setTimeout(() => {
+                const newActiveSlide = initialItems[1];
+                const newInactiveSlide = initialItems[0];
+                const newActiveMediaContainer = newActiveSlide.querySelector(".carousel-media-container");
+                const newInactiveMediaContainer = newInactiveSlide.querySelector(".carousel-media-container");
+
+                const activeIframe = newActiveMediaContainer.querySelector("iframe");
+                const inactiveIframeAfterSwitch = newInactiveMediaContainer.querySelector("iframe");
+                const inactivePosterAfterSwitch = newInactiveMediaContainer.querySelector("img");
+
+                assert(!!activeIframe, "Test 3: New active slide should have an iframe.");
+                assert(!inactiveIframeAfterSwitch, "Test 3: Old active slide (now inactive) should not have an iframe.");
+                assert(!!inactivePosterAfterSwitch, "Test 3: Old active slide (now inactive) should have its poster restored.");
+                 assert(inactivePosterAfterSwitch.style.display !== 'none', "Test 3: Restored poster should be visible.");
+
+                console.log("Tests finished.");
+            }, 1000); // Wait for the second slide's iframe to potentially load
+
+        }, 1000); // Wait for the first slide's iframe to load and potentially affect other slides
+    }
+
+    runTests();
+</script>
+
+</body>
+</html>
