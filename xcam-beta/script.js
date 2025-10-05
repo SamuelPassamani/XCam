@@ -1,5 +1,5 @@
 // Importa as traduções do script externo
-import { COUNTRY_NAMES, TRANSLATIONS } from "https://xcam.gay/translations.js";
+import { COUNTRY_NAMES, TRANSLATIONS } from "translations.js";
 // --- LÓGICA DA APLICAÇÃO ---
 // Constantes para os ícones
 const GENDER_ICON_SVG =
@@ -138,12 +138,12 @@ function setupEventListeners() {
     const orderType = btn.getAttribute("data-order");
     btn.addEventListener("mouseenter", () => {
       if (!btn.classList.contains("selected")) {
-        icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}Pink.svg`;
+        icon.src = `assets/icons/buttons/${orderType}Pink.svg`;
       }
     });
     btn.addEventListener("mouseleave", () => {
       if (!btn.classList.contains("selected")) {
-        icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}White.svg`;
+        icon.src = `assets/icons/buttons/${orderType}White.svg`;
       }
     });
   });
@@ -158,9 +158,9 @@ function setOrderMenuActive(selectedOrder) {
 
     // Troca o SVG conforme o estado
     if (isSelected) {
-      icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}Black.svg`;
+      icon.src = `assets/icons/buttons/${orderType}Black.svg`;
     } else {
-      icon.src = `https://xcam.gay/assets/icons/buttons/${orderType}White.svg`;
+      icon.src = `assets/icons/buttons/${orderType}White.svg`;
     }
   });
 }
@@ -934,7 +934,7 @@ function openModal(broadcastId) {
   const tagsString = broadcast.tags
     ? encodeURIComponent(broadcast.tags.map((tag) => tag.name).join(","))
     : "";
-  const iframeUrl = `https://xcam.gay/player/?user=${broadcast.username}&img=${posterUrl}&tags=${tagsString}`;
+  const iframeUrl = `player/?user=${broadcast.username}&img=${posterUrl}&tags=${tagsString}`;
   // Set iframe source and show it, hide the thumbnail/play button
   modalIframe.src = iframeUrl;
   document.getElementById("modal-player").classList.add("hidden");
@@ -985,7 +985,7 @@ window.openModal = openModal;
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("https://xcam.gay/sw.js")
+      .register("sw.js")
       .then((registration) => {
         console.log("Service Worker registrado com sucesso:", registration);
       })
